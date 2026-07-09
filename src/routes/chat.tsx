@@ -219,6 +219,13 @@ function ChatPage() {
           <Send className="w-4 h-4 rotate-180" />
         </button>
       </form>
+
+      <ShareSheet
+        open={!!sharePayload}
+        onClose={() => setSharePayload(null)}
+        title={sharePayload?.title ?? ""}
+        text={sharePayload?.text ?? ""}
+      />
     </main>
   );
 }
