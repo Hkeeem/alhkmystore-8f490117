@@ -1,0 +1,40 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { createLovableAiGateway } from "@/lib/ai-gateway.server";
+import { convertToModelMessages, streamText, type UIMessage } from "ai";
+import { deals, stores } from "@/data/deals";
+
+export const Route = createFileRoute("/api/chat")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const { messages } = (await request.json()) as { messages?: UIMessage[] };
+        if (!Array.isArray(messages)) return new Response("bad request", { status: 400 });
+
+        const catalog = deals.map((d) => {
+          const s = stores.find(x => x.id === d.storeId)!;
+          return `- ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s.name} | سعر: ${d.price} ر.س | قبل: ${d.originalPrice} ر.س | تنتهي: ${d.expiresIn}`;
+        }).join("\n");
+
+        const system = `أنت "وفّر"، مساعد ذكي عربي متخصص في العروض السعودية. تجاوب بلهجة سعودية ودّية ومختصرة (سطرين أو ثلاثة). مهمتك تساعد المستخدم يلقى أرخص وأفضل العروض من قاعدة العروض التالية فقط.
+
+قاعدة العروض المتاحة اليوم:
+${catalog}
+
+قواعد:
+- استخدم فقط العروض أعلاه، لا تخترع أسعار أو متاجر.
+- عند المقارنة، رتّب الأرخص أوّلاً واذكر نسبة التوفير.
+- استخدم رموز تعبيرية بسيطة (🔥 ✅ 💰) لتحسين القراءة.
+- إذا ما لقيت المنتج في القاعدة، قل بصراحة "ما عندي عرض حالي على هذا".`;
+
+        const gateway = createLovableAiGateway();
+        const result = streamText({
+          model: gateway("openai/gpt-5.5"),
+          system,
+          messages: await convertToModelMessages(messages),
+        });
+
+        return result.toUIMessageStreamResponse({ originalMessages: messages });
+      },
+    },
+  },
+});
