@@ -1,10 +1,13 @@
 import { type Deal, discountPercent, getStore } from "@/data/deals";
-import { Clock, Flame } from "lucide-react";
+import { Clock, Flame, Share2 } from "lucide-react";
+import { useState } from "react";
+import { ShareSheet, buildDealShareText } from "./ShareSheet";
 
 export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
   const isHot = off >= 45;
+  const [shareOpen, setShareOpen] = useState(false);
 
   return (
     <div className="group relative bg-card rounded-3xl shadow-card hover:shadow-glow transition-all overflow-hidden border border-border/50">
@@ -35,7 +38,14 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
           >
             {store.logo}
           </div>
-          <span className="text-xs text-muted-foreground font-medium truncate">{store.name}</span>
+          <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
+          <button
+            onClick={(e) => { e.stopPropagation(); setShareOpen(true); }}
+            aria-label="مشاركة العرض"
+            className="w-7 h-7 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         <h3 className="font-bold text-sm leading-snug line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
@@ -56,6 +66,13 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
           </div>
         </div>
       </div>
+
+      <ShareSheet
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        title={`عرض ${deal.title}`}
+        text={buildDealShareText(deal, store.name, off)}
+      />
     </div>
   );
 }
