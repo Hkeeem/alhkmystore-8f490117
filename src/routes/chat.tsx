@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useChat, DefaultChatTransport, type UIMessage } from "ai";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, Loader2 } from "lucide-react";
 

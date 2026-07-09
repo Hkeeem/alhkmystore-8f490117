@@ -18,7 +18,7 @@ export const Route = createFileRoute("/smart-list")({
 type Result = Awaited<ReturnType<typeof buildSmartList>>;
 
 function SmartList() {
-  const run = _useServerFn(buildSmartList);
+  const run = useServerFn(buildSmartList);
   const [text, setText] = useState("أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
