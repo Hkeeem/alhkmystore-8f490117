@@ -165,10 +165,18 @@ function ChatPage() {
           const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
           const mine = m.role === "user";
           return (
-            <div key={m.id} className={`flex ${mine ? "justify-start" : "justify-end"}`}>
+            <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-start" : "items-end"}`}>
               <div className={`max-w-[85%] ${mine ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg" : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"} px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
                 {text}
               </div>
+              {!mine && text && (
+                <button
+                  onClick={() => setSharePayload({ title: "توصية من مكّي", text })}
+                  className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2"
+                >
+                  <Share2 className="w-3 h-3" /> شارك التوصية
+                </button>
+              )}
             </div>
           );
         })}
