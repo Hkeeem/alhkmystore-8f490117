@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX } from "lucide-react";
+import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2 } from "lucide-react";
+import { ShareSheet } from "@/components/ShareSheet";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
