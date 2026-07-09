@@ -1,11 +1,9 @@
-import { createFileRoute, useServerFn } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
 import { useState } from "react";
 import { Sparkles, ListChecks, Loader2, Wallet } from "lucide-react";
 import { getStore } from "@/data/deals";
-
-// Fix import: useServerFn is from react-start
-import { useServerFn as _useServerFn } from "@tanstack/react-start";
 
 export const Route = createFileRoute("/smart-list")({
   head: () => ({

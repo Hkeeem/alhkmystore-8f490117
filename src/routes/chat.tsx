@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
+import { useChat, DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, Loader2 } from "lucide-react";
 
@@ -72,7 +71,7 @@ function ChatPage() {
           </div>
         )}
 
-        {messages.map((m) => {
+        {messages.map((m: UIMessage) => {
           const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
           const mine = m.role === "user";
           return (

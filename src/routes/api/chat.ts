@@ -30,7 +30,7 @@ ${catalog}
         const result = streamText({
           model: gateway("openai/gpt-5.5"),
           system,
-          messages: convertToModelMessages(messages),
+          messages: await convertToModelMessages(messages),
         });
 
         return result.toUIMessageStreamResponse({ originalMessages: messages });
