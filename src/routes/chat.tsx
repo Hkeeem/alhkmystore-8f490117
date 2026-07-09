@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Loader2 } from "lucide-react";
+import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX } from "lucide-react";
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
     meta: [
-      { title: "المساعد الذكي - وفّر" },
-      { name: "description", content: "اسأل مساعد وفّر عن أي عرض أو أرخص سعر في المملكة." },
+      { title: "مكّي - المساعد الصوتي لعروض المملكة" },
+      { name: "description", content: "تكلّم أو اكتب مع مكّي، مساعدك الذكي لأفضل عروض السعودية." },
     ],
   }),
   component: ChatPage,
@@ -22,6 +22,10 @@ const suggestions = [
 ];
 
 function ChatPage() {
+  const [voiceOn, setVoiceOn] = useState(true);
+  const spokenRef = useRef<Set<string>>(new Set());
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   const { messages, sendMessage, status } = useChat({
     id: "assistant",
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -33,6 +37,34 @@ function ChatPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, status]);
 
+  // Speak new assistant messages when done streaming
+  useEffect(() => {
+    if (!voiceOn || status === "streaming" || status === "submitted") return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || spokenRef.current.has(last.id)) return;
+    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
+    if (!text) return;
+    spokenRef.current.add(last.id);
+    speak(text);
+  }, [messages, status, voiceOn]);
+
+  async function speak(text: string) {
+    try {
+      audioRef.current?.pause();
+      const r = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!r.ok) return;
+      const blob = await r.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.play().catch(() => {});
+    } catch {}
+  }
+
   async function send(text: string) {
     if (!text.trim()) return;
     setInput("");
@@ -41,14 +73,69 @@ function ChatPage() {
 
   const isLoading = status === "submitted" || status === "streaming";
 
+  // Voice recording
+  const [recording, setRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+
+  async function toggleRecord() {
+    if (recording) {
+      recorderRef.current?.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+      const rec = new MediaRecorder(stream, { mimeType: mime });
+      chunksRef.current = [];
+      rec.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        setRecording(false);
+        const blob = new Blob(chunksRef.current, { type: mime });
+        if (blob.size < 1500) return;
+        setTranscribing(true);
+        try {
+          const fd = new FormData();
+          fd.append("file", blob, `rec.${mime.includes("mp4") ? "mp4" : "webm"}`);
+          const r = await fetch("/api/stt", { method: "POST", body: fd });
+          const data = await r.json();
+          const text = (data?.text || "").trim();
+          if (text) await send(text);
+        } finally {
+          setTranscribing(false);
+        }
+      };
+      rec.start();
+      recorderRef.current = rec;
+      setRecording(true);
+    } catch {
+      alert("ما قدرنا نوصل للمايكروفون");
+    }
+  }
+
   return (
     <main className="max-w-3xl mx-auto px-4 pt-6 pb-32 md:pb-6 flex flex-col h-[calc(100vh-4rem)]">
-      <div className="mb-4">
-        <div className="inline-flex items-center gap-2 text-primary text-sm font-bold">
-          <Sparkles className="w-4 h-4" />
-          مساعد وفّر
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <div className="inline-flex items-center gap-2 text-primary text-sm font-bold">
+            <Sparkles className="w-4 h-4" />
+            مكّي · مساعدك الصوتي
+          </div>
+          <h1 className="font-display font-black text-2xl mt-1">اسألني بالصوت أو الكتابة</h1>
         </div>
-        <h1 className="font-display font-black text-2xl mt-1">اسألني عن أي عرض</h1>
+        <button
+          onClick={() => {
+            setVoiceOn((v) => !v);
+            if (voiceOn) audioRef.current?.pause();
+          }}
+          className={`shrink-0 rounded-2xl px-3 py-2 text-xs font-bold border transition flex items-center gap-1 ${voiceOn ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border text-muted-foreground"}`}
+          title={voiceOn ? "إيقاف الصوت" : "تشغيل الصوت"}
+        >
+          {voiceOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+          {voiceOn ? "الصوت شغّال" : "الصوت مقفول"}
+        </button>
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 -mx-4 px-4">
@@ -57,7 +144,8 @@ function ChatPage() {
             <div className="w-16 h-16 mx-auto rounded-3xl bg-gradient-hero shadow-glow flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8 text-primary-foreground" />
             </div>
-            <p className="text-muted-foreground text-sm mb-6">جرّب أحد الأسئلة:</p>
+            <p className="text-muted-foreground text-sm mb-2">هلا! أنا مكّي.</p>
+            <p className="text-muted-foreground text-sm mb-6">اضغط المايك وكلّمني، أو جرّب:</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {suggestions.map((s) => (
                 <button
@@ -84,10 +172,10 @@ function ChatPage() {
           );
         })}
 
-        {isLoading && messages[messages.length - 1]?.role === "user" && (
+        {(isLoading || transcribing) && (
           <div className="flex justify-end">
             <div className="bg-card border border-border/50 rounded-3xl rounded-bl-lg px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> يفكّر...
+              <Loader2 className="w-4 h-4 animate-spin" /> {transcribing ? "يسمعك..." : "يفكّر..."}
             </div>
           </div>
         )}
@@ -97,11 +185,20 @@ function ChatPage() {
         onSubmit={(e) => { e.preventDefault(); send(input); }}
         className="mt-4 flex gap-2 sticky bottom-20 md:bottom-0 bg-background/95 backdrop-blur py-2"
       >
+        <button
+          type="button"
+          onClick={toggleRecord}
+          disabled={isLoading || transcribing}
+          className={`shrink-0 rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow transition ${recording ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-card border border-border text-primary hover:border-primary"}`}
+          title={recording ? "إيقاف التسجيل" : "تسجيل صوتي"}
+        >
+          {recording ? <Square className="w-4 h-4" /> : <Mic className="w-5 h-5" />}
+        </button>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          disabled={isLoading}
-          placeholder="اكتب سؤالك..."
+          disabled={isLoading || recording}
+          placeholder={recording ? "جاري التسجيل..." : "اكتب سؤالك أو استخدم المايك..."}
           className="flex-1 bg-card border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
         <button
