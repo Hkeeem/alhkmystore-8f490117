@@ -21,15 +21,17 @@ type Props = {
   onClose: () => void;
   title: string;
   text: string;
+  url?: string;
 };
 
-export function ShareSheet({ open, onClose, title, text }: Props) {
+export function ShareSheet({ open, onClose, title, text, url: explicitUrl }: Props) {
   const [copied, setCopied] = useState(false);
-  const [url, setUrl] = useState("");
+  const [pageUrl, setPageUrl] = useState("");
+  const url = explicitUrl || pageUrl;
 
   useEffect(() => {
-    if (typeof window !== "undefined") setUrl(window.location.href);
-  }, [open]);
+    if (typeof window !== "undefined" && !explicitUrl) setPageUrl(window.location.href);
+  }, [open, explicitUrl]);
 
   useEffect(() => {
     if (!open) return;
