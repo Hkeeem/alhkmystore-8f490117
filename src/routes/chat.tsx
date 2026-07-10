@@ -4,6 +4,31 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect } from "react";
 import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2 } from "lucide-react";
 import { ShareSheet } from "@/components/ShareSheet";
+import { deals as allDeals, getStore } from "@/data/deals";
+
+function parseAssistant(raw: string) {
+  const idx = raw.indexOf("===META===");
+  const visible = (idx >= 0 ? raw.slice(0, idx) : raw).trim();
+  let sources: string[] = [];
+  let followups: string[] = [];
+  if (idx >= 0) {
+    const rest = raw.slice(idx + "===META===".length).trim();
+    const match = rest.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        const j = JSON.parse(match[0]);
+        if (Array.isArray(j.sources)) sources = j.sources.filter((x: unknown) => typeof x === "string");
+        if (Array.isArray(j.followups)) followups = j.followups.filter((x: unknown) => typeof x === "string");
+      } catch {}
+    }
+  }
+  // Also extract inline [dN] refs as sources
+  const inline = Array.from(visible.matchAll(/\[([a-z]?\d+)\]/gi)).map((m) => m[1]);
+  const merged = Array.from(new Set([...sources, ...inline]));
+  // Strip inline [dN] tokens for readable/spoken text
+  const clean = visible.replace(/\s*\[([a-z]?\d+)\]/gi, "").trim();
+  return { visible: clean, sources: merged, followups };
+}
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
