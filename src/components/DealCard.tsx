@@ -2,7 +2,7 @@ import { type Deal, discountPercent, getStore } from "@/data/deals";
 import { Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ShareSheet, buildDealShareText } from "./ShareSheet";
+import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 
 export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const store = getStore(deal.storeId);
@@ -82,6 +82,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
         onClose={() => setShareOpen(false)}
         title={`عرض ${deal.title}`}
         text={buildDealShareText(deal, store.name, off)}
+        deal={toDealShareMeta(deal, store.name, off)}
         url={dealUrl}
       />
     </Link>

@@ -3,8 +3,56 @@ import { X, Copy, Check, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
 
+export type DealShareMeta = {
+  title: string;
+  storeName: string;
+  price: number;
+  originalPrice: number;
+  off: number;
+  unit?: string;
+  expiresIn: string;
+};
+
+export type SharePlatform = "whatsapp" | "telegram" | "x" | "snapchat" | "facebook" | "email" | "copy" | "default";
+
+export function toDealShareMeta(deal: Deal, storeName: string, off: number): DealShareMeta {
+  return {
+    title: deal.title,
+    storeName,
+    price: deal.price,
+    originalPrice: deal.originalPrice,
+    off,
+    unit: deal.unit,
+    expiresIn: deal.expiresIn,
+  };
+}
+
+export function buildPlatformDealText(m: DealShareMeta, platform: SharePlatform): string {
+  const savedRaw = Math.max(0, m.originalPrice - m.price);
+  const saved = (Math.round(savedRaw * 100) / 100).toString().replace(/\.00$/, "");
+  const unit = m.unit ? ` (${m.unit})` : "";
+  switch (platform) {
+    case "whatsapp":
+      return `🔥 *عرض من وفّر*\n\n🛍️ *${m.title}*${unit}\n🏬 المتجر: ${m.storeName}\n\n💰 السعر: *${m.price} ر.س*\n~${m.originalPrice} ر.س~\n✅ وفّر ${saved} ر.س (${m.off}٪)\n⏰ ينتهي: ${m.expiresIn}\n\nحمّل وفّر ولا يفوتك العرض 👇`;
+    case "telegram":
+      return `🔥 عرض من وفّر\n\n🛍️ ${m.title}${unit}\n🏬 ${m.storeName}\n\n💰 ${m.price} ر.س بدل ${m.originalPrice} ر.س\n✅ توفير ${saved} ر.س · خصم ${m.off}٪\n⏰ ينتهي خلال: ${m.expiresIn}`;
+    case "x":
+      return `🔥 ${m.title} من ${m.storeName}\nبـ ${m.price} ر.س بدل ${m.originalPrice} — وفّر ${m.off}٪ 💸\n#وفّر #عروض_السعودية`;
+    case "snapchat":
+      return `🔥 ${m.title} · ${m.storeName}\n${m.price} ر.س (وفّر ${m.off}٪)`;
+    case "facebook":
+      return `🔥 عرض جديد من ${m.storeName}\n${m.title}${unit}\nبـ ${m.price} ر.س بدل ${m.originalPrice} ر.س — توفير ${saved} ر.س (${m.off}٪)\nينتهي: ${m.expiresIn}`;
+    case "email":
+      return `السلام عليكم،\n\nحبّيت أشاركك عرض حلو لقيته على تطبيق وفّر:\n\nالمنتج: ${m.title}${unit}\nالمتجر: ${m.storeName}\nالسعر: ${m.price} ر.س بدل ${m.originalPrice} ر.س\nالتوفير: ${saved} ر.س (${m.off}٪)\nينتهي خلال: ${m.expiresIn}\n\nتفاصيل العرض على الرابط في الأسفل.`;
+    case "copy":
+    case "default":
+    default:
+      return `🔥 عرض من وفّر\n${m.title}${unit}\nالمتجر: ${m.storeName}\nالسعر: ${m.price} ر.س بدل ${m.originalPrice} ر.س\nوفّر ${saved} ر.س · ${m.off}٪\nينتهي: ${m.expiresIn}`;
+  }
+}
+
 export function buildDealShareText(deal: Deal, storeName: string, off: number) {
-  return `🔥 عرض من وفّر\n${deal.title}${deal.unit ? ` (${deal.unit})` : ""}\nالمتجر: ${storeName}\nالسعر: ${deal.price} ر.س بدل ${deal.originalPrice} ر.س\nوفّر ${off}٪ · ينتهي: ${deal.expiresIn}`;
+  return buildPlatformDealText(toDealShareMeta(deal, storeName, off), "default");
 }
 
 export function buildSmartListShareText(result: { total: number; saved: number; strategy: string; items: { requested: string; deal?: { title: string; price: number; originalPrice: number; storeId: string } | null }[] }) {
@@ -22,9 +70,10 @@ type Props = {
   title: string;
   text: string;
   url?: string;
+  deal?: DealShareMeta;
 };
 
-export function ShareSheet({ open, onClose, title, text, url: explicitUrl }: Props) {
+export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal }: Props) {
   const [copied, setCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
   const url = explicitUrl || pageUrl;
@@ -42,17 +91,19 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl }: Pro
 
   if (!open) return null;
 
-  const payload = `${text}\n\n${url}`;
-  const enc = encodeURIComponent(payload);
+  const textFor = (p: SharePlatform) => (deal ? buildPlatformDealText(deal, p) : text);
+  const payloadFor = (p: SharePlatform) => `${textFor(p)}\n\n${url}`;
+  const payload = payloadFor("copy");
 
-  const channels: { name: string; color: string; icon: string; href: string }[] = [
-    { name: "واتساب", color: "#25D366", icon: "💬", href: `https://wa.me/?text=${enc}` },
-    { name: "تيليجرام", color: "#229ED9", icon: "✈️", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}` },
-    { name: "X", color: "#0f0f0f", icon: "𝕏", href: `https://twitter.com/intent/tweet?text=${enc}` },
-    { name: "سناب شات", color: "#FFFC00", icon: "👻", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
-    { name: "فيسبوك", color: "#1877F2", icon: "f", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${enc}` },
-    { name: "بريد", color: "#6b7280", icon: "@", href: `mailto:?subject=${encodeURIComponent(title)}&body=${enc}` },
+  const channels: { name: string; color: string; icon: string; platform: SharePlatform; href: string }[] = [
+    { name: "واتساب", color: "#25D366", icon: "💬", platform: "whatsapp", href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}` },
+    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(textFor("telegram"))}` },
+    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(payloadFor("x"))}` },
+    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
+    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(textFor("facebook"))}` },
+    { name: "بريد", color: "#6b7280", icon: "@", platform: "email", href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}` },
   ];
+
 
   async function nativeShare() {
     try {
