@@ -70,9 +70,10 @@ type Props = {
   title: string;
   text: string;
   url?: string;
+  deal?: DealShareMeta;
 };
 
-export function ShareSheet({ open, onClose, title, text, url: explicitUrl }: Props) {
+export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal }: Props) {
   const [copied, setCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
   const url = explicitUrl || pageUrl;
@@ -90,17 +91,19 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl }: Pro
 
   if (!open) return null;
 
-  const payload = `${text}\n\n${url}`;
-  const enc = encodeURIComponent(payload);
+  const textFor = (p: SharePlatform) => (deal ? buildPlatformDealText(deal, p) : text);
+  const payloadFor = (p: SharePlatform) => `${textFor(p)}\n\n${url}`;
+  const payload = payloadFor("copy");
 
-  const channels: { name: string; color: string; icon: string; href: string }[] = [
-    { name: "واتساب", color: "#25D366", icon: "💬", href: `https://wa.me/?text=${enc}` },
-    { name: "تيليجرام", color: "#229ED9", icon: "✈️", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}` },
-    { name: "X", color: "#0f0f0f", icon: "𝕏", href: `https://twitter.com/intent/tweet?text=${enc}` },
-    { name: "سناب شات", color: "#FFFC00", icon: "👻", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
-    { name: "فيسبوك", color: "#1877F2", icon: "f", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${enc}` },
-    { name: "بريد", color: "#6b7280", icon: "@", href: `mailto:?subject=${encodeURIComponent(title)}&body=${enc}` },
+  const channels: { name: string; color: string; icon: string; platform: SharePlatform; href: string }[] = [
+    { name: "واتساب", color: "#25D366", icon: "💬", platform: "whatsapp", href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}` },
+    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(textFor("telegram"))}` },
+    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(payloadFor("x"))}` },
+    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
+    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(textFor("facebook"))}` },
+    { name: "بريد", color: "#6b7280", icon: "@", platform: "email", href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}` },
   ];
+
 
   async function nativeShare() {
     try {
