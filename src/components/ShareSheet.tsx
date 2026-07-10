@@ -3,8 +3,56 @@ import { X, Copy, Check, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
 
+export type DealShareMeta = {
+  title: string;
+  storeName: string;
+  price: number;
+  originalPrice: number;
+  off: number;
+  unit?: string;
+  expiresIn: string;
+};
+
+export type SharePlatform = "whatsapp" | "telegram" | "x" | "snapchat" | "facebook" | "email" | "copy" | "default";
+
+export function toDealShareMeta(deal: Deal, storeName: string, off: number): DealShareMeta {
+  return {
+    title: deal.title,
+    storeName,
+    price: deal.price,
+    originalPrice: deal.originalPrice,
+    off,
+    unit: deal.unit,
+    expiresIn: deal.expiresIn,
+  };
+}
+
+export function buildPlatformDealText(m: DealShareMeta, platform: SharePlatform): string {
+  const savedRaw = Math.max(0, m.originalPrice - m.price);
+  const saved = (Math.round(savedRaw * 100) / 100).toString().replace(/\.00$/, "");
+  const unit = m.unit ? ` (${m.unit})` : "";
+  switch (platform) {
+    case "whatsapp":
+      return `🔥 *عرض من وفّر*\n\n🛍️ *${m.title}*${unit}\n🏬 المتجر: ${m.storeName}\n\n💰 السعر: *${m.price} ر.س*\n~${m.originalPrice} ر.س~\n✅ وفّر ${saved} ر.س (${m.off}٪)\n⏰ ينتهي: ${m.expiresIn}\n\nحمّل وفّر ولا يفوتك العرض 👇`;
+    case "telegram":
+      return `🔥 عرض من وفّر\n\n🛍️ ${m.title}${unit}\n🏬 ${m.storeName}\n\n💰 ${m.price} ر.س بدل ${m.originalPrice} ر.س\n✅ توفير ${saved} ر.س · خصم ${m.off}٪\n⏰ ينتهي خلال: ${m.expiresIn}`;
+    case "x":
+      return `🔥 ${m.title} من ${m.storeName}\nبـ ${m.price} ر.س بدل ${m.originalPrice} — وفّر ${m.off}٪ 💸\n#وفّر #عروض_السعودية`;
+    case "snapchat":
+      return `🔥 ${m.title} · ${m.storeName}\n${m.price} ر.س (وفّر ${m.off}٪)`;
+    case "facebook":
+      return `🔥 عرض جديد من ${m.storeName}\n${m.title}${unit}\nبـ ${m.price} ر.س بدل ${m.originalPrice} ر.س — توفير ${saved} ر.س (${m.off}٪)\nينتهي: ${m.expiresIn}`;
+    case "email":
+      return `السلام عليكم،\n\nحبّيت أشاركك عرض حلو لقيته على تطبيق وفّر:\n\nالمنتج: ${m.title}${unit}\nالمتجر: ${m.storeName}\nالسعر: ${m.price} ر.س بدل ${m.originalPrice} ر.س\nالتوفير: ${saved} ر.س (${m.off}٪)\nينتهي خلال: ${m.expiresIn}\n\nتفاصيل العرض على الرابط في الأسفل.`;
+    case "copy":
+    case "default":
+    default:
+      return `🔥 عرض من وفّر\n${m.title}${unit}\nالمتجر: ${m.storeName}\nالسعر: ${m.price} ر.س بدل ${m.originalPrice} ر.س\nوفّر ${saved} ر.س · ${m.off}٪\nينتهي: ${m.expiresIn}`;
+  }
+}
+
 export function buildDealShareText(deal: Deal, storeName: string, off: number) {
-  return `🔥 عرض من وفّر\n${deal.title}${deal.unit ? ` (${deal.unit})` : ""}\nالمتجر: ${storeName}\nالسعر: ${deal.price} ر.س بدل ${deal.originalPrice} ر.س\nوفّر ${off}٪ · ينتهي: ${deal.expiresIn}`;
+  return buildPlatformDealText(toDealShareMeta(deal, storeName, off), "default");
 }
 
 export function buildSmartListShareText(result: { total: number; saved: number; strategy: string; items: { requested: string; deal?: { title: string; price: number; originalPrice: number; storeId: string } | null }[] }) {
