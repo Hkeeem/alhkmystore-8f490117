@@ -189,16 +189,63 @@ function ChatPage() {
         )}
 
         {messages.map((m: UIMessage) => {
-          const text = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+          const raw = m.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
           const mine = m.role === "user";
+          const { visible, sources, followups } = mine
+            ? { visible: raw, sources: [] as string[], followups: [] as string[] }
+            : parseAssistant(raw);
+          const sourceDeals = sources
+            .map((id) => allDeals.find((d) => d.id === id))
+            .filter((d): d is NonNullable<typeof d> => !!d);
           return (
-            <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-start" : "items-end"}`}>
+            <div key={m.id} className={`flex flex-col gap-2 ${mine ? "items-start" : "items-end"}`}>
               <div className={`max-w-[85%] ${mine ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg" : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"} px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
-                {text}
+                {visible}
               </div>
-              {!mine && text && (
+
+              {!mine && sourceDeals.length > 0 && (
+                <div className="max-w-[85%] w-full flex flex-wrap gap-2 justify-end">
+                  {sourceDeals.map((d) => {
+                    const s = getStore(d.storeId);
+                    return (
+                      <a
+                        key={d.id}
+                        href="/deals"
+                        className="flex items-center gap-2 bg-card border border-border/60 hover:border-primary rounded-2xl px-2.5 py-1.5 text-[11px] font-medium shadow-soft transition"
+                        title={d.title}
+                      >
+                        <span className="text-base leading-none">{d.image}</span>
+                        <span className="max-w-[140px] truncate">{d.title}</span>
+                        <span
+                          className="text-white text-[10px] font-black px-1.5 py-0.5 rounded-md"
+                          style={{ background: s.color }}
+                        >
+                          {s.name}
+                        </span>
+                        <span className="text-primary font-black">{d.price} ر.س</span>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+
+              {!mine && followups.length > 0 && (
+                <div className="max-w-[85%] w-full flex flex-wrap gap-2 justify-end">
+                  {followups.map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => send(q)}
+                      className="text-[12px] rounded-full border border-primary/40 text-primary hover:bg-primary hover:text-primary-foreground px-3 py-1.5 transition"
+                    >
+                      {q}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {!mine && visible && (
                 <button
-                  onClick={() => setSharePayload({ title: "توصية من مكّي", text })}
+                  onClick={() => setSharePayload({ title: "توصية من مكّي", text: visible })}
                   className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2"
                 >
                   <Share2 className="w-3 h-3" /> شارك التوصية
