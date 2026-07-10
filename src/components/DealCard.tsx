@@ -82,6 +82,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
         onClose={() => setShareOpen(false)}
         title={`عرض ${deal.title}`}
         text={buildDealShareText(deal, store.name, off)}
+        deal={toDealShareMeta(deal, store.name, off)}
         url={dealUrl}
       />
     </Link>
