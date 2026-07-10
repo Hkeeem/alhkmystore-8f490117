@@ -69,10 +69,11 @@ function ChatPage() {
     if (!voiceOn || status === "streaming" || status === "submitted") return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || spokenRef.current.has(last.id)) return;
-    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
-    if (!text) return;
+    const raw = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("");
+    const { visible } = parseAssistant(raw);
+    if (!visible) return;
     spokenRef.current.add(last.id);
-    speak(text);
+    speak(visible);
   }, [messages, status, voiceOn]);
 
   async function speak(text: string) {
