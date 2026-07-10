@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { X, Copy, Check, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
 
 export function buildDealShareText(deal: Deal, storeName: string, off: number) {
@@ -46,19 +47,25 @@ export function ShareSheet({ open, onClose, title, text }: Props) {
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url });
+        toast.success("تمت المشاركة بنجاح");
         onClose();
       } else {
         await copy();
       }
-    } catch {}
+    } catch {
+      toast.error("ما قدرنا نشارك العرض، جرّب نسخ الرابط");
+    }
   }
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(payload);
       setCopied(true);
+      toast.success("تم نسخ العرض");
       setTimeout(() => setCopied(false), 1500);
-    } catch {}
+    } catch {
+      toast.error("ما قدرنا ننسخ العرض");
+    }
   }
 
   return (
