@@ -7,6 +7,15 @@ export function buildDealShareText(deal: Deal, storeName: string, off: number) {
   return `🔥 عرض من وفّر\n${deal.title}${deal.unit ? ` (${deal.unit})` : ""}\nالمتجر: ${storeName}\nالسعر: ${deal.price} ر.س بدل ${deal.originalPrice} ر.س\nوفّر ${off}٪ · ينتهي: ${deal.expiresIn}`;
 }
 
+export function buildSmartListShareText(result: { total: number; saved: number; strategy: string; items: { requested: string; deal?: { title: string; price: number; originalPrice: number; storeId: string } | null }[] }) {
+  const lines = result.items.map((it, i) => {
+    if (!it.deal) return `${i + 1}. ${it.requested} — ما لقينا عرض مطابق`;
+    return `${i + 1}. ${it.deal.title} — ${it.deal.price} ر.س`;
+  });
+  return `🛒 قائمة تسوّق ذكية من وفّر\n\n${lines.join("\n")}\n\nالإجمالي: ${result.total} ر.س\nوفّرت: ${result.saved} ر.س\n\n💡 ${result.strategy}`;
+}
+
+
 type Props = {
   open: boolean;
   onClose: () => void;

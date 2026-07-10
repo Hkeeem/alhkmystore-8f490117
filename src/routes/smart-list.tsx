@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
 import { useState } from "react";
-import { Sparkles, ListChecks, Loader2, Wallet } from "lucide-react";
+import { Sparkles, ListChecks, Loader2, Wallet, Share2 } from "lucide-react";
 import { getStore } from "@/data/deals";
+import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
+
 
 export const Route = createFileRoute("/smart-list")({
   head: () => ({
@@ -23,6 +25,8 @@ function SmartList() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+
 
   async function submit() {
     setLoading(true);
@@ -85,7 +89,16 @@ function SmartList() {
             {result.strategy}
           </div>
 
+          <button
+            onClick={() => setShareOpen(true)}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow transition hover:scale-[1.01]"
+          >
+            <Share2 className="w-4 h-4" />
+            شارك القائمة
+          </button>
+
           <div className="bg-card rounded-3xl border border-border/50 overflow-hidden divide-y divide-border/50">
+
             <div className="p-4 flex items-center gap-2 font-bold"><ListChecks className="w-4 h-4 text-primary" /> قائمتك المُحسّنة</div>
             {result.items.map((it, i) => {
               if (!it.deal) return (
@@ -118,6 +131,14 @@ function SmartList() {
           </div>
         </div>
       )}
+
+      <ShareSheet
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        title="قائمة تسوّق ذكية - وفّر"
+        text={result ? buildSmartListShareText(result) : ""}
+      />
     </main>
   );
 }
+
