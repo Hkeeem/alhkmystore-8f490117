@@ -10,8 +10,17 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
 
+  const dealUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/deals/${deal.id}`
+      : "";
+
   return (
-    <div className="group relative bg-card rounded-3xl shadow-card hover:shadow-glow transition-all overflow-hidden border border-border/50">
+    <Link
+      to="/deals/$id"
+      params={{ id: deal.id }}
+      className="group block relative bg-card rounded-3xl shadow-card hover:shadow-glow transition-all overflow-hidden border border-border/50"
+    >
       {rank !== undefined && (
         <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-gradient-gold shadow-soft flex items-center justify-center font-display font-black text-sm text-accent-foreground">
           {rank}
@@ -73,7 +82,8 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
         onClose={() => setShareOpen(false)}
         title={`عرض ${deal.title}`}
         text={buildDealShareText(deal, store.name, off)}
+        url={dealUrl}
       />
-    </div>
+    </Link>
   );
 }
