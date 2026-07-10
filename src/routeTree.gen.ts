@@ -13,6 +13,7 @@ import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -37,6 +38,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
 const ApiTtsRoute = ApiTtsRouteImport.update({
   id: '/api/tts',
   path: '/api/tts',
@@ -56,30 +62,33 @@ const ApiChatRoute = ApiChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/deals': typeof DealsRoute
+  '/deals': typeof DealsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/deals/$id': typeof DealsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/deals': typeof DealsRoute
+  '/deals': typeof DealsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/deals/$id': typeof DealsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
-  '/deals': typeof DealsRoute
+  '/deals': typeof DealsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/deals/$id': typeof DealsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/deals/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/deals/$id'
   id:
     | '__root__'
     | '/'
@@ -109,12 +120,13 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/deals/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ChatRoute: typeof ChatRoute
-  DealsRoute: typeof DealsRoute
+  DealsRoute: typeof DealsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
@@ -151,6 +163,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
     '/api/tts': {
       id: '/api/tts'
       path: '/api/tts'
@@ -175,10 +194,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface DealsRouteChildren {
+  DealsIdRoute: typeof DealsIdRoute
+}
+
+const DealsRouteChildren: DealsRouteChildren = {
+  DealsIdRoute: DealsIdRoute,
+}
+
+const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
-  DealsRoute: DealsRoute,
+  DealsRoute: DealsRouteWithChildren,
   SmartListRoute: SmartListRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
