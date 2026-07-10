@@ -2,8 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
 import { useState } from "react";
-import { Sparkles, ListChecks, Loader2, Wallet } from "lucide-react";
+import { Sparkles, ListChecks, Loader2, Wallet, Share2 } from "lucide-react";
 import { getStore } from "@/data/deals";
+import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
+
 
 export const Route = createFileRoute("/smart-list")({
   head: () => ({
