@@ -25,6 +25,8 @@ function SmartList() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+
 
   async function submit() {
     setLoading(true);
