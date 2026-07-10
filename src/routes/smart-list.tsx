@@ -89,7 +89,16 @@ function SmartList() {
             {result.strategy}
           </div>
 
+          <button
+            onClick={() => setShareOpen(true)}
+            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow transition hover:scale-[1.01]"
+          >
+            <Share2 className="w-4 h-4" />
+            شارك القائمة
+          </button>
+
           <div className="bg-card rounded-3xl border border-border/50 overflow-hidden divide-y divide-border/50">
+
             <div className="p-4 flex items-center gap-2 font-bold"><ListChecks className="w-4 h-4 text-primary" /> قائمتك المُحسّنة</div>
             {result.items.map((it, i) => {
               if (!it.deal) return (
