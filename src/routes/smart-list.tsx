@@ -131,6 +131,14 @@ function SmartList() {
           </div>
         </div>
       )}
+
+      <ShareSheet
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        title="قائمة تسوّق ذكية - وفّر"
+        text={result ? buildSmartListShareText(result) : ""}
+      />
     </main>
   );
 }
+
