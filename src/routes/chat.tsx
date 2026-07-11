@@ -225,8 +225,8 @@ function ChatPage() {
       </form>
 
       <ShareSheet
-        open={!!sharePayload}
-        onClose={() => setSharePayload(null)}
+        open={shareOpen && !!sharePayload}
+        onClose={() => setShareOpen(false)}
         title={sharePayload?.title ?? ""}
         text={sharePayload?.text ?? ""}
       />
