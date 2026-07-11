@@ -173,7 +173,10 @@ function ChatPage() {
               </div>
               {!mine && text && (
                 <button
-                  onClick={() => setSharePayload({ title: "توصية من مكّي", text })}
+                  onClick={() => {
+                    setSharePayload({ title: "توصية من مكّي", text });
+                    setShareOpen(true);
+                  }}
                   className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2"
                 >
                   <Share2 className="w-3 h-3" /> شارك التوصية
