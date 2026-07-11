@@ -25,6 +25,7 @@ const suggestions = [
 function ChatPage() {
   const [voiceOn, setVoiceOn] = useState(true);
   const [sharePayload, setSharePayload] = useState<{ title: string; text: string } | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
   const spokenRef = useRef<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
