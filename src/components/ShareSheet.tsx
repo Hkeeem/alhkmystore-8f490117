@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { X, Copy, Check, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
+import { addPoints } from "@/lib/rewards";
 
 export type DealShareMeta = {
   title: string;
@@ -109,7 +110,8 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
     try {
       if (navigator.share) {
         await navigator.share({ title, text, url });
-        toast.success("تمت المشاركة بنجاح");
+        const s = addPoints("share");
+        toast.success(`تمت المشاركة · +5 نقاط (المجموع ${s.points})`);
         onClose();
       } else {
         await copy();
@@ -154,7 +156,7 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
               href={c.href}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={onClose}
+              onClick={() => { addPoints("share"); onClose(); }}
               className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-secondary hover:bg-primary/10 border border-transparent hover:border-primary transition"
             >
               <div
