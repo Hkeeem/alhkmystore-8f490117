@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy } from "lucide-react";
 
 const items = [
   { to: "/", label: "الرئيسية", icon: Home },
   { to: "/deals", label: "العروض", icon: Tag },
-  { to: "/smart-list", label: "قائمة ذكية", icon: ListChecks },
+  { to: "/coupons", label: "كوبونات", icon: Ticket },
+  { to: "/smart-list", label: "قائمة", icon: ListChecks },
+  { to: "/rewards", label: "جوائز", icon: Trophy },
   { to: "/chat", label: "مساعد", icon: MessageCircle },
 ] as const;
 
@@ -41,15 +43,15 @@ export function TopBar() {
 export function BottomBar() {
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border/60 pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-6">
         {items.map((it) => {
           const Icon = it.icon;
           return (
             <Link
               key={it.to}
               to={it.to}
-              className="flex flex-col items-center gap-1 py-3 text-muted-foreground text-[11px]"
-              activeProps={{ className: "flex flex-col items-center gap-1 py-3 text-primary text-[11px] font-bold" }}
+              className="flex flex-col items-center gap-1 py-3 text-muted-foreground text-[10px]"
+              activeProps={{ className: "flex flex-col items-center gap-1 py-3 text-primary text-[10px] font-bold" }}
             >
               <Icon className="w-5 h-5" />
               <span>{it.label}</span>
