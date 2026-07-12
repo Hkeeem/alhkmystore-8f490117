@@ -82,7 +82,7 @@ function RewardsPage() {
     const next: RewardState = {
       ...state,
       points: state.points - cost,
-      history: [{ action: "copy_coupon", points: -cost, at: Date.now() }, ...state.history].slice(0, 50),
+      history: [{ action: "copy_coupon" as RewardAction, points: -cost, at: Date.now() }, ...state.history].slice(0, 50),
     };
     saveRewards(next);
     setState(next);

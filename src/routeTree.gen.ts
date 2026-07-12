@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SmartListRouteImport } from './routes/smart-list'
+import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -22,6 +23,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const SmartListRoute = SmartListRouteImport.update({
   id: '/smart-list',
   path: '/smart-list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/rewards'
     | '/smart-list'
     | '/api/chat'
     | '/api/stt'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/rewards'
     | '/smart-list'
     | '/api/chat'
     | '/api/stt'
@@ -128,6 +139,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/rewards'
     | '/smart-list'
     | '/api/chat'
     | '/api/stt'
@@ -140,6 +152,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRoute
   DealsRoute: typeof DealsRouteWithChildren
+  RewardsRoute: typeof RewardsRoute
   SmartListRoute: typeof SmartListRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
@@ -153,6 +166,13 @@ declare module '@tanstack/react-router' {
       path: '/smart-list'
       fullPath: '/smart-list'
       preLoaderRoute: typeof SmartListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRoute,
   DealsRoute: DealsRouteWithChildren,
+  RewardsRoute: RewardsRoute,
   SmartListRoute: SmartListRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
