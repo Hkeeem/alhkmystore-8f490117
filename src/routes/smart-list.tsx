@@ -93,7 +93,7 @@ function SmartList() {
           className="w-full bg-secondary/50 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary/30 resize-none"
         />
         <button
-          onClick={submit}
+          onClick={() => submit()}
           disabled={loading || !text.trim()}
           className="w-full bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
         >
