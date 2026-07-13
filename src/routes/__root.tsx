@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
+import { InstallHandler } from "@/components/InstallHandler";
 
 function NotFoundComponent() {
   return (
@@ -62,6 +63,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/icon.svg" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
@@ -90,6 +94,7 @@ function RootComponent() {
         <TopBar />
         <Outlet />
         <BottomBar />
+        <InstallHandler />
       </div>
     </QueryClientProvider>
   );

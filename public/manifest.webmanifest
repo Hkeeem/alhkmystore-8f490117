@@ -1,0 +1,17 @@
+{
+  "name": "وفّر — أفضل عروض المملكة",
+  "short_name": "وفّر",
+  "description": "كل عروض المملكة في مكان واحد، مرتّبة بالذكاء الاصطناعي.",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar",
+  "background_color": "#ffffff",
+  "theme_color": "#1f5c3a",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
