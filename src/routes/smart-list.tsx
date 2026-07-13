@@ -1,13 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, ListChecks, Loader2, Wallet, Share2 } from "lucide-react";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
+import { z } from "zod";
 
 
 export const Route = createFileRoute("/smart-list")({
+  validateSearch: z.object({ q: z.string().optional(), auto: z.coerce.number().optional() }),
   head: () => ({
     meta: [
       { title: "قائمة تسوّق ذكية - وفّر" },
@@ -19,21 +21,36 @@ export const Route = createFileRoute("/smart-list")({
 
 type Result = Awaited<ReturnType<typeof buildSmartList>>;
 
+function decodeQ(q?: string): string | null {
+  if (!q) return null;
+  try {
+    if (typeof window === "undefined") return null;
+    return decodeURIComponent(escape(window.atob(q.replace(/-/g, "+").replace(/_/g, "/"))));
+  } catch { return null; }
+}
+
+function encodeQ(text: string): string {
+  if (typeof window === "undefined") return "";
+  return window.btoa(unescape(encodeURIComponent(text))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
 function SmartList() {
+  const search = Route.useSearch();
   const run = useServerFn(buildSmartList);
-  const [text, setText] = useState("أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض");
+  const initial = decodeQ(search.q) ?? "أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض";
+  const [text, setText] = useState(initial);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const autoRan = useRef(false);
 
-
-  async function submit() {
+  async function submit(t: string = text) {
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-      const r = await run({ data: { text } });
+      const r = await run({ data: { text: t } });
       setResult(r);
     } catch (e) {
       setError(e instanceof Error ? e.message : "خطأ غير متوقع");
@@ -41,6 +58,20 @@ function SmartList() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (autoRan.current) return;
+    if (search.q && search.auto === 1) {
+      autoRan.current = true;
+      submit(initial);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const shareUrl = typeof window !== "undefined"
+    ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
+    : "";
+
 
   return (
     <main className="max-w-3xl mx-auto px-4 pt-6 pb-10 space-y-6">
