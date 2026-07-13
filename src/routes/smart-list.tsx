@@ -168,6 +168,7 @@ function SmartList() {
         onClose={() => setShareOpen(false)}
         title="قائمة تسوّق ذكية - وفّر"
         text={result ? buildSmartListShareText(result) : ""}
+        url={shareUrl}
       />
     </main>
   );
