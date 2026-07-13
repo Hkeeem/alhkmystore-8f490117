@@ -74,10 +74,25 @@ type Props = {
   deal?: DealShareMeta;
 };
 
+function withUtm(rawUrl: string, platform: SharePlatform): string {
+  if (!rawUrl) return rawUrl;
+  try {
+    const u = new URL(rawUrl);
+    u.searchParams.set("utm_source", platform === "default" || platform === "copy" ? "share" : platform);
+    u.searchParams.set("utm_medium", "social");
+    u.searchParams.set("utm_campaign", "deal_share");
+    if (!u.hash) u.hash = `src=${platform}`;
+    return u.toString();
+  } catch {
+    const sep = rawUrl.includes("?") ? "&" : "?";
+    return `${rawUrl}${sep}utm_source=${platform}&utm_medium=social&utm_campaign=deal_share`;
+  }
+}
+
 export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal }: Props) {
   const [copied, setCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
-  const url = explicitUrl || pageUrl;
+  const baseUrl = explicitUrl || pageUrl;
 
   useEffect(() => {
     if (typeof window !== "undefined" && !explicitUrl) setPageUrl(window.location.href);
@@ -93,15 +108,17 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
   if (!open) return null;
 
   const textFor = (p: SharePlatform) => (deal ? buildPlatformDealText(deal, p) : text);
-  const payloadFor = (p: SharePlatform) => `${textFor(p)}\n\n${url}`;
+  const urlFor = (p: SharePlatform) => withUtm(baseUrl, p);
+  const payloadFor = (p: SharePlatform) => `${textFor(p)}\n\n🔗 ${urlFor(p)}`;
   const payload = payloadFor("copy");
+  const url = urlFor("copy");
 
   const channels: { name: string; color: string; icon: string; platform: SharePlatform; href: string }[] = [
     { name: "واتساب", color: "#25D366", icon: "💬", platform: "whatsapp", href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}` },
-    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(textFor("telegram"))}` },
-    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(payloadFor("x"))}` },
-    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
-    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(textFor("facebook"))}` },
+    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(urlFor("telegram"))}&text=${encodeURIComponent(textFor("telegram"))}` },
+    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(textFor("x"))}&url=${encodeURIComponent(urlFor("x"))}` },
+    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(urlFor("snapchat"))}` },
+    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(urlFor("facebook"))}&quote=${encodeURIComponent(textFor("facebook"))}` },
     { name: "بريد", color: "#6b7280", icon: "@", platform: "email", href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}` },
   ];
 
