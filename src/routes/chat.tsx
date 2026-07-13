@@ -93,7 +93,8 @@ function ChatPage() {
     if (!voiceOn || status === "streaming" || status === "submitted") return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || spokenRef.current.has(last.id)) return;
-    const text = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
+    const raw = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
+    const text = stripDealTokens(raw);
     if (!text) return;
     spokenRef.current.add(last.id);
     speak(text);
@@ -217,12 +218,13 @@ function ChatPage() {
           return (
             <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-start" : "items-end"}`}>
               <div className={`max-w-[85%] ${mine ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg" : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"} px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
-                {text}
+                {mine ? text : <RenderWithDealLinks text={text} />}
               </div>
               {!mine && text && (
                 <button
                   onClick={() => {
-                    setSharePayload({ title: "توصية من مكّي", text });
+                    const origin = typeof window !== "undefined" ? window.location.origin : "";
+                    setSharePayload({ title: "توصية من مكّي", text: buildShareText(text, origin) });
                     setShareOpen(true);
                   }}
                   className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2"
