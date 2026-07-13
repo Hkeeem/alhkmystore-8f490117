@@ -115,10 +115,10 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
 
   const channels: { name: string; color: string; icon: string; platform: SharePlatform; href: string }[] = [
     { name: "واتساب", color: "#25D366", icon: "💬", platform: "whatsapp", href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}` },
-    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(textFor("telegram"))}` },
-    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(payloadFor("x"))}` },
-    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}` },
-    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(textFor("facebook"))}` },
+    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(urlFor("telegram"))}&text=${encodeURIComponent(textFor("telegram"))}` },
+    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(textFor("x"))}&url=${encodeURIComponent(urlFor("x"))}` },
+    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(urlFor("snapchat"))}` },
+    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(urlFor("facebook"))}&quote=${encodeURIComponent(textFor("facebook"))}` },
     { name: "بريد", color: "#6b7280", icon: "@", platform: "email", href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}` },
   ];
 
