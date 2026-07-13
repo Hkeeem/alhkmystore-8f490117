@@ -1,9 +1,57 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { useState, useRef, useEffect } from "react";
-import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2 } from "lucide-react";
+import { useState, useRef, useEffect, Fragment } from "react";
+import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink } from "lucide-react";
 import { ShareSheet } from "@/components/ShareSheet";
+import { deals } from "@/data/deals";
+
+const DEAL_TOKEN = /\{\{deal:([a-zA-Z0-9_-]+)\}\}/g;
+
+function stripDealTokens(text: string): string {
+  return text.replace(DEAL_TOKEN, "").replace(/\s{2,}/g, " ").trim();
+}
+
+function buildShareText(text: string, origin: string): string {
+  return text.replace(DEAL_TOKEN, (_, id) => {
+    const d = deals.find((x) => x.id === id);
+    if (!d) return "";
+    return `\n🔗 ${d.title} — ${d.price} ر.س: ${origin}/deals/${id}?utm_source=makki&utm_medium=chat&utm_campaign=recommendation`;
+  }).trim();
+}
+
+function RenderWithDealLinks({ text }: { text: string }) {
+  const parts: (string | { id: string })[] = [];
+  let last = 0;
+  for (const m of text.matchAll(DEAL_TOKEN)) {
+    if (m.index! > last) parts.push(text.slice(last, m.index));
+    parts.push({ id: m[1] });
+    last = m.index! + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+
+  return (
+    <>
+      {parts.map((p, i) => {
+        if (typeof p === "string") return <Fragment key={i}>{p}</Fragment>;
+        const d = deals.find((x) => x.id === p.id);
+        if (!d) return null;
+        return (
+          <Link
+            key={i}
+            to="/deals/$id"
+            params={{ id: p.id }}
+            className="inline-flex items-center gap-1 mx-0.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold hover:bg-primary hover:text-primary-foreground transition align-middle"
+          >
+            <ExternalLink className="w-3 h-3" />
+            افتح
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
 
 export const Route = createFileRoute("/chat")({
   head: () => ({
