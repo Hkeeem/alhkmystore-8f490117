@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter } from "lucide-react";
+import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
@@ -9,6 +9,7 @@ import {
   ACTION_LABEL,
   ACTION_POINTS,
   SEED_LEADERBOARD,
+  REWARDS_CATALOG,
   type RewardState,
   type RewardAction,
 } from "@/lib/rewards";
