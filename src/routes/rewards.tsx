@@ -348,8 +348,8 @@ function HistorySection({
       ) : (
         <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
           {filtered.map((h, i) => {
-            const isRedeem = h.points < 0;
-            const Icon = isRedeem ? Gift : ACTION_ICON[h.action] ?? Sparkles;
+            const isRedeem = h.action === "redeem" || h.points < 0;
+            const Icon = isRedeem ? Gift : ACTION_ICON[h.action as RewardAction] ?? Sparkles;
             return (
               <div
                 key={i}
@@ -364,7 +364,7 @@ function HistorySection({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">
-                    {isRedeem ? "استبدال جائزة" : ACTION_LABEL[h.action]}
+                    {isRedeem ? h.label ?? "استبدال جائزة" : ACTION_LABEL[h.action as RewardAction]}
                   </div>
                   <div className="text-[11px] text-muted-foreground">{fmt(h.at)}</div>
                 </div>
