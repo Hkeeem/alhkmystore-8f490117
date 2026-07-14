@@ -42,6 +42,7 @@ function tierFor(points: number) {
 function RewardsPage() {
   const [state, setState] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
   const [nameInput, setNameInput] = useState("");
+  const [historyFilter, setHistoryFilter] = useState<"all" | RewardAction | "redeem">("all");
 
   useEffect(() => {
     const s = loadRewards();
