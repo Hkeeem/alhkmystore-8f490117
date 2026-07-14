@@ -63,12 +63,7 @@ function RewardsPage() {
     .slice(0, 10);
   const myRank = leaderboard.findIndex((r) => (r as any).isMe) + 1;
 
-  const rewards = [
-    { id: "r1", cost: 100, title: "كود شحن مجاني", desc: "على أول طلب من هنقرستيشن", icon: "🚚" },
-    { id: "r2", cost: 250, title: "خصم 25 ر.س نون", desc: "قسيمة إلكترونيات من نون", icon: "🛒" },
-    { id: "r3", cost: 500, title: "بطاقة جرير 50 ر.س", desc: "قسيمة شراء إلكترونية", icon: "🎁" },
-    { id: "r4", cost: 1000, title: "بطاقة هدايا 100 ر.س", desc: "لأي متجر من متاجر وفّر", icon: "💎" },
-  ];
+  const rewards = REWARDS_CATALOG;
 
   const saveName = () => {
     const next = { ...state, name: nameInput.trim() || "زائر" };
@@ -77,20 +72,6 @@ function RewardsPage() {
     toast.success("تم حفظ اسمك في لوحة المتصدرين");
   };
 
-  const redeem = (cost: number, title: string) => {
-    if (state.points < cost) {
-      toast.error(`تحتاج ${cost - state.points} نقطة إضافية`);
-      return;
-    }
-    const next: RewardState = {
-      ...state,
-      points: state.points - cost,
-      history: [{ action: "copy_coupon" as RewardAction, points: -cost, at: Date.now() }, ...state.history].slice(0, 50),
-    };
-    saveRewards(next);
-    setState(next);
-    toast.success(`🎉 مبروك! تم استبدال: ${title}`);
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
