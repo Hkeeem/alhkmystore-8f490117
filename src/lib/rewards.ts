@@ -23,10 +23,18 @@ export const ACTION_LABEL: Record<RewardAction, string> = {
   smart_list: "بناء قائمة ذكية",
 };
 
+export type HistoryEntry = {
+  action: RewardAction | "redeem";
+  points: number;
+  at: number;
+  label?: string;
+  rewardId?: string;
+};
+
 export type RewardState = {
   name: string;
   points: number;
-  history: { action: RewardAction; points: number; at: number }[];
+  history: HistoryEntry[];
 };
 
 const DEFAULT: RewardState = { name: "زائر", points: 0, history: [] };
@@ -60,6 +68,25 @@ export function addPoints(action: RewardAction): RewardState {
   return next;
 }
 
+export type RedeemResult =
+  | { ok: true; state: RewardState }
+  | { ok: false; missing: number };
+
+export function redeemReward(rewardId: string, cost: number, label: string): RedeemResult {
+  const s = loadRewards();
+  if (s.points < cost) return { ok: false, missing: cost - s.points };
+  const next: RewardState = {
+    ...s,
+    points: s.points - cost,
+    history: [
+      { action: "redeem", points: -cost, at: Date.now(), label, rewardId },
+      ...s.history,
+    ].slice(0, 50),
+  };
+  saveRewards(next);
+  return { ok: true, state: next };
+}
+
 export function setName(name: string) {
   const s = loadRewards();
   saveRewards({ ...s, name: name.trim() || "زائر" });
@@ -69,6 +96,72 @@ export function clearHistory() {
   const s = loadRewards();
   saveRewards({ ...s, history: [] });
 }
+
+export type RewardItem = {
+  id: string;
+  cost: number;
+  title: string;
+  desc: string;
+  icon: string;
+  details: string;
+  terms: string[];
+};
+
+export const REWARDS_CATALOG: RewardItem[] = [
+  {
+    id: "r1",
+    cost: 100,
+    title: "كود شحن مجاني",
+    desc: "على أول طلب من هنقرستيشن",
+    icon: "🚚",
+    details: "كود خصم يوفّر رسوم التوصيل بالكامل على أول طلب لك من تطبيق هنقرستيشن.",
+    terms: [
+      "صالح لأول طلب فقط لكل مستخدم",
+      "الحد الأدنى للطلب 30 ر.س",
+      "ينتهي بعد 14 يوم من الاستبدال",
+    ],
+  },
+  {
+    id: "r2",
+    cost: 250,
+    title: "خصم 25 ر.س نون",
+    desc: "قسيمة إلكترونيات من نون",
+    icon: "🛒",
+    details: "قسيمة خصم 25 ريال على مشترياتك من قسم الإلكترونيات في نون.",
+    terms: [
+      "الحد الأدنى للطلب 150 ر.س",
+      "غير قابل للاستخدام مع عروض أخرى",
+      "صالح لمدة 30 يوم",
+    ],
+  },
+  {
+    id: "r3",
+    cost: 500,
+    title: "بطاقة جرير 50 ر.س",
+    desc: "قسيمة شراء إلكترونية",
+    icon: "🎁",
+    details: "بطاقة هدايا إلكترونية بقيمة 50 ريال قابلة للاستخدام في فروع جرير وموقعهم.",
+    terms: [
+      "يتم إرسال الكود عبر البريد",
+      "صالحة لمدة 6 أشهر",
+      "غير قابلة للاسترداد نقداً",
+    ],
+  },
+  {
+    id: "r4",
+    cost: 1000,
+    title: "بطاقة هدايا 100 ر.س",
+    desc: "لأي متجر من متاجر وفّر",
+    icon: "💎",
+    details: "بطاقة هدايا مرنة بقيمة 100 ريال تختار المتجر اللي تبيها فيه.",
+    terms: [
+      "تختار المتجر بعد الاستبدال",
+      "صالحة لمدة سنة كاملة",
+      "قابلة للإهداء",
+    ],
+  },
+];
+
 
 // Fake leaderboard "seed" so a fresh user sees a populated board.
 export const SEED_LEADERBOARD: { name: string; points: number }[] = [
