@@ -79,7 +79,7 @@ export function redeemReward(rewardId: string, cost: number, label: string): Red
     ...s,
     points: s.points - cost,
     history: [
-      { action: "redeem", points: -cost, at: Date.now(), label, rewardId },
+      { action: "redeem" as const, points: -cost, at: Date.now(), label, rewardId },
       ...s.history,
     ].slice(0, 50),
   };
