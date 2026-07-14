@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Copy, Check, Ticket, Search, Store as StoreIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ function CouponsPage() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<(typeof CATEGORIES)[number]>("الكل");
   const [copied, setCopied] = useState<string | null>(null);
-  const [share, setShare] = useState<{ open: boolean; text: string; title: string }>({ open: false, text: "", title: "" });
+  const [share, setShare] = useState<{ open: boolean; text: string; title: string; url: string }>({ open: false, text: "", title: "", url: "" });
 
   const filtered = useMemo(() => {
     return coupons.filter((c) => {
@@ -94,7 +94,11 @@ function CouponsPage() {
               key={c.id}
               className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card p-5 shadow-sm hover:shadow-glow transition"
             >
-              <div className="flex items-start gap-4">
+              <Link
+                to="/coupons/$id"
+                params={{ id: c.id }}
+                className="flex items-start gap-4 hover:opacity-95"
+              >
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl shrink-0"
                   style={{ background: s?.color ?? "hsl(var(--primary))" }}
@@ -121,7 +125,7 @@ function CouponsPage() {
                   <div className="text-2xl font-black text-primary">{c.discount}</div>
                   <div className="text-[10px] text-muted-foreground mt-1">ينتهي: {c.expiresIn}</div>
                 </div>
-              </div>
+              </Link>
 
               <div className="mt-4 flex items-center gap-2">
                 <div className="flex-1 flex items-center justify-between rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 px-4 py-3">
@@ -141,6 +145,9 @@ function CouponsPage() {
                     open: true,
                     title: c.title,
                     text: `🎟️ كوبون ${s?.name}\n${c.title}\nالكود: ${c.code}\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق وفّر`,
+                    url: typeof window !== "undefined"
+                      ? `${window.location.origin}/coupons/${c.id}`
+                      : `/coupons/${c.id}`,
                   })}
                   className="h-12 px-3 rounded-2xl bg-secondary text-foreground text-sm font-bold hover:bg-secondary/80"
                   aria-label="مشاركة"
@@ -162,6 +169,7 @@ function CouponsPage() {
         onClose={() => setShare((s) => ({ ...s, open: false }))}
         title={share.title}
         text={share.text}
+        url={share.url}
       />
     </div>
   );
