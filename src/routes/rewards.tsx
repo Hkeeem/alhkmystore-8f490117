@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter } from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
   saveRewards,
+  clearHistory,
   ACTION_LABEL,
   ACTION_POINTS,
   SEED_LEADERBOARD,
