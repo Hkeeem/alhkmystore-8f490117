@@ -65,6 +65,11 @@ export function setName(name: string) {
   saveRewards({ ...s, name: name.trim() || "زائر" });
 }
 
+export function clearHistory() {
+  const s = loadRewards();
+  saveRewards({ ...s, history: [] });
+}
+
 // Fake leaderboard "seed" so a fresh user sees a populated board.
 export const SEED_LEADERBOARD: { name: string; points: number }[] = [
   { name: "أبو فيصل", points: 1420 },

@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter } from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
   saveRewards,
+  clearHistory,
   ACTION_LABEL,
   ACTION_POINTS,
   SEED_LEADERBOARD,
@@ -41,6 +42,7 @@ function tierFor(points: number) {
 function RewardsPage() {
   const [state, setState] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
   const [nameInput, setNameInput] = useState("");
+  const [historyFilter, setHistoryFilter] = useState<"all" | RewardAction | "redeem">("all");
 
   useEffect(() => {
     const s = loadRewards();
@@ -242,21 +244,143 @@ function RewardsPage() {
       </section>
 
       {/* History */}
-      {state.history.length > 0 && (
-        <section>
-          <h2 className="font-black text-xl mb-3">آخر النشاطات</h2>
-          <div className="rounded-3xl border border-border/60 bg-card p-2">
-            {state.history.slice(0, 10).map((h, i) => (
-              <div key={i} className="flex items-center gap-3 px-3 py-2 text-sm">
-                <span className="flex-1">{ACTION_LABEL[h.action] ?? "استبدال"}</span>
-                <span className={`font-black tabular-nums ${h.points > 0 ? "text-green-600" : "text-red-500"}`}>
-                  {h.points > 0 ? "+" : ""}{h.points}
+      <HistorySection
+        history={state.history}
+        filter={historyFilter}
+        setFilter={setHistoryFilter}
+        onClear={() => {
+          if (state.history.length === 0) return;
+          clearHistory();
+          setState(loadRewards());
+          toast.success("تم مسح سجل النشاطات");
+        }}
+      />
+    </div>
+  );
+}
+
+function HistorySection({
+  history,
+  filter,
+  setFilter,
+  onClear,
+}: {
+  history: RewardState["history"];
+  filter: "all" | RewardAction | "redeem";
+  setFilter: (f: "all" | RewardAction | "redeem") => void;
+  onClear: () => void;
+}) {
+  const filtered = useMemo(() => {
+    if (filter === "all") return history;
+    if (filter === "redeem") return history.filter((h) => h.points < 0);
+    return history.filter((h) => h.points > 0 && h.action === filter);
+  }, [history, filter]);
+
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { all: history.length, redeem: 0 };
+    (Object.keys(ACTION_POINTS) as RewardAction[]).forEach((a) => (c[a] = 0));
+    history.forEach((h) => {
+      if (h.points < 0) c.redeem += 1;
+      else c[h.action] = (c[h.action] ?? 0) + 1;
+    });
+    return c;
+  }, [history]);
+
+  const chips: { key: "all" | RewardAction | "redeem"; label: string }[] = [
+    { key: "all", label: "الكل" },
+    ...(Object.keys(ACTION_POINTS) as RewardAction[]).map((a) => ({ key: a, label: ACTION_LABEL[a] })),
+    { key: "redeem" as const, label: "استبدال" },
+  ];
+
+  const fmt = (t: number) => {
+    try {
+      return new Date(t).toLocaleString("ar-SA", {
+        day: "2-digit",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch {
+      return "";
+    }
+  };
+
+  return (
+    <section>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-black text-xl flex items-center gap-2">
+          <Filter className="w-5 h-5 text-primary" /> سجل النشاطات
+        </h2>
+        <button
+          onClick={onClear}
+          disabled={history.length === 0}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 disabled:cursor-not-allowed transition"
+        >
+          <Trash2 className="w-3.5 h-3.5" /> مسح السجل
+        </button>
+      </div>
+
+      <div className="flex gap-2 overflow-x-auto pb-2 mb-3 -mx-1 px-1">
+        {chips.map((c) => {
+          const active = filter === c.key;
+          const n = counts[c.key] ?? 0;
+          return (
+            <button
+              key={c.key}
+              onClick={() => setFilter(c.key)}
+              className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold transition border ${
+                active
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "bg-card text-muted-foreground border-border/60 hover:text-foreground"
+              }`}
+            >
+              {c.label}
+              <span className={`mr-1.5 tabular-nums ${active ? "opacity-90" : "opacity-60"}`}>({n})</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {filtered.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
+          {history.length === 0 ? "ما فيه نشاطات لسا — ابدأ اجمع نقاط!" : "لا توجد نشاطات ضمن هذا الفلتر"}
+        </div>
+      ) : (
+        <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
+          {filtered.map((h, i) => {
+            const isRedeem = h.points < 0;
+            const Icon = isRedeem ? Gift : ACTION_ICON[h.action] ?? Sparkles;
+            return (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 py-3 border-b border-border/40 last:border-0"
+              >
+                <div
+                  className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                    isRedeem ? "bg-red-500/10 text-red-500" : "bg-primary/10 text-primary"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-bold text-sm truncate">
+                    {isRedeem ? "استبدال جائزة" : ACTION_LABEL[h.action]}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">{fmt(h.at)}</div>
+                </div>
+                <span
+                  className={`font-black tabular-nums text-sm ${
+                    h.points > 0 ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {h.points > 0 ? "+" : ""}
+                  {h.points}
                 </span>
               </div>
-            ))}
-          </div>
-        </section>
+            );
+          })}
+        </div>
       )}
-    </div>
+    </section>
   );
 }
