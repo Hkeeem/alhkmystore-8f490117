@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter } from "lucide-react";
+import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
@@ -9,6 +9,7 @@ import {
   ACTION_LABEL,
   ACTION_POINTS,
   SEED_LEADERBOARD,
+  REWARDS_CATALOG,
   type RewardState,
   type RewardAction,
 } from "@/lib/rewards";
@@ -62,12 +63,7 @@ function RewardsPage() {
     .slice(0, 10);
   const myRank = leaderboard.findIndex((r) => (r as any).isMe) + 1;
 
-  const rewards = [
-    { id: "r1", cost: 100, title: "كود شحن مجاني", desc: "على أول طلب من هنقرستيشن", icon: "🚚" },
-    { id: "r2", cost: 250, title: "خصم 25 ر.س نون", desc: "قسيمة إلكترونيات من نون", icon: "🛒" },
-    { id: "r3", cost: 500, title: "بطاقة جرير 50 ر.س", desc: "قسيمة شراء إلكترونية", icon: "🎁" },
-    { id: "r4", cost: 1000, title: "بطاقة هدايا 100 ر.س", desc: "لأي متجر من متاجر وفّر", icon: "💎" },
-  ];
+  const rewards = REWARDS_CATALOG;
 
   const saveName = () => {
     const next = { ...state, name: nameInput.trim() || "زائر" };
@@ -76,20 +72,6 @@ function RewardsPage() {
     toast.success("تم حفظ اسمك في لوحة المتصدرين");
   };
 
-  const redeem = (cost: number, title: string) => {
-    if (state.points < cost) {
-      toast.error(`تحتاج ${cost - state.points} نقطة إضافية`);
-      return;
-    }
-    const next: RewardState = {
-      ...state,
-      points: state.points - cost,
-      history: [{ action: "copy_coupon" as RewardAction, points: -cost, at: Date.now() }, ...state.history].slice(0, 50),
-    };
-    saveRewards(next);
-    setState(next);
-    toast.success(`🎉 مبروك! تم استبدال: ${title}`);
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
@@ -183,26 +165,30 @@ function RewardsPage() {
           {rewards.map((r) => {
             const can = state.points >= r.cost;
             return (
-              <div key={r.id} className="rounded-3xl border border-border/60 bg-card p-5 flex items-center gap-4">
+              <Link
+                key={r.id}
+                to="/rewards/$id"
+                params={{ id: r.id }}
+                className="group rounded-3xl border border-border/60 bg-card p-5 flex items-center gap-4 hover:border-primary/60 hover:shadow-md transition"
+              >
                 <div className="text-4xl">{r.icon}</div>
                 <div className="flex-1 min-w-0">
                   <div className="font-black">{r.title}</div>
                   <div className="text-xs text-muted-foreground">{r.desc}</div>
                   <div className="text-xs text-primary font-bold mt-1">{r.cost} نقطة</div>
                 </div>
-                <button
-                  disabled={!can}
-                  onClick={() => redeem(r.cost, r.title)}
-                  className={`px-4 py-2 rounded-2xl text-sm font-bold transition ${
-                    can ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-secondary text-muted-foreground cursor-not-allowed"
+                <div
+                  className={`px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-1 ${
+                    can ? "bg-primary text-primary-foreground group-hover:opacity-90" : "bg-secondary text-muted-foreground"
                   }`}
                 >
-                  {can ? "استبدل" : "غير كافٍ"}
-                </button>
-              </div>
+                  التفاصيل <ChevronLeft className="w-4 h-4" />
+                </div>
+              </Link>
             );
           })}
         </div>
+
       </section>
 
       {/* Leaderboard */}
@@ -348,8 +334,8 @@ function HistorySection({
       ) : (
         <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
           {filtered.map((h, i) => {
-            const isRedeem = h.points < 0;
-            const Icon = isRedeem ? Gift : ACTION_ICON[h.action] ?? Sparkles;
+            const isRedeem = h.action === "redeem" || h.points < 0;
+            const Icon = isRedeem ? Gift : ACTION_ICON[h.action as RewardAction] ?? Sparkles;
             return (
               <div
                 key={i}
@@ -364,7 +350,7 @@ function HistorySection({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">
-                    {isRedeem ? "استبدال جائزة" : ACTION_LABEL[h.action]}
+                    {isRedeem ? h.label ?? "استبدال جائزة" : ACTION_LABEL[h.action as RewardAction]}
                   </div>
                   <div className="text-[11px] text-muted-foreground">{fmt(h.at)}</div>
                 </div>

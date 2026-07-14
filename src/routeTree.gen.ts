@@ -15,6 +15,7 @@ import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
@@ -50,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RewardsIdRoute = RewardsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => RewardsRoute,
+} as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -76,24 +82,26 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
-  '/rewards': typeof RewardsRoute
+  '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/deals/$id': typeof DealsIdRoute
+  '/rewards/$id': typeof RewardsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
-  '/rewards': typeof RewardsRoute
+  '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/deals/$id': typeof DealsIdRoute
+  '/rewards/$id': typeof RewardsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,12 +109,13 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRoute
   '/deals': typeof DealsRouteWithChildren
-  '/rewards': typeof RewardsRoute
+  '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
   '/deals/$id': typeof DealsIdRoute
+  '/rewards/$id': typeof RewardsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/api/stt'
     | '/api/tts'
     | '/deals/$id'
+    | '/rewards/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/api/stt'
     | '/api/tts'
     | '/deals/$id'
+    | '/rewards/$id'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/api/stt'
     | '/api/tts'
     | '/deals/$id'
+    | '/rewards/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,7 +164,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRoute
   DealsRoute: typeof DealsRouteWithChildren
-  RewardsRoute: typeof RewardsRoute
+  RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
@@ -203,6 +215,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rewards/$id': {
+      id: '/rewards/$id'
+      path: '/$id'
+      fullPath: '/rewards/$id'
+      preLoaderRoute: typeof RewardsIdRouteImport
+      parentRoute: typeof RewardsRoute
+    }
     '/deals/$id': {
       id: '/deals/$id'
       path: '/$id'
@@ -244,12 +263,23 @@ const DealsRouteChildren: DealsRouteChildren = {
 
 const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
 
+interface RewardsRouteChildren {
+  RewardsIdRoute: typeof RewardsIdRoute
+}
+
+const RewardsRouteChildren: RewardsRouteChildren = {
+  RewardsIdRoute: RewardsIdRoute,
+}
+
+const RewardsRouteWithChildren =
+  RewardsRoute._addFileChildren(RewardsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRoute,
   DealsRoute: DealsRouteWithChildren,
-  RewardsRoute: RewardsRoute,
+  RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
