@@ -152,8 +152,8 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
     }
   }
 
-  const [linkCopied, setLinkCopied] = useState(false);
   async function copyLink() {
+
     if (!url) {
       toast.error("ما فيه رابط للنسخ");
       return;
