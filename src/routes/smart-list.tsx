@@ -141,6 +141,13 @@ function SmartList() {
             شارك
           </button>
         </div>
+        {notice && (
+          <div className="text-sm text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span className="flex-1">{notice}</span>
+            <button onClick={() => setNotice(null)} className="text-xs font-bold opacity-70 hover:opacity-100">إغلاق</button>
+          </div>
+        )}
         {error && <div className="text-sm text-destructive bg-destructive/10 rounded-xl p-3">{error}</div>}
       </div>
 
