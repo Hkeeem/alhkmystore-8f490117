@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, Copy, Check, Share2 } from "lucide-react";
+import { X, Copy, Check, Share2, Link2 } from "lucide-react";
+
 import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
 import { addPoints } from "@/lib/rewards";
@@ -91,7 +92,9 @@ function withUtm(rawUrl: string, platform: SharePlatform): string {
 
 export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal }: Props) {
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
+
   const baseUrl = explicitUrl || pageUrl;
 
   useEffect(() => {
@@ -149,6 +152,23 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
     }
   }
 
+  async function copyLink() {
+
+    if (!url) {
+      toast.error("ما فيه رابط للنسخ");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      toast.success("تم نسخ الرابط");
+      setTimeout(() => setLinkCopied(false), 1500);
+    } catch {
+      toast.error("ما قدرنا ننسخ الرابط");
+    }
+  }
+
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-foreground/40 backdrop-blur-sm"
@@ -187,6 +207,20 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
           ))}
         </div>
 
+        {url && (
+          <button
+            onClick={copyLink}
+            className="w-full mb-2 flex items-center gap-2 bg-secondary/60 hover:bg-secondary rounded-2xl px-3 py-2.5 text-xs font-bold transition text-right"
+            title={url}
+          >
+            {linkCopied ? <Check className="w-4 h-4 text-primary shrink-0" /> : <Link2 className="w-4 h-4 text-primary shrink-0" />}
+            <span className="shrink-0">{linkCopied ? "تم نسخ الرابط" : "نسخ الرابط فقط"}</span>
+            <span className="flex-1 truncate text-muted-foreground font-normal ltr:text-left rtl:text-left" dir="ltr">
+              {url}
+            </span>
+          </button>
+        )}
+
         <div className="flex gap-2">
           <button
             onClick={copy}
@@ -203,6 +237,7 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
             مشاركة
           </button>
         </div>
+
       </div>
     </div>
   );
