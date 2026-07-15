@@ -207,6 +207,20 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
           ))}
         </div>
 
+        {url && (
+          <button
+            onClick={copyLink}
+            className="w-full mb-2 flex items-center gap-2 bg-secondary/60 hover:bg-secondary rounded-2xl px-3 py-2.5 text-xs font-bold transition text-right"
+            title={url}
+          >
+            {linkCopied ? <Check className="w-4 h-4 text-primary shrink-0" /> : <Link2 className="w-4 h-4 text-primary shrink-0" />}
+            <span className="shrink-0">{linkCopied ? "تم نسخ الرابط" : "نسخ الرابط فقط"}</span>
+            <span className="flex-1 truncate text-muted-foreground font-normal ltr:text-left rtl:text-left" dir="ltr">
+              {url}
+            </span>
+          </button>
+        )}
+
         <div className="flex gap-2">
           <button
             onClick={copy}
@@ -223,6 +237,7 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
             مشاركة
           </button>
         </div>
+
       </div>
     </div>
   );
