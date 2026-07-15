@@ -92,13 +92,24 @@ function SmartList() {
           rows={7}
           className="w-full bg-secondary/50 rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-primary/30 resize-none"
         />
-        <button
-          onClick={() => submit()}
-          disabled={loading || !text.trim()}
-          className="w-full bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
-        >
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> يفكّر...</> : <><Sparkles className="w-4 h-4" /> ابنِ قائمتي الذكية</>}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => submit()}
+            disabled={loading || !text.trim()}
+            className="flex-1 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+          >
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> يفكّر...</> : <><Sparkles className="w-4 h-4" /> ابنِ قائمتي الذكية</>}
+          </button>
+          <button
+            onClick={() => setShareOpen(true)}
+            disabled={!text.trim()}
+            aria-label="شارك رابط القائمة"
+            className="shrink-0 bg-secondary text-foreground py-3.5 px-4 rounded-2xl font-bold border border-border/50 disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+          >
+            <Share2 className="w-4 h-4" />
+            شارك
+          </button>
+        </div>
         {error && <div className="text-sm text-destructive bg-destructive/10 rounded-xl p-3">{error}</div>}
       </div>
 
