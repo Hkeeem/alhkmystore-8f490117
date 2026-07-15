@@ -92,7 +92,9 @@ function withUtm(rawUrl: string, platform: SharePlatform): string {
 
 export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal }: Props) {
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const [pageUrl, setPageUrl] = useState("");
+
   const baseUrl = explicitUrl || pageUrl;
 
   useEffect(() => {
