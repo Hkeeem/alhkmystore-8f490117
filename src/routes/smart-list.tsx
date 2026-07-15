@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, ListChecks, Loader2, Wallet, Share2 } from "lucide-react";
+import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle } from "lucide-react";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import { z } from "zod";
@@ -21,36 +21,50 @@ export const Route = createFileRoute("/smart-list")({
 
 type Result = Awaited<ReturnType<typeof buildSmartList>>;
 
+const DEFAULT_TEXT = "أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض";
+
 function decodeQ(q?: string): string | null {
   if (!q) return null;
   try {
-    if (typeof window === "undefined") return null;
-    return decodeURIComponent(escape(window.atob(q.replace(/-/g, "+").replace(/_/g, "/"))));
+    const b64 = q.replace(/-/g, "+").replace(/_/g, "/");
+    const bin = typeof atob !== "undefined" ? atob(b64) : Buffer.from(b64, "base64").toString("binary");
+    const decoded = decodeURIComponent(escape(bin)).trim();
+    return decoded.length > 0 ? decoded : null;
   } catch { return null; }
 }
 
 function encodeQ(text: string): string {
-  if (typeof window === "undefined") return "";
-  return window.btoa(unescape(encodeURIComponent(text))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  try {
+    const bin = unescape(encodeURIComponent(text));
+    const b64 = typeof btoa !== "undefined" ? btoa(bin) : Buffer.from(bin, "binary").toString("base64");
+    return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  } catch { return ""; }
 }
 
 function SmartList() {
   const search = Route.useSearch();
   const run = useServerFn(buildSmartList);
-  const initial = decodeQ(search.q) ?? "أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض";
-  const [text, setText] = useState(initial);
+
+  // Start with default to avoid SSR/CSR hydration mismatch; hydrate from q in effect.
+  const [text, setText] = useState(DEFAULT_TEXT);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
-  const autoRan = useRef(false);
+  const hydrated = useRef(false);
 
   async function submit(t: string = text) {
+    const trimmed = t.trim();
+    if (!trimmed) {
+      setError("اكتب منتج واحد على الأقل قبل بناء القائمة.");
+      return;
+    }
     setLoading(true);
     setError(null);
     setResult(null);
     try {
-      const r = await run({ data: { text: t } });
+      const r = await run({ data: { text: trimmed } });
       setResult(r);
     } catch (e) {
       setError(e instanceof Error ? e.message : "خطأ غير متوقع");
@@ -60,10 +74,25 @@ function SmartList() {
   }
 
   useEffect(() => {
-    if (autoRan.current) return;
-    if (search.q && search.auto === 1) {
-      autoRan.current = true;
-      submit(initial);
+    if (hydrated.current) return;
+    hydrated.current = true;
+
+    const decoded = decodeQ(search.q);
+    const wantsAuto = search.auto === 1;
+
+    if (search.q && !decoded) {
+      setNotice("الرابط لا يحتوي على قائمة صالحة — تم تحميل قائمة افتراضية.");
+      return;
+    }
+
+    if (decoded) {
+      setText(decoded);
+      if (wantsAuto) submit(decoded);
+      return;
+    }
+
+    if (wantsAuto && !search.q) {
+      setNotice("الرابط ينقصه محتوى القائمة (q). اكتب منتجاتك وابنِ القائمة يدوياً.");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -71,6 +100,8 @@ function SmartList() {
   const shareUrl = typeof window !== "undefined"
     ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
     : "";
+
+
 
 
   return (
@@ -110,6 +141,13 @@ function SmartList() {
             شارك
           </button>
         </div>
+        {notice && (
+          <div className="text-sm text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+            <span className="flex-1">{notice}</span>
+            <button onClick={() => setNotice(null)} className="text-xs font-bold opacity-70 hover:opacity-100">إغلاق</button>
+          </div>
+        )}
         {error && <div className="text-sm text-destructive bg-destructive/10 rounded-xl p-3">{error}</div>}
       </div>
 
