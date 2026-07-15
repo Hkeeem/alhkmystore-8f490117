@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { X, Copy, Check, Share2 } from "lucide-react";
+import { X, Copy, Check, Share2, Link2 } from "lucide-react";
+
 import { toast } from "sonner";
 import type { Deal } from "@/data/deals";
 import { addPoints } from "@/lib/rewards";
