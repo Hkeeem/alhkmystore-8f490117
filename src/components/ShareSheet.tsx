@@ -150,6 +150,23 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
     }
   }
 
+  const [linkCopied, setLinkCopied] = useState(false);
+  async function copyLink() {
+    if (!url) {
+      toast.error("ما فيه رابط للنسخ");
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      toast.success("تم نسخ الرابط");
+      setTimeout(() => setLinkCopied(false), 1500);
+    } catch {
+      toast.error("ما قدرنا ننسخ الرابط");
+    }
+  }
+
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-foreground/40 backdrop-blur-sm"
