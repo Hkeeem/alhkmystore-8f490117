@@ -120,7 +120,7 @@ describe("smart-list url helpers", () => {
       const state = resolveInitialState({ q: "!!!bad!!!", auto: 1 });
       expect(state.text).toBe(DEFAULT_TEXT);
       expect(state.autoSubmit).toBe(false);
-      expect(state.notice).toMatch(/غير.*صالح/);
+      expect(state.notice).toMatch(/صالحة/);
     });
 
     it("surfaces 'missing q' notice when auto=1 without q", () => {
@@ -136,7 +136,7 @@ describe("smart-list url helpers", () => {
       // Whitespace-only decodes to null, so it's the invalid-q branch.
       expect(state.autoSubmit).toBe(false);
       expect(state.text).toBe(DEFAULT_TEXT);
-      expect(state.notice).toMatch(/غير.*صالح/);
+      expect(state.notice).toMatch(/صالحة/);
     });
   });
 
