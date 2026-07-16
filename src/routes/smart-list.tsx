@@ -103,6 +103,18 @@ function SmartList() {
     ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
     : "";
 
+  async function copyLink() {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast.success("تم نسخ الرابط", { description: shareUrl });
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("تعذّر نسخ الرابط");
+    }
+  }
+
 
 
 
