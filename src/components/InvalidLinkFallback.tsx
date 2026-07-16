@@ -61,8 +61,8 @@ export function InvalidLinkFallback({
           <div className="flex items-center gap-2 text-xs font-bold text-primary">
             <Sparkles className="w-4 h-4" /> اقتراح أقرب متاح
           </div>
-          <Link
-            to={suggestion.to}
+          <a
+            href={suggestion.to}
             className="flex items-center gap-3 rounded-2xl bg-secondary/60 hover:bg-secondary p-3 transition"
           >
             <div className="w-12 h-12 rounded-2xl bg-gradient-hero flex items-center justify-center text-2xl shadow-glow">
@@ -75,7 +75,7 @@ export function InvalidLinkFallback({
               )}
             </div>
             <ArrowRight className="w-4 h-4 text-muted-foreground rotate-180" />
-          </Link>
+          </a>
 
           <div className="pt-1">
             <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
@@ -111,18 +111,18 @@ export function InvalidLinkFallback({
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          <Link
-            to={suggestion.to}
+          <a
+            href={suggestion.to}
             className="inline-flex items-center gap-2 bg-gradient-hero text-primary-foreground px-5 py-2.5 rounded-2xl font-bold text-sm shadow-glow"
           >
             افتح الآن
-          </Link>
-          <Link
-            to={backTo.to}
+          </a>
+          <a
+            href={backTo.to}
             className="inline-flex items-center gap-1.5 bg-secondary text-foreground px-5 py-2.5 rounded-2xl font-bold text-sm"
           >
             <ArrowRight className="w-4 h-4" /> {backTo.label}
-          </Link>
+          </a>
         </div>
       </div>
     </div>
