@@ -32,15 +32,21 @@ export const Route = createFileRoute("/coupons/$id")({
 });
 
 function CouponNotFound() {
+  const nearest = coupons[0];
+  const s = nearest ? storeById(nearest.storeId) : undefined;
   return (
-    <div className="max-w-md mx-auto p-8 text-center space-y-4">
-      <div className="text-6xl">🎟️</div>
-      <h1 className="font-black text-xl">الكوبون غير موجود</h1>
-      <p className="text-sm text-muted-foreground">يمكن انتهى أو تغيّر الكود.</p>
-      <Link to="/coupons" className="inline-block px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm">
-        رجوع للكوبونات
-      </Link>
-    </div>
+    <InvalidLinkFallback
+      icon="🎟️"
+      title="الكوبون غير متوفر"
+      message="يمكن الكوبون انتهى أو تغيّر الكود. جربّ هذا الكوبون المتاح حالياً."
+      suggestion={{
+        to: `/coupons/${nearest.id}`,
+        label: `${nearest.title} — ${s?.name ?? ""}`,
+        hint: `الكود: ${nearest.code} · ${nearest.discount}`,
+        emoji: s?.logo ?? "🎟️",
+      }}
+      backTo={{ to: "/coupons", label: "كل الكوبونات" }}
+    />
   );
 }
 
