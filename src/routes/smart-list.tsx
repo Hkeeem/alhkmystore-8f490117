@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { buildSmartList } from "@/lib/smart-list.functions";
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle } from "lucide-react";
+import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Check } from "lucide-react";
+import { toast } from "sonner";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import { z } from "zod";
@@ -52,6 +53,7 @@ function SmartList() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const hydrated = useRef(false);
 
   async function submit(t: string = text) {
@@ -101,6 +103,18 @@ function SmartList() {
     ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
     : "";
 
+  async function copyLink() {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast.success("تم نسخ الرابط", { description: shareUrl });
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      toast.error("تعذّر نسخ الرابط");
+    }
+  }
+
 
 
 
@@ -139,6 +153,16 @@ function SmartList() {
           >
             <Share2 className="w-4 h-4" />
             شارك
+          </button>
+          <button
+            onClick={copyLink}
+            disabled={!text.trim()}
+            aria-label="انسخ رابط القائمة العميق"
+            title={shareUrl}
+            className="shrink-0 bg-secondary text-foreground py-3.5 px-4 rounded-2xl font-bold border border-border/50 disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+          >
+            {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4" />}
+            {copied ? "تم" : "نسخ الرابط"}
           </button>
         </div>
         {notice && (
