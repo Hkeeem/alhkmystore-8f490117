@@ -30,19 +30,18 @@ export function InvalidLinkFallback({
   backTo,
   autoSeconds = 6,
 }: Props) {
-  const navigate = useNavigate();
   const [remaining, setRemaining] = useState(autoSeconds);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (paused) return;
     if (remaining <= 0) {
-      navigate({ to: suggestion.to });
+      if (typeof window !== "undefined") window.location.assign(suggestion.to);
       return;
     }
     const t = setTimeout(() => setRemaining((r) => r - 1), 1000);
     return () => clearTimeout(t);
-  }, [remaining, paused, navigate, suggestion.to]);
+  }, [remaining, paused, suggestion.to]);
 
   const progress = Math.max(0, Math.min(100, ((autoSeconds - remaining) / autoSeconds) * 100));
 
