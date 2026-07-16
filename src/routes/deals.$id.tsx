@@ -3,6 +3,7 @@ import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals
 import { ArrowRight, Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/deals/$id")({
   head: ({ params }) => {
