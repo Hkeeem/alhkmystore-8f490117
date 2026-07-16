@@ -154,6 +154,16 @@ function SmartList() {
             <Share2 className="w-4 h-4" />
             شارك
           </button>
+          <button
+            onClick={copyLink}
+            disabled={!text.trim()}
+            aria-label="انسخ رابط القائمة العميق"
+            title={shareUrl}
+            className="shrink-0 bg-secondary text-foreground py-3.5 px-4 rounded-2xl font-bold border border-border/50 disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+          >
+            {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4" />}
+            {copied ? "تم" : "نسخ الرابط"}
+          </button>
         </div>
         {notice && (
           <div className="text-sm text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-start gap-2">
