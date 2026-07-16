@@ -10,6 +10,7 @@ import {
   type RewardState,
 } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/rewards/$id")({
   loader: ({ params }) => {
@@ -36,15 +37,20 @@ export const Route = createFileRoute("/rewards/$id")({
 });
 
 function RewardNotFound() {
+  const nearest = [...REWARDS_CATALOG].sort((a, b) => a.cost - b.cost)[0];
   return (
-    <div className="max-w-md mx-auto p-8 text-center space-y-4">
-      <div className="text-6xl">🎁</div>
-      <h1 className="font-black text-xl">الجائزة غير موجودة</h1>
-      <p className="text-sm text-muted-foreground">يمكن أنها انتهت أو تم تغيير الكتالوج.</p>
-      <Link to="/rewards" className="inline-block px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm">
-        رجوع للجوائز
-      </Link>
-    </div>
+    <InvalidLinkFallback
+      icon="🎁"
+      title="الجائزة غير متوفرة"
+      message="يمكن الجائزة انسحبت من الكتالوج. اخترنا لك الأقرب للاستبدال."
+      suggestion={{
+        to: `/rewards/${nearest.id}`,
+        label: nearest.title,
+        hint: `${nearest.cost} نقطة`,
+        emoji: nearest.icon,
+      }}
+      backTo={{ to: "/rewards", label: "كل الجوائز" }}
+    />
   );
 }
 

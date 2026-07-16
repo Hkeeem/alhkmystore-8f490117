@@ -3,6 +3,7 @@ import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals
 import { ArrowRight, Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/deals/$id")({
   head: ({ params }) => {
@@ -201,20 +202,19 @@ function DealDetailPage() {
 }
 
 function DealNotFound() {
+  const nearest = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 text-center">
-      <div className="text-6xl mb-4">🔍</div>
-      <h1 className="font-display font-black text-2xl mb-2">ما لقينا العرض</h1>
-      <p className="text-muted-foreground mb-6">
-        العرض اللي تبحث عنه مو موجود أو انتهى.
-      </p>
-      <Link
-        to="/deals"
-        className="inline-flex items-center gap-2 bg-gradient-hero text-primary-foreground px-6 py-3 rounded-2xl font-bold shadow-glow"
-      >
-        <ArrowRight className="w-4 h-4" />
-        اكتشف العروض
-      </Link>
-    </div>
+    <InvalidLinkFallback
+      icon="🔍"
+      title="ما لقينا هذا العرض"
+      message="يمكن العرض انتهى أو الرابط قديم. جهّزنا لك أقوى عرض متاح الحين."
+      suggestion={{
+        to: `/deals/${nearest.id}`,
+        label: nearest.title,
+        hint: `خصم ${discountPercent(nearest)}٪ · ${nearest.price} ر.س`,
+        emoji: nearest.image,
+      }}
+      backTo={{ to: "/deals", label: "كل العروض" }}
+    />
   );
 }
