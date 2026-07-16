@@ -6,11 +6,16 @@ import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Ch
 import { toast } from "sonner";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
-import { z } from "zod";
+import {
+  DEFAULT_TEXT,
+  buildShareUrl,
+  resolveInitialState,
+  smartListSearchSchema,
+} from "@/lib/smart-list-url";
 
 
 export const Route = createFileRoute("/smart-list")({
-  validateSearch: z.object({ q: z.string().optional(), auto: z.coerce.number().optional() }),
+  validateSearch: smartListSearchSchema,
   head: () => ({
     meta: [
       { title: "قائمة تسوّق ذكية - وفّر" },
@@ -21,26 +26,6 @@ export const Route = createFileRoute("/smart-list")({
 });
 
 type Result = Awaited<ReturnType<typeof buildSmartList>>;
-
-const DEFAULT_TEXT = "أرز بسمتي\nزيت طبخ\nحليب\nدجاج\nبيض";
-
-function decodeQ(q?: string): string | null {
-  if (!q) return null;
-  try {
-    const b64 = q.replace(/-/g, "+").replace(/_/g, "/");
-    const bin = typeof atob !== "undefined" ? atob(b64) : Buffer.from(b64, "base64").toString("binary");
-    const decoded = decodeURIComponent(escape(bin)).trim();
-    return decoded.length > 0 ? decoded : null;
-  } catch { return null; }
-}
-
-function encodeQ(text: string): string {
-  try {
-    const bin = unescape(encodeURIComponent(text));
-    const b64 = typeof btoa !== "undefined" ? btoa(bin) : Buffer.from(bin, "binary").toString("base64");
-    return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-  } catch { return ""; }
-}
 
 function SmartList() {
   const search = Route.useSearch();
@@ -79,29 +64,15 @@ function SmartList() {
     if (hydrated.current) return;
     hydrated.current = true;
 
-    const decoded = decodeQ(search.q);
-    const wantsAuto = search.auto === 1;
-
-    if (search.q && !decoded) {
-      setNotice("الرابط لا يحتوي على قائمة صالحة — تم تحميل قائمة افتراضية.");
-      return;
-    }
-
-    if (decoded) {
-      setText(decoded);
-      if (wantsAuto) submit(decoded);
-      return;
-    }
-
-    if (wantsAuto && !search.q) {
-      setNotice("الرابط ينقصه محتوى القائمة (q). اكتب منتجاتك وابنِ القائمة يدوياً.");
-    }
+    const initial = resolveInitialState(search);
+    if (initial.text !== DEFAULT_TEXT) setText(initial.text);
+    if (initial.notice) setNotice(initial.notice);
+    if (initial.autoSubmit) submit(initial.text);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const shareUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
-    : "";
+  const shareUrl =
+    typeof window !== "undefined" ? buildShareUrl(window.location.origin, text) : "";
 
   async function copyLink() {
     if (!shareUrl) return;
