@@ -75,11 +75,9 @@ describe("smart-list url helpers", () => {
       expect(smartListSearchSchema.parse({ auto: 1 }).auto).toBe(1);
     });
 
-    it("rejects non-numeric auto values by producing NaN (guarded downstream)", () => {
-      const out = smartListSearchSchema.parse({ auto: "yes" });
-      expect(Number.isNaN(out.auto)).toBe(true);
-      // resolveInitialState treats non-1 as "no auto".
-      expect(resolveInitialState(out).autoSubmit).toBe(false);
+    it("rejects non-numeric auto values (schema throws; downstream never sees them)", () => {
+      const res = smartListSearchSchema.safeParse({ auto: "yes" });
+      expect(res.success).toBe(false);
     });
 
     it("keeps q as-is (string)", () => {
