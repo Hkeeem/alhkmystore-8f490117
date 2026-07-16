@@ -65,29 +65,15 @@ function SmartList() {
     if (hydrated.current) return;
     hydrated.current = true;
 
-    const decoded = decodeQ(search.q);
-    const wantsAuto = search.auto === 1;
-
-    if (search.q && !decoded) {
-      setNotice("الرابط لا يحتوي على قائمة صالحة — تم تحميل قائمة افتراضية.");
-      return;
-    }
-
-    if (decoded) {
-      setText(decoded);
-      if (wantsAuto) submit(decoded);
-      return;
-    }
-
-    if (wantsAuto && !search.q) {
-      setNotice("الرابط ينقصه محتوى القائمة (q). اكتب منتجاتك وابنِ القائمة يدوياً.");
-    }
+    const initial = resolveInitialState(search);
+    if (initial.text !== DEFAULT_TEXT) setText(initial.text);
+    if (initial.notice) setNotice(initial.notice);
+    if (initial.autoSubmit) submit(initial.text);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const shareUrl = typeof window !== "undefined"
-    ? `${window.location.origin}/smart-list?q=${encodeQ(text)}&auto=1`
-    : "";
+  const shareUrl =
+    typeof window !== "undefined" ? buildShareUrl(window.location.origin, text) : "";
 
   async function copyLink() {
     if (!shareUrl) return;
