@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { coupons, storeById, type Coupon } from "@/data/coupons";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/coupons/$id")({
   loader: ({ params }) => {

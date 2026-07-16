@@ -13,16 +13,38 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
 import { InstallHandler } from "@/components/InstallHandler";
 
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { deals, discountPercent } from "@/data/deals";
+
 function NotFoundComponent() {
+  const path = typeof window !== "undefined" ? window.location.pathname : "";
+  let suggestion = { to: "/", label: "الصفحة الرئيسية", hint: "أفضل العروض اليوم", emoji: "🏠" };
+  let backTo = { to: "/", label: "الرئيسية" };
+  if (path.startsWith("/deal") || path.startsWith("/offers")) {
+    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
+    suggestion = { to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image };
+    backTo = { to: "/deals", label: "كل العروض" };
+  } else if (path.startsWith("/coupon")) {
+    suggestion = { to: "/coupons", label: "قائمة الكوبونات", hint: "أحدث الأكواد المتاحة", emoji: "🎟️" };
+    backTo = { to: "/coupons", label: "الكوبونات" };
+  } else if (path.startsWith("/reward")) {
+    suggestion = { to: "/rewards", label: "قائمة الجوائز", hint: "استبدل نقاطك", emoji: "🎁" };
+    backTo = { to: "/rewards", label: "الجوائز" };
+  } else if (path.startsWith("/smart") || path.startsWith("/list")) {
+    suggestion = { to: "/smart-list", label: "قائمة التسوق الذكية", hint: "ابنِ قائمتك بالذكاء الاصطناعي", emoji: "🛒" };
+    backTo = { to: "/", label: "الرئيسية" };
+  } else if (path.startsWith("/chat") || path.startsWith("/makki")) {
+    suggestion = { to: "/chat", label: "مكّي — مساعدك الذكي", hint: "اسأله عن أي عرض", emoji: "💬" };
+    backTo = { to: "/", label: "الرئيسية" };
+  }
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="font-display text-7xl font-black text-primary">404</h1>
-        <h2 className="mt-4 text-xl font-bold">الصفحة غير موجودة</h2>
-        <p className="mt-2 text-sm text-muted-foreground">الرابط اللي تدور عليه ما لقيناه.</p>
-        <a href="/" className="mt-6 inline-flex rounded-2xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground">العودة للرئيسية</a>
-      </div>
-    </div>
+    <InvalidLinkFallback
+      icon="🧭"
+      title="الرابط غير موجود"
+      message="الصفحة اللي تدور عليها ما لقيناها. حوّلناك لأقرب صفحة متاحة."
+      suggestion={suggestion}
+      backTo={backTo}
+    />
   );
 }
 
