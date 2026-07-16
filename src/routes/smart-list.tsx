@@ -53,6 +53,7 @@ function SmartList() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const hydrated = useRef(false);
 
   async function submit(t: string = text) {
