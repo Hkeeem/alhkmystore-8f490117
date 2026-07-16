@@ -9,7 +9,6 @@ import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import {
   DEFAULT_TEXT,
   buildShareUrl,
-  encodeQ,
   resolveInitialState,
   smartListSearchSchema,
 } from "@/lib/smart-list-url";
