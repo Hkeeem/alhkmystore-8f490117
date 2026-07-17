@@ -161,7 +161,8 @@ function SmartList() {
             onClick={copyLink}
             disabled={!text.trim()}
             aria-label="انسخ رابط القائمة العميق"
-            title={mounted ? shareUrl : ""}
+            title={shareUrl}
+            suppressHydrationWarning
             className="shrink-0 bg-secondary text-foreground py-3.5 px-4 rounded-2xl font-bold border border-border/50 disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
           >
             {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4" />}
