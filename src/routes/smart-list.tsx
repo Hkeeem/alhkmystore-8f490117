@@ -54,7 +54,10 @@ function SmartList() {
   const [notice, setNotice] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const hydrated = useRef(false);
+  useEffect(() => { setMounted(true); }, []);
+
 
   async function submit(t: string = text) {
     const trimmed = t.trim();
