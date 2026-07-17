@@ -29,24 +29,26 @@ export function InstallHandler() {
   // 1) Persist the current deep link so it can be reopened post-install.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const path = location.pathname + location.search;
+    const path = window.location.pathname + window.location.search;
     if (path !== "/" && !path.startsWith("/?")) {
       try { localStorage.setItem(PENDING_KEY, path); } catch { /* noop */ }
     }
-  }, [location.pathname, location.search]);
+  }, [location.pathname, location.searchStr]);
 
   // 2) When launched as PWA, resume the saved deep link.
   useEffect(() => {
-    if (!isStandalone()) return;
+    if (typeof window === "undefined" || !isStandalone()) return;
     try {
+      const current = window.location.pathname + window.location.search;
       const target = localStorage.getItem(PENDING_KEY);
-      if (target && target !== location.pathname + location.search) {
+      if (target && target !== current) {
         localStorage.removeItem(PENDING_KEY);
         router.navigate({ to: target });
       }
     } catch { /* noop */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
 
   // 3) Capture install prompt + iOS fallback banner.
   useEffect(() => {
