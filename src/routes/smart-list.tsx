@@ -54,7 +54,10 @@ function SmartList() {
   const [notice, setNotice] = useState<string | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const hydrated = useRef(false);
+  useEffect(() => { setMounted(true); }, []);
+
 
   async function submit(t: string = text) {
     const trimmed = t.trim();
@@ -159,6 +162,7 @@ function SmartList() {
             disabled={!text.trim()}
             aria-label="انسخ رابط القائمة العميق"
             title={shareUrl}
+            suppressHydrationWarning
             className="shrink-0 bg-secondary text-foreground py-3.5 px-4 rounded-2xl font-bold border border-border/50 disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
           >
             {copied ? <Check className="w-4 h-4 text-primary" /> : <Link2 className="w-4 h-4" />}
