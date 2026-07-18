@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { Download, X, Smartphone } from "lucide-react";
+import { registerSW } from "@/lib/register-sw";
 
 const PENDING_KEY = "waffar_pending_deeplink";
 const DISMISS_KEY = "waffar_install_dismissed_at";
@@ -48,6 +49,10 @@ export function InstallHandler() {
     } catch { /* noop */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 2b) Register service worker (guarded — no-op in dev / Lovable preview / iframes).
+  useEffect(() => { void registerSW(); }, []);
+
 
 
   // 3) Capture install prompt + iOS fallback banner.
