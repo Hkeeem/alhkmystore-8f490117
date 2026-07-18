@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy } from "lucide-react";
+import { Home, ListChecks, MessageCircle, Tag, Ticket, Trophy } from "lucide-react";
+import logoAsset from "@/assets/hkeeem-ai-logo.png.asset.json";
 
 const items = [
   { to: "/", label: "الرئيسية", icon: Home },
@@ -15,12 +16,14 @@ export function TopBar() {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-hero shadow-glow flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img
+            src={logoAsset.url}
+            alt="Hkeeem AI"
+            className="w-11 h-11 rounded-2xl object-cover shadow-glow ring-1 ring-border/40"
+          />
           <div className="flex flex-col leading-tight">
-            <span className="font-display font-black text-lg">وفّر</span>
-            <span className="text-[10px] text-muted-foreground -mt-1">أفضل عروض المملكة</span>
+            <span className="font-display font-black text-lg">Hkeeem AI</span>
+            <span className="text-[10px] text-muted-foreground -mt-1">متجر حكيم الذكي · أفضل العروض</span>
           </div>
         </Link>
         <nav className="hidden md:flex items-center gap-1">
