@@ -54,6 +54,7 @@ function SmartList() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
