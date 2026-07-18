@@ -6,6 +6,8 @@ import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Ch
 import { toast } from "sonner";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { deals, discountPercent } from "@/data/deals";
 import { z } from "zod";
 
 
