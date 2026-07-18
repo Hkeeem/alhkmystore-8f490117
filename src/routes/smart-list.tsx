@@ -89,6 +89,7 @@ function SmartList() {
     const wantsAuto = search.auto === 1;
 
     if (search.q && !decoded) {
+      if (wantsAuto) { setInvalid(true); return; }
       setNotice("الرابط لا يحتوي على قائمة صالحة — تم تحميل قائمة افتراضية.");
       return;
     }
