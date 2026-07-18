@@ -6,6 +6,8 @@ import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Ch
 import { toast } from "sonner";
 import { getStore } from "@/data/deals";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { deals, discountPercent } from "@/data/deals";
 import { z } from "zod";
 
 
@@ -52,6 +54,7 @@ function SmartList() {
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -86,6 +89,7 @@ function SmartList() {
     const wantsAuto = search.auto === 1;
 
     if (search.q && !decoded) {
+      if (wantsAuto) { setInvalid(true); return; }
       setNotice("الرابط لا يحتوي على قائمة صالحة — تم تحميل قائمة افتراضية.");
       return;
     }
@@ -120,6 +124,19 @@ function SmartList() {
 
 
 
+
+  if (invalid) {
+    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
+    return (
+      <InvalidLinkFallback
+        icon="🛒"
+        title="رابط القائمة تالف"
+        message="الرابط اللي فتحته يحتوي على بيانات قائمة غير صالحة أو منتهية. نحوّلك لأقرب صفحة متاحة."
+        suggestion={{ to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image }}
+        backTo={{ to: "/smart-list", label: "قائمة جديدة" }}
+      />
+    );
+  }
 
   return (
     <main className="max-w-3xl mx-auto px-4 pt-6 pb-10 space-y-6">
