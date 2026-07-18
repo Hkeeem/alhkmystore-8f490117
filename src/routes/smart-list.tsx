@@ -125,6 +125,19 @@ function SmartList() {
 
 
 
+  if (invalid) {
+    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
+    return (
+      <InvalidLinkFallback
+        icon="🛒"
+        title="رابط القائمة تالف"
+        message="الرابط اللي فتحته يحتوي على بيانات قائمة غير صالحة أو منتهية. نحوّلك لأقرب صفحة متاحة."
+        suggestion={{ to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image }}
+        backTo={{ to: "/smart-list", label: "قائمة جديدة" }}
+      />
+    );
+  }
+
   return (
     <main className="max-w-3xl mx-auto px-4 pt-6 pb-10 space-y-6">
       <div>
