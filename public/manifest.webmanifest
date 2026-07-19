@@ -1,15 +1,15 @@
 {
-  "name": "وفّر — أفضل عروض المملكة",
-  "short_name": "وفّر",
-  "description": "كل عروض المملكة في مكان واحد، مرتّبة بالذكاء الاصطناعي.",
+  "name": "Hkeeem AI — الذكاء الاقتصادي",
+  "short_name": "Hkeeem AI",
+  "description": "منصة سعودية موحّدة بالذكاء الاصطناعي: عروض، كوبونات، عقارات، سيارات، خرائط وتحليلات.",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "dir": "rtl",
   "lang": "ar",
-  "background_color": "#ffffff",
-  "theme_color": "#1f5c3a",
+  "background_color": "#F8F5EE",
+  "theme_color": "#D4AF37",
   "icons": [
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
