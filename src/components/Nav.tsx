@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { toast } from "sonner";
 
 const items = [
   { to: "/", label: "الرئيسية", icon: Home },
@@ -11,6 +13,7 @@ const items = [
 ] as const;
 
 export function TopBar() {
+  const { user, signOut } = useAuth();
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
@@ -35,6 +38,31 @@ export function TopBar() {
             </Link>
           ))}
         </nav>
+        <div className="flex items-center gap-2">
+          {user ? (
+            <>
+              <div className="hidden sm:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
+                <UserIcon className="w-3.5 h-3.5 text-primary" />
+                <span className="max-w-[140px] truncate">{user.user_metadata?.full_name || user.email}</span>
+              </div>
+              <button
+                onClick={async () => { await signOut(); toast.success("تم تسجيل الخروج"); }}
+                className="p-2 rounded-xl hover:bg-secondary transition"
+                aria-label="خروج"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/auth"
+              className="flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-2 text-xs font-bold shadow-glow"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              دخول
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );
