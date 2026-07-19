@@ -15,12 +15,12 @@ export function TopBar() {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-hero shadow-glow flex items-center justify-center">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+          <div className="w-10 h-10 rounded-2xl bg-gradient-hero shadow-glow flex items-center justify-center ring-1 ring-primary/40">
+            <Sparkles className="w-5 h-5 text-primary" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-display font-black text-lg">وفّر</span>
-            <span className="text-[10px] text-muted-foreground -mt-1">أفضل عروض المملكة</span>
+            <span className="font-display font-black text-lg tracking-tight">Hkeeem <span className="text-primary">AI</span></span>
+            <span className="text-[10px] text-muted-foreground -mt-1">الذكاء الاقتصادي</span>
           </div>
         </Link>
         <nav className="hidden md:flex items-center gap-1">
