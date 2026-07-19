@@ -117,7 +117,7 @@ export function InstallHandler() {
           <Smartphone className="w-5 h-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-display font-black text-sm">ثبّت وفّر على جوّالك</div>
+          <div className="font-display font-black text-sm">ثبّت Hkeeem AI على جوّالك</div>
           <p className="text-xs text-muted-foreground mt-0.5">
             {iosHint
               ? "افتح قائمة المشاركة ثم اختر «إضافة إلى الشاشة الرئيسية». نرجعك لنفس هذه الصفحة بعد التثبيت."
