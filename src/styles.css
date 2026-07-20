@@ -57,7 +57,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  :root {
+
+}:root {
 
   /* Hkeeem AI — Luxury Gold & Black */
 
@@ -96,8 +97,17 @@
   --destructive-foreground: oklch(0.98 0 0);
 
   --success: oklch(0.65 0.16 145);
-  --
-    :root {
+  --success-foreground: oklch(0.98 0 0);
+
+  --hot: oklch(0.60 0.22 30);
+  --hot-foreground: oklch(0.98 0 0);
+
+  /* Borders */
+  --border: oklch(0.88 0.01 85);
+  --input: oklch(0.92 0.01 85);
+  --ring: oklch(0.77 0.13 85);
+
+}:root {
 
   /* Gradients */
 
@@ -173,7 +183,10 @@
     font-weight: 900;
 
     letter-spacing: -0.01em;
-    @utility bg-gradient-hero {
+
+  }
+
+}@utility bg-gradient-hero {
 
   background-image: var(--gradient-hero);
 
@@ -206,11 +219,5 @@
 @utility shadow-card {
 
   box-shadow: var(--shadow-card);
-
-}
-
-  }
-
-}
 
 }
