@@ -1,4 +1,3 @@
-```tsx
 import { useEffect, useState } from "react";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { Download, X } from "lucide-react";
@@ -261,5 +260,3 @@ export function InstallHandler() {
     </div>
   );
 }
-
-```
