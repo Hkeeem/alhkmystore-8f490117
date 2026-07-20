@@ -1,198 +1,268 @@
 import { useEffect, useState } from "react";
 import { useLocation, useRouter } from "@tanstack/react-router";
-import { Download, X, Smartphone } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { registerSW } from "@/lib/register-sw";
 
-const PENDING_KEY = "waffar_pending_deeplink";
+const PENDING_KEY = "hkeeem_pending_deeplink";
 const DISMISS_KEY = "hkeeem_install_hidden";
 
 type BIPEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+prompt: () => Promise<void>;
+userChoice: Promise<{
+outcome: "accepted" | "dismissed";
+}>;
 };
 
 function isStandalone() {
-  if (typeof window === "undefined") return false;
+if (typeof window === "undefined") return false;
 
-  return (
-    window.matchMedia?.("(display-mode: standalone)").matches ||
-    // @ts-expect-error
-    window.navigator.standalone === true
-  );
+return (
+window.matchMedia?.("(display-mode: standalone)").matches ||
+// @ts-expect-error
+window.navigator.standalone === true
+);
 }
 
 export function InstallHandler() {
-  const router = useRouter();
-  const location = useLocation();
+const router = useRouter();
+const location = useLocation();
 
-  const [bip, setBip] = useState<BIPEvent | null>(null);
-  const [visible, setVisible] = useState(false);
-  const [iosHint, setIosHint] = useState(false);
+const [bip, setBip] = useState<BIPEvent | null>(null);
+const [visible, setVisible] = useState(false);
+const [iosHint, setIosHint] = useState(false);
 
-  // حفظ الرابط الحالي
-  useEffect(() => {
-    if (typeof window === "undefined") return;
+useEffect(() => {
+if (typeof window === "undefined") return;
 
-    const path = window.location.pathname + window.location.search;
+const path =  
+  window.location.pathname +  
+  window.location.search;  
 
-    if (path !== "/" && !path.startsWith("/?")) {
-      try {
-        localStorage.setItem(PENDING_KEY, path);
-      } catch {}
-    }
-  }, [location.pathname, location.searchStr]);
+if (path !== "/" && !path.startsWith("/?")) {  
+  try {  
+    localStorage.setItem(PENDING_KEY, path);  
+  } catch {}  
+}
 
-  // الرجوع لنفس الصفحة بعد التثبيت
-  useEffect(() => {
-    if (typeof window === "undefined" || !isStandalone()) return;
+}, [location.pathname, location.search]);
 
-    try {
-      const current =
-        window.location.pathname + window.location.search;
+useEffect(() => {
+if (
+typeof window === "undefined" ||
+!isStandalone()
+)
+return;
 
-      const target = localStorage.getItem(PENDING_KEY);
+try {  
+  const current =  
+    window.location.pathname +  
+    window.location.search;  
 
-      if (target && target !== current) {
-        localStorage.removeItem(PENDING_KEY);
-        router.navigate({ to: target });
-      }
-    } catch {}
+  const target =  
+    localStorage.getItem(PENDING_KEY);  
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (target && target !== current) {  
+    localStorage.removeItem(PENDING_KEY);  
 
-  // تسجيل Service Worker
-  useEffect(() => {
-    void registerSW();
-  }, []);
+    router.navigate({  
+      to: target,  
+    });  
+  }  
+} catch {}  
 
-  // التقاط حدث التثبيت
-  useEffect(() => {
-    if (typeof window === "undefined" || isStandalone()) return;
+// eslint-disable-next-line react-hooks/exhaustive-deps
 
-    const dismissed =
-      localStorage.getItem(DISMISS_KEY) === "true";
+}, []);
 
-    const onBIP = (e: Event) => {
-      e.preventDefault();
+useEffect(() => {
+void registerSW();
+}, []);
 
-      setBip(e as BIPEvent);
+useEffect(() => {
+if (
+typeof window === "undefined" ||
+isStandalone()
+)
+return;
 
-      if (!dismissed) {
-        setVisible(true);
-      }
-    };
+const dismissed =  
+  localStorage.getItem(DISMISS_KEY) ===  
+  "true";  
 
-    const onInstalled = () => {
-      setVisible(false);
-      setBip(null);
+const onBIP = (e: Event) => {  
+  e.preventDefault();  
 
-      try {
-        localStorage.setItem(DISMISS_KEY, "true");
-      } catch {}
-    };
+  setBip(e as BIPEvent);  
 
-    window.addEventListener("beforeinstallprompt", onBIP);
-    window.addEventListener("appinstalled", onInstalled);
+  if (!dismissed) {  
+    setVisible(true);  
+  }  
+};  
 
-    const ua = window.navigator.userAgent;
+const onInstalled = () => {  
+  setVisible(false);  
 
-    const isIos =
-      /iPad|iPhone|iPod/.test(ua) &&
-      !/CriOS|FxiOS/.test(ua);
+  setBip(null);  
 
-    const onDeepLink =
-      location.pathname.startsWith("/deals/") ||
-      location.pathname === "/smart-list";
+  try {  
+    localStorage.setItem(  
+      DISMISS_KEY,  
+      "true"  
+    );  
+  } catch {}  
+};  
 
-    if (isIos && onDeepLink && !dismissed) {
-      setIosHint(true);
-      setVisible(true);
-    }
+window.addEventListener(  
+  "beforeinstallprompt",  
+  onBIP  
+);  
 
-    return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        onBIP
-      );
+window.addEventListener(  
+  "appinstalled",  
+  onInstalled  
+);  
+const ua = window.navigator.userAgent;  
 
-      window.removeEventListener(
-        "appinstalled",
-        onInstalled
-      );
-    };
-  }, [location.pathname]);
+const isIos =  
+  /iPad|iPhone|iPod/.test(ua) &&  
+  !/CriOS|FxiOS/.test(ua);  
 
-  async function install() {
-    if (!bip) return;
+const onDeepLink =  
+  location.pathname.startsWith("/deals/") ||  
+  location.pathname === "/smart-list";  
 
-    await bip.prompt();
+if (isIos && onDeepLink && !dismissed) {  
+  setIosHint(true);  
+  setVisible(true);  
+}  
 
-    const choice = await bip.userChoice;
+return () => {  
+  window.removeEventListener(  
+    "beforeinstallprompt",  
+    onBIP  
+  );  
 
-    if (choice.outcome === "accepted") {
-      setVisible(false);
+  window.removeEventListener(  
+    "appinstalled",  
+    onInstalled  
+  );  
+};
 
-      try {
-        localStorage.setItem(DISMISS_KEY, "true");
-      } catch {}
-    } else {
-      dismiss();
-    }
-  }
+}, [location.pathname]);
 
-  function dismiss() {
-    setVisible(false);
+async function install() {
+if (!bip) return;
 
-    try {
-      localStorage.setItem(DISMISS_KEY, "true");
-    } catch {}
-  }
+await bip.prompt();  
 
-  if (!visible) return null;
+const choice = await bip.userChoice;  
 
-  return (
-    <div className="fixed bottom-24 md:bottom-6 inset-x-3 md:inset-x-auto md:right-6 md:max-w-sm z-40 bg-card border border-border shadow-glow rounded-3xl p-4 animate-in slide-in-from-bottom">
+if (choice.outcome === "accepted") {  
+  setVisible(false);  
 
-      <button
-        onClick={dismiss}
-        aria-label="إغلاق"
-        className="absolute top-2 left-2 w-7 h-7 rounded-full hover:bg-secondary flex items-center justify-center"
-      >
-        <X className="w-3.5 h-3.5" />
-      </button>
+  try {  
+    localStorage.setItem(  
+      DISMISS_KEY,  
+      "true"  
+    );  
+  } catch {}  
+} else {  
+  dismiss();  
+}
 
-      <div className="flex items-start gap-3">
+}
 
-        <div className="w-11 h-11 rounded-2xl bg-gradient-hero text-primary-foreground flex items-center justify-center shrink-0">
-          <Smartphone className="w-5 h-5" />
-        </div>
+function dismiss() {
+setVisible(false);
 
-        <div className="flex-1 min-w-0">
+try {  
+  localStorage.setItem(  
+    DISMISS_KEY,  
+    "true"  
+  );  
+} catch {}
 
-          <div className="font-display font-black text-sm">
-            ثبّت Hkeeem AI على جوّالك
-          </div>
+}
 
-          <p className="text-xs text-muted-foreground mt-0.5">
-            {iosHint
-              ? "افتح قائمة المشاركة ثم اختر «إضافة إلى الشاشة الرئيسية». نرجعك لنفس هذه الصفحة بعد التثبيت."
-              : "ثبّت التطبيق ونرجعك لنفس هذه الصفحة تلقائياً بعد التثبيت."}
-          </p>
+if (!visible) return null;
 
-          {!iosHint && bip && (
-            <button
-              onClick={install}
-              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-hero text-primary-foreground px-4 py-2 rounded-2xl text-xs font-bold shadow-soft"
-            >
-              <Download className="w-3.5 h-3.5" />
-              تثبيت الآن
-            </button>
-          )}
+return (
+<div className="fixed bottom-5 left-1/2 -translate-x-1/2 w-[94%] max-w-md z-50">
 
-        </div>
+<div className="relative rounded-3xl bg-[#111111]/95 backdrop-blur-xl border border-[#D4AF37]/40 shadow-[0_0_40px_rgba(212,175,55,.25)] overflow-hidden">  
 
-      </div>
-    </div>
-  );
+    <button  
+      onClick={dismiss}  
+      className="absolute top-3 left-3 w-8 h-8 rounded-full flex items-center justify-center bg-[#1d1d1d] hover:bg-[#D4AF37]/20 transition z-10"  
+    >  
+      <X className="w-4 h-4 text-[#D4AF37]" />  
+    </button>  
+
+    <div className="p-5 flex items-center gap-4">  
+
+      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#f6e7a7] via-[#D4AF37] to-[#8f6b10] p-[2px] shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.4)]">  
+        <img  
+          src="/164238.jpg"  
+          alt="Hkeeem AI"  
+          className="w-full h-full rounded-[14px] bg-black object-contain"  
+        />  
+      </div>  
+
+      <div className="flex-1 min-w-0 pr-2">  
+        <h2 className="font-['Cairo'] font-black text-xl text-transparent bg-clip-text bg-gradient-to-b from-[#f3e5ab] to-[#aa771c]">  
+          Hkeeem AI  
+        </h2>  
+        <p className="mt-1 text-xs text-neutral-300 leading-relaxed font-medium">  
+          {iosHint  
+            ? "أضف Hkeeem AI للشاشة الرئيسية من قائمة المشاركة."  
+            : "ثبّت التطبيق لتجربة أسرع وأفضل."}  
+        </p>  
+
+        {!iosHint && bip && (  
+          <button  
+            onClick={install}  
+            className="  
+              mt-4  
+              w-full  
+              flex  
+              items-center  
+              justify-center  
+              gap-2  
+              rounded-xl  
+              py-2.5  
+              text-xs  
+              font-bold  
+              text-black  
+              bg-gradient-to-r  
+              from-[#F7E7A8]  
+              via-[#D4AF37]  
+              to-[#9E7408]  
+              hover:scale-[1.02]  
+              active:scale-[0.98]  
+              transition-all  
+              duration-200  
+              shadow-[0_4px_15px_rgba(212,175,55,0.4)]  
+            "  
+          >  
+            <Download className="w-4 h-4 text-black" />  
+            تثبيت الآن  
+          </button>  
+        )}  
+
+      </div>  
+
+    </div>  
+
+    <div className="px-5 pb-4">  
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent mb-3" />  
+      <p className="text-[11px] text-center text-neutral-500 font-medium">  
+        © Hkeeem AI • Smart Shopping Platform  
+      </p>  
+    </div>  
+
+  </div>  
+
+</div>
+
+);
 }
