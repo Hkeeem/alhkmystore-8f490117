@@ -152,29 +152,29 @@ export function InstallHandler() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 inset-x-3 md:inset-x-auto md:right-6 md:max-w-sm z-40 bg-[#0c0c0e] border border-[#d4af37]/40 shadow-[0_0_25px_rgba(212,175,55,0.15)] rounded-3xl p-4 text-white animate-in slide-in-from-bottom">
+    <div className="fixed bottom-24 md:bottom-6 inset-x-3 md:inset-x-auto md:right-6 md:max-w-sm z-40 bg-card border border-primary/40 shadow-xl rounded-3xl p-4 text-card-foreground animate-in slide-in-from-bottom">
 
       <button
         onClick={dismiss}
         aria-label="إغلاق"
-        className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/40 hover:bg-[#d4af37]/20 text-neutral-400 hover:text-[#d4af37] flex items-center justify-center transition-colors"
+        className="absolute top-2 left-2 w-7 h-7 rounded-full bg-muted hover:bg-primary/20 text-muted-foreground hover:text-primary flex items-center justify-center transition-colors"
       >
         <X className="w-3.5 h-3.5" />
       </button>
 
       <div className="flex items-start gap-3">
 
-        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black flex items-center justify-center shrink-0 shadow-md">
           <Smartphone className="w-5 h-5 text-black" />
         </div>
 
         <div className="flex-1 min-w-0 pr-1">
 
-          <div className="font-display font-black text-sm tracking-wide text-[#f3e5ab]">
+          <div className="font-display font-black text-sm tracking-wide text-foreground">
             ثبّت Hkeeem AI على جوّالك
           </div>
 
-          <p className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
             {iosHint
               ? "افتح قائمة المشاركة ثم اختر «إضافة إلى الشاشة الرئيسية». نرجعك لنفس هذه الصفحة بعد التثبيت."
               : "ثبّت التطبيق ونرجعك لنفس هذه الصفحة تلقائياً بعد التثبيت."}
@@ -183,7 +183,7 @@ export function InstallHandler() {
           {!iosHint && bip && (
             <button
               onClick={install}
-              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black px-4 py-2.5 rounded-2xl text-xs font-bold shadow-[0_4px_12px_rgba(212,175,55,0.3)] hover:opacity-95 transition-opacity"
+              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black px-4 py-2.5 rounded-2xl text-xs font-bold shadow-md hover:opacity-95 transition-opacity"
             >
               <Download className="w-3.5 h-3.5 text-black" />
               تثبيت الآن
