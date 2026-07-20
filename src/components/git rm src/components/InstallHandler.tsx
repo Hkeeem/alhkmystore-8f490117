@@ -1,1 +1,123 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  Outlet,
+  createRootRouteWithContext,
+  useRouter,
+  HeadContent,
+  Scripts,
+} from "@tanstack/react-router";
+import { useEffect, type ReactNode } from "react";
 
+import appCss from "../styles.css?url";
+import { reportLovableError } from "../lib/lovable-error-reporting";
+import { TopBar, BottomBar } from "@/components/Nav";
+import { InstallHandler } from "@/components/InstallHandler";
+
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { deals, discountPercent } from "@/data/deals";
+
+function NotFoundComponent() {
+  const path = typeof window !== "undefined" ? window.location.pathname : "";
+  let suggestion = { to: "/", label: "الصفحة الرئيسية", hint: "أفضل العروض اليوم", emoji: "🏠" };
+  let backTo = { to: "/", label: "الرئيسية" };
+  if (path.startsWith("/deal") || path.startsWith("/offers")) {
+    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
+    suggestion = { to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image };
+    backTo = { to: "/deals", label: "كل العروض" };
+  } else if (path.startsWith("/coupon")) {
+    suggestion = { to: "/coupons", label: "قائمة الكوبونات", hint: "أحدث الأكواد المتاحة", emoji: "🎟️" };
+    backTo = { to: "/coupons", label: "الكوبونات" };
+  } else if (path.startsWith("/reward")) {
+    suggestion = { to: "/rewards", label: "قائمة الجوائز", hint: "استبدل نقاطك", emoji: "🎁" };
+    backTo = { to: "/rewards", label: "الجوائز" };
+  } else if (path.startsWith("/smart") || path.startsWith("/list")) {
+    suggestion = { to: "/smart-list", label: "قائمة التسوق الذكية", hint: "ابنِ قائمتك بالذكاء الاصطناعي", emoji: "🛒" };
+    backTo = { to: "/", label: "الرئيسية" };
+  } else if (path.startsWith("/chat") || path.startsWith("/makki")) {
+    suggestion = { to: "/chat", label: "مكّي — مساعدك الذكي", hint: "اسأله عن أي عرض", emoji: "💬" };
+    backTo = { to: "/", label: "الرئيسية" };
+  }
+  return (
+    <InvalidLinkFallback
+      icon="🧭"
+      title="الرابط غير موجود"
+      message="الصفحة اللي تدور عليها ما لقيناها. حوّلناك لأقرب صفحة متاحة."
+      suggestion={suggestion}
+      backTo={backTo}
+    />
+  );
+}
+
+function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  useEffect(() => {
+    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-xl font-bold">صار خطأ غير متوقع</h1>
+        <p className="mt-2 text-sm text-muted-foreground">جرّب تحدّث الصفحة.</p>
+        <div className="mt-6 flex justify-center gap-2">
+          <button
+            onClick={() => { router.invalidate(); reset(); }}
+            className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
+          >إعادة المحاولة</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Hkeeem AI — الذكاء الاقتصادي" },
+      { name: "description", content: "منصة سعودية موحّدة بالذكاء الاصطناعي: مقارنة أسعار، عروض، كوبونات، عقارات، سيارات، خرائط، وتحليلات اقتصادية في مكان واحد." },
+      { name: "theme-color", content: "#D4AF37" },
+      { property: "og:title", content: "Hkeeem AI — الذكاء الاقتصادي" },
+      { property: "og:description", content: "كل قرار اقتصادي في المملكة، مدعومًا بالذكاء الاصطناعي." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/icon.svg" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+    ],
+  }),
+  shellComponent: RootShell,
+  component: RootComponent,
+  notFoundComponent: NotFoundComponent,
+  errorComponent: ErrorComponent,
+});
+
+function RootShell({ children }: { children: ReactNode }) {
+  return (
+    <html lang="ar" dir="rtl">
+      <head><HeadContent /></head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen pb-20 md:pb-0">
+        <TopBar />
+        <Outlet />
+        <BottomBar />
+        <InstallHandler />
+      </div>
+    </QueryClientProvider>
+  );
+}
