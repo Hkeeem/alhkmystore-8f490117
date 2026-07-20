@@ -1,4 +1,4 @@
-tsx
+```tsx
 import { useEffect, useState } from "react";
 import { useLocation, useRouter } from "@tanstack/react-router";
 import { Download, X, Smartphone } from "lucide-react";
@@ -184,7 +184,7 @@ export function InstallHandler() {
           {!iosHint && bip && (
             <button
               onClick={install}
-              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black px-4 py-2 rounded-2xl text-xs font-bold shadow-[0_4px_12px_rgba(212,175,55,0.3)] hover:opacity-95 transition-opacity"
+              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black px-4 py.5 rounded-2xl text-xs font-bold shadow-[0_4px_12px_rgba(212,175,55,0.3)] hover:opacity-95 transition-opacity"
             >
               <Download className="w-3.5 h-3.5 text-black" />
               تثبيت الآن
@@ -198,3 +198,4 @@ export function InstallHandler() {
   );
 }
 
+```
