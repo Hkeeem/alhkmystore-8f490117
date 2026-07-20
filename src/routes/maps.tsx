@@ -1,48 +1,54 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { MapPin, Navigation, Store, Sparkles } from "lucide-react";
+'use client';
 
-export const Route = createFileRoute("/maps")({
-  head: () => ({
-    meta: [
-      { title: "الخرائط — Hkeeem AI" },
-      { name: "description", content: "خريطة تفاعلية لأفضل العروض والمتاجر القريبة منك في المملكة العربية السعودية." },
-    ],
-  }),
-  component: Maps,
-});
+import { useEffect, useState } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 
-function Maps() {
+export default function StoreMap() {
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const apiKey = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY;
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => alert("يرجى تفعيل الموقع")
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!apiKey || !userLocation) return;
+
+    const loader = new Loader({ apiKey, version: "weekly" });
+    loader.load().then(() => {
+      const map = new google.maps.Map(document.getElementById("map")!, {
+        center: userLocation,
+        zoom: 14,
+      });
+
+      // عروض وهمية (يمكن ربطها بـ API)
+      const offers = [
+        { lat: userLocation.lat + 0.01, lng: userLocation.lng + 0.01, title: "بنده - خصم 50%" },
+        { lat: userLocation.lat + 0.02, lng: userLocation.lng - 0.01, title: "جرير - آيفون" },
+      ];
+
+      offers.forEach(offer => {
+        const marker = new google.maps.Marker({
+          position: { lat: offer.lat, lng: offer.lng },
+          map,
+          title: offer.title,
+        });
+
+        marker.addListener("click", () => {
+          alert(`التوجه إلى: ${offer.title}`);
+          // يمكن إضافة Directions API هنا
+        });
+      });
+    });
+  }, [userLocation, apiKey]);
+
   return (
-    <main className="max-w-6xl mx-auto px-4 pt-6 pb-16 space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-hero p-8 md:p-12 text-primary-foreground shadow-glow">
-        <div className="relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur text-xs font-bold mb-4">
-            <Sparkles className="w-3.5 h-3.5" /> قريباً
-          </div>
-          <h1 className="font-display text-3xl md:text-5xl font-black">الخرائط الذكية</h1>
-          <p className="mt-3 max-w-lg text-white/80">اكتشف أقرب المتاجر والعروض على خريطة تفاعلية مربوطة بجوجل مابس.</p>
-        </div>
-      </section>
-
-      <div className="grid md:grid-cols-3 gap-4">
-        {[
-          { icon: MapPin, t: "أقرب المتاجر", d: "بحسب موقعك الحالي" },
-          { icon: Navigation, t: "أفضل مسار", d: "لجولة توفير كاملة في يوم واحد" },
-          { icon: Store, t: "فروع فعّالة", d: "ساعات العمل والعروض النشطة" },
-        ].map((f) => (
-          <div key={f.t} className="p-6 rounded-3xl bg-card border border-border/60 shadow-card">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-gold flex items-center justify-center mb-3">
-              <f.icon className="w-6 h-6 text-secondary" />
-            </div>
-            <h3 className="font-black text-lg">{f.t}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{f.d}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="text-center">
-        <Link to="/" className="inline-block px-6 py-3 rounded-2xl bg-secondary text-secondary-foreground font-bold">رجوع للرئيسية</Link>
-      </div>
-    </main>
+    <div className="mt-12">
+      <h3 className="text-2xl font-bold mb-4">🗺️ العروض القريبة</h3>
+      <div id="map" className="w-full h-96 rounded-3xl"></div>
+    </div>
   );
 }
