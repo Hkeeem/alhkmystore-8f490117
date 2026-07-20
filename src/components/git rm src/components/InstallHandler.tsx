@@ -1,123 +1,201 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+```tsx
+import { useEffect, useState } from "react";
+import { useLocation, useRouter } from "@tanstack/react-router";
+import { Download, X, Smartphone } from "lucide-react";
+import { registerSW } from "@/lib/register-sw";
 
-import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
-import { TopBar, BottomBar } from "@/components/Nav";
-import { InstallHandler } from "@/components/InstallHandler";
+const PENDING_KEY = "hkeeem_pending_deeplink";
+const DISMISS_KEY = "hkeeem_install_hidden";
 
-import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
-import { deals, discountPercent } from "@/data/deals";
+type BIPEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
 
-function NotFoundComponent() {
-  const path = typeof window !== "undefined" ? window.location.pathname : "";
-  let suggestion = { to: "/", label: "الصفحة الرئيسية", hint: "أفضل العروض اليوم", emoji: "🏠" };
-  let backTo = { to: "/", label: "الرئيسية" };
-  if (path.startsWith("/deal") || path.startsWith("/offers")) {
-    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
-    suggestion = { to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image };
-    backTo = { to: "/deals", label: "كل العروض" };
-  } else if (path.startsWith("/coupon")) {
-    suggestion = { to: "/coupons", label: "قائمة الكوبونات", hint: "أحدث الأكواد المتاحة", emoji: "🎟️" };
-    backTo = { to: "/coupons", label: "الكوبونات" };
-  } else if (path.startsWith("/reward")) {
-    suggestion = { to: "/rewards", label: "قائمة الجوائز", hint: "استبدل نقاطك", emoji: "🎁" };
-    backTo = { to: "/rewards", label: "الجوائز" };
-  } else if (path.startsWith("/smart") || path.startsWith("/list")) {
-    suggestion = { to: "/smart-list", label: "قائمة التسوق الذكية", hint: "ابنِ قائمتك بالذكاء الاصطناعي", emoji: "🛒" };
-    backTo = { to: "/", label: "الرئيسية" };
-  } else if (path.startsWith("/chat") || path.startsWith("/makki")) {
-    suggestion = { to: "/chat", label: "مكّي — مساعدك الذكي", hint: "اسأله عن أي عرض", emoji: "💬" };
-    backTo = { to: "/", label: "الرئيسية" };
-  }
+function isStandalone() {
+  if (typeof window === "undefined") return false;
+
   return (
-    <InvalidLinkFallback
-      icon="🧭"
-      title="الرابط غير موجود"
-      message="الصفحة اللي تدور عليها ما لقيناها. حوّلناك لأقرب صفحة متاحة."
-      suggestion={suggestion}
-      backTo={backTo}
-    />
+    window.matchMedia?.("(display-mode: standalone)").matches ||
+    // @ts-expect-error
+    window.navigator.standalone === true
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+export function InstallHandler() {
   const router = useRouter();
+  const location = useLocation();
+
+  const [bip, setBip] = useState<BIPEvent | null>(null);
+  const [visible, setVisible] = useState(false);
+  const [iosHint, setIosHint] = useState(false);
+
+  // حفظ الرابط الحالي
   useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
+    if (typeof window === "undefined") return;
+
+    const path = window.location.pathname + window.location.search;
+
+    if (path !== "/" && !path.startsWith("/?")) {
+      try {
+        localStorage.setItem(PENDING_KEY, path);
+      } catch {}
+    }
+  }, [location.pathname, location.search]);
+
+  // الرجوع لنفس الصفحة بعد التثبيت
+  useEffect(() => {
+    if (typeof window === "undefined" || !isStandalone()) return;
+
+    try {
+      const current =
+        window.location.pathname + window.location.search;
+
+      const target = localStorage.getItem(PENDING_KEY);
+
+      if (target && target !== current) {
+        localStorage.removeItem(PENDING_KEY);
+        router.navigate({ to: target });
+      }
+    } catch {}
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // تسجيل Service Worker
+  useEffect(() => {
+    void registerSW();
+  }, []);
+
+  // التقاط حدث التثبيت
+  useEffect(() => {
+    if (typeof window === "undefined" || isStandalone()) return;
+
+    const dismissed =
+      localStorage.getItem(DISMISS_KEY) === "true";
+
+    const onBIP = (e: Event) => {
+      e.preventDefault();
+
+      setBip(e as BIPEvent);
+
+      if (!dismissed) {
+        setVisible(true);
+      }
+    };
+
+    const onInstalled = () => {
+      setVisible(false);
+      setBip(null);
+
+      try {
+        localStorage.setItem(DISMISS_KEY, "true");
+      } catch {}
+    };
+
+    window.addEventListener("beforeinstallprompt", onBIP);
+    window.addEventListener("appinstalled", onInstalled);
+
+    const ua = window.navigator.userAgent;
+
+    const isIos =
+      /iPad|iPhone|iPod/.test(ua) &&
+      !/CriOS|FxiOS/.test(ua);
+
+    const onDeepLink =
+      location.pathname.startsWith("/deals/") ||
+      location.pathname === "/smart-list";
+
+    if (isIos && onDeepLink && !dismissed) {
+      setIosHint(true);
+      setVisible(true);
+    }
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        onBIP
+      );
+
+      window.removeEventListener(
+        "appinstalled",
+        onInstalled
+      );
+    };
+  }, [location.pathname]);
+
+  async function install() {
+    if (!bip) return;
+
+    await bip.prompt();
+
+    const choice = await bip.userChoice;
+
+    if (choice.outcome === "accepted") {
+      setVisible(false);
+
+      try {
+        localStorage.setItem(DISMISS_KEY, "true");
+      } catch {}
+    } else {
+      dismiss();
+    }
+  }
+
+  function dismiss() {
+    setVisible(false);
+
+    try {
+      localStorage.setItem(DISMISS_KEY, "true");
+    } catch {}
+  }
+
+  if (!visible) return null;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-bold">صار خطأ غير متوقع</h1>
-        <p className="mt-2 text-sm text-muted-foreground">جرّب تحدّث الصفحة.</p>
-        <div className="mt-6 flex justify-center gap-2">
-          <button
-            onClick={() => { router.invalidate(); reset(); }}
-            className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
-          >إعادة المحاولة</button>
+    <div className="fixed bottom-24 md:bottom-6 inset-x-3 md:inset-x-auto md:right-6 md:max-w-sm z-40 bg-[#0c0c0e] border border-[#d4af37]/40 shadow-[0_0_25px_rgba(212,175,55,0.15)] rounded-3xl p-4 text-white animate-in slide-in-from-bottom">
+
+      <button
+        onClick={dismiss}
+        aria-label="إغلاق"
+        className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/40 hover:bg-[#d4af37]/20 text-neutral-400 hover:text-[#d4af37] flex items-center justify-center transition-colors"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+
+      <div className="flex items-start gap-3">
+
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(212,175,55,0.4)]">
+          <Smartphone className="w-5 h-5 text-black" />
         </div>
+
+        <div className="flex-1 min-w-0 pr-1">
+
+          <div className="font-display font-black text-sm tracking-wide text-[#f3e5ab]">
+            ثبّت Hkeeem AI على جوّالك
+          </div>
+
+          <p className="text-xs text-neutral-300 mt-0.5 leading-relaxed">
+            {iosHint
+              ? "افتح قائمة المشاركة ثم اختر «إضافة إلى الشاشة الرئيسية». نرجعك لنفس هذه الصفحة بعد التثبيت."
+              : "ثبّت التطبيق ونرجعك لنفس هذه الصفحة تلقائياً بعد التثبيت."}
+          </p>
+
+          {!iosHint && bip && (
+            <button
+              onClick={install}
+              className="mt-3 inline-flex items-center gap-1.5 bg-gradient-to-r from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black px-4 py-2 rounded-2xl text-xs font-bold shadow-[0_4px_12px_rgba(212,175,55,0.3)] hover:opacity-95 transition-opacity"
+            >
+              <Download className="w-3.5 h-3.5 text-black" />
+              تثبيت الآن
+            </button>
+          )}
+
+        </div>
+
       </div>
     </div>
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Hkeeem AI — الذكاء الاقتصادي" },
-      { name: "description", content: "منصة سعودية موحّدة بالذكاء الاصطناعي: مقارنة أسعار، عروض، كوبونات، عقارات، سيارات، خرائط، وتحليلات اقتصادية في مكان واحد." },
-      { name: "theme-color", content: "#D4AF37" },
-      { property: "og:title", content: "Hkeeem AI — الذكاء الاقتصادي" },
-      { property: "og:description", content: "كل قرار اقتصادي في المملكة، مدعومًا بالذكاء الاصطناعي." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
-      { rel: "apple-touch-icon", href: "/icon.svg" },
-      { rel: "manifest", href: "/manifest.webmanifest" },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
-
-function RootShell({ children }: { children: ReactNode }) {
-  return (
-    <html lang="ar" dir="rtl">
-      <head><HeadContent /></head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
-
-function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-  return (
-    <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen pb-20 md:pb-0">
-        <TopBar />
-        <Outlet />
-        <BottomBar />
-        <InstallHandler />
-      </div>
-    </QueryClientProvider>
-  );
-}
+```
