@@ -9,67 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as CarsRouteImport } from './routes/cars'
-import { Route as ChatRouteImport } from './routes/chat'
-import { Route as CouponsRouteImport } from './routes/coupons'
-import { Route as DealsRouteImport } from './routes/deals'
-import { Route as MapsRouteImport } from './routes/maps'
-import { Route as RealEstateRouteImport } from './routes/real-estate'
-import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as StoresRouteImport } from './routes/stores'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as ApiSttRouteImport } from './routes/api/stt'
-import { Route as ApiTtsRouteImport } from './routes/api/tts'
-import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
-import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as SmartListRouteImport } from './routes/smart-list'
+import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as CouponsRouteImport } from './routes/coupons'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as CarsRouteImport } from './routes/cars'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
+import { Route as ApiTtsRouteImport } from './routes/api/tts'
+import { Route as ApiSttRouteImport } from './routes/api/stt'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CarsRoute = CarsRouteImport.update({
-  id: '/cars',
-  path: '/cars',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CouponsRoute = CouponsRouteImport.update({
-  id: '/coupons',
-  path: '/coupons',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DealsRoute = DealsRouteImport.update({
-  id: '/deals',
-  path: '/deals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapsRoute = MapsRouteImport.update({
-  id: '/maps',
-  path: '/maps',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RealEstateRoute = RealEstateRouteImport.update({
-  id: '/real-estate',
-  path: '/real-estate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
+const StoresRoute = StoresRouteImport.update({
+  id: '/stores',
+  path: '/stores',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SmartListRoute = SmartListRouteImport.update({
@@ -77,14 +36,64 @@ const SmartListRoute = SmartListRouteImport.update({
   path: '/smart-list',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StoresRoute = StoresRouteImport.update({
-  id: '/stores',
-  path: '/stores',
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
+const RealEstateRoute = RealEstateRouteImport.update({
+  id: '/real-estate',
+  path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CouponsRoute = CouponsRouteImport.update({
+  id: '/coupons',
+  path: '/coupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsRoute = CarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsIdRoute = RewardsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => RewardsRoute,
+} as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
+const CouponsIdRoute = CouponsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CouponsRoute,
+} as any)
+const ApiTtsRoute = ApiTtsRouteImport.update({
+  id: '/api/tts',
+  path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSttRoute = ApiSttRouteImport.update({
@@ -92,25 +101,10 @@ const ApiSttRoute = ApiSttRouteImport.update({
   path: '/api/stt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTtsRoute = ApiTtsRouteImport.update({
-  id: '/api/tts',
-  path: '/api/tts',
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
-} as any)
-const CouponsIdRoute = CouponsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => CouponsRoute,
-} as any)
-const DealsIdRoute = DealsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => DealsRoute,
-} as any)
-const RewardsIdRoute = RewardsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => RewardsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -120,7 +114,6 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
-  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -139,7 +132,6 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
-  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -159,7 +151,6 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
-  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -180,7 +171,6 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
-    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -199,7 +189,6 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
-    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -218,7 +207,6 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
-    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -238,7 +226,6 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
-  MapsRoute: typeof MapsRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
@@ -250,67 +237,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cars': {
-      id: '/cars'
-      path: '/cars'
-      fullPath: '/cars'
-      preLoaderRoute: typeof CarsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coupons': {
-      id: '/coupons'
-      path: '/coupons'
-      fullPath: '/coupons'
-      preLoaderRoute: typeof CouponsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deals': {
-      id: '/deals'
-      path: '/deals'
-      fullPath: '/deals'
-      preLoaderRoute: typeof DealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/maps': {
-      id: '/maps'
-      path: '/maps'
-      fullPath: '/maps'
-      preLoaderRoute: typeof MapsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/real-estate': {
-      id: '/real-estate'
-      path: '/real-estate'
-      fullPath: '/real-estate'
-      preLoaderRoute: typeof RealEstateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
+    '/stores': {
+      id: '/stores'
+      path: '/stores'
+      fullPath: '/stores'
+      preLoaderRoute: typeof StoresRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/smart-list': {
@@ -320,18 +251,88 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SmartListRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stores': {
-      id: '/stores'
-      path: '/stores'
-      fullPath: '/stores'
-      preLoaderRoute: typeof StoresRouteImport
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
+    '/real-estate': {
+      id: '/real-estate'
+      path: '/real-estate'
+      fullPath: '/real-estate'
+      preLoaderRoute: typeof RealEstateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coupons': {
+      id: '/coupons'
+      path: '/coupons'
+      fullPath: '/coupons'
+      preLoaderRoute: typeof CouponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars': {
+      id: '/cars'
+      path: '/cars'
+      fullPath: '/cars'
+      preLoaderRoute: typeof CarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards/$id': {
+      id: '/rewards/$id'
+      path: '/$id'
+      fullPath: '/rewards/$id'
+      preLoaderRoute: typeof RewardsIdRouteImport
+      parentRoute: typeof RewardsRoute
+    }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/coupons/$id': {
+      id: '/coupons/$id'
+      path: '/$id'
+      fullPath: '/coupons/$id'
+      preLoaderRoute: typeof CouponsIdRouteImport
+      parentRoute: typeof CouponsRoute
+    }
+    '/api/tts': {
+      id: '/api/tts'
+      path: '/api/tts'
+      fullPath: '/api/tts'
+      preLoaderRoute: typeof ApiTtsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/stt': {
@@ -341,33 +342,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSttRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/tts': {
-      id: '/api/tts'
-      path: '/api/tts'
-      fullPath: '/api/tts'
-      preLoaderRoute: typeof ApiTtsRouteImport
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/coupons/$id': {
-      id: '/coupons/$id'
-      path: '/$id'
-      fullPath: '/coupons/$id'
-      preLoaderRoute: typeof CouponsIdRouteImport
-      parentRoute: typeof CouponsRoute
-    }
-    '/deals/$id': {
-      id: '/deals/$id'
-      path: '/$id'
-      fullPath: '/deals/$id'
-      preLoaderRoute: typeof DealsIdRouteImport
-      parentRoute: typeof DealsRoute
-    }
-    '/rewards/$id': {
-      id: '/rewards/$id'
-      path: '/$id'
-      fullPath: '/rewards/$id'
-      preLoaderRoute: typeof RewardsIdRouteImport
-      parentRoute: typeof RewardsRoute
     }
   }
 }
@@ -411,7 +391,6 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
-  MapsRoute: MapsRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
@@ -423,3 +402,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
