@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { MapPin, Navigation, Store as StoreIcon } from "lucide-react";
 import { stores } from "@/data/deals";
 
@@ -34,19 +34,23 @@ function MapsPage() {
   useEffect(() => {
     if (!apiKey || !userLocation || !mapRef.current) return;
     let cancelled = false;
-    const loader = new Loader({ apiKey, version: "weekly" });
-    loader.importLibrary("maps").then(async ({ Map }) => {
-      if (cancelled || !mapRef.current) return;
-      const { Marker } = (await loader.importLibrary("marker")) as google.maps.MarkerLibrary;
-      const map = new Map(mapRef.current, { center: userLocation, zoom: 13, disableDefaultUI: false });
-      // Demo nearby offers around the user
-      const offers = [
-        { lat: userLocation.lat + 0.008, lng: userLocation.lng + 0.011, title: "بنده — خصم 50٪ على المنظفات" },
-        { lat: userLocation.lat + 0.014, lng: userLocation.lng - 0.007, title: "جرير — عرض على AirPods Pro" },
-        { lat: userLocation.lat - 0.006, lng: userLocation.lng + 0.004, title: "النهدي — فيتامين C خصم 50٪" },
-      ];
-      offers.forEach((o) => new Marker({ position: { lat: o.lat, lng: o.lng }, map, title: o.title }));
-    }).catch(() => setError("تعذّر تحميل الخريطة."));
+    setOptions({ key: apiKey, v: "weekly" });
+    (async () => {
+      try {
+        const { Map } = await importLibrary("maps");
+        const { Marker } = await importLibrary("marker");
+        if (cancelled || !mapRef.current) return;
+        const map = new Map(mapRef.current, { center: userLocation, zoom: 13 });
+        const offers = [
+          { lat: userLocation.lat + 0.008, lng: userLocation.lng + 0.011, title: "بنده — خصم 50٪ على المنظفات" },
+          { lat: userLocation.lat + 0.014, lng: userLocation.lng - 0.007, title: "جرير — عرض على AirPods Pro" },
+          { lat: userLocation.lat - 0.006, lng: userLocation.lng + 0.004, title: "النهدي — فيتامين C خصم 50٪" },
+        ];
+        offers.forEach((o) => new Marker({ position: { lat: o.lat, lng: o.lng }, map, title: o.title }));
+      } catch {
+        setError("تعذّر تحميل الخريطة.");
+      }
+    })();
     return () => { cancelled = true; };
   }, [apiKey, userLocation]);
 
