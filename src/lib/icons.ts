@@ -1,47 +1,60 @@
+import type { LucideIcon } from "lucide-react";
 import {
-  Apple, Beef, Beer, Cookie, Coffee, Croissant, Droplet, Egg, Milk, Pizza,
-  Sandwich, Utensils, Wheat, Salad, IceCream,
-  Smartphone, Laptop, Headphones, Monitor, Tv, Camera, Gamepad2, Watch,
-  Pill, Sparkles, HeartPulse, Stethoscope,
-  ShoppingBasket, ShoppingBag, Store as StoreIcon, Building2, Truck,
-  type LucideIcon,
+  ShoppingBasket, Wheat, Milk, Egg, Coffee, Beef, Fish, Apple, Cookie,
+  Utensils, Pizza, Sandwich, IceCream,
+  Smartphone, Laptop, Headphones, Tv, Monitor, Camera, Watch, Gamepad2,
+  Shirt, Pill, Stethoscope, Store, ShoppingBag, ShoppingCart, Package,
 } from "lucide-react";
-import type { Category, Deal, Store } from "@/data/deals";
+import type { Deal, Store as StoreT } from "@/data/deals";
 
-// Map product emoji → Lucide icon. Falls back by category.
-const EMOJI_ICON: Record<string, LucideIcon> = {
-  "🍚": Wheat, "🫒": Droplet, "🥛": Milk, "🍗": Beef, "🥚": Egg,
-  "🧂": Salad, "☕": Coffee, "🍞": Croissant, "🍎": Apple, "🍦": IceCream,
-  "🍕": Pizza, "🍔": Sandwich, "🌯": Utensils, "🍛": Utensils, "🍺": Beer, "🍪": Cookie,
-  "📱": Smartphone, "💻": Laptop, "🎧": Headphones, "📺": Tv,
-  "📷": Camera, "🎮": Gamepad2, "⌚": Watch, "🖥️": Monitor,
-  "💊": Pill, "🧴": Sparkles, "🪥": Stethoscope, "❤️": HeartPulse,
-};
+const KEY_ICONS: Array<{ match: RegExp; icon: LucideIcon }> = [
+  [/أرز|بسمتي|basmati/i, Wheat],
+  [/زيت|عافية/i, Utensils],
+  [/حليب|لبن/i, Milk],
+  [/دجاج|لحم|بيف/i, Beef],
+  [/سمك|تونة/i, Fish],
+  [/بيض/i, Egg],
+  [/سكر|ملح|طحين|دقيق/i, Cookie],
+  [/قهوة|شاي|كابتشينو|إسبريسو/i, Coffee],
+  [/تفاح|فواكه|خضار|طماطم|موز/i, Apple],
+  [/برجر|بيتزا|شاورما|وجبة|ساندوتش/i, Sandwich],
+  [/آيس|آيسكريم|بوظة|حلا/i, IceCream],
+  [/آيفون|iphone|جوال|سامسونج|هاتف/i, Smartphone],
+  [/airpods|سماعة|هيدفون/i, Headphones],
+  [/لابتوب|ماك|macbook|laptop/i, Laptop],
+  [/تلفاز|tv|شاشة/i, Tv],
+  [/شاشة|monitor/i, Monitor],
+  [/كاميرا|camera/i, Camera],
+  [/ساعة|watch/i, Watch],
+  [/بلايستيشن|ps5|xbox|قيمنق|gaming/i, Gamepad2],
+  [/قميص|ثوب|عباية|فستان|حذاء|أزياء/i, Shirt],
+  [/فيتامين|دواء|علاج|بانادول|صيدلية|شامبو/i, Pill],
+  [/طبي|كشف|فحص/i, Stethoscope],
+  [/مطعم|طعام|مطاعم/i, Utensils],
+  [/بيتزا/i, Pizza],
+];
 
-const CATEGORY_ICON: Record<Category, LucideIcon> = {
-  "سوبرماركت": ShoppingBasket,
-  "مطاعم": Utensils,
-  "إلكترونيات": Smartphone,
-  "أزياء": ShoppingBag,
-  "صيدلية": Pill,
-};
-
-const STORE_ICON: Record<string, LucideIcon> = {
-  jarir: Laptop, extra: Tv, noon: ShoppingBag, amazon: ShoppingBag,
-  hunger: Utensils, jahez: Utensils, toshel: Truck,
-  nahdi: Pill, dawaa: Pill,
-  othaim: ShoppingBasket, panda: ShoppingBasket, lulu: ShoppingBasket,
-  danube: ShoppingBasket, tamimi: ShoppingBasket,
-};
-
-export function getDealIcon(deal: Deal): LucideIcon {
-  return EMOJI_ICON[deal.image] ?? CATEGORY_ICON[deal.category] ?? StoreIcon;
+export function getDealIcon(deal: Pick<Deal, "title" | "category">): LucideIcon {
+  for (const [rx, icon] of KEY_ICONS as unknown as Array<[RegExp, LucideIcon]>) {
+    if (rx.test(deal.title)) return icon;
+  }
+  switch (deal.category) {
+    case "سوبرماركت": return ShoppingBasket;
+    case "مطاعم": return Utensils;
+    case "إلكترونيات": return Smartphone;
+    case "أزياء": return Shirt;
+    case "صيدلية": return Pill;
+    default: return Package;
+  }
 }
 
-export function getStoreIcon(store: Store): LucideIcon {
-  return STORE_ICON[store.id] ?? CATEGORY_ICON[store.category] ?? Building2;
-}
-
-export function getCategoryIcon(cat: Category): LucideIcon {
-  return CATEGORY_ICON[cat] ?? StoreIcon;
+export function getStoreIcon(store: Pick<StoreT, "category">): LucideIcon {
+  switch (store.category) {
+    case "سوبرماركت": return ShoppingCart;
+    case "مطاعم": return Utensils;
+    case "إلكترونيات": return Smartphone;
+    case "أزياء": return ShoppingBag;
+    case "صيدلية": return Pill;
+    default: return Store;
+  }
 }

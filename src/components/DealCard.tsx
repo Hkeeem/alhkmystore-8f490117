@@ -3,12 +3,15 @@ import { Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
+import { getDealIcon, getStoreIcon } from "@/lib/icons";
 
 export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
+  const Icon = getDealIcon(deal);
+  const StoreIcon = getStoreIcon(store);
 
   const dealUrl =
     typeof window !== "undefined"
@@ -33,8 +36,9 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
         </div>
       )}
 
-      <div className="aspect-square bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-7xl relative">
-        <span className="drop-shadow-sm">{deal.image}</span>
+      <div className="aspect-square bg-gradient-to-br from-secondary/90 to-secondary flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-gradient-gold" />
+        <Icon className="relative w-20 h-20 text-primary drop-shadow-[0_0_16px_oklch(0.77_0.13_85_/_0.6)]" strokeWidth={1.4} />
         <div className="absolute bottom-2 left-2 bg-gradient-hero text-primary-foreground px-2.5 py-1 rounded-full text-xs font-black shadow-soft">
           −{off}%
         </div>
@@ -43,10 +47,10 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
       <div className="p-4 space-y-2.5">
         <div className="flex items-center gap-1.5">
           <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center text-white text-[10px] font-black"
+            className="w-6 h-6 rounded-lg flex items-center justify-center text-white"
             style={{ background: store.color }}
           >
-            {store.logo}
+            <StoreIcon className="w-3.5 h-3.5" strokeWidth={2.4} />
           </div>
           <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
           <button
@@ -65,7 +69,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
         <div className="flex items-end justify-between pt-1">
           <div>
             <div className="flex items-baseline gap-1.5">
-              <span className="font-display font-black text-xl text-primary">{deal.price}</span>
+              <span className="font-display font-black text-xl text-gold-shine">{deal.price}</span>
               <span className="text-xs text-muted-foreground">ر.س</span>
             </div>
             <span className="text-xs text-muted-foreground line-through">{deal.originalPrice} ر.س</span>
