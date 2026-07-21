@@ -15,15 +15,16 @@ const items = [
 export function TopBar() {
   const { user, signOut } = useAuth();
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/80 border-b border-border/60">
+    <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
-        <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-hero shadow-glow flex items-center justify-center ring-1 ring-primary/40">
-            <Sparkles className="w-5 h-5 text-primary" />
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="relative w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-gold opacity-25" />
+            <Sparkles className="relative w-5 h-5 text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]" />
           </div>
           <div className="flex flex-col leading-tight">
-            <span className="font-display font-black text-lg tracking-tight">Hkeeem <span className="text-primary">AI</span></span>
-            <span className="text-[10px] text-muted-foreground -mt-1">الذكاء الاقتصادي</span>
+            <span className="font-display font-black text-lg md:text-xl tracking-tight text-gold-shine">HkeeemAI</span>
+            <span className="text-[10px] text-muted-foreground -mt-0.5">تسوّق أذكى… وفّر أكثر</span>
           </div>
         </Link>
         <nav className="hidden md:flex items-center gap-1">
@@ -32,7 +33,7 @@ export function TopBar() {
               key={it.to}
               to={it.to}
               className="px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition"
-              activeProps={{ className: "px-3 py-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground" }}
+              activeProps={{ className: "px-3 py-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground glow-gold" }}
             >
               {it.label}
             </Link>
@@ -56,7 +57,7 @@ export function TopBar() {
           ) : (
             <Link
               to="/auth"
-              className="flex items-center gap-1.5 rounded-xl bg-primary text-primary-foreground px-3 py-2 text-xs font-bold shadow-glow"
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-gold text-secondary px-3 py-2 text-xs font-bold glow-gold"
             >
               <LogIn className="w-3.5 h-3.5" />
               دخول
@@ -70,7 +71,7 @@ export function TopBar() {
 
 export function BottomBar() {
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border/60 pb-[env(safe-area-inset-bottom)]">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-primary/15 pb-[env(safe-area-inset-bottom)]">
       <div className="grid grid-cols-6">
         {items.map((it) => {
           const Icon = it.icon;
