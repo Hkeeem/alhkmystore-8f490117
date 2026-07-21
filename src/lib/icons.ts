@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import type { Deal, Store as StoreT } from "@/data/deals";
 
-const KEY_ICONS: Array<{ match: RegExp; icon: LucideIcon }> = [
+const KEY_ICONS: Array<[RegExp, LucideIcon]> = [
   [/أرز|بسمتي|basmati/i, Wheat],
   [/زيت|عافية/i, Utensils],
   [/حليب|لبن/i, Milk],
@@ -35,7 +35,7 @@ const KEY_ICONS: Array<{ match: RegExp; icon: LucideIcon }> = [
 ];
 
 export function getDealIcon(deal: Pick<Deal, "title" | "category">): LucideIcon {
-  for (const [rx, icon] of KEY_ICONS as unknown as Array<[RegExp, LucideIcon]>) {
+  for (const [rx, icon] of KEY_ICONS) {
     if (rx.test(deal.title)) return icon;
   }
   switch (deal.category) {
