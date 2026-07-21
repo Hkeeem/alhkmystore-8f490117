@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
   Home as HomeIcon, Car, MapPin, Bot, ShieldCheck, Zap, Award,
@@ -43,17 +44,17 @@ function Home() {
         <div className="absolute -bottom-28 -right-16 w-96 h-96 rounded-full bg-accent/30 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
         <div className="relative">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur text-xs font-bold mb-5 border border-white/20">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur text-xs font-bold mb-5 border border-primary/40">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span>الذكاء الاقتصادي — Hkeeem AI</span>
+            <span className="text-gold-shine">HkeeemAI — الذكاء الاقتصادي</span>
           </div>
           <h1 className="font-display text-3xl md:text-6xl font-black leading-[1.05] tracking-tight">
-            كل قرار اقتصادي
+            تسوّق أذكى…
             <br />
-            <span className="bg-gradient-gold bg-clip-text text-transparent">في مكان واحد.</span>
+            <span className="text-gold-shine">وفّر أكثر.</span>
           </h1>
           <p className="mt-5 max-w-xl text-sm md:text-lg text-white/80 leading-relaxed">
-            عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لتوفّر أكثر بأقل وقت.
+            عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لقرارات شراء أفضل بأقل وقت.
           </p>
 
           {/* AI search */}
@@ -93,7 +94,7 @@ function Home() {
 
       {/* Pillars grid */}
       <section>
-        <SectionHeader title="استكشف Hkeeem AI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
+        <SectionHeader title="استكشف HkeeemAI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {pillars.map((p) => {
             const Icon = p.icon;
@@ -136,39 +137,47 @@ function Home() {
       <section id="compare">
         <SectionHeader title="مقارنة الأسعار" subtitle="نفس المنتج، أرخص متجر أوّلاً" icon={<TrendingDown className="w-5 h-5" />} />
         <div className="space-y-4">
-          {groups.map((g) => (
-            <div key={g[0].productKey} className="bg-card rounded-3xl border border-border/60 shadow-card overflow-hidden">
-              <div className="p-4 bg-gradient-to-l from-secondary/5 to-transparent flex items-center gap-3">
-                <div className="text-4xl">{g[0].image}</div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold truncate">{g[0].title}</h3>
-                  {g[0].unit && <p className="text-xs text-muted-foreground">{g[0].unit}</p>}
+          {groups.map((g) => {
+            const Icon = getDealIcon(g[0]);
+            return (
+              <div key={g[0].productKey} className="bg-card rounded-3xl border border-border/60 shadow-card overflow-hidden">
+                <div className="p-4 bg-gradient-to-l from-primary/10 to-transparent flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center ring-1 ring-primary/40">
+                    <Icon className="w-7 h-7 text-primary" strokeWidth={1.6} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold truncate">{g[0].title}</h3>
+                    {g[0].unit && <p className="text-xs text-muted-foreground">{g[0].unit}</p>}
+                  </div>
+                  <div className="text-left shrink-0">
+                    <div className="text-[10px] text-muted-foreground">أرخص سعر</div>
+                    <div className="font-display font-black text-lg text-gold-shine">{g[0].price} ر.س</div>
+                  </div>
                 </div>
-                <div className="text-left shrink-0">
-                  <div className="text-[10px] text-muted-foreground">أرخص سعر</div>
-                  <div className="font-display font-black text-lg text-primary">{g[0].price} ر.س</div>
+                <div className="divide-y divide-border/50">
+                  {g.map((d, i) => {
+                    const s = getStore(d.storeId);
+                    const SIcon = getStoreIcon(s);
+                    const diff = d.price - g[0].price;
+                    return (
+                      <div key={d.id} className="flex items-center gap-3 px-4 py-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white shrink-0" style={{ background: s.color }}>
+                          <SIcon className="w-4 h-4" strokeWidth={2.2} />
+                        </div>
+                        <span className="flex-1 text-sm font-medium truncate">{s.name}</span>
+                        {i === 0 ? (
+                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">الأفضل</span>
+                        ) : (
+                          <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
+                        )}
+                        <span className="font-display font-black w-16 text-left">{d.price} ر.س</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-              <div className="divide-y divide-border/50">
-                {g.map((d, i) => {
-                  const s = getStore(d.storeId);
-                  const diff = d.price - g[0].price;
-                  return (
-                    <div key={d.id} className="flex items-center gap-3 px-4 py-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0" style={{ background: s.color }}>{s.logo}</div>
-                      <span className="flex-1 text-sm font-medium truncate">{s.name}</span>
-                      {i === 0 ? (
-                        <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">الأفضل</span>
-                      ) : (
-                        <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
-                      )}
-                      <span className="font-display font-black w-16 text-left">{d.price} ر.س</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -198,12 +207,17 @@ function Home() {
           </Link>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
-          {stores.map((s) => (
-            <div key={s.id} className="shrink-0 flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
-              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-xs font-black" style={{ background: s.color }}>{s.logo}</div>
-              <span className="text-xs font-bold whitespace-nowrap">{s.name}</span>
-            </div>
-          ))}
+          {stores.map((s) => {
+            const Icon = getStoreIcon(s);
+            return (
+              <div key={s.id} className="shrink-0 flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white" style={{ background: s.color }}>
+                  <Icon className="w-4 h-4" strokeWidth={2.2} />
+                </div>
+                <span className="text-xs font-bold whitespace-nowrap">{s.name}</span>
+              </div>
+            );
+          })}
         </div>
       </section>
     </main>
