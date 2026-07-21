@@ -13,6 +13,7 @@ import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as MapsRouteImport } from './routes/maps'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -44,6 +45,11 @@ const RewardsRoute = RewardsRouteImport.update({
 const RealEstateRoute = RealEstateRouteImport.update({
   id: '/real-estate',
   path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapsRoute = MapsRouteImport.update({
+  id: '/maps',
+  path: '/maps',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/maps': typeof MapsRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/maps'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
+  MapsRoute: typeof MapsRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/real-estate'
       fullPath: '/real-estate'
       preLoaderRoute: typeof RealEstateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maps': {
+      id: '/maps'
+      path: '/maps'
+      fullPath: '/maps'
+      preLoaderRoute: typeof MapsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
+  MapsRoute: MapsRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
@@ -402,13 +423,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
