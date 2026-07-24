@@ -45,7 +45,7 @@ export const getAdminStats = createServerFn({ method: "GET" })
       supabaseAdmin.from("premium_subscriptions").select("id", { count: "exact", head: true }).eq("status", "active"),
     ]);
     return {
-      users: users.data?.total ?? 0,
+      users: (users.data as { total?: number } | null)?.total ?? users.data?.users?.length ?? 0,
       complaintsOpen: complaintsOpen.count ?? 0,
       suggestions: suggestions.count ?? 0,
       premiumActive: premiumActive.count ?? 0,
