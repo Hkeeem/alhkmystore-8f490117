@@ -54,6 +54,9 @@ function RenderWithDealLinks({ text }: { text: string }) {
 
 
 export const Route = createFileRoute("/chat")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q : "",
+  }),
   head: () => ({
     meta: [
       { title: "مكّي - المساعد الصوتي لعروض المملكة" },
