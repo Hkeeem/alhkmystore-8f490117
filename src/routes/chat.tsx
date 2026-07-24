@@ -2,8 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect, Fragment } from "react";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
-import { z } from "zod";
 import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink } from "lucide-react";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
