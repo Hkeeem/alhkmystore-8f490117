@@ -74,6 +74,8 @@ const suggestions = [
 ];
 
 function ChatPage() {
+  const { q } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const [voiceOn, setVoiceOn] = useState(true);
   const [sharePayload, setSharePayload] = useState<{ title: string; text: string } | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
@@ -86,10 +88,21 @@ function ChatPage() {
   });
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const autoSentRef = useRef(false);
+
+  useEffect(() => {
+    if (autoSentRef.current) return;
+    const text = (q ?? "").trim();
+    if (!text) return;
+    autoSentRef.current = true;
+    void sendMessage({ text });
+    navigate({ search: { q: "" }, replace: true });
+  }, [q, sendMessage, navigate]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, status]);
+
 
   // Speak new assistant messages when done streaming
   useEffect(() => {
