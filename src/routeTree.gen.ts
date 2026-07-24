@@ -19,6 +19,7 @@ import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
@@ -26,6 +27,7 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
@@ -77,6 +79,10 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -112,6 +118,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -125,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -144,6 +156,7 @@ export interface FileRoutesByTo {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -154,6 +167,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
@@ -164,6 +178,7 @@ export interface FileRoutesById {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -185,6 +200,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/admin'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -204,6 +220,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/admin'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -213,6 +230,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/cars'
     | '/chat'
@@ -223,6 +241,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/_authenticated/admin'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -233,6 +252,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
   ChatRoute: typeof ChatRoute
@@ -320,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -369,8 +396,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface CouponsRouteChildren {
   CouponsIdRoute: typeof CouponsIdRoute
@@ -406,6 +451,7 @@ const RewardsRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
   ChatRoute: ChatRoute,

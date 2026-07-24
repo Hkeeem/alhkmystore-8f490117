@@ -48,15 +48,15 @@ function AdminPage() {
   const roles = ctx.roles;
   const can = (allowed: Array<string>) => allowed.some((r) => roles.includes(r as never));
 
-  const tabs: Array<{ id: Tab; label: string; icon: React.ElementType; allow: string[] }> = [
-    { id: "dashboard", label: "الرئيسية", icon: LayoutDashboard, allow: ["super_admin","admin","support","content_manager"] },
-    { id: "complaints", label: "الشكاوى", icon: MessageSquareWarning, allow: ["super_admin","admin","support"] },
-    { id: "suggestions", label: "الاقتراحات", icon: Lightbulb, allow: ["super_admin","admin","content_manager"] },
-    { id: "users", label: "المستخدمون", icon: Users, allow: ["super_admin","admin"] },
-    { id: "notifications", label: "الإشعارات", icon: Bell, allow: ["super_admin","admin","content_manager"] },
-    { id: "premium", label: "Premium", icon: Crown, allow: ["super_admin","admin"] },
-    { id: "audit", label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
-  ].filter((t) => can(t.allow));
+  const tabs = ([
+    { id: "dashboard" as const, label: "الرئيسية", icon: LayoutDashboard, allow: ["super_admin","admin","support","content_manager"] },
+    { id: "complaints" as const, label: "الشكاوى", icon: MessageSquareWarning, allow: ["super_admin","admin","support"] },
+    { id: "suggestions" as const, label: "الاقتراحات", icon: Lightbulb, allow: ["super_admin","admin","content_manager"] },
+    { id: "users" as const, label: "المستخدمون", icon: Users, allow: ["super_admin","admin"] },
+    { id: "notifications" as const, label: "الإشعارات", icon: Bell, allow: ["super_admin","admin","content_manager"] },
+    { id: "premium" as const, label: "Premium", icon: Crown, allow: ["super_admin","admin"] },
+    { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
+  ]).filter((t) => can(t.allow));
 
   return (
     <div dir="rtl" className="min-h-screen bg-background">
