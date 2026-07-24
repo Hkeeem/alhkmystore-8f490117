@@ -44,6 +44,15 @@ export function TopBar() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          {isStaff && (
+            <Link
+              to="/admin"
+              className="hidden sm:flex items-center gap-1.5 rounded-xl bg-primary/10 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              لوحة التحكم
+            </Link>
+          )}
           {user ? (
             <>
               <div className="hidden sm:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
@@ -72,6 +81,22 @@ export function TopBar() {
     </header>
   );
 }
+
+function useIsStaff(userId: string | undefined) {
+  const [staff, setStaff] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (!userId) { setStaff(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", userId).then(({ data }) => {
+      if (cancelled) return;
+      const roles = (data ?? []).map((r) => r.role);
+      setStaff(roles.some((r) => ["super_admin","admin","support","content_manager"].includes(r as string)));
+    });
+    return () => { cancelled = true; };
+  }, [userId]);
+  return staff;
+}
+
 
 export function BottomBar() {
   return (
