@@ -108,7 +108,7 @@ export const updateSuggestion = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await requireAny(context.supabase, context.userId, ["super_admin", "admin", "content_manager"]);
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: string; tag?: string | null } = {};
     if (data.status) patch.status = data.status;
     if (data.tag !== null) patch.tag = data.tag;
     const { error } = await context.supabase.from("suggestions").update(patch).eq("id", data.id);
