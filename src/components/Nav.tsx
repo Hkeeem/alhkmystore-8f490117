@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const items = [
   { to: "/", label: "الرئيسية", icon: Home },
@@ -14,9 +16,11 @@ const items = [
 
 export function TopBar() {
   const { user, signOut } = useAuth();
+  const isStaff = useIsStaff(user?.id);
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+
         <Link to="/" className="flex items-center gap-2.5 group">
           <div className="relative w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-gold opacity-25" />
@@ -40,6 +44,15 @@ export function TopBar() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          {isStaff && (
+            <Link
+              to="/admin"
+              className="hidden sm:flex items-center gap-1.5 rounded-xl bg-primary/10 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+            >
+              <Shield className="w-3.5 h-3.5" />
+              لوحة التحكم
+            </Link>
+          )}
           {user ? (
             <>
               <div className="hidden sm:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
@@ -68,6 +81,22 @@ export function TopBar() {
     </header>
   );
 }
+
+function useIsStaff(userId: string | undefined) {
+  const [staff, setStaff] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (!userId) { setStaff(false); return; }
+    supabase.from("user_roles").select("role").eq("user_id", userId).then(({ data }) => {
+      if (cancelled) return;
+      const roles = (data ?? []).map((r) => r.role);
+      setStaff(roles.some((r) => ["super_admin","admin","support","content_manager"].includes(r as string)));
+    });
+    return () => { cancelled = true; };
+  }, [userId]);
+  return staff;
+}
+
 
 export function BottomBar() {
   return (

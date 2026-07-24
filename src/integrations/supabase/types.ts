@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          meta: Json | null
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          meta?: Json | null
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
+      complaints: {
+        Row: {
+          assigned_to: string | null
+          body: string
+          created_at: string
+          id: string
+          response: string | null
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          body: string
+          created_at?: string
+          id?: string
+          response?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          response?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -43,6 +109,7 @@ export type Database = {
           body: string | null
           created_at: string
           id: string
+          is_broadcast: boolean
           link: string | null
           read_at: string | null
           title: string
@@ -52,6 +119,7 @@ export type Database = {
           body?: string | null
           created_at?: string
           id?: string
+          is_broadcast?: boolean
           link?: string | null
           read_at?: string | null
           title: string
@@ -61,9 +129,43 @@ export type Database = {
           body?: string | null
           created_at?: string
           id?: string
+          is_broadcast?: boolean
           link?: string | null
           read_at?: string | null
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      premium_subscriptions: {
+        Row: {
+          created_at: string
+          end_at: string | null
+          id: string
+          plan: string
+          start_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          plan?: string
+          start_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          plan?: string
+          start_at?: string
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -89,6 +191,39 @@ export type Database = {
           display_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      suggestions: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          status: string
+          subject: string
+          tag: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject: string
+          tag?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          status?: string
+          subject?: string
+          tag?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -118,6 +253,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      assign_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target: string
+        }
+        Returns: undefined
+      }
+      claim_super_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -125,9 +268,23 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      revoke_user_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _target: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "super_admin"
+        | "support"
+        | "content_manager"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -255,7 +412,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "super_admin",
+        "support",
+        "content_manager",
+      ],
     },
   },
 } as const
