@@ -76,7 +76,7 @@ export const updateComplaint = createServerFn({ method: "POST" })
   )
   .handler(async ({ context, data }) => {
     await requireAny(context.supabase, context.userId, ["super_admin", "admin", "support"]);
-    const patch: Record<string, unknown> = {};
+    const patch: { status?: string; response?: string | null } = {};
     if (data.status) patch.status = data.status;
     if (data.response !== null) patch.response = data.response;
     const { error } = await context.supabase.from("complaints").update(patch).eq("id", data.id);
