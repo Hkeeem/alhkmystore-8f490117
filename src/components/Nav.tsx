@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const items = [
   { to: "/", label: "الرئيسية", icon: Home },
