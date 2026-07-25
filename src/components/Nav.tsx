@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -55,7 +55,14 @@ export function TopBar() {
           )}
           {user ? (
             <>
-              <div className="hidden sm:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
+              <Link
+                to="/me"
+                className="hidden sm:flex items-center gap-1.5 rounded-xl bg-secondary/60 px-3 py-2 text-xs font-bold hover:bg-secondary transition"
+              >
+                <Heart className="w-3.5 h-3.5 text-primary" />
+                حسابي
+              </Link>
+              <div className="hidden md:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
                 <UserIcon className="w-3.5 h-3.5 text-primary" />
                 <span className="max-w-[140px] truncate">{user.user_metadata?.full_name || user.email}</span>
               </div>

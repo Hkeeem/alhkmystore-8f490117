@@ -424,3 +424,67 @@ function EmptyState({ icon: Icon, text }: { icon: React.ElementType; text: strin
     </div>
   );
 }
+
+function CashbackAdminTab() {
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ["admin-cashback"], queryFn: () => adminListCashback() });
+  const upd = useMutation({
+    mutationFn: (v: { id: string; status: any }) => adminUpdateCashbackStatus({ data: v }),
+    onSuccess: () => { toast.success("تم التحديث"); qc.invalidateQueries({ queryKey: ["admin-cashback"] }); },
+    onError: () => toast.error("فشل"),
+  });
+  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  const items = q.data ?? [];
+  if (items.length === 0) return <EmptyState icon={Wallet} text="لا توجد عمليات كاش باك." />;
+  const STATUSES = ["pending","confirmed","paid","rejected"] as const;
+  return (
+    <div className="space-y-2">
+      {items.map((t: any) => (
+        <div key={t.id} className="p-4 rounded-xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm">{t.store_id} · {t.purchase_amount} ر.س → <span className="text-primary">{t.cashback_amount} ر.س</span></p>
+            <p className="text-xs text-muted-foreground">{t.user_id.slice(0,8)}… · {new Date(t.created_at).toLocaleString("ar-SA")}</p>
+          </div>
+          <span className={`text-xs px-2 py-1 rounded-full ${
+            t.status === "confirmed" ? "bg-blue-500/15 text-blue-500"
+            : t.status === "paid" ? "bg-green-500/15 text-green-500"
+            : t.status === "rejected" ? "bg-red-500/15 text-red-500"
+            : "bg-orange-500/15 text-orange-500"
+          }`}>{t.status}</span>
+          <select
+            defaultValue={t.status}
+            onChange={(e) => upd.mutate({ id: t.id, status: e.target.value })}
+            className="px-2 py-1.5 rounded-lg border bg-background text-xs"
+          >
+            {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AlertsAdminTab() {
+  const q = useQuery({ queryKey: ["admin-alerts"], queryFn: () => adminListAlerts() });
+  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  const items = q.data ?? [];
+  if (items.length === 0) return <EmptyState icon={BellRing} text="لا توجد تنبيهات سعر." />;
+  return (
+    <div className="space-y-2">
+      {items.map((a: any) => (
+        <div key={a.id} className="p-4 rounded-xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm line-clamp-1">{a.title}</p>
+            <p className="text-xs text-muted-foreground">
+              {a.user_id.slice(0,8)}… · حالي {a.current_price} → هدف <b className="text-primary">{a.target_price}</b> ر.س
+            </p>
+          </div>
+          <span className={`text-xs px-2 py-1 rounded-full ${a.active ? "bg-green-500/15 text-green-500" : "bg-muted"}`}>
+            {a.active ? "مفعّل" : "متوقف"}
+          </span>
+          {a.triggered_at && <span className="text-xs text-green-500">✓ أُطلق</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
