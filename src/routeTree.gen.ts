@@ -28,6 +28,7 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
 const StoresRoute = StoresRouteImport.update({
@@ -124,6 +125,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/stores'
     | '/admin'
+    | '/me'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/stores'
     | '/admin'
+    | '/me'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -254,6 +265,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/stores'
     | '/_authenticated/admin'
+    | '/_authenticated/me'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -416,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/me': {
+      id: '/_authenticated/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -428,10 +447,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedMeRoute: typeof AuthenticatedMeRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedMeRoute: AuthenticatedMeRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
