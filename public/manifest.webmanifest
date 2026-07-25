@@ -1,7 +1,7 @@
 {
-  "name": "HkeeemAI - تسوّق أذكى... وفّر أكثر",
+  "name": "HkeeemAI - تسوّق أذكى.. توفير أكثر",
   "short_name": "HkeeemAI",
-  "description": "تطبيق متجر حكيم الذكي",
+  "description": "تطبيق متجر حكيم الذكي - تسوّق أذكى.. توفير أكثر",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
@@ -12,12 +12,12 @@
   "theme_color": "#D4AF37",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/hkeeem_192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/hkeeem_512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
