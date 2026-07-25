@@ -1,13 +1,13 @@
 {
-  "name": "HkeeemAI - تسوق أذكى.. توفير أكثر",
+  "name": "HkeeemAI Store",
   "short_name": "HkeeemAI",
-  "description": "متجر حكيم الذكي - تسوق أذكى.. توفير أكثر",
+  "description": "Smart shopping application",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "dir": "rtl",
-  "lang": "ar",
+  "dir": "ltr",
+  "lang": "en",
   "background_color": "#111111",
   "theme_color": "#D4AF37",
   "icons": [
