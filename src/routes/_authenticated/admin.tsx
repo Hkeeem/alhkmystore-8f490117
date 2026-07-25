@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
+  Wallet, BellRing,
 } from "lucide-react";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
@@ -14,10 +15,13 @@ import {
   listUsersWithRoles, assignRole, revokeRole,
   listPremium, broadcastNotification, listAuditLog,
 } from "@/lib/admin.functions";
+import {
+  adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
+} from "@/lib/user.functions";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "audit";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -55,6 +59,8 @@ function AdminPage() {
     { id: "users" as const, label: "المستخدمون", icon: Users, allow: ["super_admin","admin"] },
     { id: "notifications" as const, label: "الإشعارات", icon: Bell, allow: ["super_admin","admin","content_manager"] },
     { id: "premium" as const, label: "Premium", icon: Crown, allow: ["super_admin","admin"] },
+    { id: "cashback" as const, label: "كاش باك", icon: Wallet, allow: ["super_admin","admin"] },
+    { id: "alerts" as const, label: "تنبيهات الأسعار", icon: BellRing, allow: ["super_admin","admin"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
   ]).filter((t) => can(t.allow));
 
@@ -96,6 +102,8 @@ function AdminPage() {
           {tab === "users" && <UsersTab canManageRoles={roles.includes("super_admin")} />}
           {tab === "notifications" && <NotificationsTab />}
           {tab === "premium" && <PremiumTab />}
+          {tab === "cashback" && <CashbackAdminTab />}
+          {tab === "alerts" && <AlertsAdminTab />}
           {tab === "audit" && <AuditTab />}
         </main>
       </div>
