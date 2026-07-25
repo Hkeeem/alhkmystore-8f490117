@@ -1,38 +1,43 @@
 {
-  "name": "HkeeemAI Store",
+  "name": "HkeeemAI - متجر حكيم الذكي",
   "short_name": "HkeeemAI",
-  "description": "Smart shopping application",
+  "description": "منصة سعودية ذكية تجمع العروض والكوبونات ومقارنة الأسعار للعقارات والسيارات والخرائط في مكان واحد.",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "dir": "ltr",
-  "lang": "en",
+  "dir": "rtl",
+  "lang": "ar",
   "background_color": "#111111",
   "theme_color": "#D4AF37",
   "icons": [
     {
       "src": "/hkeeem_192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
-    {
-      "src": "/hkeeem_512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ],
-  "screenshots": [
     {
       "src": "/hkeeem_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "form_factor": "wide"
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide-1280x720.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "HkeeemAI - متجر حكيم الذكي"
     },
     {
-      "src": "/hkeeem_192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/screenshot-narrow-750x1334.jpg",
+      "sizes": "750x1334",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "HkeeemAI Store"
     }
   ]
 }
