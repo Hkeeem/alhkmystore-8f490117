@@ -4,6 +4,7 @@ import { ArrowRight, Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { DealActions } from "@/components/DealActions";
 
 export const Route = createFileRoute("/deals/$id")({
   head: ({ params }) => {
@@ -139,6 +140,8 @@ function DealDetailPage() {
               <Share2 className="w-5 h-5" />
               شارك العرض
             </button>
+
+            <DealActions deal={deal} />
           </div>
         </div>
 
