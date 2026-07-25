@@ -1,7 +1,7 @@
 {
-  "name": "HkeeemAI - تسوّق أذكى.. توفير أكثر",
+  "name": "HkeeemAI - تسوق أذكى.. توفير أكثر",
   "short_name": "HkeeemAI",
-  "description": "تطبيق متجر حكيم الذكي - تسوّق أذكى.. توفير أكثر",
+  "description": "متجر حكيم الذكي - تسوق أذكى.. توفير أكثر",
   "start_url": "/?utm_source=pwa",
   "scope": "/",
   "display": "standalone",
