@@ -1,10 +1,10 @@
-const CACHE_NAME = 'hkeeem-ai-v1';
+const CACHE_NAME = 'hkeeemai-cache-v1';
 const urlsToCache = [
   '/',
-  '/manifest.json'
-
+  '/?utm_source=pwa'
 ];
 
+// تثبيت الـ Service Worker وحفظ الملفات الأساسية في ذاكرة التخزين المؤقت
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -14,6 +14,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// جلب الطلبات من الذاكرة المؤقتة عند انقطاع الإنترنت
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
