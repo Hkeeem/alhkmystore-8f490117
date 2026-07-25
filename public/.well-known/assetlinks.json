@@ -1,1 +1,8 @@
-
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.hkeeem_5e62e238_czivxz8ci_alhkmy11_9783s_projects.twa",
+        "sha256_cert_fingerprints": ["ED:E6:3E:FD:DF:77:B2:80:CE:1A:A8:0D:7B:AC:4A:12:66:04:14:C0:54:9C:B8:E0:A8:BA:F9:C9:FA:BE:14:A4"]
+      }
+    }]
