@@ -1,8 +1,7 @@
 const CACHE_NAME = 'hkeeem-ai-v1';
 const urlsToCache = [
   '/',
-  '/manifest.json'
-
+  '/manifest.webmanifest'
 ];
 
 self.addEventListener('install', (event) => {
