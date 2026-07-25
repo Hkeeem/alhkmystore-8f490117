@@ -44,6 +44,48 @@ export type Database = {
         }
         Relationships: []
       }
+      cashback_transactions: {
+        Row: {
+          cashback_amount: number
+          cashback_rate: number
+          created_at: string
+          deal_id: string | null
+          id: string
+          note: string | null
+          purchase_amount: number
+          status: string
+          store_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cashback_amount: number
+          cashback_rate?: number
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          note?: string | null
+          purchase_amount: number
+          status?: string
+          store_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cashback_amount?: number
+          cashback_rate?: number
+          created_at?: string
+          deal_id?: string | null
+          id?: string
+          note?: string | null
+          purchase_amount?: number
+          status?: string
+          store_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       complaints: {
         Row: {
           assigned_to: string | null
@@ -170,6 +212,48 @@ export type Database = {
         }
         Relationships: []
       }
+      price_alerts: {
+        Row: {
+          active: boolean
+          created_at: string
+          current_price: number
+          deal_id: string
+          id: string
+          product_key: string | null
+          target_price: number
+          title: string
+          triggered_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          current_price: number
+          deal_id: string
+          id?: string
+          product_key?: string | null
+          target_price: number
+          title: string
+          triggered_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          current_price?: number
+          deal_id?: string
+          id?: string
+          product_key?: string | null
+          target_price?: number
+          title?: string
+          triggered_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -250,7 +334,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      cashback_user_totals: {
+        Row: {
+          confirmed_total: number | null
+          paid_total: number | null
+          pending_total: number | null
+          tx_count: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       assign_user_role: {
