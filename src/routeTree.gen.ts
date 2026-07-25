@@ -13,6 +13,7 @@ import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
@@ -47,6 +48,11 @@ const RewardsRoute = RewardsRouteImport.update({
 const RealEstateRoute = RealEstateRouteImport.update({
   id: '/real-estate',
   path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapsRoute = MapsRouteImport.update({
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -152,6 +159,7 @@ export interface FileRoutesByTo {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -174,6 +182,7 @@ export interface FileRoutesById {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -216,6 +226,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -237,6 +248,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
@@ -259,6 +271,7 @@ export interface RootRouteChildren {
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   MapsRoute: typeof MapsRoute
+  PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       path: '/real-estate'
       fullPath: '/real-estate'
       preLoaderRoute: typeof RealEstateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maps': {
@@ -458,6 +478,7 @@ const rootRouteChildren: RootRouteChildren = {
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   MapsRoute: MapsRoute,
+  PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
@@ -469,3 +490,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
