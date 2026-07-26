@@ -64,33 +64,33 @@
 
   --radius: 1rem;
 
-  /* Background */
-  --background: oklch(0.97 0.01 85);
-  --foreground: oklch(0.18 0 0);
+  /* Background — بيج دافئ */
+  --background: oklch(0.97 0.015 75);
+  --foreground: oklch(0.16 0.01 60);
 
-  /* Cards */
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0 0);
+  /* Cards — أبيض مائل للكريمي */
+  --card: oklch(0.99 0.008 75);
+  --card-foreground: oklch(0.16 0.01 60);
 
   /* Popover */
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0 0);
+  --popover: oklch(0.99 0.008 75);
+  --popover-foreground: oklch(0.16 0.01 60);
 
   /* Primary Gold */
-  --primary: oklch(0.77 0.13 85);
-  --primary-foreground: oklch(0.18 0 0);
+  --primary: oklch(0.72 0.14 75);
+  --primary-foreground: oklch(0.99 0.008 75);
 
-  /* Secondary Black */
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.97 0.01 85);
+  /* Secondary — بيج غامق */
+  --secondary: oklch(0.93 0.02 75);
+  --secondary-foreground: oklch(0.25 0.02 60);
 
-  /* Muted */
-  --muted: oklch(0.94 0.01 85);
-  --muted-foreground: oklch(0.45 0.01 85);
+  /* Muted — بيج فاتح */
+  --muted: oklch(0.95 0.015 75);
+  --muted-foreground: oklch(0.48 0.02 70);
 
-  /* Accent */
-  --accent: oklch(0.68 0.15 75);
-  --accent-foreground: oklch(0.18 0 0);
+  /* Accent — ذهبي دافئ */
+  --accent: oklch(0.88 0.06 80);
+  --accent-foreground: oklch(0.25 0.02 60);
 
   /* Status */
   --destructive: oklch(0.55 0.22 27);
@@ -102,10 +102,10 @@
   --hot: oklch(0.60 0.22 30);
   --hot-foreground: oklch(0.98 0 0);
 
-  /* Borders */
-  --border: oklch(0.88 0.01 85);
-  --input: oklch(0.92 0.01 85);
-  --ring: oklch(0.77 0.13 85);
+  /* Borders — بيج خفيف */
+  --border: oklch(0.90 0.02 75);
+  --input: oklch(0.94 0.015 75);
+  --ring: oklch(0.72 0.14 75);
 
 }:root {
 
@@ -114,9 +114,9 @@
   --gradient-hero:
     linear-gradient(
       135deg,
-      oklch(0.18 0 0) 0%,
-      oklch(0.28 0 0) 45%,
-      oklch(0.77 0.13 85) 100%
+      oklch(0.22 0.04 70) 0%,
+      oklch(0.35 0.05 75) 45%,
+      oklch(0.72 0.14 75) 100%
     );
 
   --gradient-gold:
@@ -149,25 +149,39 @@
 
 }
 
-/* Dark Mode Variables */
+/* Dark Mode Variables — Deep Indigo/Violet with Gold */
 .dark {
-  --background: oklch(0.10 0 0);
+  /* خلفية بنفسجية/نيلية داكنة */
+  --background: oklch(0.13 0.04 280);
   --foreground: oklch(0.95 0.01 85);
-  --card: oklch(0.14 0 0);
+
+  /* البطاقات — أغمق قليلاً مع صبغة بنفسجية */
+  --card: oklch(0.17 0.05 280);
   --card-foreground: oklch(0.95 0.01 85);
-  --popover: oklch(0.14 0 0);
+
+  --popover: oklch(0.17 0.05 280);
   --popover-foreground: oklch(0.95 0.01 85);
-  --primary: oklch(0.77 0.13 85);
-  --primary-foreground: oklch(0.10 0 0);
-  --secondary: oklch(0.20 0 0);
-  --secondary-foreground: oklch(0.95 0.01 85);
-  --muted: oklch(0.18 0 0);
-  --muted-foreground: oklch(0.60 0.01 85);
-  --accent: oklch(0.68 0.15 75);
-  --accent-foreground: oklch(0.10 0 0);
-  --border: oklch(0.22 0 0);
-  --input: oklch(0.20 0 0);
-  --ring: oklch(0.77 0.13 85);
+
+  /* الذهبي يبقى كما هو للتمييز */
+  --primary: oklch(0.80 0.14 85);
+  --primary-foreground: oklch(0.13 0.04 280);
+
+  /* الثانوي — بنفسجي شفاف */
+  --secondary: oklch(0.22 0.06 280);
+  --secondary-foreground: oklch(0.90 0.02 85);
+
+  /* المكتوم */
+  --muted: oklch(0.20 0.05 280);
+  --muted-foreground: oklch(0.58 0.04 280);
+
+  /* التمييز */
+  --accent: oklch(0.55 0.18 290);
+  --accent-foreground: oklch(0.95 0.01 85);
+
+  /* الحدود — بنفسجية شفافة */
+  --border: oklch(0.28 0.06 280);
+  --input: oklch(0.22 0.05 280);
+  --ring: oklch(0.80 0.14 85);
 }
 
 @layer base {
@@ -273,6 +287,20 @@
   border: 1px solid oklch(0.77 0.13 85 / 0.28);
 }
 
+/* بطاقة زجاجية للوضع الليلي */
+@utility glass-dark {
+  background-color: oklch(0.20 0.06 280 / 0.60);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid oklch(0.50 0.10 280 / 0.25);
+}
+
+/* أيقونة شفافة للوضع الليلي */
+@utility icon-glass {
+  background-color: oklch(0.30 0.08 280 / 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.55 0.10 280 / 0.30);
+}
+
 /* --- UX polish: soft elevation, ripple, skeleton --- */
 
 @utility hover-lift {
@@ -332,9 +360,9 @@
 @utility skeleton-box {
   background-image: linear-gradient(
     100deg,
-    oklch(0.92 0.01 85) 20%,
-    oklch(0.96 0.01 85) 40%,
-    oklch(0.92 0.01 85) 60%
+    oklch(0.92 0.02 75) 20%,
+    oklch(0.96 0.015 75) 40%,
+    oklch(0.92 0.02 75) 60%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.4s ease-in-out infinite;
