@@ -12,6 +12,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
 import { InstallHandler } from "@/components/InstallHandler";
+import { Footer } from "@/components/Footer";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -114,6 +115,7 @@ function RootComponent() {
       <div className="min-h-screen pb-20 md:pb-0">
         <TopBar />
         <Outlet />
+        <Footer />
         <BottomBar />
         <InstallHandler />
       </div>

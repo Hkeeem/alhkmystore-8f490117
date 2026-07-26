@@ -16,6 +16,7 @@ import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MapsRouteImport } from './routes/maps'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -65,6 +66,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const MapsRoute = MapsRouteImport.update({
   id: '/maps',
   path: '/maps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
     | '/privacy'
     | '/real-estate'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
     | '/privacy'
     | '/real-estate'
@@ -269,6 +280,7 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
     | '/privacy'
     | '/real-estate'
@@ -294,6 +306,7 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
+  DeleteAccountRoute: typeof DeleteAccountRoute
   MapsRoute: typeof MapsRoute
   PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
@@ -355,6 +368,13 @@ declare module '@tanstack/react-router' {
       path: '/maps'
       fullPath: '/maps'
       preLoaderRoute: typeof MapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -518,6 +538,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
+  DeleteAccountRoute: DeleteAccountRoute,
   MapsRoute: MapsRoute,
   PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
@@ -532,3 +553,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
