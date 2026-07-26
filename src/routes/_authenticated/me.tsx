@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Heart, BellRing, Wallet, Loader2, Trash2, Power } from "lucide-react";
+import { Heart, BellRing, Wallet, Trash2, Power } from "lucide-react";
 import { toast } from "sonner";
 import {
   listFavorites, toggleFavorite,
