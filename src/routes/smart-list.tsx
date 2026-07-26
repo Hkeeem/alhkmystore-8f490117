@@ -162,7 +162,7 @@ function SmartList() {
           <button
             onClick={() => submit()}
             disabled={loading || !text.trim()}
-            className="flex-1 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+            className="flex-1 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow press-ripple disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> يفكّر...</> : <><Sparkles className="w-4 h-4" /> ابنِ قائمتي الذكية</>}
           </button>
@@ -232,7 +232,7 @@ function SmartList() {
 
           <button
             onClick={() => setShareOpen(true)}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow transition hover:scale-[1.01]"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow press-ripple transition hover:scale-[1.01]"
           >
             <Share2 className="w-4 h-4" />
             شارك القائمة
