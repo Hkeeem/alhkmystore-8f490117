@@ -22,8 +22,9 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
     <Link
       to="/deals/$id"
       params={{ id: deal.id }}
-      className="group block relative bg-card rounded-3xl shadow-card hover:shadow-glow transition-all overflow-hidden border border-border/50"
+      className="group block relative bg-card rounded-3xl shadow-card hover:shadow-glow hover-lift press-ripple overflow-hidden border border-border/50 hover:border-primary/40"
     >
+
       {rank !== undefined && (
         <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-gradient-gold shadow-soft flex items-center justify-center font-display font-black text-sm text-accent-foreground">
           {rank}
