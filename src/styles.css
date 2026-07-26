@@ -251,3 +251,107 @@
   backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid oklch(0.77 0.13 85 / 0.28);
 }
+
+/* --- UX polish: soft elevation, ripple, skeleton --- */
+
+@utility hover-lift {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+  will-change: transform;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px -12px oklch(0.18 0 0 / 0.22);
+  }
+  &:active {
+    transform: translateY(-1px) scale(0.995);
+  }
+}
+
+@utility press-ripple {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0;
+    transform: scale(1);
+    pointer-events: none;
+  }
+  &:active::after {
+    animation: rippleOut 0.55s ease-out;
+  }
+  &:active {
+    transform: scale(0.985);
+  }
+}
+
+@keyframes rippleOut {
+  0% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(48);
+  }
+}
+
+@utility skeleton-box {
+  background-image: linear-gradient(
+    100deg,
+    oklch(0.92 0.01 85) 20%,
+    oklch(0.96 0.01 85) 40%,
+    oklch(0.92 0.01 85) 60%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer base {
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :where(button, a, input, textarea, select):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  img {
+    content-visibility: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
