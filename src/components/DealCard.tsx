@@ -55,12 +55,13 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
           </div>
           <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
           <button
-            onClick={(e) => { e.stopPropagation(); setShareOpen(true); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareOpen(true); }}
             aria-label="مشاركة العرض"
-            className="w-7 h-7 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition"
+            className="w-7 h-7 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground press-ripple flex items-center justify-center transition shrink-0"
           >
             <Share2 className="w-3.5 h-3.5" />
           </button>
+
         </div>
 
         <h3 className="font-bold text-sm leading-snug line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
