@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
@@ -59,6 +59,20 @@ export function TopBar() {
                       </Link>
                     );
                   })}
+
+                  {/* رابط البحث العقاري الذكي - في القائمة الجانبية فقط */}
+                  <div className="mt-2 border-t border-primary/10 pt-2">
+                    <p className="text-[10px] text-muted-foreground px-4 pb-1 font-bold uppercase tracking-wider">عقارات</p>
+                    <Link
+                      to="/real-estate"
+                      className="flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                      activeProps={{ className: "flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold" }}
+                    >
+                      <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-sm">البحث العقاري</span>
+                      <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">AI</span>
+                    </Link>
+                  </div>
                 </nav>
               </div>
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
