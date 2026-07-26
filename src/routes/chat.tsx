@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect, Fragment } from "react";
-import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink } from "lucide-react";
+import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink, Bot, Zap, TrendingDown, ShoppingCart, Star } from "lucide-react";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
 
@@ -44,7 +44,7 @@ function RenderWithDealLinks({ text }: { text: string }) {
             className="inline-flex items-center gap-1 mx-0.5 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-bold hover:bg-primary hover:text-primary-foreground transition align-middle"
           >
             <ExternalLink className="w-3 h-3" />
-            افتح
+            افتح العرض
           </Link>
         );
       })}
@@ -52,14 +52,13 @@ function RenderWithDealLinks({ text }: { text: string }) {
   );
 }
 
-
 export const Route = createFileRoute("/chat")({
   validateSearch: (search: Record<string, unknown>) => ({
     q: typeof search.q === "string" ? search.q : "",
   }),
   head: () => ({
     meta: [
-      { title: "مكّي - المساعد الصوتي لعروض المملكة" },
+      { title: "مكّي - المساعد الذكي لعروض المملكة" },
       { name: "description", content: "تكلّم أو اكتب مع مكّي، مساعدك الذكي لأفضل عروض السعودية." },
     ],
   }),
@@ -67,10 +66,12 @@ export const Route = createFileRoute("/chat")({
 });
 
 const suggestions = [
-  "وين ألقى أرخص أرز بسمتي؟",
-  "أبي أوفر في وجبة عائلية",
-  "قارن أسعار الآيفون",
-  "أفضل عروض الصيدلية",
+  { text: "وين ألقى أرخص أرز بسمتي؟", icon: ShoppingCart },
+  { text: "أبي أوفر في وجبة عائلية", icon: TrendingDown },
+  { text: "قارن أسعار الآيفون", icon: Zap },
+  { text: "أفضل عروض الصيدلية اليوم", icon: Star },
+  { text: "عروض المواد الغذائية هذا الأسبوع", icon: ShoppingCart },
+  { text: "أرخص متجر للإلكترونيات", icon: Zap },
 ];
 
 function ChatPage() {
@@ -103,8 +104,6 @@ function ChatPage() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, status]);
 
-
-  // Speak new assistant messages when done streaming
   useEffect(() => {
     if (!voiceOn || status === "streaming" || status === "submitted") return;
     const last = messages[messages.length - 1];
@@ -141,7 +140,6 @@ function ChatPage() {
 
   const isLoading = status === "submitted" || status === "streaming";
 
-  // Voice recording
   const [recording, setRecording] = useState(false);
   const [transcribing, setTranscribing] = useState(false);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -185,13 +183,22 @@ function ChatPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 pt-6 pb-32 md:pb-6 flex flex-col h-[calc(100vh-4rem)]">
+      {/* Header */}
       <div className="mb-4 flex items-start justify-between gap-3">
-        <div>
-          <div className="inline-flex items-center gap-2 text-primary text-sm font-bold">
-            <Sparkles className="w-4 h-4" />
-            مكّي · مساعدك الصوتي
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-gradient-hero glow-gold flex items-center justify-center shrink-0">
+            <Bot className="w-6 h-6 text-primary" />
           </div>
-          <h1 className="font-display font-black text-2xl mt-1">اسألني بالصوت أو الكتابة</h1>
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="font-display font-black text-xl">مكّي</h1>
+              <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse inline-block" />
+                متصل
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">مساعدك الذكي لأفضل عروض المملكة</p>
+          </div>
         </div>
         <button
           onClick={() => {
@@ -202,28 +209,41 @@ function ChatPage() {
           title={voiceOn ? "إيقاف الصوت" : "تشغيل الصوت"}
         >
           {voiceOn ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          {voiceOn ? "الصوت شغّال" : "الصوت مقفول"}
+          <span className="hidden sm:inline">{voiceOn ? "الصوت شغّال" : "الصوت مقفول"}</span>
         </button>
       </div>
 
+      {/* منطقة المحادثة */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 -mx-4 px-4">
         {messages.length === 0 && (
-          <div className="text-center py-10">
-            <div className="w-16 h-16 mx-auto rounded-3xl bg-gradient-hero shadow-glow flex items-center justify-center mb-4">
-              <Sparkles className="w-8 h-8 text-primary-foreground" />
+          <div className="py-6">
+            {/* بطاقة الترحيب */}
+            <div className="bg-gradient-hero rounded-3xl p-6 mb-6 text-center">
+              <div className="w-16 h-16 mx-auto rounded-3xl bg-primary/20 flex items-center justify-center mb-3">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <h2 className="font-display font-black text-xl text-white mb-1">هلا! أنا مكّي 👋</h2>
+              <p className="text-sm text-white/70">اسألني عن أي عرض أو منتج وأنا أساعدك توفّر</p>
             </div>
-            <p className="text-muted-foreground text-sm mb-2">هلا! أنا مكّي.</p>
-            <p className="text-muted-foreground text-sm mb-6">اضغط المايك وكلّمني، أو جرّب:</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {suggestions.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => send(s)}
-                  className="text-right p-3 rounded-2xl bg-card border border-border/50 hover:border-primary hover:shadow-soft text-sm font-medium transition"
-                >
-                  {s}
-                </button>
-              ))}
+
+            {/* اقتراحات سريعة */}
+            <p className="text-xs text-muted-foreground mb-3 font-bold">جرّب تسألني:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {suggestions.map((s) => {
+                const Icon = s.icon;
+                return (
+                  <button
+                    key={s.text}
+                    onClick={() => send(s.text)}
+                    className="text-right p-3 rounded-2xl bg-card border border-border/50 hover:border-primary hover:shadow-soft text-sm font-medium transition flex items-center gap-2 group"
+                  >
+                    <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition">
+                      <Icon className="w-4 h-4 text-primary" />
+                    </div>
+                    {s.text}
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}
@@ -233,7 +253,18 @@ function ChatPage() {
           const mine = m.role === "user";
           return (
             <div key={m.id} className={`flex flex-col gap-1 ${mine ? "items-start" : "items-end"}`}>
-              <div className={`max-w-[85%] ${mine ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg" : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"} px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
+              {!mine && (
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="w-6 h-6 rounded-full bg-gradient-hero flex items-center justify-center">
+                    <Bot className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <span className="text-[11px] text-muted-foreground font-bold">مكّي</span>
+                </div>
+              )}
+              <div className={`max-w-[85%] ${mine
+                ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg"
+                : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"
+              } px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
                 {mine ? text : <RenderWithDealLinks text={text} />}
               </div>
               {!mine && text && (
@@ -243,7 +274,7 @@ function ChatPage() {
                     setSharePayload({ title: "توصية من مكّي", text: buildShareText(text, origin) });
                     setShareOpen(true);
                   }}
-                  className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2"
+                  className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2 transition"
                 >
                   <Share2 className="w-3 h-3" /> شارك التوصية
                 </button>
@@ -254,13 +285,29 @@ function ChatPage() {
 
         {(isLoading || transcribing) && (
           <div className="flex justify-end">
+            <div className="flex items-center gap-1.5 mb-1">
+              <div className="w-6 h-6 rounded-full bg-gradient-hero flex items-center justify-center">
+                <Bot className="w-3.5 h-3.5 text-primary" />
+              </div>
+            </div>
             <div className="bg-card border border-border/50 rounded-3xl rounded-bl-lg px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
-              <Loader2 className="w-4 h-4 animate-spin" /> {transcribing ? "يسمعك..." : "يفكّر..."}
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              {transcribing ? "يسمعك..." : (
+                <span className="flex items-center gap-1">
+                  يفكّر
+                  <span className="flex gap-0.5">
+                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </span>
+                </span>
+              )}
             </div>
           </div>
         )}
       </div>
 
+      {/* شريط الإدخال */}
       <form
         onSubmit={(e) => { e.preventDefault(); send(input); }}
         className="mt-4 flex gap-2 sticky bottom-20 md:bottom-0 bg-background/95 backdrop-blur py-2"
@@ -269,7 +316,11 @@ function ChatPage() {
           type="button"
           onClick={toggleRecord}
           disabled={isLoading || transcribing}
-          className={`shrink-0 rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow transition ${recording ? "bg-destructive text-destructive-foreground animate-pulse" : "bg-card border border-border text-primary hover:border-primary"}`}
+          className={`shrink-0 rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow transition ${
+            recording
+              ? "bg-destructive text-destructive-foreground animate-pulse"
+              : "bg-card border border-border text-primary hover:border-primary hover:bg-primary/5"
+          }`}
           title={recording ? "إيقاف التسجيل" : "تسجيل صوتي"}
         >
           {recording ? <Square className="w-4 h-4" /> : <Mic className="w-5 h-5" />}
@@ -278,13 +329,13 @@ function ChatPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={isLoading || recording}
-          placeholder={recording ? "جاري التسجيل..." : "اكتب سؤالك أو استخدم المايك..."}
-          className="flex-1 bg-card border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+          placeholder={recording ? "🎙 جاري التسجيل..." : "اكتب سؤالك أو استخدم المايك..."}
+          className="flex-1 bg-card border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="bg-gradient-hero text-primary-foreground rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow disabled:opacity-50"
+          className="bg-gradient-hero text-primary-foreground rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow disabled:opacity-50 hover:opacity-90 transition"
         >
           <Send className="w-4 h-4 rotate-180" />
         </button>

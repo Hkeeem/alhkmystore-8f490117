@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ const items = [
   { to: "/", label: "الرئيسية", icon: Home },
   { to: "/deals", label: "العروض", icon: Tag },
   { to: "/coupons", label: "كوبونات", icon: Ticket },
+  { to: "/maps", label: "خريطتي", icon: Map },
   { to: "/smart-list", label: "قائمة", icon: ListChecks },
   { to: "/rewards", label: "جوائز", icon: Trophy },
   { to: "/chat", label: "مساعد", icon: MessageCircle },
@@ -18,6 +20,7 @@ const items = [
 export function TopBar() {
   const { user, signOut } = useAuth();
   const isStaff = useIsStaff(user?.id);
+  const { isDark, toggle: toggleTheme } = useTheme();
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
@@ -50,6 +53,9 @@ export function TopBar() {
                       >
                         <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span className="text-sm">{it.label}</span>
+                        {it.to === "/maps" && (
+                          <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">جديد</span>
+                        )}
                       </Link>
                     );
                   })}
@@ -111,6 +117,14 @@ export function TopBar() {
               لوحة التحكم
             </Link>
           )}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl hover:bg-secondary transition"
+            aria-label={isDark ? "الوضع النهاري" : "الوضع الليلي"}
+            title={isDark ? "الوضع النهاري" : "الوضع الليلي"}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4" />}
+          </button>
           {user ? (
             <>
               <Link
@@ -167,16 +181,19 @@ function useIsStaff(userId: string | undefined) {
 export function BottomBar() {
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-primary/15 pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-6">
+      <div className="grid grid-cols-7">
         {items.map((it) => {
           const Icon = it.icon;
           return (
             <Link
               key={it.to}
               to={it.to}
-              className="flex flex-col items-center gap-1 py-3 text-muted-foreground text-[10px]"
-              activeProps={{ className: "flex flex-col items-center gap-1 py-3 text-primary text-[10px] font-bold" }}
+              className="flex flex-col items-center gap-1 py-2 text-muted-foreground text-[9px] relative"
+              activeProps={{ className: "flex flex-col items-center gap-1 py-2 text-primary text-[9px] font-bold relative" }}
             >
+              {it.to === "/maps" && (
+                <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full" />
+              )}
               <Icon className="w-5 h-5" />
               <span>{it.label}</span>
             </Link>
