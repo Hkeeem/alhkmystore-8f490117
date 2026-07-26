@@ -33,7 +33,7 @@ function Stores() {
       {Object.entries(grouped).map(([cat, items]) => (
         <section key={cat}>
           <h2 className="font-black text-lg mb-3">{cat}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {items.map((s) => {
               const Icon = getStoreIcon(s);
               return (
@@ -41,7 +41,7 @@ function Stores() {
                   key={s.id}
                   to="/deals"
                   search={{ store: s.id }}
-                  className="p-4 rounded-2xl bg-card border border-border/60 hover:border-primary hover:shadow-glow transition flex items-center gap-3"
+                  className="p-4 rounded-2xl bg-card border border-border/60 shadow-card hover:border-primary hover:shadow-glow hover-lift press-ripple flex items-center gap-3"
                 >
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: s.color }}>
                     <Icon className="w-6 h-6" strokeWidth={2} />

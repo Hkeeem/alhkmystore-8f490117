@@ -9,6 +9,7 @@ import {
   listMyCashback,
 } from "@/lib/user.functions";
 import { deals, getStore, discountPercent } from "@/data/deals";
+import { ListSkeleton, StatsSkeleton } from "@/components/Skeletons";
 
 type Tab = "favorites" | "alerts" | "cashback";
 
@@ -63,7 +64,7 @@ function FavoritesPanel() {
     mutationFn: (v: { itemType: any; itemId: string }) => toggleFavorite({ data: v }),
     onSuccess: () => { toast.success("تم"); qc.invalidateQueries({ queryKey: ["my-favorites"] }); },
   });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} grid />;
   const items = q.data ?? [];
   const dealFavs = items.filter((f: any) => f.item_type === "deal");
   if (dealFavs.length === 0) {
@@ -76,7 +77,7 @@ function FavoritesPanel() {
     );
   }
   return (
-    <div className="grid sm:grid-cols-2 gap-3">
+    <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
       {dealFavs.map((f: any) => {
         const deal = deals.find((d) => d.id === f.item_id);
         if (!deal) return (
@@ -89,7 +90,7 @@ function FavoritesPanel() {
         );
         const store = getStore(deal.storeId);
         return (
-          <div key={f.id} className="p-4 rounded-2xl border border-primary/20 bg-card flex items-center gap-3">
+          <div key={f.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3">
             <div className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-black" style={{ background: store.color }}>
               {store.logo}
             </div>
@@ -125,7 +126,7 @@ function AlertsPanel() {
     mutationFn: (v: { id: string }) => deleteAlert({ data: v }),
     onSuccess: () => { toast.success("حُذف"); qc.invalidateQueries({ queryKey: ["my-alerts"] }); },
   });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={3} />;
   const items = q.data ?? [];
   if (items.length === 0) {
     return (
@@ -141,7 +142,7 @@ function AlertsPanel() {
       {items.map((a: any) => {
         const dropped = Number(a.current_price) > Number(a.target_price) && a.triggered_at;
         return (
-          <div key={a.id} className="p-4 rounded-2xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+          <div key={a.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
             <div className="flex-1 min-w-0">
               <Link to="/deals/$id" params={{ id: a.deal_id }} className="font-bold text-sm line-clamp-1 hover:text-primary">
                 {a.title}
@@ -177,7 +178,12 @@ function AlertsPanel() {
 
 function CashbackPanel() {
   const q = useQuery({ queryKey: ["my-cashback"], queryFn: () => listMyCashback() });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return (
+    <div className="space-y-4">
+      <StatsSkeleton />
+      <ListSkeleton count={3} />
+    </div>
+  );
   const { transactions = [], totals } = q.data ?? { transactions: [], totals: { confirmed_total: 0, pending_total: 0, paid_total: 0, tx_count: 0 } };
   return (
     <div className="space-y-4">
@@ -197,7 +203,7 @@ function CashbackPanel() {
           {transactions.map((t: any) => {
             const store = getStore(t.store_id);
             return (
-              <div key={t.id} className="p-4 rounded-2xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+              <div key={t.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-black" style={{ background: store?.color ?? "#666" }}>
                   {store?.logo ?? "?"}
                 </div>
