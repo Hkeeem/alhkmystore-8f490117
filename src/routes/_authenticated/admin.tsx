@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
+import { ListSkeleton } from "@/components/Skeletons";
 import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
@@ -155,7 +156,7 @@ function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () =>
 
 function StatCard({ label, value, icon: Icon }: { label: string; value: number | string; icon: React.ElementType }) {
   return (
-    <div className="p-5 rounded-2xl border border-primary/20 bg-card">
+    <div className="p-5 rounded-2xl border border-primary/20 bg-card shadow-card">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm text-muted-foreground">{label}</span>
         <Icon className="w-5 h-5 text-primary" />
@@ -167,7 +168,7 @@ function StatCard({ label, value, icon: Icon }: { label: string; value: number |
 
 function DashboardTab() {
   const q = useQuery({ queryKey: ["admin-stats"], queryFn: () => getAdminStats() });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   if (q.error) return <p className="text-destructive">تعذّر تحميل الإحصائيات.</p>;
   const s = q.data!;
   return (
@@ -193,14 +194,14 @@ function ComplaintsTab() {
     onError: () => toast.error("فشل التحديث"),
   });
 
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={MessageSquareWarning} text="لا توجد شكاوى حالياً." />;
 
   return (
     <div className="space-y-3">
       {items.map((c: any) => (
-        <div key={c.id} className="p-4 rounded-xl border border-primary/20 bg-card">
+        <div key={c.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -243,13 +244,13 @@ function SuggestionsTab() {
     onSuccess: () => { toast.success("تم التحديث"); qc.invalidateQueries({ queryKey: ["admin-suggestions"] }); },
     onError: () => toast.error("فشل التحديث"),
   });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={Lightbulb} text="لا توجد اقتراحات." />;
   return (
     <div className="space-y-3">
       {items.map((s: any) => (
-        <div key={s.id} className="p-4 rounded-xl border border-primary/20 bg-card">
+        <div key={s.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
@@ -287,13 +288,13 @@ function UsersTab({ canManageRoles }: { canManageRoles: boolean }) {
 
   const ROLES = ["super_admin","admin","support","content_manager","user"] as const;
 
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   return (
     <div className="space-y-3">
       {!canManageRoles && <p className="text-xs text-muted-foreground">🔒 عرض فقط — تعيين الأدوار متاح للمدير العام.</p>}
       {items.map((u: any) => (
-        <div key={u.id} className="p-4 rounded-xl border border-primary/20 bg-card">
+        <div key={u.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
               <p className="font-semibold">{u.display_name || u.email}</p>
@@ -359,7 +360,7 @@ function NotificationsTab() {
     }
   }
   return (
-    <div className="max-w-2xl space-y-3 p-5 rounded-2xl border border-primary/20 bg-card">
+    <div className="max-w-2xl space-y-3 p-5 rounded-2xl border border-primary/20 bg-card shadow-card">
       <h2 className="font-bold flex items-center gap-2"><Bell className="w-5 h-5 text-primary" /> إرسال إشعار</h2>
       <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="العنوان *" className="w-full px-3 py-2 rounded-lg border bg-background" />
       <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="المحتوى" rows={3} className="w-full px-3 py-2 rounded-lg border bg-background" />
@@ -374,13 +375,13 @@ function NotificationsTab() {
 
 function PremiumTab() {
   const q = useQuery({ queryKey: ["admin-premium"], queryFn: () => listPremium() });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={Crown} text="لا توجد اشتراكات." />;
   return (
     <div className="space-y-2">
       {items.map((p: any) => (
-        <div key={p.id} className="p-4 rounded-xl border border-primary/20 bg-card flex items-center justify-between gap-3 flex-wrap">
+        <div key={p.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center justify-between gap-3 flex-wrap">
           <div>
             <p className="font-semibold">{p.plan}</p>
             <p className="text-xs text-muted-foreground">{p.user_id}</p>
@@ -397,7 +398,7 @@ function PremiumTab() {
 
 function AuditTab() {
   const q = useQuery({ queryKey: ["admin-audit"], queryFn: () => listAuditLog() });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={ScrollText} text="السجل فارغ." />;
   return (
@@ -433,14 +434,14 @@ function CashbackAdminTab() {
     onSuccess: () => { toast.success("تم التحديث"); qc.invalidateQueries({ queryKey: ["admin-cashback"] }); },
     onError: () => toast.error("فشل"),
   });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={Wallet} text="لا توجد عمليات كاش باك." />;
   const STATUSES = ["pending","confirmed","paid","rejected"] as const;
   return (
     <div className="space-y-2">
       {items.map((t: any) => (
-        <div key={t.id} className="p-4 rounded-xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+        <div key={t.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm">{t.store_id} · {t.purchase_amount} ر.س → <span className="text-primary">{t.cashback_amount} ر.س</span></p>
             <p className="text-xs text-muted-foreground">{t.user_id.slice(0,8)}… · {new Date(t.created_at).toLocaleString("ar-SA")}</p>
@@ -466,13 +467,13 @@ function CashbackAdminTab() {
 
 function AlertsAdminTab() {
   const q = useQuery({ queryKey: ["admin-alerts"], queryFn: () => adminListAlerts() });
-  if (q.isLoading) return <Loader2 className="w-6 h-6 animate-spin text-primary" />;
+  if (q.isLoading) return <ListSkeleton count={4} />;
   const items = q.data ?? [];
   if (items.length === 0) return <EmptyState icon={BellRing} text="لا توجد تنبيهات سعر." />;
   return (
     <div className="space-y-2">
       {items.map((a: any) => (
-        <div key={a.id} className="p-4 rounded-xl border border-primary/20 bg-card flex items-center gap-3 flex-wrap">
+        <div key={a.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm line-clamp-1">{a.title}</p>
             <p className="text-xs text-muted-foreground">

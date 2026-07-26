@@ -123,7 +123,7 @@ export function DealActions({ deal }: { deal: Deal }) {
               className="w-32 px-3 py-2 rounded-lg border bg-background"
             />
             <span className="text-sm text-muted-foreground">ر.س</span>
-            <button onClick={handleAlert} disabled={busy === "alert"} className="mr-auto px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50">
+            <button onClick={handleAlert} disabled={busy === "alert"} className="mr-auto px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold press-ripple disabled:opacity-50">
               {busy === "alert" ? "جارٍ…" : "فعّل التنبيه"}
             </button>
           </div>
@@ -143,7 +143,7 @@ export function DealActions({ deal }: { deal: Deal }) {
               className="w-32 px-3 py-2 rounded-lg border bg-background"
             />
             <span className="text-sm text-muted-foreground">ر.س</span>
-            <button onClick={handleCash} disabled={busy === "cash"} className="mr-auto px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold disabled:opacity-50">
+            <button onClick={handleCash} disabled={busy === "cash"} className="mr-auto px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-bold press-ripple disabled:opacity-50">
               {busy === "cash" ? "جارٍ…" : "احسب كاش باك"}
             </button>
           </div>

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { getStore } from "@/data/deals";
+import { SkeletonBox, RowSkeleton } from "@/components/Skeletons";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -161,7 +162,7 @@ function SmartList() {
           <button
             onClick={() => submit()}
             disabled={loading || !text.trim()}
-            className="flex-1 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
+            className="flex-1 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow press-ripple disabled:opacity-60 flex items-center justify-center gap-2 transition hover:scale-[1.01]"
           >
             {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> يفكّر...</> : <><Sparkles className="w-4 h-4" /> ابنِ قائمتي الذكية</>}
           </button>
@@ -196,6 +197,21 @@ function SmartList() {
         {error && <div className="text-sm text-destructive bg-destructive/10 rounded-xl p-3">{error}</div>}
       </div>
 
+      {loading && !result && (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <SkeletonBox className="h-28 rounded-3xl" />
+            <SkeletonBox className="h-28 rounded-3xl" />
+          </div>
+          <SkeletonBox className="h-20 rounded-2xl" />
+          <div className="space-y-2">
+            <RowSkeleton />
+            <RowSkeleton />
+            <RowSkeleton />
+          </div>
+        </div>
+      )}
+
       {result && (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
@@ -216,7 +232,7 @@ function SmartList() {
 
           <button
             onClick={() => setShareOpen(true)}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow transition hover:scale-[1.01]"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground py-3.5 rounded-2xl font-bold shadow-glow press-ripple transition hover:scale-[1.01]"
           >
             <Share2 className="w-4 h-4" />
             شارك القائمة
@@ -227,7 +243,7 @@ function SmartList() {
             <div className="p-4 flex items-center gap-2 font-bold"><ListChecks className="w-4 h-4 text-primary" /> قائمتك المُحسّنة</div>
             {result.items.map((it, i) => {
               if (!it.deal) return (
-                <div key={i} className="p-4 flex items-center gap-3">
+                <div key={i} className="p-4 flex items-center gap-3 transition hover:bg-secondary/40">
                   <div className="text-2xl">🔎</div>
                   <div className="flex-1">
                     <div className="font-bold text-sm">{it.requested}</div>
@@ -237,7 +253,7 @@ function SmartList() {
               );
               const s = getStore(it.deal.storeId);
               return (
-                <div key={i} className="p-4 flex items-center gap-3">
+                <div key={i} className="p-4 flex items-center gap-3 transition hover:bg-secondary/40">
                   <div className="text-3xl">{it.deal.image}</div>
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-sm truncate">{it.deal.title}</div>

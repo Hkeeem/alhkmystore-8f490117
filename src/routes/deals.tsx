@@ -41,7 +41,7 @@ function DealsPage() {
   const cats = ["سوبرماركت", "مطاعم", "إلكترونيات", "صيدلية"];
 
   return (
-    <main className="max-w-6xl mx-auto px-4 pt-6 pb-10 space-y-5">
+    <main className="max-w-6xl mx-auto px-4 pt-6 pb-12 space-y-5 md:space-y-6">
       <div>
         <h1 className="font-display font-black text-2xl md:text-3xl">كل العروض</h1>
         <p className="text-sm text-muted-foreground mt-1">{filtered.length} عرض متاح الآن</p>
@@ -76,8 +76,8 @@ function DealsPage() {
 
       <div className="flex gap-2 text-xs">
         <span className="text-muted-foreground py-1.5">ترتيب:</span>
-        <button onClick={() => setSort("discount")} className={`px-3 py-1.5 rounded-full font-bold ${sort==="discount"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأعلى توفيراً</button>
-        <button onClick={() => setSort("price")} className={`px-3 py-1.5 rounded-full font-bold ${sort==="price"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأرخص سعراً</button>
+        <button onClick={() => setSort("discount")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="discount"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأعلى توفيراً</button>
+        <button onClick={() => setSort("price")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="price"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأرخص سعراً</button>
       </div>
 
       {filtered.length === 0 ? (
@@ -95,7 +95,7 @@ function Chip({ active, onClick, children, small }: { active: boolean; onClick: 
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full font-bold transition ${small ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm"} ${active ? "bg-primary text-primary-foreground shadow-soft" : "bg-card border border-border text-foreground hover:border-primary"}`}
+      className={`shrink-0 rounded-full font-bold transition press-ripple ${small ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm"} ${active ? "bg-primary text-primary-foreground shadow-soft" : "bg-card border border-border text-foreground hover:border-primary"}`}
     >
       {children}
     </button>

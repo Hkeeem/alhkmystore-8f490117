@@ -22,8 +22,9 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
     <Link
       to="/deals/$id"
       params={{ id: deal.id }}
-      className="group block relative bg-card rounded-3xl shadow-card hover:shadow-glow transition-all overflow-hidden border border-border/50"
+      className="group block relative bg-card rounded-3xl shadow-card hover:shadow-glow hover-lift press-ripple overflow-hidden border border-border/50 hover:border-primary/40"
     >
+
       {rank !== undefined && (
         <div className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-gradient-gold shadow-soft flex items-center justify-center font-display font-black text-sm text-accent-foreground">
           {rank}
@@ -54,12 +55,13 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
           </div>
           <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
           <button
-            onClick={(e) => { e.stopPropagation(); setShareOpen(true); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareOpen(true); }}
             aria-label="مشاركة العرض"
-            className="w-7 h-7 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground flex items-center justify-center transition"
+            className="w-7 h-7 rounded-full bg-secondary hover:bg-primary hover:text-primary-foreground press-ripple flex items-center justify-center transition shrink-0"
           >
             <Share2 className="w-3.5 h-3.5" />
           </button>
+
         </div>
 
         <h3 className="font-bold text-sm leading-snug line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
