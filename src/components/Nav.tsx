@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -20,8 +21,65 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+        <div className="flex items-center gap-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <button className="p-2 hover:bg-secondary rounded-xl transition-colors">
+                <Menu className="w-5 h-5 text-primary" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col bg-background border-l border-primary/10">
+              <SheetHeader className="text-right border-b border-primary/10 pb-4">
+                <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
+                  <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                  </div>
+                  HkeeemAI
+                </SheetTitle>
+              </SheetHeader>
+              <div className="flex-1 overflow-y-auto py-6">
+                <nav className="flex flex-col gap-2">
+                  {items.map((it) => {
+                    const Icon = it.icon;
+                    return (
+                      <Link
+                        key={it.to}
+                        to={it.to}
+                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                        activeProps={{ className: "flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold" }}
+                      >
+                        <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm">{it.label}</span>
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+              <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
+                <div className="flex flex-col gap-4 w-full">
+                  <div className="bg-secondary/50 p-4 rounded-2xl border border-primary/10">
+                    <p className="text-[11px] text-muted-foreground leading-relaxed text-right">
+                      يسعدني استقبال طلباتكم وعروضكم عبر رابط مكتبي العقاري، وسنقوم بخدمتكم في أقرب فرصة
+                    </p>
+                    <p className="text-[10px] font-bold text-primary mt-2 text-right">
+                      (مؤسسة محسن لخدمات الاعمال)
+                    </p>
+                    <a 
+                      href="https://dealapp.sa/ar/profile/67c08063ca5bafdb59e3d8d4?utm_source=visit_my_profile" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="mt-3 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-gradient-gold text-secondary text-xs font-bold glow-gold hover:opacity-90 transition-opacity"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      زيارة المكتب العقاري
+                    </a>
+                  </div>
+                </div>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
 
-        <Link to="/" className="flex items-center gap-2.5 group">
+          <Link to="/" className="flex items-center gap-2.5 group">
           <div className="relative w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-gold opacity-25" />
             <Sparkles className="relative w-5 h-5 text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]" />
