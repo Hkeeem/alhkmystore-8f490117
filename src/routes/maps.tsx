@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { MapPin, Navigation, Sparkles, Tag, Clock, ChevronLeft, Locate } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 export const Route = createFileRoute("/maps")({
   head: () => ({
@@ -34,14 +35,13 @@ function MapsPage() {
   const [loading, setLoading] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const apiKey = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   // توليد مواقع ثابتة للعروض حول موقع المستخدم
   const getDealPosition = useCallback((dealId: string, center: { lat: number; lng: number }) => {
     const seed = dealId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const angle = (seed * 137.5) % 360; // توزيع ذهبي
-    const radius = 0.005 + (seed % 7) * 0.004; // 0.5 - 3.3 كم
+    const angle = (seed * 137.5) % 360;
+    const radius = 0.005 + (seed % 7) * 0.004;
     return {
       lat: center.lat + radius * Math.sin((angle * Math.PI) / 180),
       lng: center.lng + radius * Math.cos((angle * Math.PI) / 180),
@@ -63,7 +63,6 @@ function MapsPage() {
       () => {
         setError("يرجى السماح بالوصول للموقع لعرض العروض القريبة.");
         setLoading(false);
-        // موقع افتراضي: جدة
         setUserLocation({ lat: 21.5433, lng: 39.1728 });
       },
       { timeout: 8000, enableHighAccuracy: true }
@@ -75,139 +74,138 @@ function MapsPage() {
   }, [requestLocation]);
 
   useEffect(() => {
-    if (!apiKey || !userLocation || !mapRef.current) return;
-    let cancelled = false;
-    setOptions({ key: apiKey, v: "weekly" });
-    (async () => {
-      try {
-        const { Map } = await importLibrary("maps") as google.maps.MapsLibrary;
-        if (cancelled || !mapRef.current) return;
+    if (!userLocation || !mapRef.current) return;
 
-        const map = new Map(mapRef.current, {
-          center: userLocation,
-          zoom: 14,
-          mapTypeId: "roadmap",
-          styles: [
-            { featureType: "all", elementType: "geometry", stylers: [{ color: "#1a1a1a" }] },
-            { featureType: "water", elementType: "geometry", stylers: [{ color: "#0d1b2a" }] },
-            { featureType: "road", elementType: "geometry", stylers: [{ color: "#2d2d2d" }] },
-            { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#3a3a3a" }] },
-            { featureType: "poi", elementType: "geometry", stylers: [{ color: "#242424" }] },
-            { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
-            { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-            { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-            { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-            { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-          ],
-          disableDefaultUI: false,
-          zoomControl: true,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-        });
+    // تدمير الخريطة القديمة إن وجدت
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.remove();
+      mapInstanceRef.current = null;
+    }
 
-        mapInstanceRef.current = map;
+    // إنشاء الخريطة
+    const map = L.map(mapRef.current, {
+      center: [userLocation.lat, userLocation.lng],
+      zoom: 14,
+      zoomControl: true,
+      attributionControl: false,
+    });
 
-        // أيقونة موقع المستخدم
-        new google.maps.Marker({
-          position: userLocation,
-          map,
-          title: "موقعك الحالي",
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 10,
-            fillColor: "#D4AF37",
-            fillOpacity: 1,
-            strokeColor: "#ffffff",
-            strokeWeight: 3,
-          },
-          zIndex: 999,
-        });
+    mapInstanceRef.current = map;
 
-        // دائرة حول موقع المستخدم
-        new google.maps.Circle({
-          center: userLocation,
-          radius: 2000,
-          map,
-          fillColor: "#D4AF37",
-          fillOpacity: 0.06,
-          strokeColor: "#D4AF37",
-          strokeOpacity: 0.3,
-          strokeWeight: 1,
-        });
+    // طبقة الخريطة - OpenStreetMap
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+    }).addTo(map);
 
-        // إضافة نقاط العروض
-        deals.forEach((deal) => {
-          const pos = getDealPosition(deal.id, userLocation);
-          const store = getStore(deal.storeId);
-          const discount = Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100);
+    // أيقونة موقع المستخدم (نقطة زرقاء)
+    const userIcon = L.divIcon({
+      className: "",
+      html: `
+        <div style="
+          width: 20px; height: 20px;
+          background: #D4AF37;
+          border: 3px solid #fff;
+          border-radius: 50%;
+          box-shadow: 0 0 0 4px rgba(212,175,55,0.3);
+        "></div>
+      `,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+    });
 
-          const marker = new google.maps.Marker({
-            position: pos,
-            map,
-            title: `${store.name}: ${deal.title}`,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: "#D4AF37",
-              fillOpacity: 0.9,
-              strokeColor: "#111111",
-              strokeWeight: 2,
-            },
-            label: {
-              text: `${discount}%`,
-              color: "#111111",
-              fontSize: "9px",
-              fontWeight: "bold",
-            },
-          });
+    L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
+      .addTo(map)
+      .bindPopup("<b>موقعك الحالي</b>");
 
-          const infoContent = `
-            <div dir="rtl" style="
+    // دائرة حول موقع المستخدم
+    L.circle([userLocation.lat, userLocation.lng], {
+      radius: 2000,
+      color: "#D4AF37",
+      fillColor: "#D4AF37",
+      fillOpacity: 0.06,
+      weight: 1,
+      opacity: 0.3,
+    }).addTo(map);
+
+    // إضافة نقاط العروض الذهبية
+    deals.forEach((deal) => {
+      const pos = getDealPosition(deal.id, userLocation);
+      const store = getStore(deal.storeId);
+      const discount = Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100);
+
+      // أيقونة ذهبية مخصصة للعرض
+      const dealIcon = L.divIcon({
+        className: "",
+        html: `
+          <div style="
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          ">
+            <div style="
+              background: #D4AF37;
+              color: #111;
+              font-size: 10px;
+              font-weight: 900;
               font-family: 'Tajawal', sans-serif;
-              background: #1a1a1a;
-              color: #f5f5f5;
-              border-radius: 12px;
-              padding: 12px;
-              min-width: 200px;
-              max-width: 240px;
-              border: 1px solid #D4AF37;
-            ">
-              <img src="${deal.image}" 
-                style="width:100%;height:90px;object-fit:cover;border-radius:8px;margin-bottom:8px;" 
-                onerror="this.style.display='none'"
-              />
-              <div style="font-size:13px;font-weight:900;margin-bottom:4px;color:#fff;">${deal.title}</div>
-              <div style="font-size:11px;color:#D4AF37;font-weight:bold;margin-bottom:6px;">${store.name}</div>
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:15px;font-weight:900;color:#D4AF37;">${deal.price} ر.س</span>
-                <span style="
-                  font-size:10px;
-                  background:#D4AF37;
-                  color:#111;
-                  padding:2px 8px;
-                  border-radius:20px;
-                  font-weight:900;
-                ">خصم ${discount}%</span>
-              </div>
-              <div style="font-size:10px;color:#888;margin-top:4px;">⏱ ينتهي خلال ${deal.expiresIn}</div>
-            </div>
-          `;
+              padding: 3px 6px;
+              border-radius: 20px;
+              border: 2px solid #fff;
+              box-shadow: 0 2px 8px rgba(212,175,55,0.6);
+              white-space: nowrap;
+            ">-${discount}%</div>
+            <div style="
+              width: 0; height: 0;
+              border-left: 5px solid transparent;
+              border-right: 5px solid transparent;
+              border-top: 6px solid #D4AF37;
+              margin-top: -1px;
+            "></div>
+          </div>
+        `,
+        iconSize: [50, 30],
+        iconAnchor: [25, 30],
+        popupAnchor: [0, -32],
+      });
 
-          const infoWindow = new google.maps.InfoWindow({ content: infoContent });
+      const marker = L.marker([pos.lat, pos.lng], { icon: dealIcon }).addTo(map);
 
-          marker.addListener("click", () => {
-            infoWindow.open(map, marker);
-            setSelectedDeal(deal.id);
-          });
-        });
+      const popupContent = `
+        <div dir="rtl" style="
+          font-family: 'Tajawal', sans-serif;
+          min-width: 180px;
+          max-width: 220px;
+        ">
+          ${deal.image.startsWith("http") ? `<img src="${deal.image}" style="width:100%;height:80px;object-fit:cover;border-radius:8px;margin-bottom:8px;" onerror="this.style.display='none'" />` : `<div style="font-size:40px;text-align:center;margin-bottom:8px;">${deal.image}</div>`}
+          <div style="font-size:13px;font-weight:900;margin-bottom:2px;">${deal.title}</div>
+          <div style="font-size:11px;color:#D4AF37;font-weight:bold;margin-bottom:6px;">${store.name}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:15px;font-weight:900;color:#D4AF37;">${deal.price} ر.س</span>
+            <span style="
+              font-size:10px;
+              background:#D4AF37;
+              color:#111;
+              padding:2px 8px;
+              border-radius:20px;
+              font-weight:900;
+            ">خصم ${discount}%</span>
+          </div>
+          <div style="font-size:10px;color:#888;margin-top:4px;">⏱ ينتهي خلال ${deal.expiresIn}</div>
+        </div>
+      `;
 
-      } catch {
-        setError("تعذّر تحميل الخريطة.");
+      marker.bindPopup(popupContent);
+      marker.on("click", () => setSelectedDeal(deal.id));
+    });
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
       }
-    })();
-    return () => { cancelled = true; };
-  }, [apiKey, userLocation, getDealPosition]);
+    };
+  }, [userLocation, getDealPosition]);
 
   // العروض مرتبة حسب المسافة
   const nearbyDeals = userLocation
@@ -252,18 +250,11 @@ function MapsPage() {
         </div>
       )}
 
-      {/* رسالة بدون API */}
-      {!apiKey && (
-        <div className="rounded-2xl bg-card border border-primary/20 p-4 text-sm text-muted-foreground flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-primary animate-pulse shrink-0" />
-          خرائط قوقل قيد التهيئة — يتم إعداد الاتصال.
-        </div>
-      )}
-
       {/* الخريطة */}
       <div
         ref={mapRef}
-        className="w-full h-[55vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow bg-secondary/40"
+        className="w-full h-[55vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
+        style={{ background: "#e8e0d5" }}
       />
 
       {/* إحصائيات سريعة */}
