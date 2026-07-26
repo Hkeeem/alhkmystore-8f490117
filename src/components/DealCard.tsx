@@ -10,8 +10,11 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const off = discountPercent(deal);
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const Icon = getDealIcon(deal);
   const StoreIcon = getStoreIcon(store);
+
+  const hasRealImage = deal.image?.startsWith("http") && !imgError;
 
   const dealUrl =
     typeof window !== "undefined"
@@ -39,7 +42,16 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
 
       <div className="aspect-square bg-gradient-to-br from-secondary/90 to-secondary flex items-center justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-gradient-gold" />
-        <Icon className="relative w-20 h-20 text-primary drop-shadow-[0_0_16px_oklch(0.77_0.13_85_/_0.6)]" strokeWidth={1.4} />
+        {hasRealImage ? (
+          <img
+            src={deal.image}
+            alt={deal.title}
+            onError={() => setImgError(true)}
+            className="relative w-full h-full object-cover"
+          />
+        ) : (
+          <Icon className="relative w-20 h-20 text-primary drop-shadow-[0_0_16px_oklch(0.77_0.13_85_/_0.6)]" strokeWidth={1.4} />
+        )}
         <div className="absolute bottom-2 left-2 bg-gradient-hero text-primary-foreground px-2.5 py-1 rounded-full text-xs font-black shadow-soft">
           −{off}%
         </div>
