@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
 import { ArrowRight, Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
+import { getDealIcon } from "@/lib/icons";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { DealActions } from "@/components/DealActions";
@@ -35,6 +36,9 @@ function DealDetailPage() {
   const off = discountPercent(deal);
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const DealIcon = getDealIcon(deal);
+  const hasRealImage = deal.image?.startsWith("http") && !imgError;
 
   const groups = comparableGroups();
   const sameProduct =
@@ -60,8 +64,17 @@ function DealDetailPage() {
         </Link>
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-10">
-          <div className="bg-gradient-to-br from-secondary to-muted rounded-[2rem] aspect-square md:aspect-auto md:h-full flex items-center justify-center text-[8rem] md:text-[10rem] relative">
-            <span className="drop-shadow-sm">{deal.image}</span>
+          <div className="bg-gradient-to-br from-secondary to-muted rounded-[2rem] aspect-square md:aspect-auto md:h-full flex items-center justify-center relative overflow-hidden">
+            {hasRealImage ? (
+              <img
+                src={deal.image}
+                alt={deal.title}
+                onError={() => setImgError(true)}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <DealIcon className="w-32 h-32 text-primary drop-shadow-[0_0_24px_oklch(0.77_0.13_85_/_0.6)]" strokeWidth={1.2} />
+            )}
             {isHot && (
               <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-hot text-hot-foreground text-sm font-bold shadow-soft">
                 <Flame className="w-4 h-4" />
@@ -161,8 +174,12 @@ function DealDetailPage() {
                     params={{ id: d.id }}
                     className="group bg-card rounded-2xl p-4 border border-border/50 hover:border-primary transition flex items-center gap-4"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-2xl">
-                      {d.image}
+                    <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-2xl overflow-hidden">
+                      {d.image?.startsWith("http") ? (
+                        <img src={d.image} alt={d.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <span>{d.image}</span>
+                      )}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-1.5 mb-1">
