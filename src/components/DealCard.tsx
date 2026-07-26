@@ -3,7 +3,8 @@ import { Clock, Flame, Share2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
-import { getDealIcon, getStoreIcon } from "@/lib/icons";
+import { getDealIcon } from "@/lib/icons";
+import { StoreLogo } from "./StoreLogo";
 
 export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const store = getStore(deal.storeId);
@@ -12,7 +13,6 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
   const [shareOpen, setShareOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
   const Icon = getDealIcon(deal);
-  const StoreIcon = getStoreIcon(store);
 
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
 
@@ -59,12 +59,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
 
       <div className="p-4 space-y-2.5">
         <div className="flex items-center gap-1.5">
-          <div
-            className="w-6 h-6 rounded-lg flex items-center justify-center text-white"
-            style={{ background: store.color }}
-          >
-            <StoreIcon className="w-3.5 h-3.5" strokeWidth={2.4} />
-          </div>
+          <StoreLogo store={store} size="sm" />
           <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareOpen(true); }}

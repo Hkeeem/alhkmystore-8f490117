@@ -9,25 +9,26 @@ export type Store = {
   id: string;
   name: string;
   logo: string;
+  logoUrl?: string; // URL for real store logo image
   color: string;
   category: Category;
 };
 
 export const stores: Store[] = [
-  { id: "othaim", name: "أسواق العثيم", logo: "ع", color: "oklch(0.55 0.18 25)", category: "سوبرماركت" },
-  { id: "panda", name: "بنده", logo: "ب", color: "oklch(0.5 0.2 145)", category: "سوبرماركت" },
-  { id: "lulu", name: "لولو هايبر", logo: "ل", color: "oklch(0.55 0.2 260)", category: "سوبرماركت" },
-  { id: "danube", name: "الدانوب", logo: "د", color: "oklch(0.5 0.19 220)", category: "سوبرماركت" },
-  { id: "tamimi", name: "أسواق التميمي", logo: "ت", color: "oklch(0.5 0.15 30)", category: "سوبرماركت" },
-  { id: "hunger", name: "هنقرستيشن", logo: "H", color: "oklch(0.65 0.22 40)", category: "مطاعم" },
-  { id: "jahez", name: "جاهز", logo: "ج", color: "oklch(0.6 0.2 340)", category: "مطاعم" },
-  { id: "toshel", name: "توصيل", logo: "T", color: "oklch(0.55 0.18 200)", category: "مطاعم" },
-  { id: "noon", name: "نون", logo: "N", color: "oklch(0.55 0.22 320)", category: "إلكترونيات" },
-  { id: "amazon", name: "أمازون السعودية", logo: "A", color: "oklch(0.5 0.18 60)", category: "إلكترونيات" },
-  { id: "jarir", name: "جرير", logo: "ج", color: "oklch(0.45 0.2 25)", category: "إلكترونيات" },
-  { id: "extra", name: "إكسترا", logo: "X", color: "oklch(0.5 0.2 30)", category: "إلكترونيات" },
-  { id: "nahdi", name: "صيدلية النهدي", logo: "N", color: "oklch(0.5 0.2 155)", category: "صيدلية" },
-  { id: "dawaa", name: "صيدلية الدواء", logo: "د", color: "oklch(0.55 0.18 180)", category: "صيدلية" },
+  { id: "othaim", name: "أسواق العثيم", logo: "ع", logoUrl: "https://logo.clearbit.com/othaim.com.sa", color: "oklch(0.55 0.18 25)", category: "سوبرماركت" },
+  { id: "panda", name: "بنده", logo: "ب", logoUrl: "https://logo.clearbit.com/pandaonline.com.sa", color: "oklch(0.5 0.2 145)", category: "سوبرماركت" },
+  { id: "lulu", name: "لولو هايبر", logo: "ل", logoUrl: "https://logo.clearbit.com/luluhypermarket.com", color: "oklch(0.55 0.2 260)", category: "سوبرماركت" },
+  { id: "danube", name: "الدانوب", logo: "د", logoUrl: "https://logo.clearbit.com/danube.com.sa", color: "oklch(0.5 0.19 220)", category: "سوبرماركت" },
+  { id: "tamimi", name: "أسواق التميمي", logo: "ت", logoUrl: "https://logo.clearbit.com/tamimimarkets.com", color: "oklch(0.5 0.15 30)", category: "سوبرماركت" },
+  { id: "hunger", name: "هنقرستيشن", logo: "H", logoUrl: "https://logo.clearbit.com/hungerstation.com", color: "oklch(0.65 0.22 40)", category: "مطاعم" },
+  { id: "jahez", name: "جاهز", logo: "ج", logoUrl: "https://logo.clearbit.com/jahez.com", color: "oklch(0.6 0.2 340)", category: "مطاعم" },
+  { id: "toshel", name: "توصيل", logo: "T", logoUrl: "https://logo.clearbit.com/tawseel.com.sa", color: "oklch(0.55 0.18 200)", category: "مطاعم" },
+  { id: "noon", name: "نون", logo: "N", logoUrl: "https://logo.clearbit.com/noon.com", color: "oklch(0.55 0.22 320)", category: "إلكترونيات" },
+  { id: "amazon", name: "أمازون السعودية", logo: "A", logoUrl: "https://logo.clearbit.com/amazon.sa", color: "oklch(0.5 0.18 60)", category: "إلكترونيات" },
+  { id: "jarir", name: "جرير", logo: "ج", logoUrl: "https://logo.clearbit.com/jarir.com", color: "oklch(0.45 0.2 25)", category: "إلكترونيات" },
+  { id: "extra", name: "إكسترا", logo: "X", logoUrl: "https://logo.clearbit.com/extra.com", color: "oklch(0.5 0.2 30)", category: "إلكترونيات" },
+  { id: "nahdi", name: "صيدلية النهدي", logo: "N", logoUrl: "https://logo.clearbit.com/nahdi.sa", color: "oklch(0.5 0.2 155)", category: "صيدلية" },
+  { id: "dawaa", name: "صيدلية الدواء", logo: "د", logoUrl: "https://logo.clearbit.com/aldawaa.com", color: "oklch(0.55 0.18 180)", category: "صيدلية" },
 ];
 
 export type Deal = {

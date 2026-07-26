@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, SlidersHorizontal, X } from "lucide-react";
 import { z } from "zod";
 
 const searchSchema = z.object({
@@ -68,16 +69,22 @@ function DealsPage() {
         <Chip active={!storeId} onClick={() => setStoreId(undefined)} small>كل المتاجر</Chip>
         {stores.filter(s => !category || s.category === category).map((s) => (
           <Chip key={s.id} active={storeId === s.id} onClick={() => setStoreId(s.id)} small>
-            <span className="w-4 h-4 rounded inline-flex items-center justify-center text-white text-[8px] font-black ml-1" style={{ background: s.color }}>{s.logo}</span>
+            <StoreLogo store={s} size="sm" className="ml-1 w-4 h-4 rounded" />
             {s.name}
           </Chip>
         ))}
       </div>
 
-      <div className="flex gap-2 text-xs">
+      <div className="flex items-center gap-2 text-xs">
+        <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
         <span className="text-muted-foreground py-1.5">ترتيب:</span>
         <button onClick={() => setSort("discount")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="discount"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأعلى توفيراً</button>
         <button onClick={() => setSort("price")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="price"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأرخص سعراً</button>
+        {(q || category || storeId) && (
+          <button onClick={() => { setQ(""); setCategory(undefined); setStoreId(undefined); }} className="mr-auto flex items-center gap-1 px-3 py-1.5 rounded-full bg-destructive/10 text-destructive font-bold press-ripple transition">
+            <X className="w-3 h-3" /> مسح الفلاتر
+          </button>
+        )}
       </div>
 
       {filtered.length === 0 ? (

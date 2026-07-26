@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Copy, Check, Ticket, Search, Store as StoreIcon } from "lucide-react";
+import { Copy, Check, Ticket, Search, MessageCircle } from "lucide-react";
+import { StoreLogo } from "@/components/StoreLogo";
 import { toast } from "sonner";
 import { coupons, storeById } from "@/data/coupons";
 import { addPoints } from "@/lib/rewards";
@@ -99,15 +100,13 @@ function CouponsPage() {
                 params={{ id: c.id }}
                 className="flex items-start gap-4 hover:opacity-95"
               >
-                <div
-                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-xl shrink-0"
-                  style={{ background: s?.color ?? "hsl(var(--primary))" }}
-                >
-                  {s?.logo ?? "?"}
-                </div>
+                {s ? (
+                  <StoreLogo store={s} size="lg" />
+                ) : (
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary text-primary-foreground font-black text-xl shrink-0">?</div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <StoreIcon className="w-3 h-3" />
                     {s?.name}
                     {c.category && (
                       <span className="mr-auto px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold text-[10px]">
@@ -141,18 +140,15 @@ function CouponsPage() {
                   {isCopied ? <><Check className="w-4 h-4" /> نُسخ</> : <><Copy className="w-4 h-4" /> نسخ</>}
                 </button>
                 <button
-                  onClick={() => setShare({
-                    open: true,
-                    title: c.title,
-                    text: `🎟️ كوبون ${s?.name}\n${c.title}\nالكود: ${c.code}\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق وفّر`,
-                    url: typeof window !== "undefined"
-                      ? `${window.location.origin}/coupons/${c.id}`
-                      : `/coupons/${c.id}`,
-                  })}
-                  className="h-12 px-3 rounded-2xl bg-secondary text-foreground text-sm font-bold hover:bg-secondary/80"
-                  aria-label="مشاركة"
+                  onClick={() => {
+                    const text = encodeURIComponent(`🏟️ *كوبون ${s?.name}*\n${c.title}\nالكود: *${c.code}*\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق HkeeemAI`);
+                    window.open(`https://wa.me/?text=${text}`, "_blank");
+                  }}
+                  className="h-12 px-3 rounded-2xl bg-green-600 text-white text-sm font-bold hover:bg-green-700 flex items-center gap-1.5"
+                  aria-label="مشاركة واتساب"
                 >
-                  شارك
+                  <MessageCircle className="w-4 h-4" />
+                  واتساب
                 </button>
               </div>
             </article>
