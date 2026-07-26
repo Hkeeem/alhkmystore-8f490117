@@ -9,11 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MapsRouteImport } from './routes/maps'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -30,6 +33,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
   path: '/stores',
@@ -50,9 +58,19 @@ const RealEstateRoute = RealEstateRouteImport.update({
   path: '/real-estate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapsRoute = MapsRouteImport.update({
   id: '/maps',
   path: '/maps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DealsRoute = DealsRouteImport.update({
@@ -137,11 +155,14 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -158,11 +179,14 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -181,11 +205,14 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
+  '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -204,11 +231,14 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/admin'
     | '/me'
     | '/api/chat'
@@ -225,11 +255,14 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/admin'
     | '/me'
     | '/api/chat'
@@ -247,11 +280,14 @@ export interface FileRouteTypes {
     | '/chat'
     | '/coupons'
     | '/deals'
+    | '/delete-account'
     | '/maps'
+    | '/privacy'
     | '/real-estate'
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/me'
     | '/api/chat'
@@ -270,11 +306,14 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
+  DeleteAccountRoute: typeof DeleteAccountRoute
   MapsRoute: typeof MapsRoute
+  PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
   StoresRoute: typeof StoresRoute
+  TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
@@ -282,6 +321,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stores': {
       id: '/stores'
       path: '/stores'
@@ -310,11 +356,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RealEstateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/maps': {
       id: '/maps'
       path: '/maps'
       fullPath: '/maps'
       preLoaderRoute: typeof MapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/deals': {
@@ -478,11 +538,14 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
+  DeleteAccountRoute: DeleteAccountRoute,
   MapsRoute: MapsRoute,
+  PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
   StoresRoute: StoresRoute,
+  TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
