@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
@@ -31,6 +32,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
   path: '/stores',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/rewards': typeof RewardsRouteWithChildren
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/api/chat': typeof ApiChatRoute
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/admin'
     | '/me'
     | '/api/chat'
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/admin'
     | '/me'
     | '/api/chat'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/smart-list'
     | '/stores'
+    | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/me'
     | '/api/chat'
@@ -288,6 +300,7 @@ export interface RootRouteChildren {
   RewardsRoute: typeof RewardsRouteWithChildren
   SmartListRoute: typeof SmartListRoute
   StoresRoute: typeof StoresRoute
+  TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
@@ -295,6 +308,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stores': {
       id: '/stores'
       path: '/stores'
@@ -504,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   RewardsRoute: RewardsRouteWithChildren,
   SmartListRoute: SmartListRoute,
   StoresRoute: StoresRoute,
+  TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
