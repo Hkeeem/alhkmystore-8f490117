@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { MapPin, Navigation, Sparkles, Tag, Clock, ChevronLeft, Locate } from "lucide-react";
+import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -171,6 +171,8 @@ function MapsPage() {
 
       const marker = L.marker([pos.lat, pos.lng], { icon: dealIcon }).addTo(map);
 
+      const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${pos.lat},${pos.lng}`;
+
       const popupContent = `
         <div dir="rtl" style="
           font-family: 'Tajawal', sans-serif;
@@ -192,6 +194,23 @@ function MapsPage() {
             ">خصم ${discount}%</span>
           </div>
           <div style="font-size:10px;color:#888;margin-top:4px;">⏱ ينتهي خلال ${deal.expiresIn}</div>
+          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:6px;
+            margin-top:10px;
+            background:#D4AF37;
+            color:#111;
+            font-size:12px;
+            font-weight:900;
+            font-family:'Tajawal',sans-serif;
+            padding:7px 12px;
+            border-radius:12px;
+            text-decoration:none;
+            width:100%;
+            box-sizing:border-box;
+          ">🧭 ابدأ التوجيه</a>
         </div>
       `;
 
@@ -334,7 +353,19 @@ function MapsPage() {
                     </div>
                   </div>
 
-                  <ChevronLeft className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <div className="flex flex-col items-center gap-1 shrink-0">
+                    <ChevronLeft className="w-4 h-4 text-muted-foreground" />
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${deal.pos.lat},${deal.pos.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="flex items-center gap-1 bg-primary text-secondary text-[10px] font-black px-2 py-1 rounded-xl hover:opacity-90 transition"
+                    >
+                      <Navigation className="w-3 h-3" />
+                      توجيه
+                    </a>
+                  </div>
                 </Link>
               );
             })}
