@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Car, Fuel, Wrench, Sparkles } from "lucide-react";
+import { CarsPageSkeleton } from "@/components/Skeletons";
 
 export const Route = createFileRoute("/cars")({
   head: () => ({
@@ -8,6 +9,9 @@ export const Route = createFileRoute("/cars")({
       { name: "description", content: "مقارنة أسعار السيارات الجديدة والمستعملة، تحليل الوكالات، وأفضل صفقات السوق السعودي." },
     ],
   }),
+  pendingComponent: CarsPageSkeleton,
+  pendingMs: 0,
+  pendingMinMs: 300,
   component: Cars,
 });
 
