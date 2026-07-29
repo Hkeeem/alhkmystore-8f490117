@@ -3,6 +3,7 @@ import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -110,11 +111,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen pb-20 md:pb-0">
         <TopBar />
-        <Outlet />
+        <div key={pathname} className="page-transition">
+          <Outlet />
+        </div>
         <Footer />
         <BottomBar />
         <InstallHandler />
