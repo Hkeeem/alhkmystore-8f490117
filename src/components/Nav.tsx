@@ -21,11 +21,27 @@ export function TopBar() {
   const { user, signOut } = useAuth();
   const isStaff = useIsStaff(user?.id);
   const { isDark, toggle: toggleTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
+  useEffect(() => {
+    try {
+      if (localStorage.getItem("hkeeem-sidebar-open") === "1") setMenuOpen(true);
+    } catch { /* ignore */ }
+  }, []);
+
+  const handleMenuOpenChange = (open: boolean) => {
+    setMenuOpen(open);
+    try {
+      localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
+    } catch { /* ignore */ }
+  };
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
         <div className="flex items-center gap-4">
-          <Sheet>
+          <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange}>
             <SheetTrigger asChild>
               <button className="p-2 hover:bg-secondary rounded-xl transition-colors">
                 <Menu className="w-5 h-5 text-primary" />
