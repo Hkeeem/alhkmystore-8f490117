@@ -10,6 +10,7 @@ import {
   findMatches, DISTRICTS_JEDDAH, SERVICES_LIST, FEATURES_LIST,
   type PropertyRequest, type MatchResult, type PropertyType, type FinishType,
 } from "@/data/real-estate-listings";
+import { RealEstatePageSkeleton } from "@/components/Skeletons";
 
 export const Route = createFileRoute("/real-estate")({
   head: () => ({
@@ -18,6 +19,9 @@ export const Route = createFileRoute("/real-estate")({
       { name: "description", content: "ابحث عن عقارك المثالي بالذكاء الاصطناعي — نطابق طلبك مع أفضل العروض بنسب دقيقة." },
     ],
   }),
+  pendingComponent: RealEstatePageSkeleton,
+  pendingMs: 0,
+  pendingMinMs: 300,
   component: RealEstate,
 });
 
