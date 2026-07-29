@@ -17,10 +17,17 @@ const items = [
   { to: "/chat", label: "مساعد", icon: MessageCircle },
 ] as const;
 
+/** يحدد إن كان المسار الحالي يطابق رابط القائمة (مع دعم الصفحات الفرعية) */
+function isPathActive(pathname: string, to: string) {
+  if (to === "/") return pathname === "/";
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
 export function TopBar() {
   const { user, signOut } = useAuth();
   const isStaff = useIsStaff(user?.id);
   const { isDark, toggle: toggleTheme } = useTheme();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [menuOpen, setMenuOpen] = useState(false);
 
   // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
