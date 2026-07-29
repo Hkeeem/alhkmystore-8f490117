@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2 } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,10 +17,17 @@ const items = [
   { to: "/chat", label: "مساعد", icon: MessageCircle },
 ] as const;
 
+/** يحدد إن كان المسار الحالي يطابق رابط القائمة (مع دعم الصفحات الفرعية) */
+function isPathActive(pathname: string, to: string) {
+  if (to === "/") return pathname === "/";
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
 export function TopBar() {
   const { user, signOut } = useAuth();
   const isStaff = useIsStaff(user?.id);
   const { isDark, toggle: toggleTheme } = useTheme();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [menuOpen, setMenuOpen] = useState(false);
 
   // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
@@ -60,16 +67,24 @@ export function TopBar() {
                 <nav className="flex flex-col gap-2">
                   {items.map((it) => {
                     const Icon = it.icon;
+                    const active = isPathActive(pathname, it.to);
                     return (
                       <Link
                         key={it.to}
                         to={it.to}
-                        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
-                        activeProps={{ className: "flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold" }}
+                        aria-current={active ? "page" : undefined}
+                        className={
+                          active
+                            ? "relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
+                            : "relative flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                        }
                       >
+                        {active && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
+                        )}
                         <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span className="text-sm">{it.label}</span>
-                        {it.to === "/maps" && (
+                        {it.to === "/maps" && !active && (
                           <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">جديد</span>
                         )}
                       </Link>
@@ -79,15 +94,29 @@ export function TopBar() {
                   {/* رابط البحث العقاري الذكي - في القائمة الجانبية فقط */}
                   <div className="mt-2 border-t border-primary/10 pt-2">
                     <p className="text-[10px] text-muted-foreground px-4 pb-1 font-bold uppercase tracking-wider">عقارات</p>
-                    <Link
-                      to="/real-estate"
-                      className="flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
-                      activeProps={{ className: "flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold" }}
-                    >
-                      <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                      <span className="text-sm">البحث العقاري</span>
-                      <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">AI</span>
-                    </Link>
+                    {(() => {
+                      const active = isPathActive(pathname, "/real-estate");
+                      return (
+                        <Link
+                          to="/real-estate"
+                          aria-current={active ? "page" : undefined}
+                          className={
+                            active
+                              ? "relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
+                              : "relative flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                          }
+                        >
+                          {active && (
+                            <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
+                          )}
+                          <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                          <span className="text-sm">البحث العقاري</span>
+                          {!active && (
+                            <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">AI</span>
+                          )}
+                        </Link>
+                      );
+                    })()}
                   </div>
                 </nav>
               </div>
