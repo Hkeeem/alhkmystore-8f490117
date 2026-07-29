@@ -16,7 +16,7 @@ function buildShareText(text: string, origin: string): string {
   return text.replace(DEAL_TOKEN, (_, id) => {
     const d = deals.find((x) => x.id === id);
     if (!d) return "";
-    return `\n🔗 ${d.title} — ${d.price} ر.س: ${origin}/deals/${id}?utm_source=makki&utm_medium=chat&utm_campaign=recommendation`;
+    return `\n🔗 ${d.title} — ${d.price} ر.س: ${origin}/deals/${id}?utm_source=hkeeem&utm_medium=chat&utm_campaign=recommendation`;
   }).trim();
 }
 
@@ -58,8 +58,8 @@ export const Route = createFileRoute("/chat")({
   }),
   head: () => ({
     meta: [
-      { title: "مكّي - المساعد الذكي لعروض المملكة" },
-      { name: "description", content: "تكلّم أو اكتب مع مكّي، مساعدك الذكي لأفضل عروض السعودية." },
+      { title: "حكيم - المساعد الذكي لعروض المملكة" },
+      { name: "description", content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية." },
     ],
   }),
   component: ChatPage,
@@ -191,7 +191,7 @@ function ChatPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-display font-black text-xl">مكّي</h1>
+              <h1 className="font-display font-black text-xl">حكيم</h1>
               <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse inline-block" />
                 متصل
@@ -222,7 +222,7 @@ function ChatPage() {
               <div className="w-16 h-16 mx-auto rounded-3xl bg-primary/20 flex items-center justify-center mb-3">
                 <Sparkles className="w-8 h-8 text-primary" />
               </div>
-              <h2 className="font-display font-black text-xl text-white mb-1">هلا! أنا مكّي 👋</h2>
+              <h2 className="font-display font-black text-xl text-white mb-1">هلا! أنا حكيم 👋</h2>
               <p className="text-sm text-white/70">اسألني عن أي عرض أو منتج وأنا أساعدك توفّر</p>
             </div>
 
@@ -258,7 +258,7 @@ function ChatPage() {
                   <div className="w-6 h-6 rounded-full bg-gradient-hero flex items-center justify-center">
                     <Bot className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <span className="text-[11px] text-muted-foreground font-bold">مكّي</span>
+                  <span className="text-[11px] text-muted-foreground font-bold">حكيم</span>
                 </div>
               )}
               <div className={`max-w-[85%] ${mine
@@ -271,7 +271,7 @@ function ChatPage() {
                 <button
                   onClick={() => {
                     const origin = typeof window !== "undefined" ? window.location.origin : "";
-                    setSharePayload({ title: "توصية من مكّي", text: buildShareText(text, origin) });
+                    setSharePayload({ title: "توصية من حكيم", text: buildShareText(text, origin) });
                     setShareOpen(true);
                   }}
                   className="text-[11px] text-muted-foreground hover:text-primary flex items-center gap-1 px-2 transition"

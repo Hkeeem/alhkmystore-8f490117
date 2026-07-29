@@ -35,7 +35,7 @@ function NotFoundComponent() {
     suggestion = { to: "/smart-list", label: "قائمة التسوق الذكية", hint: "ابنِ قائمتك بالذكاء الاصطناعي", emoji: "🛒" };
     backTo = { to: "/", label: "الرئيسية" };
   } else if (path.startsWith("/chat") || path.startsWith("/makki")) {
-    suggestion = { to: "/chat", label: "مكّي — مساعدك الذكي", hint: "اسأله عن أي عرض", emoji: "💬" };
+    suggestion = { to: "/chat", label: "حكيم — مساعدك الذكي", hint: "اسأله عن أي عرض", emoji: "💬" };
     backTo = { to: "/", label: "الرئيسية" };
   }
   return (
