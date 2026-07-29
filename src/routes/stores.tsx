@@ -2,6 +2,7 @@ import { stores } from "@/data/deals";
 import { getStoreIcon } from "@/lib/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Store as StoreIcon } from "lucide-react";
+import { StoresPageSkeleton } from "@/components/Skeletons";
 
 export const Route = createFileRoute("/stores")({
   head: () => ({
@@ -10,6 +11,9 @@ export const Route = createFileRoute("/stores")({
       { name: "description", content: "كل المتاجر السعودية الشريكة في مكان واحد: العثيم، بنده، لولو، نون، جرير، إكسترا، النهدي." },
     ],
   }),
+  pendingComponent: StoresPageSkeleton,
+  pendingMs: 0,
+  pendingMinMs: 300,
   component: Stores,
 });
 
