@@ -66,3 +66,65 @@ export function StatsSkeleton({ count = 3 }: { count?: number }) {
     </div>
   );
 }
+
+/* ===== هياكل تحميل مخصصة لكل صفحة ===== */
+
+function PageHeroSkeleton() {
+  return (
+    <div className="rounded-[2rem] border border-border/50 bg-card p-8 md:p-12 space-y-4">
+      <SkeletonBox className="h-6 w-32 rounded-full" />
+      <SkeletonBox className="h-9 w-2/3" />
+      <SkeletonBox className="h-4 w-1/2" />
+    </div>
+  );
+}
+
+export function StoresPageSkeleton() {
+  return (
+    <main className="max-w-6xl mx-auto px-4 pt-6 pb-16 space-y-8">
+      <PageHeroSkeleton />
+      {Array.from({ length: 3 }).map((_, s) => (
+        <section key={s} className="space-y-3">
+          <SkeletonBox className="h-5 w-40" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonBox key={i} className="h-24 rounded-2xl" />
+            ))}
+          </div>
+        </section>
+      ))}
+    </main>
+  );
+}
+
+export function CarsPageSkeleton() {
+  return (
+    <main className="max-w-6xl mx-auto px-4 pt-6 pb-16 space-y-8">
+      <PageHeroSkeleton />
+      <StatsSkeleton count={3} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <SkeletonBox key={i} className="h-44 rounded-3xl" />
+        ))}
+      </div>
+    </main>
+  );
+}
+
+export function RealEstatePageSkeleton() {
+  return (
+    <main className="max-w-6xl mx-auto px-4 pt-6 pb-16 space-y-8">
+      <PageHeroSkeleton />
+      <div className="rounded-3xl border border-border/50 bg-card p-6 space-y-4">
+        <SkeletonBox className="h-5 w-44" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonBox key={i} className="h-11 rounded-xl" />
+          ))}
+        </div>
+        <SkeletonBox className="h-12 w-full rounded-2xl" />
+      </div>
+      <ListSkeleton count={4} grid />
+    </main>
+  );
+}
