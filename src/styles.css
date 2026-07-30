@@ -409,19 +409,36 @@
 }
 
 
-/* ===== انتقالات ناعمة بين الصفحات ===== */
+/* ===== تمرير ناعم + استعادة موضع التمرير ===== */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+  overscroll-behavior-y: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ===== انتقالات ناعمة بين الصفحات (opacity فقط حتى لا تتأثر استعادة التمرير) ===== */
 @keyframes pageEnter {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.995);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 
 .page-transition {
-  animation: pageEnter 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
-  will-change: opacity, transform;
+  animation: pageEnter 0.22s ease-out both;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
 }

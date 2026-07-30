@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
 import { InstallHandler } from "@/components/InstallHandler";
+import { ScrollMemory } from "@/components/ScrollMemory";
 import { Footer } from "@/components/Footer";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
@@ -116,6 +117,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen pb-20 md:pb-0">
         <TopBar />
+        <ScrollMemory />
         <div key={pathname} className="page-transition">
           <Outlet />
         </div>
