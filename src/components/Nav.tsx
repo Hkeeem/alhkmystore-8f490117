@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2 } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2, Store, Car, ChevronDown } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
@@ -17,10 +17,89 @@ const items = [
   { to: "/chat", label: "مساعد", icon: MessageCircle },
 ] as const;
 
+type SubItem = { to: string; label: string; icon: typeof Home; badge?: string };
+type Group = { label: string; icon: typeof Home; items: SubItem[] };
+
+const groups: Group[] = [
+  {
+    label: "متجر حكيم AI",
+    icon: Store,
+    items: [
+      { to: "/stores", label: "المتاجر", icon: Store },
+      { to: "/deals", label: "العروض", icon: Tag },
+      { to: "/coupons", label: "الكوبونات", icon: Ticket },
+    ],
+  },
+  {
+    label: "معرض حكيم AI",
+    icon: Car,
+    items: [{ to: "/cars", label: "السيارات", icon: Car, badge: "AI" }],
+  },
+  {
+    label: "مكتب حكيم AI",
+    icon: Building2,
+    items: [{ to: "/real-estate", label: "البحث العقاري", icon: Building2, badge: "AI" }],
+  },
+];
+
 /** يحدد إن كان المسار الحالي يطابق رابط القائمة (مع دعم الصفحات الفرعية) */
 function isPathActive(pathname: string, to: string) {
   if (to === "/") return pathname === "/";
   return pathname === to || pathname.startsWith(`${to}/`);
+}
+
+function SidebarGroup({ group, pathname }: { group: Group; pathname: string }) {
+  const hasActive = group.items.some((i) => isPathActive(pathname, i.to));
+  const [open, setOpen] = useState(hasActive);
+  // فتح تلقائي عند الانتقال لصفحة داخل القسم
+  useEffect(() => {
+    if (hasActive) setOpen(true);
+  }, [hasActive]);
+  const GroupIcon = group.icon;
+  return (
+    <div className="mt-2 border-t border-primary/10 pt-2">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
+      >
+        <GroupIcon className="w-4.5 h-4.5 text-primary" />
+        <span className="text-sm font-bold">{group.label}</span>
+        <ChevronDown className={`mr-auto w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="mt-1 flex flex-col gap-1 pr-3">
+          {group.items.map((it) => {
+            const Icon = it.icon;
+            const active = isPathActive(pathname, it.to);
+            return (
+              <Link
+                key={it.to}
+                to={it.to}
+                preload="intent"
+                aria-current={active ? "page" : undefined}
+                className={
+                  active
+                    ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
+                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                }
+              >
+                {active && (
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-full bg-primary-foreground/80" />
+                )}
+                <Icon className="w-4.5 h-4.5 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">{it.label}</span>
+                {it.badge && !active && (
+                  <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{it.badge}</span>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function TopBar() {
@@ -91,33 +170,10 @@ export function TopBar() {
                     );
                   })}
 
-                  {/* رابط البحث العقاري الذكي - في القائمة الجانبية فقط */}
-                  <div className="mt-2 border-t border-primary/10 pt-2">
-                    <p className="text-[10px] text-muted-foreground px-4 pb-1 font-bold uppercase tracking-wider">عقارات</p>
-                    {(() => {
-                      const active = isPathActive(pathname, "/real-estate");
-                      return (
-                        <Link
-                          to="/real-estate"
-                          aria-current={active ? "page" : undefined}
-                          className={
-                            active
-                              ? "relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                              : "relative flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
-                          }
-                        >
-                          {active && (
-                            <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
-                          )}
-                          <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                          <span className="text-sm">البحث العقاري</span>
-                          {!active && (
-                            <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">AI</span>
-                          )}
-                        </Link>
-                      );
-                    })()}
-                  </div>
+                  {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
+                  {groups.map((g) => (
+                    <SidebarGroup key={g.label} group={g} pathname={pathname} />
+                  ))}
                 </nav>
               </div>
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
