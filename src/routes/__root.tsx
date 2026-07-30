@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
 import { InstallHandler } from "@/components/InstallHandler";
+import { ScrollMemory } from "@/components/ScrollMemory";
 import { Footer } from "@/components/Footer";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
