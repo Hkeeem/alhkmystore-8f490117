@@ -4,6 +4,9 @@ export const Route = createFileRoute("/api/stt")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader) return new Response("Unauthorized", { status: 401 });
+
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("missing key", { status: 500 });
 

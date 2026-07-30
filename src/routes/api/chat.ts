@@ -7,6 +7,12 @@ export const Route = createFileRoute("/api/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Auth check
+        const authHeader = request.headers.get("Authorization");
+        if (!authHeader) {
+          return new Response("Unauthorized", { status: 401 });
+        }
+
         const { messages } = (await request.json()) as { messages?: UIMessage[] };
         if (!Array.isArray(messages)) return new Response("bad request", { status: 400 });
 
