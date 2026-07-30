@@ -116,6 +116,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen pb-20 md:pb-0">
         <TopBar />
+        <ScrollMemory />
         <div key={pathname} className="page-transition">
           <Outlet />
         </div>
