@@ -35,24 +35,30 @@ export function ScrollMemory() {
     };
 
     let cancelled = false;
-    const start = performance.now();
-    const restore = () => {
-      if (cancelled) return;
-      const elapsed = performance.now() - start;
-      const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
-      const goal = Math.min(target, max);
-      // نُعيد التطبيق كل إطار خلال نافذة قصيرة، لأن ارتفاع المحتوى قد يتغيّر
-      // بعد التركيب (بيانات/صور/حركة الانتقال) فيقصّ المتصفح الموضع.
-      if (Math.abs(window.scrollY - goal) > 1) {
-        window.scrollTo({ top: goal, behavior: "instant" as ScrollBehavior });
-      }
-      if (elapsed < 900) {
-        requestAnimationFrame(restore);
-      } else {
-        ready = true;
-      }
-    };
-    requestAnimationFrame(restore);
+    if (target <= 0) {
+      // صفحة جديدة: ابدأ من الأعلى ثم اسمح بالحفظ فوراً
+      window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+      ready = true;
+    } else {
+      const start = performance.now();
+      const restore = () => {
+        if (cancelled) return;
+        const elapsed = performance.now() - start;
+        const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
+        const goal = Math.min(target, max);
+        // نُعيد التطبيق كل إطار خلال نافذة قصيرة، لأن ارتفاع المحتوى قد يتغيّر
+        // بعد التركيب (بيانات/صور/حركة الانتقال) فيقصّ المتصفح الموضع.
+        if (window.scrollY < goal - 1) {
+          window.scrollTo({ top: goal, behavior: "instant" as ScrollBehavior });
+        }
+        if (elapsed < 900) {
+          requestAnimationFrame(restore);
+        } else {
+          ready = true;
+        }
+      };
+      requestAnimationFrame(restore);
+    }
 
     window.addEventListener("scroll", save, { passive: true });
     return () => {
