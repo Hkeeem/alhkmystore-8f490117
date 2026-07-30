@@ -52,8 +52,8 @@ export function ScrollMemory() {
     window.addEventListener("scroll", save, { passive: true });
     return () => {
       cancelled = true;
-      ready = true;
-      save();
+      // لا نحفظ عند الخروج: المتصفح قد يكون صفّر التمرير مسبقاً فيُتلف القيمة المحفوظة
+      ready = false;
       window.removeEventListener("scroll", save);
       if (raf) cancelAnimationFrame(raf);
     };
