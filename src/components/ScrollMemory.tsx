@@ -38,10 +38,15 @@ export function ScrollMemory() {
     const start = performance.now();
     const restore = () => {
       if (cancelled) return;
+      const elapsed = performance.now() - start;
       const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
-      window.scrollTo({ top: Math.min(target, max), behavior: "instant" as ScrollBehavior });
-      // نستمر بالمحاولة حتى يكتمل ارتفاع المحتوى (صور/بيانات) أو تنتهي المهلة
-      if (max < target && performance.now() - start < 1500) {
+      const goal = Math.min(target, max);
+      // نُعيد التطبيق كل إطار خلال نافذة قصيرة، لأن ارتفاع المحتوى قد يتغيّر
+      // بعد التركيب (بيانات/صور/حركة الانتقال) فيقصّ المتصفح الموضع.
+      if (Math.abs(window.scrollY - goal) > 1) {
+        window.scrollTo({ top: goal, behavior: "instant" as ScrollBehavior });
+      }
+      if (elapsed < 900) {
         requestAnimationFrame(restore);
       } else {
         ready = true;
