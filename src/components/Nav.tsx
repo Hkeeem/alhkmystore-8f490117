@@ -91,33 +91,10 @@ export function TopBar() {
                     );
                   })}
 
-                  {/* رابط البحث العقاري الذكي - في القائمة الجانبية فقط */}
-                  <div className="mt-2 border-t border-primary/10 pt-2">
-                    <p className="text-[10px] text-muted-foreground px-4 pb-1 font-bold uppercase tracking-wider">عقارات</p>
-                    {(() => {
-                      const active = isPathActive(pathname, "/real-estate");
-                      return (
-                        <Link
-                          to="/real-estate"
-                          aria-current={active ? "page" : undefined}
-                          className={
-                            active
-                              ? "relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                              : "relative flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
-                          }
-                        >
-                          {active && (
-                            <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
-                          )}
-                          <Building2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                          <span className="text-sm">البحث العقاري</span>
-                          {!active && (
-                            <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">AI</span>
-                          )}
-                        </Link>
-                      );
-                    })()}
-                  </div>
+                  {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
+                  {groups.map((g) => (
+                    <SidebarGroup key={g.label} group={g} pathname={pathname} />
+                  ))}
                 </nav>
               </div>
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
