@@ -102,8 +102,6 @@ export function ScrollMemory() {
       window.removeEventListener("scroll", save);
       if (raf) cancelAnimationFrame(raf);
     };
-
-    };
   }, [key, router]);
 
   return null;
