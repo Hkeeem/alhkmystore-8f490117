@@ -38,7 +38,6 @@ export function ScrollMemory() {
     const save = () => {
       // بعد النقر على رابط/زر نتوقف عن الحفظ حتى لا يُكتب موضع الصفر
       if (!ready || frozen || raf) return;
-      if (intentY >= 0 && performance.now() - intentAt < 1500) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
         if (frozen) return;
@@ -53,7 +52,19 @@ export function ScrollMemory() {
       intentY = window.scrollY;
       intentAt = performance.now();
       if (ready) write(intentY);
+      // أوقف الحفظ التلقائي حتى يمرّر المستخدم مجدداً أو يغادر الصفحة
+      frozen = true;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
     };
+
+    // تمرير حقيقي من المستخدم يلغي التجميد
+    const onUserScroll = () => {
+      if (!cancelled) {
+        frozen = false;
+        intentY = -1;
+      }
+    };
+
 
 
     let cancelled = false;
