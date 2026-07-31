@@ -8,6 +8,7 @@ const state = {
   frozen: false,
   intentY: -1,
   intentAt: 0,
+  lastKey: "",
 };
 
 function write(key: string, y: number) {
@@ -36,8 +37,12 @@ export function ScrollMemory() {
     let raf = 0;
     let cancelled = false;
 
-    state.frozen = false;
-    state.intentY = -1;
+    // لا نلغي التجميد إلا عند تغيّر الصفحة فعلياً
+    if (state.lastKey !== key) {
+      state.lastKey = key;
+      state.frozen = false;
+      state.intentY = -1;
+    }
 
     const save = () => {
       if (!ready || state.frozen || raf) return;
