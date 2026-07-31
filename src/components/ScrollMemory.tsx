@@ -1,14 +1,14 @@
 import { useEffect, useRef } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import { useRouter, useRouterState } from "@tanstack/react-router";
 
 const PREFIX = "hkeeem-scroll:";
 
 /**
  * يحفظ موضع التمرير لكل إدخال في سجل التصفح ويعيده عند الرجوع/التقدّم،
- * ويبدأ من أعلى الصفحة عند فتح صفحة جديدة. يعمل حتى مع إعادة تركيب
- * المحتوى بسبب حركة الانتقال بين الصفحات.
+ * ويبدأ من أعلى الصفحة عند فتح صفحة جديدة.
  */
 export function ScrollMemory() {
+  const router = useRouter();
   const location = useRouterState({ select: (s) => s.location });
   const key = `${(location.state as { key?: string } | undefined)?.key ?? ""}|${location.pathname}${location.searchStr ?? ""}`;
   const keyRef = useRef(key);
@@ -16,18 +16,21 @@ export function ScrollMemory() {
   useEffect(() => {
     keyRef.current = key;
 
-    // 1) اقرأ الموضع المحفوظ قبل تسجيل أي حفظ جديد
     let target = 0;
     try {
       target = Number(sessionStorage.getItem(PREFIX + key) ?? 0) || 0;
     } catch { /* ignore */ }
 
+    // frozen: يمنع أي حفظ بعد بدء التنقل (المتصفح يصفّر التمرير عندها)
+    let frozen = false;
     let ready = false;
     let raf = 0;
+
     const save = () => {
-      if (!ready || raf) return;
+      if (!ready || frozen || raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
+        if (frozen) return;
         try {
           sessionStorage.setItem(PREFIX + keyRef.current, String(Math.round(window.scrollY)));
         } catch { /* ignore */ }
@@ -36,7 +39,6 @@ export function ScrollMemory() {
 
     let cancelled = false;
     if (target <= 0) {
-      // صفحة جديدة: ابدأ من الأعلى ثم اسمح بالحفظ فوراً
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
       ready = true;
     } else {
@@ -46,9 +48,7 @@ export function ScrollMemory() {
         const elapsed = performance.now() - start;
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 0);
         const goal = Math.min(target, max);
-        // نُعيد التطبيق كل إطار خلال نافذة قصيرة، لأن ارتفاع المحتوى قد يتغيّر
-        // بعد التركيب (بيانات/صور/حركة الانتقال) فيقصّ المتصفح الموضع.
-        if (window.scrollY < goal - 1) {
+        if (Math.abs(window.scrollY - goal) > 1) {
           window.scrollTo({ top: goal, behavior: "instant" as ScrollBehavior });
         }
         if (elapsed < 900) {
@@ -60,15 +60,27 @@ export function ScrollMemory() {
       requestAnimationFrame(restore);
     }
 
+    // جمّد الحفظ لحظة بدء أي تنقل، بعد تثبيت آخر موضع فعلي للمستخدم
+    const unsubscribe = router.subscribe("onBeforeNavigate", () => {
+      if (ready && !frozen) {
+        try {
+          sessionStorage.setItem(PREFIX + keyRef.current, String(Math.round(window.scrollY)));
+        } catch { /* ignore */ }
+      }
+      frozen = true;
+      if (raf) { cancelAnimationFrame(raf); raf = 0; }
+    });
+
     window.addEventListener("scroll", save, { passive: true });
     return () => {
       cancelled = true;
-      // لا نحفظ عند الخروج: المتصفح قد يكون صفّر التمرير مسبقاً فيُتلف القيمة المحفوظة
+      frozen = true;
       ready = false;
+      unsubscribe();
       window.removeEventListener("scroll", save);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [key]);
+  }, [key, router]);
 
   return null;
 }
