@@ -3,20 +3,14 @@ import { useEffect, useState } from "react";
 type Theme = "light" | "dark";
 
 export function useTheme() {
-  // نبدأ دائماً بـ "light" على الخادم والعميل لتفادي اختلاف الترطيب (hydration)
-  const [theme, setTheme] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
     const stored = localStorage.getItem("hkeeem-theme") as Theme | null;
-    const initial =
-      stored ?? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    setTheme(initial);
-    setMounted(true);
-  }, []);
+    if (stored) return stored;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
 
   useEffect(() => {
-    if (!mounted) return;
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -24,7 +18,7 @@ export function useTheme() {
       root.classList.remove("dark");
     }
     localStorage.setItem("hkeeem-theme", theme);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const toggle = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
