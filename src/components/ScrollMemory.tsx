@@ -79,25 +79,30 @@ export function ScrollMemory() {
       requestAnimationFrame(restore);
     }
 
-    // جمّد الحفظ لحظة بدء أي تنقل، بعد تثبيت آخر موضع فعلي للمستخدم
+    // جمّد الحفظ لحظة بدء أي تنقل، مع تثبيت آخر موضع فعلي للمستخدم
     const unsubscribe = router.subscribe("onBeforeNavigate", () => {
       if (ready && !frozen) {
-        try {
-          sessionStorage.setItem(PREFIX + key, String(Math.round(window.scrollY)));
-        } catch { /* ignore */ }
+        const recentIntent = intentY >= 0 && performance.now() - intentAt < 3000;
+        write(recentIntent ? intentY : window.scrollY);
       }
       frozen = true;
       if (raf) { cancelAnimationFrame(raf); raf = 0; }
     });
 
+    document.addEventListener("pointerdown", onIntent, true);
+    document.addEventListener("keydown", onIntent, true);
     window.addEventListener("scroll", save, { passive: true });
     return () => {
       cancelled = true;
       frozen = true;
       ready = false;
       unsubscribe();
+      document.removeEventListener("pointerdown", onIntent, true);
+      document.removeEventListener("keydown", onIntent, true);
       window.removeEventListener("scroll", save);
       if (raf) cancelAnimationFrame(raf);
+    };
+
     };
   }, [key, router]);
 
