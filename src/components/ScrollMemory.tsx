@@ -32,7 +32,7 @@ export function ScrollMemory() {
         raf = 0;
         if (frozen) return;
         try {
-          sessionStorage.setItem(PREFIX + keyRef.current, String(Math.round(window.scrollY)));
+          sessionStorage.setItem(PREFIX + key, String(Math.round(window.scrollY)));
         } catch { /* ignore */ }
       });
     };
@@ -40,7 +40,7 @@ export function ScrollMemory() {
     let cancelled = false;
     if (target <= 0) {
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
-      ready = true;
+      setTimeout(() => { ready = true; }, 400);
     } else {
       const start = performance.now();
       const restore = () => {
@@ -64,7 +64,7 @@ export function ScrollMemory() {
     const unsubscribe = router.subscribe("onBeforeNavigate", () => {
       if (ready && !frozen) {
         try {
-          sessionStorage.setItem(PREFIX + keyRef.current, String(Math.round(window.scrollY)));
+          sessionStorage.setItem(PREFIX + key, String(Math.round(window.scrollY)));
         } catch { /* ignore */ }
       }
       frozen = true;
