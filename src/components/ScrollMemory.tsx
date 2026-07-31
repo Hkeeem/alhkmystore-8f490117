@@ -113,6 +113,8 @@ export function ScrollMemory() {
       unsubscribe();
       document.removeEventListener("pointerdown", onIntent, true);
       document.removeEventListener("keydown", onIntent, true);
+      window.removeEventListener("wheel", onUserScroll);
+      window.removeEventListener("touchmove", onUserScroll);
       window.removeEventListener("scroll", save);
       if (raf) cancelAnimationFrame(raf);
     };
