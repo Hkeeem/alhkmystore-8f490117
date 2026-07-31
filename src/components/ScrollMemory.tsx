@@ -25,17 +25,36 @@ export function ScrollMemory() {
     let frozen = false;
     let ready = false;
     let raf = 0;
+    // آخر موضع مؤكد للمستخدم قبل أي نقرة تنقّل
+    let intentY = -1;
+    let intentAt = 0;
+
+    const write = (y: number) => {
+      try {
+        sessionStorage.setItem(PREFIX + key, String(Math.max(0, Math.round(y))));
+      } catch { /* ignore */ }
+    };
 
     const save = () => {
+      // بعد النقر على رابط/زر نتوقف عن الحفظ حتى لا يُكتب موضع الصفر
       if (!ready || frozen || raf) return;
+      if (intentY >= 0 && performance.now() - intentAt < 1500) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
         if (frozen) return;
-        try {
-          sessionStorage.setItem(PREFIX + key, String(Math.round(window.scrollY)));
-        } catch { /* ignore */ }
+        write(window.scrollY);
       });
     };
+
+    // نلتقط الموضع لحظة النقر على رابط أو زر (قبل أي تصفير للتمرير)
+    const onIntent = (e: Event) => {
+      const el = e.target as HTMLElement | null;
+      if (!el?.closest?.("a[href], button, [role='link'], [role='button']")) return;
+      intentY = window.scrollY;
+      intentAt = performance.now();
+      if (ready) write(intentY);
+    };
+
 
     let cancelled = false;
     if (target <= 0) {
