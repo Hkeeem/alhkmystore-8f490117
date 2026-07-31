@@ -90,9 +90,9 @@ export function ScrollMemory() {
       requestAnimationFrame(restore);
     }
 
-    // جمّد الحفظ لحظة بدء أي تنقل، مع تثبيت آخر موضع فعلي للمستخدم
+    // ثبّت آخر موضع فعلي للمستخدم لحظة بدء أي تنقل
     const unsubscribe = router.subscribe("onBeforeNavigate", () => {
-      if (ready && !frozen) {
+      if (ready) {
         const recentIntent = intentY >= 0 && performance.now() - intentAt < 3000;
         write(recentIntent ? intentY : window.scrollY);
       }
@@ -102,7 +102,10 @@ export function ScrollMemory() {
 
     document.addEventListener("pointerdown", onIntent, true);
     document.addEventListener("keydown", onIntent, true);
+    window.addEventListener("wheel", onUserScroll, { passive: true });
+    window.addEventListener("touchmove", onUserScroll, { passive: true });
     window.addEventListener("scroll", save, { passive: true });
+
     return () => {
       cancelled = true;
       frozen = true;
