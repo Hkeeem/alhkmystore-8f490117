@@ -65,7 +65,9 @@ function AdminPage() {
     { id: "cashback" as const, label: "كاش باك", icon: Wallet, allow: ["super_admin","admin"] },
     { id: "alerts" as const, label: "تنبيهات الأسعار", icon: BellRing, allow: ["super_admin","admin"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
+    { id: "deploy" as const, label: "حالة النشر", icon: Rocket, allow: ["super_admin","admin"] },
   ]).filter((t) => can(t.allow));
+
 
   return (
     <div dir="rtl" className="min-h-screen bg-background">
@@ -108,6 +110,8 @@ function AdminPage() {
           {tab === "cashback" && <CashbackAdminTab />}
           {tab === "alerts" && <AlertsAdminTab />}
           {tab === "audit" && <AuditTab />}
+          {tab === "deploy" && <DeployTab />}
+
         </main>
       </div>
     </div>
