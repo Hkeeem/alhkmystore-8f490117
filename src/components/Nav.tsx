@@ -137,7 +137,9 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+      <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+        <VisionBadge />
+
         <div className="flex items-center gap-4">
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange}>
             <SheetTrigger asChild>
