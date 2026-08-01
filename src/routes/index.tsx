@@ -241,7 +241,7 @@ function Home() {
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-thuluth text-base text-muted-foreground leading-[1.8]">المتاجر المشاركة</h3>
-          <Link to="/stores" className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+          <Link to="/stores" className="font-thuluth text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all leading-[1.9]">
             كل المتاجر <ArrowLeft className="w-3 h-3" />
           </Link>
         </div>
