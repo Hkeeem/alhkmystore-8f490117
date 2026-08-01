@@ -716,15 +716,57 @@ html {
   animation: sidebarItemIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* انزلاق ناعم للقائمة اليمنى عند الفتح والإغلاق */
+@keyframes sidebarPanelIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes sidebarPanelOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.99);
+  }
+}
+
 .sidebar-panel {
   will-change: width, transform, opacity;
 }
 
+.sidebar-panel[data-state="open"] {
+  animation: sidebarPanelIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sidebar-panel[data-state="closed"] {
+  animation: sidebarPanelOut 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* تعتيم الخلفية بتزامن مع القائمة */
+.sidebar-panel ~ * {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .sidebar-item {
-    animation: none;
+  .sidebar-item,
+  .sidebar-panel[data-state="open"],
+  .sidebar-panel[data-state="closed"] {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
   }
   .sidebar-panel {
-    transition: none;
+    transition: none !important;
+    will-change: auto;
   }
 }
+
