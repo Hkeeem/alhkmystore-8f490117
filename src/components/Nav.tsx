@@ -3,6 +3,9 @@ import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { VisionBadge } from "@/components/VisionBadge";
+import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
+
 
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
@@ -137,7 +140,9 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
-      <div className="max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+      <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
+        <VisionBadge />
+
         <div className="flex items-center gap-4">
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange}>
             <SheetTrigger asChild>
@@ -213,8 +218,6 @@ export function TopBar() {
           </Sheet>
 
           <Link to="/" className="relative flex items-center gap-2.5 group">
-          {/* خلفية شفافة خلف الشعار عليها 2030 */}
-          <span aria-hidden className="vision-2030-bg">2030</span>
           <div className="relative w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-gold opacity-25" />
             <Sparkles className="relative w-5 h-5 text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]" />
@@ -224,6 +227,7 @@ export function TopBar() {
             <span className="text-[10px] text-muted-foreground -mt-0.5">تسوّق أذكى… وفّر أكثر</span>
           </div>
         </Link>
+
 
         <nav className="hidden md:flex items-center gap-1">
           {items.map((it) => (
@@ -247,7 +251,9 @@ export function TopBar() {
               لوحة التحكم
             </Link>
           )}
+          <VisionBadgeSettings className="hidden sm:inline-flex" />
           <ThemeSwitcher />
+
 
           {user ? (
             <>

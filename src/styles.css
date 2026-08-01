@@ -269,12 +269,11 @@
 /* ===== خلفية شفافة خلف الشعار مكتوب عليها 2030 ===== */
 .vision-2030-bg {
   position: absolute;
-  inset-inline-start: -6px;
   top: 50%;
   transform: translateY(-50%);
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 2.6rem;
+  font-size: var(--vision-size, 2.6rem);
   line-height: 1;
   letter-spacing: -0.04em;
   pointer-events: none;
@@ -283,8 +282,21 @@
   background-image: var(--gradient-gold);
   background-clip: text;
   color: transparent;
-  opacity: 0.16;
 }
+
+/* الأحجام */
+.vision-2030-bg.vision-sm { --vision-size: 1.8rem; }
+.vision-2030-bg.vision-md { --vision-size: 2.6rem; }
+.vision-2030-bg.vision-lg { --vision-size: 3.6rem; }
+
+/* المكان داخل الترويسة (يدعم RTL عبر الخصائص المنطقية) */
+.vision-2030-bg.vision-start { inset-inline-start: 0.5rem; }
+.vision-2030-bg.vision-end { inset-inline-end: 1rem; }
+.vision-2030-bg.vision-center {
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+}
+
 
 @layer base {
 
