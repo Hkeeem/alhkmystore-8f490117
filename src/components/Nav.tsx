@@ -212,16 +212,19 @@ export function TopBar() {
             </SheetContent>
           </Sheet>
 
-          <Link to="/" className="flex items-center gap-2.5 group">
+          <Link to="/" className="relative flex items-center gap-2.5 group">
+          {/* خلفية شفافة خلف الشعار عليها 2030 */}
+          <span aria-hidden className="vision-2030-bg">2030</span>
           <div className="relative w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-gold opacity-25" />
             <Sparkles className="relative w-5 h-5 text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]" />
           </div>
-          <div className="flex flex-col leading-tight">
+          <div className="relative flex flex-col leading-tight">
             <span className="font-display font-black text-lg md:text-xl tracking-tight text-gold-shine">HkeeemAI</span>
             <span className="text-[10px] text-muted-foreground -mt-0.5">تسوّق أذكى… وفّر أكثر</span>
           </div>
         </Link>
+
         <nav className="hidden md:flex items-center gap-1">
           {items.map((it) => (
             <Link
