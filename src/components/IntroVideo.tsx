@@ -12,7 +12,31 @@ export function IntroVideo() {
   const [loading, setLoading] = useState(true);
   // مكتوم افتراضيًا حتى لا تحجب المتصفحات التشغيل التلقائي
   const [muted, setMuted] = useState(true);
+  // تحميل كسول: لا يُحمّل مصدر الفيديو إلا عند اقتراب القسم من الظهور أو عند فتح النافذة
+  const [nearby, setNearby] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (nearby) return;
+    const el = sectionRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNearby(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNearby(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [nearby]);
 
   // استرجاع تفضيل الصوت المحفوظ بعد التحميل (تفاديًا لتعارض SSR)
   useEffect(() => {
@@ -51,7 +75,7 @@ export function IntroVideo() {
   }, []);
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card">
+    <section ref={sectionRef} className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card">
       <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
       <div className="relative grid md:grid-cols-2 gap-6 p-5 md:p-8 items-center">
         <div>
@@ -105,13 +129,13 @@ export function IntroVideo() {
             )}
             <video
               ref={videoRef}
-              src={introVideo.url}
+              src={open || nearby ? introVideo.url : undefined}
               poster={introPoster.url}
               playsInline
               autoPlay
               loop
               muted={muted}
-              preload="metadata"
+              preload={open ? "auto" : "none"}
               onLoadedData={() => setLoading(false)}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
