@@ -1,17 +1,30 @@
 import { type Deal, discountPercent, getStore } from "@/data/deals";
-import { Clock, Flame, Share2 } from "lucide-react";
+import { Clock, Flame, Share2, Info } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
 
-export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
+export function DealCard({
+  deal,
+  rank,
+  reason,
+  reasonDetail,
+}: {
+  deal: Deal;
+  rank?: number;
+  /** سبب مختصر لترقية العرض في الترتيب الذكي */
+  reason?: string | null;
+  /** شرح تفصيلي يظهر عند الضغط على التلميح */
+  reasonDetail?: string;
+}) {
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [whyOpen, setWhyOpen] = useState(false);
   const Icon = getDealIcon(deal);
 
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
@@ -78,6 +91,28 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
           <h3 className="font-bold text-[13px] md:text-sm leading-6 line-clamp-2 min-h-[3rem]">{deal.title}</h3>
           {deal.unit && <p className="text-[11px] text-muted-foreground truncate">{deal.unit}</p>}
         </div>
+
+        {reason && (
+          <div className="-mt-1">
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWhyOpen((v) => !v); }}
+              aria-expanded={whyOpen}
+              aria-label={`لماذا هذا العرض في الأعلى؟ ${reason}`}
+              title={reasonDetail ?? reason}
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold press-ripple hover:bg-primary/20 transition"
+            >
+              <Info className="w-3 h-3 shrink-0" />
+              {reason}
+            </button>
+            {whyOpen && reasonDetail && (
+              <p className="mt-1.5 whitespace-pre-line text-[10px] leading-5 text-muted-foreground bg-secondary/70 rounded-xl p-2 border border-border/50">
+                {reasonDetail}
+              </p>
+            )}
+          </div>
+        )}
+
 
         <div className="mt-auto pt-3 border-t border-border/50 flex items-end justify-between gap-2">
           <div className="min-w-0">
