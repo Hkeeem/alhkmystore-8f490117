@@ -465,13 +465,14 @@
 @utility skeleton-box {
   background-image: linear-gradient(
     100deg,
-    oklch(0.92 0.02 75) 20%,
-    oklch(0.96 0.015 75) 40%,
-    oklch(0.92 0.02 75) 60%
+    var(--secondary) 20%,
+    var(--muted) 40%,
+    var(--secondary) 60%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
+
 
 @keyframes skeletonShimmer {
   0% {
