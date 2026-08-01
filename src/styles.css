@@ -192,6 +192,12 @@
    مقروءًا على الخلفيات الفاتحة (تباين ≥ 4.5:1)، بينما يبقى اللمعان
    المعدني عبر التدرّجات. */
 
+:root {
+  --shine-dark: oklch(0.42 0.12 66);
+  --shine-mid: oklch(0.52 0.14 78);
+  --shine-light: oklch(0.62 0.15 85);
+}
+
 .theme-gold {
   --primary: oklch(0.60 0.13 72);
   --primary-foreground: oklch(0.99 0.01 85);
@@ -199,6 +205,7 @@
   --accent-foreground: oklch(0.22 0.02 60);
   --ring: oklch(0.60 0.13 72);
 }
+
 
 .theme-silver {
   --background: oklch(0.97 0.004 250);
