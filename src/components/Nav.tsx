@@ -161,11 +161,19 @@ export function TopBar() {
     if (activeGroupIndex >= 0) setOpenGroup(activeGroupIndex);
   }, [activeGroupIndex]);
 
+  const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
+    // ترجيع التركيز لزر القائمة بعد الإغلاق (حتى لو صار تنقل لقسم آخر)
+    if (!open) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => menuTriggerRef.current?.focus());
+      });
+    }
   };
 
   // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
