@@ -86,26 +86,27 @@
 
   /* Muted — بيج فاتح */
   --muted: oklch(0.95 0.015 75);
-  --muted-foreground: oklch(0.48 0.02 70);
+  --muted-foreground: oklch(0.42 0.02 70);
 
   /* Accent — ذهبي دافئ */
   --accent: oklch(0.88 0.06 80);
-  --accent-foreground: oklch(0.25 0.02 60);
+  --accent-foreground: oklch(0.22 0.02 60);
 
-  /* Status */
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
+  /* Status — دُكِّنت لضمان تباين ٤.٥:١ مع النص الأبيض */
+  --destructive: oklch(0.50 0.20 27);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --success: oklch(0.65 0.16 145);
-  --success-foreground: oklch(0.98 0 0);
+  --success: oklch(0.51 0.13 148);
+  --success-foreground: oklch(0.99 0 0);
 
-  --hot: oklch(0.60 0.22 30);
-  --hot-foreground: oklch(0.98 0 0);
+  --hot: oklch(0.53 0.19 30);
+  --hot-foreground: oklch(0.99 0 0);
 
   /* Borders — بيج خفيف */
-  --border: oklch(0.90 0.02 75);
-  --input: oklch(0.94 0.015 75);
-  --ring: oklch(0.72 0.14 75);
+  --border: oklch(0.86 0.025 75);
+  --input: oklch(0.91 0.02 75);
+  --ring: oklch(0.62 0.14 72);
+
 
 }:root {
 
@@ -187,60 +188,83 @@
 }
 
 /* ===== الأنماط المعدنية: ذهبي / فضي / برونزي ===== */
+/* ملاحظة: الألوان الأساسية مُعتمة بما يكفي ليبقى النص المكتوب بها
+   مقروءًا على الخلفيات الفاتحة (تباين ≥ 4.5:1)، بينما يبقى اللمعان
+   المعدني عبر التدرّجات. */
 
-/* الذهبي = القيم الافتراضية في :root */
-.theme-gold {
-  --primary: oklch(0.75 0.16 78);
-  --ring: oklch(0.72 0.14 75);
+:root {
+  --shine-dark: oklch(0.42 0.12 66);
+  --shine-mid: oklch(0.52 0.14 78);
+  --shine-light: oklch(0.62 0.15 85);
 }
+
+.theme-gold {
+  --primary: oklch(0.60 0.13 72);
+  --primary-foreground: oklch(0.99 0.01 85);
+  --accent: oklch(0.86 0.06 80);
+  --accent-foreground: oklch(0.22 0.02 60);
+  --ring: oklch(0.60 0.13 72);
+}
+
 
 .theme-silver {
   --background: oklch(0.97 0.004 250);
-  --foreground: oklch(0.17 0.01 250);
+  --foreground: oklch(0.16 0.01 250);
   --card: oklch(0.99 0.003 250);
-  --card-foreground: oklch(0.17 0.01 250);
+  --card-foreground: oklch(0.16 0.01 250);
   --popover: oklch(0.99 0.003 250);
-  --popover-foreground: oklch(0.17 0.01 250);
-  --primary: oklch(0.78 0.015 250);
-  --primary-foreground: oklch(0.16 0.01 250);
-  --secondary: oklch(0.93 0.006 250);
-  --secondary-foreground: oklch(0.25 0.01 250);
+  --popover-foreground: oklch(0.16 0.01 250);
+  --primary: oklch(0.52 0.015 250);
+  --primary-foreground: oklch(0.99 0.002 250);
+  --secondary: oklch(0.92 0.006 250);
+  --secondary-foreground: oklch(0.22 0.01 250);
   --muted: oklch(0.95 0.005 250);
-  --muted-foreground: oklch(0.50 0.01 250);
-  --accent: oklch(0.88 0.01 250);
-  --accent-foreground: oklch(0.25 0.01 250);
-  --border: oklch(0.90 0.008 250);
-  --input: oklch(0.94 0.006 250);
-  --ring: oklch(0.74 0.02 250);
+  --muted-foreground: oklch(0.44 0.012 250);
+  --accent: oklch(0.86 0.012 250);
+  --accent-foreground: oklch(0.22 0.01 250);
+  --border: oklch(0.86 0.01 250);
+  --input: oklch(0.91 0.008 250);
+  --ring: oklch(0.52 0.015 250);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.22 0.01 250) 0%, oklch(0.42 0.012 250) 45%, oklch(0.86 0.015 250) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.96 0.006 250) 0%, oklch(0.84 0.012 250) 40%, oklch(0.66 0.015 250) 100%);
-  --shadow-glow: 0 8px 40px -8px oklch(0.72 0.02 250 / 0.55), 0 0 0 1px oklch(0.72 0.02 250 / 0.22);
+  --gradient-hero: linear-gradient(135deg, oklch(0.20 0.01 250) 0%, oklch(0.36 0.012 250) 45%, oklch(0.62 0.015 250) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.92 0.006 250) 0%, oklch(0.76 0.012 250) 40%, oklch(0.58 0.015 250) 100%);
+  --shadow-glow: 0 8px 40px -8px oklch(0.55 0.02 250 / 0.45), 0 0 0 1px oklch(0.55 0.02 250 / 0.25);
+
+  --shine-dark: oklch(0.36 0.01 250);
+  --shine-mid: oklch(0.46 0.012 250);
+  --shine-light: oklch(0.58 0.014 250);
+
 }
 
 .theme-bronze {
   --background: oklch(0.96 0.02 55);
-  --foreground: oklch(0.18 0.02 45);
+  --foreground: oklch(0.17 0.02 45);
   --card: oklch(0.99 0.012 55);
-  --card-foreground: oklch(0.18 0.02 45);
+  --card-foreground: oklch(0.17 0.02 45);
   --popover: oklch(0.99 0.012 55);
-  --popover-foreground: oklch(0.18 0.02 45);
-  --primary: oklch(0.62 0.12 55);
-  --primary-foreground: oklch(0.98 0.01 60);
-  --secondary: oklch(0.92 0.03 55);
-  --secondary-foreground: oklch(0.28 0.03 45);
+  --popover-foreground: oklch(0.17 0.02 45);
+  --primary: oklch(0.52 0.11 52);
+  --primary-foreground: oklch(0.99 0.01 60);
+  --secondary: oklch(0.91 0.03 55);
+  --secondary-foreground: oklch(0.24 0.03 45);
   --muted: oklch(0.94 0.02 55);
-  --muted-foreground: oklch(0.48 0.03 50);
-  --accent: oklch(0.84 0.07 55);
-  --accent-foreground: oklch(0.25 0.03 45);
-  --border: oklch(0.88 0.03 55);
-  --input: oklch(0.93 0.02 55);
-  --ring: oklch(0.62 0.12 55);
+  --muted-foreground: oklch(0.44 0.03 50);
+  --accent: oklch(0.82 0.07 55);
+  --accent-foreground: oklch(0.22 0.03 45);
+  --border: oklch(0.85 0.03 55);
+  --input: oklch(0.91 0.025 55);
+  --ring: oklch(0.52 0.11 52);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.20 0.03 45) 0%, oklch(0.33 0.06 50) 45%, oklch(0.65 0.13 55) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.84 0.09 62) 0%, oklch(0.68 0.13 55) 45%, oklch(0.48 0.11 48) 100%);
-  --shadow-glow: 0 8px 40px -8px oklch(0.62 0.12 55 / 0.60), 0 0 0 1px oklch(0.62 0.12 55 / 0.22);
+  --gradient-hero: linear-gradient(135deg, oklch(0.19 0.03 45) 0%, oklch(0.31 0.06 50) 45%, oklch(0.58 0.12 55) 100%);
+  --gradient-gold: linear-gradient(135deg, oklch(0.80 0.09 62) 0%, oklch(0.62 0.13 55) 45%, oklch(0.44 0.10 48) 100%);
+  --shadow-glow: 0 8px 40px -8px oklch(0.52 0.11 52 / 0.50), 0 0 0 1px oklch(0.52 0.11 52 / 0.25);
+
+  --shine-dark: oklch(0.38 0.09 48);
+  --shine-mid: oklch(0.48 0.11 52);
+  --shine-light: oklch(0.58 0.12 58);
+
 }
+
 
 /* ===== خلفية شفافة خلف الشعار مكتوب عليها 2030 ===== */
 .vision-2030-bg {
@@ -337,17 +361,23 @@
 
 @utility text-gold-shine {
   background-image: linear-gradient(100deg,
-    oklch(0.58 0.16 68) 0%,
-    oklch(0.95 0.18 92) 35%,
-    oklch(0.82 0.20 85) 50%,
-    oklch(0.95 0.18 92) 65%,
-    oklch(0.58 0.16 68) 100%);
+    var(--shine-dark) 0%,
+    var(--shine-light) 35%,
+    var(--shine-mid) 50%,
+    var(--shine-light) 65%,
+    var(--shine-dark) 100%);
   background-size: 300% 100%;
   background-clip: text;
-  -webkit-background-clip: text;
   color: transparent;
   animation: goldShine 4s ease-in-out infinite;
 }
+
+@utility glass-card {
+  background-color: oklch(1 0 0 / 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--border);
+}
+
 
 @keyframes goldShine {
   0%, 100% { background-position: 0% 50%; }
@@ -356,16 +386,11 @@
 
 @utility glow-gold {
   box-shadow:
-    0 0 0 1px oklch(0.78 0.17 82 / 0.50),
-    0 4px 20px -4px oklch(0.78 0.17 82 / 0.50),
-    0 0 40px -10px oklch(0.78 0.17 82 / 0.35);
+    0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+    0 4px 20px -4px color-mix(in oklab, var(--primary) 45%, transparent),
+    0 0 40px -10px color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-@utility glass-card {
-  background-color: oklch(1 0 0 / 0.55);
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid oklch(0.77 0.13 85 / 0.28);
-}
 
 /* بطاقة زجاجية للوضع الليلي */
 @utility glass-dark {
@@ -440,13 +465,14 @@
 @utility skeleton-box {
   background-image: linear-gradient(
     100deg,
-    oklch(0.92 0.02 75) 20%,
-    oklch(0.96 0.015 75) 40%,
-    oklch(0.92 0.02 75) 60%
+    var(--secondary) 20%,
+    var(--muted) 40%,
+    var(--secondary) 60%
   );
   background-size: 200% 100%;
   animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
+
 
 @keyframes skeletonShimmer {
   0% {
