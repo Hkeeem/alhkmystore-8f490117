@@ -50,11 +50,12 @@ function Home() {
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             <span className="text-gold-shine">HkeeemAI — الذكاء الاقتصادي</span>
           </div>
-          <h1 className="font-display text-3xl md:text-6xl font-black leading-[1.05] tracking-tight">
-            تسوّق أذكى…
+          <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
+            تسوّق ذكي…
             <br />
-            <span className="text-gold-shine">وفّر أكثر.</span>
+            <span className="text-gold-shine">توفير أكثر</span>
           </h1>
+
           <p className="mt-5 max-w-xl text-sm md:text-lg text-white/80 leading-relaxed">
             عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لقرارات شراء أفضل بأقل وقت.
           </p>
