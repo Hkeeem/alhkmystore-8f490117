@@ -149,12 +149,71 @@ export function TopBar() {
     } catch { /* ignore */ }
   }, []);
 
+  // القسم المفتوح حالياً داخل القائمة (يتبع المسار الحالي افتراضياً)
+  const activeGroupIndex = groups.findIndex((g) => g.items.some((i) => isPathActive(pathname, i.to)));
+  const [openGroup, setOpenGroup] = useState<number | null>(activeGroupIndex >= 0 ? activeGroupIndex : null);
+  useEffect(() => {
+    if (activeGroupIndex >= 0) setOpenGroup(activeGroupIndex);
+  }, [activeGroupIndex]);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
   };
+
+  // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
+  useEffect(() => {
+    const isTyping = (el: EventTarget | null) => {
+      const node = el as HTMLElement | null;
+      if (!node) return false;
+      const tag = node.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || node.isContentEditable;
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isTyping(e.target)) return;
+
+      // فتح/إغلاق القائمة
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        handleMenuOpenChange(!menuOpen);
+        return;
+      }
+
+      if (e.key === "Escape" && menuOpen) {
+        handleMenuOpenChange(false);
+        return;
+      }
+
+      if (!e.altKey || e.ctrlKey || e.metaKey) return;
+
+      // Alt + 1..N لاختيار قسم مباشرة
+      const num = parseInt(e.key, 10);
+      if (!Number.isNaN(num) && num >= 1 && num <= groups.length) {
+        e.preventDefault();
+        if (!menuOpen) handleMenuOpenChange(true);
+        setOpenGroup(num - 1);
+        return;
+      }
+
+      // Alt + ↑/↓ للتنقل بين الأقسام
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!menuOpen) handleMenuOpenChange(true);
+        setOpenGroup((prev) => {
+          const step = e.key === "ArrowDown" ? 1 : -1;
+          if (prev === null) return e.key === "ArrowDown" ? 0 : groups.length - 1;
+          return (prev + step + groups.length) % groups.length;
+        });
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
 
   const toggleSidebarWidth = () => {
     setSidebarWide((prev) => {
