@@ -10,6 +10,7 @@ import { z } from "zod";
 
 const searchSchema = z.object({
   cat: z.string().optional(),
+  store: z.string().optional(),
 });
 
 export const Route = createFileRoute("/deals")({
@@ -24,10 +25,10 @@ export const Route = createFileRoute("/deals")({
 });
 
 function DealsPage() {
-  const { cat } = Route.useSearch();
+  const { cat, store } = Route.useSearch();
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string | undefined>(cat);
-  const [storeId, setStoreId] = useState<string | undefined>();
+  const [storeId, setStoreId] = useState<string | undefined>(store);
   const [sort, setSort] = useState<"discount" | "price">("discount");
 
   const filtered = useMemo(() => {
