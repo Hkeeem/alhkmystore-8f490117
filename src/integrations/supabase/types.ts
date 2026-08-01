@@ -146,6 +146,131 @@ export type Database = {
         }
         Relationships: []
       }
+      merchant_deals: {
+        Row: {
+          category: string
+          clicks: number
+          created_at: string
+          description: string | null
+          discount_percent: number | null
+          expires_at: string | null
+          id: string
+          image_url: string | null
+          merchant_id: string
+          original_price: number
+          price: number
+          product_url: string | null
+          review_note: string | null
+          starts_at: string
+          status: Database["public"]["Enums"]["deal_status"]
+          title: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          clicks?: number
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          merchant_id: string
+          original_price: number
+          price: number
+          product_url?: string | null
+          review_note?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          title: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          clicks?: number
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          merchant_id?: string
+          original_price?: number
+          price?: number
+          product_url?: string | null
+          review_note?: string | null
+          starts_at?: string
+          status?: Database["public"]["Enums"]["deal_status"]
+          title?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "merchant_deals_merchant_id_fkey"
+            columns: ["merchant_id"]
+            isOneToOne: false
+            referencedRelation: "merchants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      merchants: {
+        Row: {
+          category: string
+          city: string | null
+          cr_number: string | null
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          phone: string | null
+          review_note: string | null
+          slug: string
+          status: Database["public"]["Enums"]["merchant_status"]
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          category?: string
+          city?: string | null
+          cr_number?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          owner_id: string
+          phone?: string | null
+          review_note?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["merchant_status"]
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          category?: string
+          city?: string | null
+          cr_number?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          review_note?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["merchant_status"]
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -378,6 +503,8 @@ export type Database = {
         | "super_admin"
         | "support"
         | "content_manager"
+      deal_status: "draft" | "pending" | "published" | "rejected" | "expired"
+      merchant_status: "pending" | "verified" | "rejected" | "suspended"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -513,6 +640,8 @@ export const Constants = {
         "support",
         "content_manager",
       ],
+      deal_status: ["draft", "pending", "published", "rejected", "expired"],
+      merchant_status: ["pending", "verified", "rejected", "suspended"],
     },
   },
 } as const
