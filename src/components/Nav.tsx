@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2, Store, Car, ChevronDown } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Moon, Sun, Building2, Store, Car, ChevronDown, Scale, BarChart3, Megaphone, ShoppingBag } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
@@ -40,7 +40,18 @@ const groups: Group[] = [
     icon: Building2,
     items: [{ to: "/real-estate", label: "البحث العقاري", icon: Building2, badge: "AI" }],
   },
+  {
+    label: "ذكاء حكيم AI",
+    icon: Sparkles,
+    items: [
+      { to: "/compare", label: "مقارنة الأسعار", icon: Scale },
+      { to: "/analysis", label: "تحليل المتاجر", icon: BarChart3, badge: "AI" },
+      { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
+      { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
+    ],
+  },
 ];
+
 
 /** يحدد إن كان المسار الحالي يطابق رابط القائمة (مع دعم الصفحات الفرعية) */
 function isPathActive(pathname: string, to: string) {

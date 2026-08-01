@@ -15,13 +15,17 @@ import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
@@ -63,6 +67,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapsRoute = MapsRouteImport.update({
   id: '/maps',
   path: '/maps',
@@ -83,6 +92,11 @@ const CouponsRoute = CouponsRouteImport.update({
   path: '/coupons',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ChatRoute = ChatRouteImport.update({
   id: '/chat',
   path: '/chat',
@@ -96,6 +110,16 @@ const CarsRoute = CarsRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalysisRoute = AnalysisRouteImport.update({
+  id: '/analysis',
+  path: '/analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdsRoute = AdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -150,13 +174,17 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ads': typeof AdsRoute
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -174,13 +202,17 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ads': typeof AdsRoute
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -200,13 +232,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/ads': typeof AdsRoute
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -226,13 +262,17 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ads'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -250,13 +290,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ads'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -275,13 +319,17 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/ads'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -301,13 +349,17 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AdsRoute: typeof AdsRoute
+  AnalysisRoute: typeof AnalysisRoute
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
   ChatRoute: typeof ChatRoute
+  CompareRoute: typeof CompareRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
   MapsRoute: typeof MapsRoute
+  MarketRoute: typeof MarketRoute
   PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
@@ -363,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/maps': {
       id: '/maps'
       path: '/maps'
@@ -391,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CouponsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat': {
       id: '/chat'
       path: '/chat'
@@ -410,6 +476,20 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analysis': {
+      id: '/analysis'
+      path: '/analysis'
+      fullPath: '/analysis'
+      preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ads': {
+      id: '/ads'
+      path: '/ads'
+      fullPath: '/ads'
+      preLoaderRoute: typeof AdsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -533,13 +613,17 @@ const RewardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AdsRoute: AdsRoute,
+  AnalysisRoute: AnalysisRoute,
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
   ChatRoute: ChatRoute,
+  CompareRoute: CompareRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
   MapsRoute: MapsRoute,
+  MarketRoute: MarketRoute,
   PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
@@ -553,13 +637,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
