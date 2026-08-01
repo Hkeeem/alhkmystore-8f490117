@@ -174,6 +174,45 @@ function DealDetailPage() {
           </div>
         </div>
 
+        {/* الوصف الكامل + تاريخ الانتهاء + الشروط */}
+        <div className="mt-10 md:mt-14 grid gap-4 md:gap-6 lg:grid-cols-3">
+          <section className="lg:col-span-2 bg-card rounded-3xl border border-border/60 shadow-md p-5 md:p-6">
+            <div className="flex items-center gap-2 mb-3 text-primary">
+              <FileText className="w-5 h-5 shrink-0" />
+              <h2 className="font-bold text-lg text-foreground">وصف العرض</h2>
+            </div>
+            <p className="text-sm md:text-base text-muted-foreground leading-8">{description}</p>
+          </section>
+
+          <section className="bg-card rounded-3xl border border-border/60 shadow-md p-5 md:p-6">
+            <div className="flex items-center gap-2 mb-3 text-primary">
+              <CalendarClock className="w-5 h-5 shrink-0" />
+              <h2 className="font-bold text-lg text-foreground">تاريخ الانتهاء</h2>
+            </div>
+            <p className="font-display font-black text-xl leading-8">{endsAt}</p>
+            <p className="text-sm text-muted-foreground mt-2 flex items-center gap-1.5">
+              <Clock className="w-4 h-4 shrink-0" />
+              متبقٍ تقريباً: {deal.expiresIn}
+            </p>
+          </section>
+
+          <section className="lg:col-span-3 bg-card rounded-3xl border border-border/60 shadow-md p-5 md:p-6">
+            <div className="flex items-center gap-2 mb-3 text-primary">
+              <ShieldCheck className="w-5 h-5 shrink-0" />
+              <h2 className="font-bold text-lg text-foreground">الشروط والأحكام</h2>
+            </div>
+            <ul className="space-y-2.5">
+              {terms.map((t) => (
+                <li key={t} className="flex gap-2.5 text-sm text-muted-foreground leading-7">
+                  <span className="mt-2.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+
         {sameProduct.length > 0 && (
           <div className="mt-10 md:mt-16">
             <h2 className="font-display font-black text-xl md:text-2xl mb-4">
