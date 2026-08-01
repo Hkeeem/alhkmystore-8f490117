@@ -47,3 +47,29 @@ export function smartReason(deal: Deal, prefs: Prefs): string | null {
   if (discountPercent(deal) >= 45) return "توفير مرتفع";
   return null;
 }
+
+/** شرح تفصيلي يوضّح العوامل الثلاثة التي رفعت ترتيب العرض */
+export function smartExplanation(deal: Deal, prefs: Prefs): string {
+  const off = discountPercent(deal);
+  const days = expiresInDays(deal.expiresIn);
+  const pref = preferenceScore(deal, prefs);
+
+  const parts: string[] = [
+    `التوفير: خصم ${off}٪ (وزن ${Math.round(W_DISCOUNT * 100)}٪ من الترتيب)`,
+    days <= 1
+      ? "وقت الانتهاء: ينتهي خلال يوم — أولوية عالية"
+      : days <= 3
+        ? `وقت الانتهاء: يتبقّى ${days} أيام تقريباً — أولوية مرتفعة`
+        : days < 14
+          ? `وقت الانتهاء: يتبقّى ${days} يوماً تقريباً`
+          : "وقت الانتهاء: مدة العرض طويلة، فلا يرفع الترتيب",
+    pref >= 0.5
+      ? "اهتماماتك: من فئة/متجر تتصفّحه كثيراً"
+      : pref > 0
+        ? "اهتماماتك: تطابق جزئي مع ما تتصفّحه"
+        : "اهتماماتك: لا توجد بيانات كافية بعد",
+  ];
+
+  return `رُتّب هذا العرض بناءً على:\n• ${parts.join("\n• ")}`;
+}
+
