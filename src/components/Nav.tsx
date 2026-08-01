@@ -497,7 +497,7 @@ export function TopBar() {
 
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
-                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
+                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · ↑/↓ للتنقل بين العناصر · Home/End للأول والأخير · Enter لفتح الرابط · Alt+رقم لاختيار قسم
                   </p>
 
                 </nav>
