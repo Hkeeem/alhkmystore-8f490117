@@ -98,7 +98,7 @@ function SidebarGroup({ group, pathname }: { group: Group; pathname: string }) {
                 className={
                   active
                     ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/80 hover:bg-secondary hover:text-foreground transition-all group"
                 }
               >
                 {active && (
@@ -239,7 +239,7 @@ export function TopBar() {
                         className={
                           active
                             ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all whitespace-nowrap"
-                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
                         }
 
                       >
@@ -264,7 +264,7 @@ export function TopBar() {
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
                 <div className="flex flex-col gap-4 w-full">
                   <div className="bg-secondary/50 p-4 rounded-2xl border border-primary/10">
-                    <p className="text-[11px] text-muted-foreground leading-relaxed text-right">
+                    <p className="text-[11px] text-foreground/80 leading-relaxed text-right">
                       يسعدني استقبال طلباتكم وعروضكم عبر رابط مكتبي العقاري، وسنقوم بخدمتكم في أقرب فرصة
                     </p>
                     <p className="text-[10px] font-bold text-primary mt-2 text-right">
