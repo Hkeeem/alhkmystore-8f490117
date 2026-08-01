@@ -3,6 +3,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect, Fragment } from "react";
 import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink, Bot, Zap, TrendingDown, ShoppingCart, Star } from "lucide-react";
+import { toast } from "sonner";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
 
