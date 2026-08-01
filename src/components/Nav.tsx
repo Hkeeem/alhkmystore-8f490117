@@ -8,7 +8,7 @@ import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
 
 
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const items = [
@@ -161,11 +161,19 @@ export function TopBar() {
     if (activeGroupIndex >= 0) setOpenGroup(activeGroupIndex);
   }, [activeGroupIndex]);
 
+  const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
+    // ترجيع التركيز لزر القائمة بعد الإغلاق (حتى لو صار تنقل لقسم آخر)
+    if (!open) {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => menuTriggerRef.current?.focus());
+      });
+    }
   };
 
   // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
@@ -328,6 +336,7 @@ export function TopBar() {
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
             <SheetTrigger asChild>
               <button
+                ref={menuTriggerRef}
                 aria-label="فتح القائمة الجانبية"
                 aria-haspopup="dialog"
                 aria-expanded={menuOpen}
@@ -344,6 +353,10 @@ export function TopBar() {
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
+              onCloseAutoFocus={(e) => {
+                e.preventDefault();
+                menuTriggerRef.current?.focus();
+              }}
               onOpenAutoFocus={(e) => {
                 // حبس التركيز: ابدأ من أول عنصر تفاعلي داخل القائمة
                 e.preventDefault();
