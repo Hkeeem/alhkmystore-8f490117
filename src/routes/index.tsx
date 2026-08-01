@@ -73,14 +73,14 @@ function Home() {
                 className="flex-1 bg-transparent outline-none text-secondary placeholder:text-secondary/50 py-2 text-sm md:text-base"
                 aria-label="بحث ذكي"
               />
-              <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
+              <button type="submit" className="font-thuluth inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
                 <Search className="w-4 h-4" />
-                <span className="hidden md:inline">ابحث</span>
+                <span className="hidden md:inline leading-[1.9]">ابحث</span>
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {["أرز بسمتي", "زيت دوار الشمس", "iPhone 16", "عروض النهدي"].map((s) => (
-                <button key={s} type="button" onClick={() => { setQ(s); }} className="text-[11px] px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/15">
+                <button key={s} type="button" onClick={() => { setQ(s); }} className="font-thuluth leading-[1.9] text-[11px] px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/15">
                   {s}
                 </button>
               ))}
@@ -112,10 +112,10 @@ function Home() {
               { to: "/market", tag: "عقارات وتجارة", title: "سوق حكيم التجاري والعقاري الموحد", desc: "منتجات وعقارات في الرياض وجدة والخبر مع حاسبة العائد الإيجاري، مدى و STC Pay، وشحن سبل وسمسا خلال 24-48 ساعة.", cta: "تصفح السوق والحاسبة" },
             ].map((c) => (
               <Link key={c.to} to={c.to} className="bg-card rounded-3xl border border-border/60 shadow-card p-5 hover-lift flex flex-col">
-                <span className="self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">{c.tag}</span>
+                <span className="font-thuluth self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 leading-[1.9]">{c.tag}</span>
                 <h3 className="font-thuluth text-lg mt-3 leading-[1.8]">{c.title}</h3>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed flex-1">{c.desc}</p>
-                <span className="mt-4 self-start text-sm font-bold text-primary">{c.cta} ←</span>
+                <p className="font-thuluth text-sm text-muted-foreground mt-2 leading-[2] flex-1">{c.desc}</p>
+                <span className="font-thuluth mt-4 self-start text-sm font-bold text-primary leading-[1.9]">{c.cta} ←</span>
               </Link>
             ))}
           </div>
@@ -141,8 +141,8 @@ function Home() {
                   <div className="w-11 h-11 rounded-2xl bg-secondary text-primary flex items-center justify-center mb-3 ring-1 ring-primary/30 group-hover:scale-105 transition">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <div className="font-black text-sm md:text-base">{p.label}</div>
-                  <div className="text-[11px] text-muted-foreground mt-1">{p.note}</div>
+                  <div className="font-thuluth font-black text-sm md:text-base leading-[1.9]">{p.label}</div>
+                  <div className="font-thuluth text-[11px] text-muted-foreground mt-1 leading-[1.9]">{p.note}</div>
                 </div>
               </Link>
             );
@@ -230,7 +230,7 @@ function Home() {
               <f.icon className="w-5 h-5" />
             </div>
             <h3 className="font-thuluth text-lg leading-[1.8]">{f.t}</h3>
-            <p className="text-sm text-secondary-foreground/70 mt-1">{f.d}</p>
+            <p className="font-thuluth text-sm text-secondary-foreground/70 mt-1 leading-[2]">{f.d}</p>
           </div>
         ))}
       </section>
@@ -241,7 +241,7 @@ function Home() {
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-thuluth text-base text-muted-foreground leading-[1.8]">المتاجر المشاركة</h3>
-          <Link to="/stores" className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+          <Link to="/stores" className="font-thuluth text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all leading-[1.9]">
             كل المتاجر <ArrowLeft className="w-3 h-3" />
           </Link>
         </div>
@@ -281,7 +281,7 @@ function SectionHeader({ title, subtitle, icon, href }: { title: string; subtitl
         <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{subtitle}</p>
       </div>
       {href && (
-        <Link to={href} className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+        <Link to={href} className="font-thuluth text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all leading-[1.9]">
           عرض الكل <ArrowLeft className="w-3 h-3" />
         </Link>
       )}
