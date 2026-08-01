@@ -316,6 +316,38 @@ export function TopBar() {
     });
   };
 
+  // تنقل كامل بلوحة المفاتيح داخل القائمة: الأسهم و Home/End، وEnter/Space لتفعيل العنصر
+  const handleNavKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const keys = ["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "Spacebar"];
+    if (!keys.includes(e.key)) return;
+
+    const container = e.currentTarget.querySelector<HTMLElement>("nav") ?? e.currentTarget;
+    const items = Array.from(
+      container.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+    ).filter((el) => el.offsetParent !== null);
+    if (items.length === 0) return;
+
+    const current = document.activeElement as HTMLElement | null;
+    const index = current ? items.indexOf(current) : -1;
+
+    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+      if (index === -1) return;
+      // الروابط تعمل مع Enter تلقائياً؛ نتكفل بالمسافة وبأزرار الأقسام
+      if (e.key === "Enter" && items[index].tagName === "A") return;
+      e.preventDefault();
+      items[index].click();
+      return;
+    }
+
+    e.preventDefault();
+    let next = 0;
+    if (e.key === "ArrowDown") next = index < 0 ? 0 : (index + 1) % items.length;
+    else if (e.key === "ArrowUp") next = index <= 0 ? items.length - 1 : index - 1;
+    else if (e.key === "End") next = items.length - 1;
+    items[next]?.focus();
+  };
+
   const toggleHighContrast = () => {
     setHighContrast((prev) => {
       const next = !prev;
@@ -350,6 +382,7 @@ export function TopBar() {
               role="dialog"
               aria-modal="true"
               aria-label="القائمة الجانبية"
+              onKeyDown={handleNavKeyDown}
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
@@ -358,12 +391,14 @@ export function TopBar() {
                 menuTriggerRef.current?.focus();
               }}
               onOpenAutoFocus={(e) => {
-                // حبس التركيز: ابدأ من أول عنصر تفاعلي داخل القائمة
+                // حبس التركيز: ابدأ من أول رابط تنقل داخل القائمة
                 e.preventDefault();
                 const panel = e.currentTarget as HTMLElement;
-                const first = panel.querySelector<HTMLElement>(
-                  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-                );
+                const first =
+                  panel.querySelector<HTMLElement>('nav a[href], nav button:not([disabled])') ??
+                  panel.querySelector<HTMLElement>(
+                    'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                  );
                 (first ?? panel).focus();
               }}
               data-sidebar-hc={highContrast ? "on" : "off"}
@@ -417,7 +452,7 @@ export function TopBar() {
 
 
               <div className="flex-1 overflow-y-auto py-6">
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2" aria-label="روابط القائمة الجانبية">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
@@ -465,7 +500,7 @@ export function TopBar() {
 
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
-                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
+                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · ↑/↓ للتنقل بين العناصر · Home/End للأول والأخير · Enter لفتح الرابط · Alt+رقم لاختيار قسم
                   </p>
 
                 </nav>
