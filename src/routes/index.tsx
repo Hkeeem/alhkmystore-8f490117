@@ -73,14 +73,14 @@ function Home() {
                 className="flex-1 bg-transparent outline-none text-secondary placeholder:text-secondary/50 py-2 text-sm md:text-base"
                 aria-label="بحث ذكي"
               />
-              <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
+              <button type="submit" className="font-thuluth inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
                 <Search className="w-4 h-4" />
-                <span className="hidden md:inline">ابحث</span>
+                <span className="hidden md:inline leading-[1.9]">ابحث</span>
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {["أرز بسمتي", "زيت دوار الشمس", "iPhone 16", "عروض النهدي"].map((s) => (
-                <button key={s} type="button" onClick={() => { setQ(s); }} className="text-[11px] px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/15">
+                <button key={s} type="button" onClick={() => { setQ(s); }} className="font-thuluth leading-[1.9] text-[11px] px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/15">
                   {s}
                 </button>
               ))}
