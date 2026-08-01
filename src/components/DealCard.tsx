@@ -24,6 +24,7 @@ export function DealCard({
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [whyOpen, setWhyOpen] = useState(false);
   const Icon = getDealIcon(deal);
 
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
