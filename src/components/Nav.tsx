@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, Scale, BarChart3, Megaphone, ShoppingBag } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Scale, BarChart3, Megaphone, ShoppingBag } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
