@@ -32,6 +32,7 @@ const groups: Group[] = [
       { to: "/stores", label: "المتاجر", icon: Store },
       { to: "/deals", label: "العروض", icon: Tag },
       { to: "/coupons", label: "الكوبونات", icon: Ticket },
+      { to: "/merchant", label: "بوابة التاجر", icon: Store, badge: "جديد" },
     ],
   },
   {
