@@ -165,11 +165,15 @@ export function TopBar() {
             </SheetTrigger>
             <SheetContent
               side="right"
+              data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
                   ? "w-[300px] sm:w-[360px] max-w-[85vw] "
                   : "w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] ") +
-                "p-4 flex flex-col bg-background/55 backdrop-blur-2xl border-l border-primary/15 shadow-xl transition-[width,max-width] duration-300"
+                (highContrast
+                  ? "bg-background/95 border-primary/40 "
+                  : "bg-background/55 border-primary/15 ") +
+                "p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl transition-[width,max-width] duration-300"
               }
             >
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
@@ -178,17 +182,35 @@ export function TopBar() {
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
                   {sidebarWide && <span>HkeeemAI</span>}
-                  <button
-                    type="button"
-                    onClick={toggleSidebarWidth}
-                    aria-label={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
-                    title={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
-                    className="mr-auto p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
-                  >
-                    {sidebarWide ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                  </button>
+                  <div className="mr-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={toggleHighContrast}
+                      aria-pressed={highContrast}
+                      aria-label={highContrast ? "إيقاف وضع التباين العالي" : "تفعيل وضع التباين العالي"}
+                      title={highContrast ? "إيقاف وضع التباين العالي" : "تفعيل وضع التباين العالي"}
+                      className={
+                        "min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-colors " +
+                        (highContrast
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground/70 hover:text-foreground hover:bg-secondary/60")
+                      }
+                    >
+                      <Contrast className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={toggleSidebarWidth}
+                      aria-label={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                      title={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                      className="min-h-9 min-w-9 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                    >
+                      {sidebarWide ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </SheetTitle>
               </SheetHeader>
+
 
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2">
