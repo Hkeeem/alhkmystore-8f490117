@@ -699,3 +699,32 @@ html {
 [data-sidebar-hc="on"] span {
   font-weight: 600;
 }
+
+/* ===== حركات القائمة الجانبية ===== */
+@keyframes sidebarItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-item {
+  animation: sidebarItemIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sidebar-panel {
+  will-change: width, transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-item {
+    animation: none;
+  }
+  .sidebar-panel {
+    transition: none;
+  }
+}
