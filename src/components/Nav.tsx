@@ -183,9 +183,11 @@ export function TopBar() {
       }
 
       if (e.key === "Escape" && menuOpen) {
+        e.preventDefault();
         handleMenuOpenChange(false);
         return;
       }
+
 
       if (!e.altKey || e.ctrlKey || e.metaKey) return;
 
