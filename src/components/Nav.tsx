@@ -322,7 +322,7 @@ export function TopBar() {
     const keys = ["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "Spacebar"];
     if (!keys.includes(e.key)) return;
 
-    const container = e.currentTarget;
+    const container = e.currentTarget.querySelector<HTMLElement>("nav") ?? e.currentTarget;
     const items = Array.from(
       container.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
     ).filter((el) => el.offsetParent !== null);
