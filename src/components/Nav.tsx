@@ -183,9 +183,11 @@ export function TopBar() {
       }
 
       if (e.key === "Escape" && menuOpen) {
+        e.preventDefault();
         handleMenuOpenChange(false);
         return;
       }
+
 
       if (!e.altKey || e.ctrlKey || e.metaKey) return;
 
@@ -334,6 +336,7 @@ export function TopBar() {
               role="dialog"
               aria-modal="true"
               aria-label="القائمة الجانبية"
+              onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
               onOpenAutoFocus={(e) => {
