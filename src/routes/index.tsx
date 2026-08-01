@@ -113,7 +113,7 @@ function Home() {
             ].map((c) => (
               <Link key={c.to} to={c.to} className="bg-card rounded-3xl border border-border/60 shadow-card p-5 hover-lift flex flex-col">
                 <span className="self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">{c.tag}</span>
-                <h3 className="font-black mt-3 leading-snug">{c.title}</h3>
+                <h3 className="font-thuluth text-lg mt-3 leading-[1.8]">{c.title}</h3>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed flex-1">{c.desc}</p>
                 <span className="mt-4 self-start text-sm font-bold text-primary">{c.cta} ←</span>
               </Link>
@@ -229,7 +229,7 @@ function Home() {
             <div className="w-11 h-11 rounded-2xl bg-primary/15 text-primary flex items-center justify-center mb-3">
               <f.icon className="w-5 h-5" />
             </div>
-            <h3 className="font-black">{f.t}</h3>
+            <h3 className="font-thuluth text-lg leading-[1.8]">{f.t}</h3>
             <p className="text-sm text-secondary-foreground/70 mt-1">{f.d}</p>
           </div>
         ))}
@@ -240,7 +240,7 @@ function Home() {
       <LazySection minHeight={140}>
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-sm text-muted-foreground">المتاجر المشاركة</h3>
+          <h3 className="font-thuluth text-base text-muted-foreground leading-[1.8]">المتاجر المشاركة</h3>
           <Link to="/stores" className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
             كل المتاجر <ArrowLeft className="w-3 h-3" />
           </Link>
@@ -277,7 +277,7 @@ function SectionHeader({ title, subtitle, icon, href }: { title: string; subtitl
   return (
     <div className="flex items-end justify-between mb-4">
       <div>
-        <div className="flex items-center gap-2 text-primary">{icon}<h2 className="font-display font-black text-xl md:text-2xl text-foreground">{title}</h2></div>
+        <div className="flex items-center gap-2 text-primary">{icon}<h2 className="font-thuluth text-2xl md:text-3xl leading-[1.8] text-foreground">{title}</h2></div>
         <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{subtitle}</p>
       </div>
       {href && (
