@@ -44,6 +44,7 @@ export function useTheme() {
   const [auto, setAutoState] = useState(false);
   const [systemDark, setSystemDark] = useState(false);
   const [ready, setReady] = useState(false);
+  const firstApply = useRef(true);
 
   useEffect(() => {
     setThemeState(readTheme());
