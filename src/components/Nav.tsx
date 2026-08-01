@@ -316,6 +316,38 @@ export function TopBar() {
     });
   };
 
+  // تنقل كامل بلوحة المفاتيح داخل القائمة: الأسهم و Home/End، وEnter/Space لتفعيل العنصر
+  const handleNavKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    const keys = ["ArrowDown", "ArrowUp", "Home", "End", "Enter", " ", "Spacebar"];
+    if (!keys.includes(e.key)) return;
+
+    const container = e.currentTarget;
+    const items = Array.from(
+      container.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+    ).filter((el) => el.offsetParent !== null);
+    if (items.length === 0) return;
+
+    const current = document.activeElement as HTMLElement | null;
+    const index = current ? items.indexOf(current) : -1;
+
+    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+      if (index === -1) return;
+      // الروابط تعمل مع Enter تلقائياً؛ نتكفل بالمسافة وبأزرار الأقسام
+      if (e.key === "Enter" && items[index].tagName === "A") return;
+      e.preventDefault();
+      items[index].click();
+      return;
+    }
+
+    e.preventDefault();
+    let next = 0;
+    if (e.key === "ArrowDown") next = index < 0 ? 0 : (index + 1) % items.length;
+    else if (e.key === "ArrowUp") next = index <= 0 ? items.length - 1 : index - 1;
+    else if (e.key === "End") next = items.length - 1;
+    items[next]?.focus();
+  };
+
   const toggleHighContrast = () => {
     setHighContrast((prev) => {
       const next = !prev;
