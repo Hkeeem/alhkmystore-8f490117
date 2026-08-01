@@ -301,6 +301,8 @@ export function TopBar() {
             </SheetTrigger>
             <SheetContent
               side="right"
+              onPointerDownOutside={() => handleMenuOpenChange(false)}
+              onInteractOutside={() => handleMenuOpenChange(false)}
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
