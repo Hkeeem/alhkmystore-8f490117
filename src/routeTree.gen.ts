@@ -19,6 +19,7 @@ import { Route as MapsRouteImport } from './routes/maps'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
+import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
@@ -81,6 +82,11 @@ const DealsRoute = DealsRouteImport.update({
 const CouponsRoute = CouponsRouteImport.update({
   id: '/coupons',
   path: '/coupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChatRoute = ChatRouteImport.update({
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
+  '/compare': typeof CompareRoute
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
@@ -278,6 +289,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cars'
     | '/chat'
+    | '/compare'
     | '/coupons'
     | '/deals'
     | '/delete-account'
@@ -304,6 +316,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
   ChatRoute: typeof ChatRoute
+  CompareRoute: typeof CompareRoute
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
@@ -389,6 +402,13 @@ declare module '@tanstack/react-router' {
       path: '/coupons'
       fullPath: '/coupons'
       preLoaderRoute: typeof CouponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/chat': {
@@ -536,6 +556,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
   ChatRoute: ChatRoute,
+  CompareRoute: CompareRoute,
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
