@@ -339,24 +339,43 @@
 }
 
 /* ===== انتقال ناعم عند تبديل النمط المعدني ===== */
+/* يشمل كل العناصر والعناصر الزائفة والأيقونات والتدرّجات والظلال */
 html.theme-switching,
 html.theme-switching body,
-html.theme-switching *:not(svg):not(path) {
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after,
+html.theme-switching svg,
+html.theme-switching svg * {
   transition:
     background-color 420ms ease,
+    background-image 420ms ease,
     border-color 420ms ease,
+    outline-color 420ms ease,
     color 420ms ease,
     fill 420ms ease,
     stroke 420ms ease,
     box-shadow 420ms ease,
-    background-image 420ms ease !important;
+    text-decoration-color 420ms ease,
+    caret-color 420ms ease,
+    opacity 420ms ease !important;
   transition-delay: 0ms !important;
+}
+
+/* لا نريد تأخير الحركات التفاعلية أثناء التبديل */
+html.theme-switching *:hover,
+html.theme-switching *:active {
+  transition-duration: 420ms !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html.theme-switching,
   html.theme-switching body,
-  html.theme-switching *:not(svg):not(path) {
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after,
+  html.theme-switching svg,
+  html.theme-switching svg * {
     transition: none !important;
   }
 }
