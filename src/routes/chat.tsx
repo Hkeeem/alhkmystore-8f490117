@@ -129,6 +129,7 @@ function ChatPage() {
   }, [messages, status, voiceOn]);
 
   async function speak(text: string) {
+    lastSpokenRef.current = text;
     try {
       audioRef.current?.pause();
       const r = await fetch("/api/tts", {
@@ -136,20 +137,39 @@ function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-      if (!r.ok) return;
+      if (!r.ok) throw new Error("tts");
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audioRef.current = audio;
+      setFailure((f) => (f?.kind === "tts" ? null : f));
       audio.play().catch(() => {});
-    } catch {}
+    } catch {
+      const msg = "تعذّر تشغيل الرد الصوتي.";
+      setFailure({ kind: "tts", msg });
+      toast.error(msg, { action: { label: "إعادة المحاولة", onClick: () => void speak(text) } });
+    }
   }
 
   async function send(text: string) {
     if (!text.trim()) return;
+    lastSentRef.current = text.trim();
     setInput("");
-    await sendMessage({ text });
+    setFailure(null);
+    await sendMessage({ text: text.trim() });
   }
+
+  function retry() {
+    const f = failure;
+    setFailure(null);
+    if (!f) return;
+    if (f.kind === "tts") {
+      if (lastSpokenRef.current) void speak(lastSpokenRef.current);
+      return;
+    }
+    if (lastSentRef.current) void sendMessage({ text: lastSentRef.current });
+  }
+
 
   const isLoading = status === "submitted" || status === "streaming";
 
