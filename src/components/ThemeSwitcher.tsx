@@ -43,7 +43,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       {themes.map((t) => (
         <button
           key={t.id}
-          onClick={() => setTheme(t.id)}
+          onClick={() => commit(t.id, t.label)}
           onMouseEnter={() => preview(t.id)}
           onFocus={() => preview(t.id)}
           onBlur={restore}
