@@ -116,7 +116,7 @@ function SidebarGroup({ group, pathname }: { group: Group; pathname: string }) {
 export function TopBar() {
   const { user, signOut } = useAuth();
   const isStaff = useIsStaff(user?.id);
-  const { isDark, toggle: toggleTheme } = useTheme();
+  
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [menuOpen, setMenuOpen] = useState(false);
 
