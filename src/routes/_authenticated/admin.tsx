@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
-  Wallet, BellRing,
+  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle,
 } from "lucide-react";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
@@ -16,13 +16,15 @@ import {
   listUsersWithRoles, assignRole, revokeRole,
   listPremium, broadcastNotification, listAuditLog,
 } from "@/lib/admin.functions";
+import { getDeployStatus } from "@/lib/deploy.functions";
 import {
   adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
 } from "@/lib/user.functions";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
