@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
 import { ArrowRight, CalendarClock, Clock, FileText, Flame, Share2, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { recordInterest } from "@/lib/preferences";
+
 import { getDealIcon } from "@/lib/icons";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
@@ -38,6 +40,11 @@ function DealDetailPage() {
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    if (deal) recordInterest(deal.category, deal.storeId);
+  }, [deal?.id]);
+
   const DealIcon = getDealIcon(deal);
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
   const router = useRouter();

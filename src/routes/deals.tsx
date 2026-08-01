@@ -2,11 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { StoreLogo } from "@/components/StoreLogo";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon } from "lucide-react";
+import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles } from "lucide-react";
 import { fetchPublishedDeals } from "@/lib/merchant-api";
+import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
+import { smartSort } from "@/lib/smart-rank";
 import { z } from "zod";
+
 
 const searchSchema = z.object({
   cat: z.string().optional(),
@@ -29,18 +32,28 @@ function DealsPage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string | undefined>(cat);
   const [storeId, setStoreId] = useState<string | undefined>(store);
-  const [sort, setSort] = useState<"discount" | "price">("discount");
+  const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
+  const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
+
+  useEffect(() => {
+    const load = () => setPrefs(readPrefs());
+    load();
+    window.addEventListener("hkeeem-prefs-change", load);
+    return () => window.removeEventListener("hkeeem-prefs-change", load);
+  }, []);
 
   const filtered = useMemo(() => {
-    let list = deals.filter((d) => {
+    const list = deals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
       if (q && !d.title.includes(q)) return false;
       return true;
     });
+    if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [q, category, storeId, sort]);
+  }, [q, category, storeId, sort, prefs]);
+
 
   const cats = ["سوبرماركت", "مطاعم", "إلكترونيات", "صيدلية"];
 
@@ -81,9 +94,12 @@ function DealsPage() {
         ))}
       </div>
 
-      <div className="flex items-center gap-2 text-xs">
+      <div className="flex items-center gap-2 text-xs flex-wrap">
         <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
         <span className="text-muted-foreground py-1.5">ترتيب:</span>
+        <button onClick={() => setSort("smart")} className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="smart"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>
+          <Sparkles className="w-3 h-3" /> ذكي
+        </button>
         <button onClick={() => setSort("discount")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="discount"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأعلى توفيراً</button>
         <button onClick={() => setSort("price")} className={`px-3 py-1.5 rounded-full font-bold press-ripple transition ${sort==="price"?"bg-primary text-primary-foreground":"bg-secondary text-secondary-foreground"}`}>الأرخص سعراً</button>
         {(q || category || storeId) && (
@@ -93,13 +109,22 @@ function DealsPage() {
         )}
       </div>
 
+      {sort === "smart" && (
+        <p className="text-xs text-muted-foreground -mt-2">
+          {hasPrefs(prefs)
+            ? "مرتّبة حسب قرب انتهاء العرض ونسبة التوفير واهتماماتك السابقة."
+            : "مرتّبة حسب قرب انتهاء العرض ونسبة التوفير — وتتحسّن كلما تصفّحت عروضاً أكثر."}
+        </p>
+      )}
+
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">لا توجد عروض مطابقة.</div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {filtered.map((d, i) => <DealCard key={d.id} deal={d} rank={sort==="discount"?i+1:undefined} />)}
+          {filtered.map((d, i) => <DealCard key={d.id} deal={d} rank={sort==="price"?undefined:i+1} />)}
         </div>
       )}
+
     </main>
   );
 }
