@@ -14,6 +14,8 @@ export function IntroVideo() {
   const [muted, setMuted] = useState(true);
   // تحميل كسول: لا يُحمّل مصدر الفيديو إلا عند اقتراب القسم من الظهور أو عند فتح النافذة
   const [nearby, setNearby] = useState(false);
+  // اكتمل التحميل المسبق فيفتح الفيديو فورًا
+  const [prefetched, setPrefetched] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
@@ -21,6 +23,9 @@ export function IntroVideo() {
     if (nearby) return;
     const el = sectionRef.current;
     if (!el) return;
+    // احترام وضع توفير البيانات والشبكات البطيئة: لا تحميل مسبق
+    const conn = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    if (conn?.saveData || (conn?.effectiveType && /2g/.test(conn.effectiveType))) return;
     if (typeof IntersectionObserver === "undefined") {
       setNearby(true);
       return;
@@ -37,6 +42,20 @@ export function IntroVideo() {
     io.observe(el);
     return () => io.disconnect();
   }, [nearby]);
+
+  // تلميح للمتصفح ببدء جلب الفيديو مبكرًا عند الاقتراب من القسم
+  useEffect(() => {
+    if (!nearby || prefetched) return;
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "video";
+    link.href = introVideo.url;
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [nearby, prefetched]);
+
 
   // استرجاع تفضيل الصوت المحفوظ بعد التحميل (تفاديًا لتعارض SSR)
   useEffect(() => {
@@ -117,31 +136,46 @@ export function IntroVideo() {
         </button>
       </div>
 
+      {/* تحميل مسبق مخفي: يبدأ عند اقتراب القسم فيفتح الفيديو فورًا لاحقًا */}
+      {nearby && !open && (
+        <video
+          src={introVideo.url}
+          preload="auto"
+          muted
+          playsInline
+          aria-hidden
+          tabIndex={-1}
+          className="hidden"
+          onCanPlayThrough={() => setPrefetched(true)}
+        />
+      )}
+
       <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setPlaying(false); }}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden bg-secondary border-primary/30">
           <DialogTitle className="sr-only">الفيديو التعريفي لحكيم AI</DialogTitle>
           <DialogDescription className="sr-only">فيديو قصير يشرح فكرة حكيم AI</DialogDescription>
           <div className="relative bg-black">
-            {loading && (
+            {loading && !prefetched && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Loader2 className="w-7 h-7 text-primary animate-spin" />
               </div>
             )}
             <video
               ref={videoRef}
-              src={open || nearby ? introVideo.url : undefined}
+              src={introVideo.url}
               poster={introPoster.url}
               playsInline
               autoPlay
               loop
               muted={muted}
-              preload={open ? "auto" : "none"}
+              preload="auto"
               onLoadedData={() => setLoading(false)}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               className="w-full max-h-[70vh] bg-black"
             />
           </div>
+
           <div className="flex items-center gap-2 p-3 bg-secondary">
             <button
               onClick={togglePlay}
