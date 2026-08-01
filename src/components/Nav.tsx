@@ -187,8 +187,11 @@ export function TopBar() {
                 (highContrast
                   ? "bg-background/95 border-primary/40 "
                   : "bg-background/55 border-primary/15 ") +
-                "p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl transition-[width,max-width] duration-300"
+                "sidebar-panel p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl " +
+                "transition-[width,max-width,background-color,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] " +
+                "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:duration-400 data-[state=closed]:duration-250 data-[state=open]:ease-[cubic-bezier(0.22,1,0.36,1)]"
               }
+
             >
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
                 <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
@@ -228,7 +231,7 @@ export function TopBar() {
 
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2">
-                  {items.map((it) => {
+                  {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
                     return (
@@ -236,16 +239,19 @@ export function TopBar() {
                         key={it.to}
                         to={it.to}
                         aria-current={active ? "page" : undefined}
+                        style={{ animationDelay: `${60 + i * 35}ms` }}
                         className={
-                          active
-                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all whitespace-nowrap"
-                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
+                          "sidebar-item " +
+                          (active
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
                         }
 
                       >
                         {active && (
                           <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
                         )}
+
                         <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span className="text-sm">{it.label}</span>
                         {it.to === "/maps" && !active && (
