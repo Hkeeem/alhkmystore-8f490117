@@ -62,7 +62,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
       <div className="p-4 space-y-2.5">
         <div className="flex items-center gap-1.5">
           <StoreLogo store={store} size="sm" />
-          <span className="font-thuluth text-xs text-muted-foreground font-medium truncate flex-1 leading-[1.9]">{store.name}</span>
+          <span className="text-xs text-muted-foreground font-medium truncate flex-1">{store.name}</span>
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareOpen(true); }}
             aria-label="مشاركة العرض"
@@ -73,9 +73,9 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
 
         </div>
 
-        <h3 className="font-thuluth text-sm leading-[1.9] line-clamp-2 min-h-[2.75rem]">{deal.title}</h3>
+        <h3 className="font-bold text-sm leading-snug line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
 
-        {deal.unit && <p className="font-thuluth text-xs text-muted-foreground leading-[1.9]">{deal.unit}</p>}
+        {deal.unit && <p className="text-xs text-muted-foreground">{deal.unit}</p>}
 
         <div className="flex items-end justify-between pt-1">
           <div>
