@@ -136,31 +136,46 @@ export function IntroVideo() {
         </button>
       </div>
 
+      {/* تحميل مسبق مخفي: يبدأ عند اقتراب القسم فيفتح الفيديو فورًا لاحقًا */}
+      {nearby && !open && (
+        <video
+          src={introVideo.url}
+          preload="auto"
+          muted
+          playsInline
+          aria-hidden
+          tabIndex={-1}
+          className="hidden"
+          onCanPlayThrough={() => setPrefetched(true)}
+        />
+      )}
+
       <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setPlaying(false); }}>
         <DialogContent className="max-w-3xl p-0 overflow-hidden bg-secondary border-primary/30">
           <DialogTitle className="sr-only">الفيديو التعريفي لحكيم AI</DialogTitle>
           <DialogDescription className="sr-only">فيديو قصير يشرح فكرة حكيم AI</DialogDescription>
           <div className="relative bg-black">
-            {loading && (
+            {loading && !prefetched && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Loader2 className="w-7 h-7 text-primary animate-spin" />
               </div>
             )}
             <video
               ref={videoRef}
-              src={open || nearby ? introVideo.url : undefined}
+              src={introVideo.url}
               poster={introPoster.url}
               playsInline
               autoPlay
               loop
               muted={muted}
-              preload={open ? "auto" : "none"}
+              preload="auto"
               onLoadedData={() => setLoading(false)}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               className="w-full max-h-[70vh] bg-black"
             />
           </div>
+
           <div className="flex items-center gap-2 p-3 bg-secondary">
             <button
               onClick={togglePlay}
