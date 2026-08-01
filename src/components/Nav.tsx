@@ -263,7 +263,32 @@ export function TopBar() {
     };
   }, [menuOpen]);
 
-
+  // منع تمرير الصفحة خلف الـ overlay عندما تكون القائمة مفتوحة
+  useEffect(() => {
+    if (!menuOpen) return;
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prev = {
+      overflow: body.style.overflow,
+      position: body.style.position,
+      top: body.style.top,
+      width: body.style.width,
+      overscroll: body.style.overscrollBehavior,
+    };
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    body.style.overscrollBehavior = "none";
+    return () => {
+      body.style.overflow = prev.overflow;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.width = prev.width;
+      body.style.overscrollBehavior = prev.overscroll;
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
 
 
   const toggleSidebarWidth = () => {
