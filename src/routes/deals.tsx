@@ -10,6 +10,7 @@ import { z } from "zod";
 
 const searchSchema = z.object({
   cat: z.string().optional(),
+  store: z.string().optional(),
 });
 
 export const Route = createFileRoute("/deals")({
