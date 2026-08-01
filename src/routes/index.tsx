@@ -3,6 +3,7 @@ import { useState } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
+import { LazySection } from "@/components/LazySection";
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
@@ -94,7 +95,9 @@ function Home() {
       </section>
 
       {/* Intro video */}
-      <IntroVideo />
+      <LazySection minHeight={340}>
+        <IntroVideo />
+      </LazySection>
 
       {/* Pillars grid */}
 
@@ -124,6 +127,7 @@ function Home() {
       </section>
 
       {/* Best deals */}
+      <LazySection minHeight={520}>
       <section>
         <SectionHeader
           title="أفضل العروض الآن"
@@ -137,8 +141,10 @@ function Home() {
           ))}
         </div>
       </section>
+      </LazySection>
 
       {/* Price comparison */}
+      <LazySection minHeight={620} id="compare-wrap">
       <section id="compare">
         <SectionHeader title="مقارنة الأسعار" subtitle="نفس المنتج، أرخص متجر أوّلاً" icon={<TrendingDown className="w-5 h-5" />} />
         <div className="space-y-4">
@@ -185,8 +191,10 @@ function Home() {
           })}
         </div>
       </section>
+      </LazySection>
 
       {/* Value strip */}
+      <LazySection minHeight={220}>
       <section className="grid md:grid-cols-3 gap-4">
         {[
           { icon: ShieldCheck, t: "بيانات موثوقة", d: "أسعار محدّثة من مصادر رسمية" },
@@ -202,8 +210,10 @@ function Home() {
           </div>
         ))}
       </section>
+      </LazySection>
 
       {/* Stores strip */}
+      <LazySection minHeight={140}>
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-bold text-sm text-muted-foreground">المتاجر المشاركة</h3>
@@ -225,6 +235,7 @@ function Home() {
           })}
         </div>
       </section>
+      </LazySection>
     </main>
   );
 }
