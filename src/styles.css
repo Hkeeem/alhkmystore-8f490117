@@ -338,6 +338,28 @@
   --shine-light: oklch(0.86 0.08 62);
 }
 
+/* ===== انتقال ناعم عند تبديل النمط المعدني ===== */
+html.theme-switching,
+html.theme-switching body,
+html.theme-switching *:not(svg):not(path) {
+  transition:
+    background-color 420ms ease,
+    border-color 420ms ease,
+    color 420ms ease,
+    fill 420ms ease,
+    stroke 420ms ease,
+    box-shadow 420ms ease,
+    background-image 420ms ease !important;
+  transition-delay: 0ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-switching,
+  html.theme-switching body,
+  html.theme-switching *:not(svg):not(path) {
+    transition: none !important;
+  }
+}
 
 
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type Theme = "gold" | "silver" | "bronze";
 
@@ -44,6 +44,7 @@ export function useTheme() {
   const [auto, setAutoState] = useState(false);
   const [systemDark, setSystemDark] = useState(false);
   const [ready, setReady] = useState(false);
+  const firstApply = useRef(true);
 
   useEffect(() => {
     setThemeState(readTheme());
@@ -72,11 +73,25 @@ export function useTheme() {
   useEffect(() => {
     if (!ready) return;
     const root = document.documentElement;
+
+    // انتقال ناعم للألوان عند التبديل (نتجاهله في أول تطبيق بعد التحميل)
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (!firstApply.current) {
+      root.classList.add("theme-switching");
+      timer = setTimeout(() => root.classList.remove("theme-switching"), 480);
+    }
+    firstApply.current = false;
+
     root.classList.remove(...CLASSES, "dark");
     root.classList.add(`theme-${theme}`);
     // في الوضع التلقائي نتبع تفضيل النظام للوضع الداكن مع بقاء الثيم المعدني
     if (auto && systemDark) root.classList.add("dark");
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [theme, auto, systemDark, ready]);
+
 
   const persist = (next: { theme?: Theme; auto?: boolean }) => {
     try {
