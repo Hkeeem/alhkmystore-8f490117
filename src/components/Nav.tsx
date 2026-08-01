@@ -124,11 +124,13 @@ export function TopBar() {
   
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [menuOpen, setMenuOpen] = useState(false);
+  const [sidebarWide, setSidebarWide] = useState(false);
 
   // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
   useEffect(() => {
     try {
       if (localStorage.getItem("hkeeem-sidebar-open") === "1") setMenuOpen(true);
+      if (localStorage.getItem("hkeeem-sidebar-wide") === "1") setSidebarWide(true);
     } catch { /* ignore */ }
   }, []);
 
@@ -137,6 +139,16 @@ export function TopBar() {
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
+  };
+
+  const toggleSidebarWidth = () => {
+    setSidebarWide((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("hkeeem-sidebar-wide", next ? "1" : "0");
+      } catch { /* ignore */ }
+      return next;
+    });
   };
 
   return (
@@ -151,15 +163,33 @@ export function TopBar() {
                 <Menu className="w-5 h-5 text-primary" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] p-4 flex flex-col bg-background/55 backdrop-blur-2xl border-l border-primary/15 shadow-xl">
+            <SheetContent
+              side="right"
+              className={
+                (sidebarWide
+                  ? "w-[300px] sm:w-[360px] max-w-[85vw] "
+                  : "w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] ") +
+                "p-4 flex flex-col bg-background/55 backdrop-blur-2xl border-l border-primary/15 shadow-xl transition-[width,max-width] duration-300"
+              }
+            >
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
                 <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
                   <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
-                  HkeeemAI
+                  {sidebarWide && <span>HkeeemAI</span>}
+                  <button
+                    type="button"
+                    onClick={toggleSidebarWidth}
+                    aria-label={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                    title={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                    className="mr-auto p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
+                  >
+                    {sidebarWide ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                  </button>
                 </SheetTitle>
               </SheetHeader>
+
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2">
                   {items.map((it) => {
