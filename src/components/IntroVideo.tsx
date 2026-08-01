@@ -14,6 +14,8 @@ export function IntroVideo() {
   const [muted, setMuted] = useState(true);
   // تحميل كسول: لا يُحمّل مصدر الفيديو إلا عند اقتراب القسم من الظهور أو عند فتح النافذة
   const [nearby, setNearby] = useState(false);
+  // اكتمل التحميل المسبق فيفتح الفيديو فورًا
+  const [prefetched, setPrefetched] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
@@ -21,6 +23,9 @@ export function IntroVideo() {
     if (nearby) return;
     const el = sectionRef.current;
     if (!el) return;
+    // احترام وضع توفير البيانات والشبكات البطيئة: لا تحميل مسبق
+    const conn = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    if (conn?.saveData || (conn?.effectiveType && /2g/.test(conn.effectiveType))) return;
     if (typeof IntersectionObserver === "undefined") {
       setNearby(true);
       return;
@@ -37,6 +42,20 @@ export function IntroVideo() {
     io.observe(el);
     return () => io.disconnect();
   }, [nearby]);
+
+  // تلميح للمتصفح ببدء جلب الفيديو مبكرًا عند الاقتراب من القسم
+  useEffect(() => {
+    if (!nearby || prefetched) return;
+    const link = document.createElement("link");
+    link.rel = "prefetch";
+    link.as = "video";
+    link.href = introVideo.url;
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [nearby, prefetched]);
+
 
   // استرجاع تفضيل الصوت المحفوظ بعد التحميل (تفاديًا لتعارض SSR)
   useEffect(() => {
