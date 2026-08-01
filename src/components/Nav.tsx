@@ -172,9 +172,10 @@ export function TopBar() {
                         aria-current={active ? "page" : undefined}
                         className={
                           active
-                            ? "relative flex items-center gap-3 px-4 py-3 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                            : "relative flex items-center gap-3 px-4 py-3 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
                         }
+
                       >
                         {active && (
                           <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
