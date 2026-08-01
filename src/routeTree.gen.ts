@@ -15,6 +15,7 @@ import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
@@ -64,6 +65,11 @@ const RealEstateRoute = RealEstateRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapsRoute = MapsRouteImport.update({
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
   '/maps': typeof MapsRoute
+  '/market': typeof MarketRoute
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/deals'
     | '/delete-account'
     | '/maps'
+    | '/market'
     | '/privacy'
     | '/real-estate'
     | '/rewards'
@@ -347,6 +359,7 @@ export interface RootRouteChildren {
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
   MapsRoute: typeof MapsRoute
+  MarketRoute: typeof MarketRoute
   PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
@@ -400,6 +413,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/maps': {
@@ -603,6 +623,7 @@ const rootRouteChildren: RootRouteChildren = {
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
   MapsRoute: MapsRoute,
+  MarketRoute: MarketRoute,
   PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
