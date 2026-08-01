@@ -193,15 +193,25 @@ function ChatPage() {
         stream.getTracks().forEach((t) => t.stop());
         setRecording(false);
         const blob = new Blob(chunksRef.current, { type: mime });
-        if (blob.size < 1500) return;
+        if (blob.size < 1500) {
+          toast.error("التسجيل قصير جداً، حاول مرة أخرى.");
+          return;
+        }
         setTranscribing(true);
         try {
           const fd = new FormData();
           fd.append("file", blob, `rec.${mime.includes("mp4") ? "mp4" : "webm"}`);
           const r = await fetch("/api/stt", { method: "POST", body: fd });
+          if (!r.ok) throw new Error("stt");
           const data = await r.json();
           const text = (data?.text || "").trim();
-          if (text) await send(text);
+          if (!text) throw new Error("empty");
+          setFailure(null);
+          await send(text);
+        } catch {
+          const msg = "ما قدرنا نحوّل صوتك لنص. جرّب التسجيل مرة ثانية أو اكتب سؤالك.";
+          setFailure({ kind: "stt", msg });
+          toast.error(msg, { action: { label: "تسجيل جديد", onClick: () => void toggleRecord() } });
         } finally {
           setTranscribing(false);
         }
@@ -210,8 +220,11 @@ function ChatPage() {
       recorderRef.current = rec;
       setRecording(true);
     } catch {
-      alert("ما قدرنا نوصل للمايكروفون");
+      const msg = "ما قدرنا نوصل للمايكروفون. تأكد من إذن الميكروفون.";
+      setFailure({ kind: "stt", msg });
+      toast.error(msg);
     }
+
   }
 
   return (
