@@ -34,6 +34,7 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
@@ -161,6 +162,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMerchantRoute = AuthenticatedMerchantRouteImport.update({
+  id: '/merchant',
+  path: '/merchant',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
+  '/merchant': typeof AuthenticatedMerchantRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/me': typeof AuthenticatedMeRoute
+  '/merchant': typeof AuthenticatedMerchantRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -251,6 +259,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
+  '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -281,6 +290,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/me'
+    | '/merchant'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -309,6 +319,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/me'
+    | '/merchant'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/me'
+    | '/_authenticated/merchant'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -548,6 +560,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/merchant': {
+      id: '/_authenticated/merchant'
+      path: '/merchant'
+      fullPath: '/merchant'
+      preLoaderRoute: typeof AuthenticatedMerchantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/me': {
       id: '/_authenticated/me'
       path: '/me'
@@ -568,11 +587,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
+  AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
+  AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
