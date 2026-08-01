@@ -50,7 +50,10 @@ function DealsPage() {
         <p className="text-sm text-muted-foreground mt-1">{filtered.length} عرض متاح الآن</p>
       </div>
 
+      <MerchantDealsSection />
+
       <div className="relative">
+
         <Search className="w-4 h-4 absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
         <input
           value={q}
