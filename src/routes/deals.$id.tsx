@@ -40,6 +40,11 @@ function DealDetailPage() {
   const [imgError, setImgError] = useState(false);
   const DealIcon = getDealIcon(deal);
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
+  const router = useRouter();
+
+  const description = dealDescription(deal, store);
+  const terms = dealTerms(deal, store);
+  const endsAt = formatArabicDate(expiryDate(deal));
 
   const groups = comparableGroups();
   const sameProduct =
@@ -56,13 +61,23 @@ function DealDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 md:py-10">
-        <Link
-          to="/deals"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-4"
-        >
-          <ArrowRight className="w-4 h-4" />
-          العودة للعروض
-        </Link>
+        <div className="sticky top-2 z-20 mb-5 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => router.history.back()}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-card/90 backdrop-blur border border-border/60 shadow-md text-sm font-bold hover:border-primary/50 press-ripple transition"
+          >
+            <ArrowRight className="w-4 h-4 shrink-0" />
+            رجوع
+          </button>
+          <Link
+            to="/deals"
+            className="inline-flex items-center gap-1 px-3 py-2.5 rounded-2xl text-sm text-muted-foreground hover:text-primary transition"
+          >
+            كل العروض
+          </Link>
+        </div>
+
 
         <div className="grid md:grid-cols-2 gap-6 md:gap-10">
           <div className="bg-gradient-to-br from-secondary to-muted rounded-[2rem] aspect-square md:aspect-auto md:h-full flex items-center justify-center relative overflow-hidden">
