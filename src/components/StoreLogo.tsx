@@ -31,6 +31,8 @@ export function StoreLogo({ store, size = "md", className = "" }: StoreLogoProps
           src={store.logoUrl}
           alt={store.name}
           onError={() => setImgError(true)}
+          loading="lazy"
+          decoding="async"
           className={`${s.img} object-contain p-1`}
         />
       ) : (

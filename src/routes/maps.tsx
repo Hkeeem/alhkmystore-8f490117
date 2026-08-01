@@ -321,6 +321,8 @@ function MapsPage() {
                       <img
                         src={deal.image}
                         alt={deal.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           (e.target as HTMLImageElement).style.display = "none";

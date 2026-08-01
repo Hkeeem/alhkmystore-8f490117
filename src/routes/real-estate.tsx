@@ -64,6 +64,8 @@ function MatchCard({ result, rank }: { result: MatchResult; rank: number }) {
         <img
           src={listing.image}
           alt={listing.title}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover"
           onError={e => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"; }}
         />

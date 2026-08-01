@@ -47,6 +47,8 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
             src={deal.image}
             alt={deal.title}
             onError={() => setImgError(true)}
+            loading="lazy"
+            decoding="async"
             className="relative w-full h-full object-cover"
           />
         ) : (
