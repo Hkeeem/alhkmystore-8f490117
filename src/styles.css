@@ -265,6 +265,81 @@
 
 }
 
+/* ===== الوضع الداكن التلقائي (تفضيل النظام) لكل نمط معدني ===== */
+.dark.theme-gold {
+  --background: oklch(0.13 0.02 80);
+  --foreground: oklch(0.96 0.01 85);
+  --card: oklch(0.17 0.02 80);
+  --card-foreground: oklch(0.96 0.01 85);
+  --popover: oklch(0.17 0.02 80);
+  --popover-foreground: oklch(0.96 0.01 85);
+  --primary: oklch(0.82 0.15 82);
+  --primary-foreground: oklch(0.15 0.02 80);
+  --secondary: oklch(0.22 0.02 80);
+  --secondary-foreground: oklch(0.92 0.01 85);
+  --muted: oklch(0.20 0.02 80);
+  --muted-foreground: oklch(0.72 0.02 82);
+  --accent: oklch(0.34 0.05 80);
+  --accent-foreground: oklch(0.95 0.01 85);
+  --border: oklch(0.30 0.03 80);
+  --input: oklch(0.24 0.02 80);
+  --ring: oklch(0.82 0.15 82);
+
+  --shine-dark: oklch(0.66 0.12 70);
+  --shine-mid: oklch(0.78 0.14 80);
+  --shine-light: oklch(0.90 0.10 88);
+}
+
+.dark.theme-silver {
+  --background: oklch(0.14 0.006 250);
+  --foreground: oklch(0.96 0.003 250);
+  --card: oklch(0.18 0.007 250);
+  --card-foreground: oklch(0.96 0.003 250);
+  --popover: oklch(0.18 0.007 250);
+  --popover-foreground: oklch(0.96 0.003 250);
+  --primary: oklch(0.84 0.012 250);
+  --primary-foreground: oklch(0.16 0.008 250);
+  --secondary: oklch(0.23 0.008 250);
+  --secondary-foreground: oklch(0.92 0.004 250);
+  --muted: oklch(0.21 0.007 250);
+  --muted-foreground: oklch(0.72 0.008 250);
+  --accent: oklch(0.34 0.01 250);
+  --accent-foreground: oklch(0.95 0.004 250);
+  --border: oklch(0.31 0.01 250);
+  --input: oklch(0.25 0.008 250);
+  --ring: oklch(0.84 0.012 250);
+
+  --shine-dark: oklch(0.68 0.008 250);
+  --shine-mid: oklch(0.80 0.01 250);
+  --shine-light: oklch(0.93 0.005 250);
+}
+
+.dark.theme-bronze {
+  --background: oklch(0.13 0.02 45);
+  --foreground: oklch(0.96 0.01 60);
+  --card: oklch(0.18 0.025 45);
+  --card-foreground: oklch(0.96 0.01 60);
+  --popover: oklch(0.18 0.025 45);
+  --popover-foreground: oklch(0.96 0.01 60);
+  --primary: oklch(0.78 0.10 58);
+  --primary-foreground: oklch(0.16 0.02 45);
+  --secondary: oklch(0.23 0.03 45);
+  --secondary-foreground: oklch(0.92 0.015 55);
+  --muted: oklch(0.21 0.025 45);
+  --muted-foreground: oklch(0.72 0.03 52);
+  --accent: oklch(0.35 0.05 50);
+  --accent-foreground: oklch(0.95 0.01 60);
+  --border: oklch(0.31 0.04 48);
+  --input: oklch(0.25 0.03 45);
+  --ring: oklch(0.78 0.10 58);
+
+  --shine-dark: oklch(0.62 0.10 48);
+  --shine-mid: oklch(0.74 0.11 55);
+  --shine-light: oklch(0.86 0.08 62);
+}
+
+
+
 
 /* ===== خلفية شفافة خلف الشعار مكتوب عليها 2030 ===== */
 .vision-2030-bg {
