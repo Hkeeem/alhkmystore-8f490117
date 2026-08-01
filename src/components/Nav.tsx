@@ -333,9 +333,21 @@ export function TopBar() {
                   })}
 
                   {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
-                  {groups.map((g) => (
-                    <SidebarGroup key={g.label} group={g} pathname={pathname} />
+                  {groups.map((g, gi) => (
+                    <SidebarGroup
+                      key={g.label}
+                      group={g}
+                      pathname={pathname}
+                      open={openGroup === gi}
+                      onToggle={() => setOpenGroup((prev) => (prev === gi ? null : gi))}
+                      shortcut={gi + 1}
+                    />
                   ))}
+
+                  <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
+                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
+                  </p>
+
                 </nav>
               </div>
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
