@@ -9,18 +9,64 @@ export const THEMES: { id: Theme; label: string; swatch: string }[] = [
 ];
 
 const KEY = "hkeeem-theme";
+const AUTO_KEY = "hkeeem-theme-auto";
+const EVT = "hkeeem:theme";
 const CLASSES = ["theme-gold", "theme-silver", "theme-bronze"];
 
+function readTheme(): Theme {
+  try {
+    const stored = localStorage.getItem(KEY);
+    return THEMES.some((t) => t.id === stored) ? (stored as Theme) : "gold";
+  } catch {
+    return "gold";
+  }
+}
+
+function readAuto(): boolean {
+  try {
+    return localStorage.getItem(AUTO_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function prefersDark() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+
+/**
+ * الثيمات المعدنية الثلاثة + خيار "تلقائي" يتبع تفضيل النظام
+ * (فاتح/داكن) مع الاحتفاظ بآخر ثيم معدني اختاره المستخدم.
+ */
 export function useTheme() {
-  // نبدأ دائمًا بالذهبي على الخادم والعميل لتفادي اختلاف الترطيب (hydration)
+  // قيم ثابتة على الخادم والعميل لتفادي اختلاف الترطيب (hydration)
   const [theme, setThemeState] = useState<Theme>("gold");
+  const [auto, setAutoState] = useState(false);
+  const [systemDark, setSystemDark] = useState(false);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(KEY);
-    const valid = THEMES.some((t) => t.id === stored) ? (stored as Theme) : "gold";
-    setThemeState(valid);
+    setThemeState(readTheme());
+    setAutoState(readAuto());
+    setSystemDark(prefersDark());
     setReady(true);
+
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSystem = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener("change", onSystem);
+
+    const sync = () => {
+      setThemeState(readTheme());
+      setAutoState(readAuto());
+    };
+    window.addEventListener(EVT, sync);
+    window.addEventListener("storage", sync);
+
+    return () => {
+      mq.removeEventListener("change", onSystem);
+      window.removeEventListener(EVT, sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
   useEffect(() => {
@@ -28,12 +74,37 @@ export function useTheme() {
     const root = document.documentElement;
     root.classList.remove(...CLASSES, "dark");
     root.classList.add(`theme-${theme}`);
-    localStorage.setItem(KEY, theme);
-  }, [theme, ready]);
+    // في الوضع التلقائي نتبع تفضيل النظام للوضع الداكن مع بقاء الثيم المعدني
+    if (auto && systemDark) root.classList.add("dark");
+  }, [theme, auto, systemDark, ready]);
 
-  const setTheme = (t: Theme) => setThemeState(t);
-  const cycle = () =>
-    setThemeState((t) => THEMES[(THEMES.findIndex((x) => x.id === t) + 1) % THEMES.length].id);
+  const persist = (next: { theme?: Theme; auto?: boolean }) => {
+    try {
+      if (next.theme) localStorage.setItem(KEY, next.theme);
+      if (typeof next.auto === "boolean") localStorage.setItem(AUTO_KEY, next.auto ? "1" : "0");
+      window.dispatchEvent(new Event(EVT));
+    } catch {
+      /* ignore */
+    }
+  };
 
-  return { theme, setTheme, cycle, themes: THEMES };
+  /** اختيار ثيم يدويًا يوقف الوضع التلقائي */
+  const setTheme = (t: Theme) => {
+    setThemeState(t);
+    setAutoState(false);
+    persist({ theme: t, auto: false });
+  };
+
+  /** تفعيل/إيقاف اتباع النظام — يعود لآخر ثيم محدد عند الإيقاف */
+  const setAuto = (v: boolean) => {
+    setAutoState(v);
+    persist({ auto: v });
+  };
+
+  const cycle = () => {
+    const next = THEMES[(THEMES.findIndex((x) => x.id === theme) + 1) % THEMES.length].id;
+    setTheme(next);
+  };
+
+  return { theme, setTheme, auto, setAuto, systemDark, cycle, themes: THEMES, ready };
 }
