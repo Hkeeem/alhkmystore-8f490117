@@ -64,26 +64,38 @@ function isPathActive(pathname: string, to: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
-function SidebarGroup({ group, pathname }: { group: Group; pathname: string }) {
-  const hasActive = group.items.some((i) => isPathActive(pathname, i.to));
-  const [open, setOpen] = useState(hasActive);
-  // فتح تلقائي عند الانتقال لصفحة داخل القسم
-  useEffect(() => {
-    if (hasActive) setOpen(true);
-  }, [hasActive]);
+function SidebarGroup({
+  group,
+  pathname,
+  open,
+  onToggle,
+  shortcut,
+}: {
+  group: Group;
+  pathname: string;
+  open: boolean;
+  onToggle: () => void;
+  shortcut?: number;
+}) {
   const GroupIcon = group.icon;
   return (
     <div className="mt-2 border-t border-primary/10 pt-2">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={onToggle}
         aria-expanded={open}
         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
       >
         <GroupIcon className="w-4.5 h-4.5 text-primary" />
         <span className="text-sm font-bold">{group.label}</span>
+        {shortcut && (
+          <kbd className="text-[10px] font-mono text-foreground/50 border border-border rounded px-1">
+            Alt+{shortcut}
+          </kbd>
+        )}
         <ChevronDown className={`mr-auto w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
+
       {open && (
         <div className="mt-1 flex flex-col gap-1 pr-3">
           {group.items.map((it) => {
@@ -137,12 +149,71 @@ export function TopBar() {
     } catch { /* ignore */ }
   }, []);
 
+  // القسم المفتوح حالياً داخل القائمة (يتبع المسار الحالي افتراضياً)
+  const activeGroupIndex = groups.findIndex((g) => g.items.some((i) => isPathActive(pathname, i.to)));
+  const [openGroup, setOpenGroup] = useState<number | null>(activeGroupIndex >= 0 ? activeGroupIndex : null);
+  useEffect(() => {
+    if (activeGroupIndex >= 0) setOpenGroup(activeGroupIndex);
+  }, [activeGroupIndex]);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
   };
+
+  // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
+  useEffect(() => {
+    const isTyping = (el: EventTarget | null) => {
+      const node = el as HTMLElement | null;
+      if (!node) return false;
+      const tag = node.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || node.isContentEditable;
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isTyping(e.target)) return;
+
+      // فتح/إغلاق القائمة
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        handleMenuOpenChange(!menuOpen);
+        return;
+      }
+
+      if (e.key === "Escape" && menuOpen) {
+        handleMenuOpenChange(false);
+        return;
+      }
+
+      if (!e.altKey || e.ctrlKey || e.metaKey) return;
+
+      // Alt + 1..N لاختيار قسم مباشرة
+      const num = parseInt(e.key, 10);
+      if (!Number.isNaN(num) && num >= 1 && num <= groups.length) {
+        e.preventDefault();
+        if (!menuOpen) handleMenuOpenChange(true);
+        setOpenGroup(num - 1);
+        return;
+      }
+
+      // Alt + ↑/↓ للتنقل بين الأقسام
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault();
+        if (!menuOpen) handleMenuOpenChange(true);
+        setOpenGroup((prev) => {
+          const step = e.key === "ArrowDown" ? 1 : -1;
+          if (prev === null) return e.key === "ArrowDown" ? 0 : groups.length - 1;
+          return (prev + step + groups.length) % groups.length;
+        });
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
 
   const toggleSidebarWidth = () => {
     setSidebarWide((prev) => {
@@ -262,9 +333,21 @@ export function TopBar() {
                   })}
 
                   {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
-                  {groups.map((g) => (
-                    <SidebarGroup key={g.label} group={g} pathname={pathname} />
+                  {groups.map((g, gi) => (
+                    <SidebarGroup
+                      key={g.label}
+                      group={g}
+                      pathname={pathname}
+                      open={openGroup === gi}
+                      onToggle={() => setOpenGroup((prev) => (prev === gi ? null : gi))}
+                      shortcut={gi + 1}
+                    />
                   ))}
+
+                  <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
+                    اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
+                  </p>
+
                 </nav>
               </div>
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
