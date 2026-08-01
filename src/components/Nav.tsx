@@ -243,14 +243,8 @@ export function TopBar() {
               لوحة التحكم
             </Link>
           )}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-xl hover:bg-secondary transition"
-            aria-label={isDark ? "الوضع النهاري" : "الوضع الليلي"}
-            title={isDark ? "الوضع النهاري" : "الوضع الليلي"}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-primary" /> : <Moon className="w-4 h-4" />}
-          </button>
+          <ThemeSwitcher />
+
           {user ? (
             <>
               <Link
