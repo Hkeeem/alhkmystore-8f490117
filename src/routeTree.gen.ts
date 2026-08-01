@@ -23,6 +23,7 @@ import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
@@ -104,6 +105,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalysisRoute = AnalysisRouteImport.update({
+  id: '/analysis',
+  path: '/analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -156,6 +162,7 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
@@ -181,6 +188,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/analysis'
     | '/auth'
     | '/cars'
     | '/chat'
@@ -313,6 +325,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AnalysisRoute: typeof AnalysisRoute
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
   ChatRoute: typeof ChatRoute
@@ -430,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analysis': {
+      id: '/analysis'
+      path: '/analysis'
+      fullPath: '/analysis'
+      preLoaderRoute: typeof AnalysisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -553,6 +573,7 @@ const RewardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AnalysisRoute: AnalysisRoute,
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
   ChatRoute: ChatRoute,
