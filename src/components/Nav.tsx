@@ -318,16 +318,33 @@ export function TopBar() {
         <VisionBadge />
 
         <div className="flex items-center gap-4">
-          <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange}>
+          <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
             <SheetTrigger asChild>
-              <button className="p-2 hover:bg-secondary rounded-xl transition-colors">
+              <button
+                aria-label="فتح القائمة الجانبية"
+                aria-haspopup="dialog"
+                aria-expanded={menuOpen}
+                className="p-2 min-h-11 min-w-11 flex items-center justify-center hover:bg-secondary rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
                 <Menu className="w-5 h-5 text-primary" />
               </button>
             </SheetTrigger>
             <SheetContent
               side="right"
+              role="dialog"
+              aria-modal="true"
+              aria-label="القائمة الجانبية"
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
+              onOpenAutoFocus={(e) => {
+                // حبس التركيز: ابدأ من أول عنصر تفاعلي داخل القائمة
+                e.preventDefault();
+                const panel = e.currentTarget as HTMLElement;
+                const first = panel.querySelector<HTMLElement>(
+                  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                );
+                (first ?? panel).focus();
+              }}
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
