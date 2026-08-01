@@ -70,14 +70,17 @@ function SidebarGroup({
   open,
   onToggle,
   shortcut,
+  onNavigate,
 }: {
   group: Group;
   pathname: string;
   open: boolean;
   onToggle: () => void;
   shortcut?: number;
+  onNavigate?: () => void;
 }) {
   const GroupIcon = group.icon;
+
   return (
     <div className="mt-2 border-t border-primary/10 pt-2">
       <button
