@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { IntroVideo } from "@/components/IntroVideo";
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
