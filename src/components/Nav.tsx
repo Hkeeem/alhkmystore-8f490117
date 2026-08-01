@@ -109,7 +109,9 @@ function SidebarGroup({
                 key={it.to}
                 to={it.to}
                 preload="intent"
+                onClick={() => onNavigate?.()}
                 aria-current={active ? "page" : undefined}
+
                 className={
                   active
                     ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
