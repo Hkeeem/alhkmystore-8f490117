@@ -369,16 +369,11 @@
 
 @utility glow-gold {
   box-shadow:
-    0 0 0 1px oklch(0.78 0.17 82 / 0.50),
-    0 4px 20px -4px oklch(0.78 0.17 82 / 0.50),
-    0 0 40px -10px oklch(0.78 0.17 82 / 0.35);
+    0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+    0 4px 20px -4px color-mix(in oklab, var(--primary) 45%, transparent),
+    0 0 40px -10px color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
-@utility glass-card {
-  background-color: oklch(1 0 0 / 0.55);
-  backdrop-filter: blur(18px) saturate(140%);
-  border: 1px solid oklch(0.77 0.13 85 / 0.28);
-}
 
 /* بطاقة زجاجية للوضع الليلي */
 @utility glass-dark {
