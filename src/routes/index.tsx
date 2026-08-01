@@ -281,7 +281,7 @@ function SectionHeader({ title, subtitle, icon, href }: { title: string; subtitl
         <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{subtitle}</p>
       </div>
       {href && (
-        <Link to={href} className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all">
+        <Link to={href} className="font-thuluth text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all leading-[1.9]">
           عرض الكل <ArrowLeft className="w-3 h-3" />
         </Link>
       )}
