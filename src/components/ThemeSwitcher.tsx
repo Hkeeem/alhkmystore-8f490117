@@ -1,10 +1,21 @@
 import { Monitor } from "lucide-react";
+import { toast } from "sonner";
 import { useTheme, type Theme } from "@/hooks/use-theme";
 
 const CLASSES = ["theme-gold", "theme-silver", "theme-bronze"];
 
 export function ThemeSwitcher({ className = "" }: { className?: string }) {
   const { theme, setTheme, auto, setAuto, systemDark, themes } = useTheme();
+
+  /** الضغط يحفظ الثيم فورًا (بدون أي خطوة إضافية) */
+  const commit = (t: Theme, label: string) => {
+    const root = document.documentElement;
+    root.classList.add("theme-switching");
+    root.classList.remove(...CLASSES);
+    root.classList.add(`theme-${t}`);
+    setTheme(t);
+    toast.success(`تم حفظ ${label}`);
+  };
 
   /** معاينة فورية عند المرور/التركيز قبل الحفظ */
   const preview = (t: Theme) => {
@@ -32,7 +43,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       {themes.map((t) => (
         <button
           key={t.id}
-          onClick={() => setTheme(t.id)}
+          onClick={() => commit(t.id, t.label)}
           onMouseEnter={() => preview(t.id)}
           onFocus={() => preview(t.id)}
           onBlur={restore}
