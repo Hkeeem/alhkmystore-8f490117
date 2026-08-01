@@ -1,4 +1,5 @@
-import { Monitor } from "lucide-react";
+import { Monitor, Check } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useTheme, type Theme } from "@/hooks/use-theme";
 
@@ -6,31 +7,33 @@ const CLASSES = ["theme-gold", "theme-silver", "theme-bronze"];
 
 export function ThemeSwitcher({ className = "" }: { className?: string }) {
   const { theme, setTheme, auto, setAuto, systemDark, themes } = useTheme();
+  const [previewing, setPreviewing] = useState<Theme | null>(null);
 
-  /** الضغط يحفظ الثيم فورًا (بدون أي خطوة إضافية) */
-  const commit = (t: Theme, label: string) => {
+  const apply = (t: Theme) => {
     const root = document.documentElement;
     root.classList.add("theme-switching");
     root.classList.remove(...CLASSES);
     root.classList.add(`theme-${t}`);
+  };
+
+  /** الضغط يحفظ الثيم فورًا (بدون أي خطوة إضافية) */
+  const commit = (t: Theme, label: string) => {
+    apply(t);
     setTheme(t);
+    setPreviewing(null);
     toast.success(`تم حفظ ${label}`);
   };
 
   /** معاينة فورية عند المرور/التركيز قبل الحفظ */
   const preview = (t: Theme) => {
-    const root = document.documentElement;
-    root.classList.add("theme-switching");
-    root.classList.remove(...CLASSES);
-    root.classList.add(`theme-${t}`);
+    apply(t);
+    setPreviewing(t);
   };
 
   /** الرجوع للثيم المحفوظ — فقط عند مغادرة المبدّل بالكامل */
   const restore = () => {
-    const root = document.documentElement;
-    root.classList.add("theme-switching");
-    root.classList.remove(...CLASSES);
-    root.classList.add(`theme-${theme}`);
+    apply(theme);
+    setPreviewing(null);
   };
 
   /** لا نرجع إلا إذا خرج التركيز خارج مجموعة الأزرار */
@@ -38,6 +41,9 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
     if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
     restore();
   };
+
+  const pending = previewing && (auto || previewing !== theme) ? previewing : null;
+  const pendingLabel = themes.find((t) => t.id === pending)?.label ?? "";
 
   return (
     <div
@@ -47,6 +53,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       onMouseLeave={restore}
       onBlur={onGroupBlur}
     >
+
       {themes.map((t) => (
         <button
           key={t.id}
@@ -85,6 +92,18 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       >
         <Monitor className="w-3.5 h-3.5" />
       </button>
+
+      {pending && (
+        <button
+          onClick={() => commit(pending, pendingLabel)}
+          title={`تأكيد ${pendingLabel}`}
+          className="ms-0.5 flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground transition hover:opacity-90 press-ripple"
+        >
+          <Check className="w-3 h-3" />
+          تأكيد
+        </button>
+      )}
     </div>
+
   );
 }
