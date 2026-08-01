@@ -353,6 +353,10 @@ export function TopBar() {
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
+              onCloseAutoFocus={(e) => {
+                e.preventDefault();
+                menuTriggerRef.current?.focus();
+              }}
               onOpenAutoFocus={(e) => {
                 // حبس التركيز: ابدأ من أول عنصر تفاعلي داخل القائمة
                 e.preventDefault();
