@@ -92,6 +92,18 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       >
         <Monitor className="w-3.5 h-3.5" />
       </button>
+
+      {pending && (
+        <button
+          onClick={() => commit(pending, pendingLabel)}
+          title={`تأكيد ${pendingLabel}`}
+          className="ms-0.5 flex items-center gap-1 rounded-full bg-primary px-2 py-1 text-[11px] font-semibold text-primary-foreground transition hover:opacity-90 press-ripple"
+        >
+          <Check className="w-3 h-3" />
+          تأكيد
+        </button>
+      )}
     </div>
+
   );
 }
