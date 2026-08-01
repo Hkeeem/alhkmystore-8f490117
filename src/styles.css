@@ -86,26 +86,27 @@
 
   /* Muted — بيج فاتح */
   --muted: oklch(0.95 0.015 75);
-  --muted-foreground: oklch(0.48 0.02 70);
+  --muted-foreground: oklch(0.42 0.02 70);
 
   /* Accent — ذهبي دافئ */
   --accent: oklch(0.88 0.06 80);
-  --accent-foreground: oklch(0.25 0.02 60);
+  --accent-foreground: oklch(0.22 0.02 60);
 
-  /* Status */
-  --destructive: oklch(0.55 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
+  /* Status — دُكِّنت لضمان تباين ٤.٥:١ مع النص الأبيض */
+  --destructive: oklch(0.50 0.20 27);
+  --destructive-foreground: oklch(0.99 0 0);
 
-  --success: oklch(0.65 0.16 145);
-  --success-foreground: oklch(0.98 0 0);
+  --success: oklch(0.51 0.13 148);
+  --success-foreground: oklch(0.99 0 0);
 
-  --hot: oklch(0.60 0.22 30);
-  --hot-foreground: oklch(0.98 0 0);
+  --hot: oklch(0.53 0.19 30);
+  --hot-foreground: oklch(0.99 0 0);
 
   /* Borders — بيج خفيف */
-  --border: oklch(0.90 0.02 75);
-  --input: oklch(0.94 0.015 75);
-  --ring: oklch(0.72 0.14 75);
+  --border: oklch(0.86 0.025 75);
+  --input: oklch(0.91 0.02 75);
+  --ring: oklch(0.62 0.14 72);
+
 
 }:root {
 
