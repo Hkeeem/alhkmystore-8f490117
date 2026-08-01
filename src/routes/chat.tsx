@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect, Fragment } from "react";
-import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink, Bot, Zap, TrendingDown, ShoppingCart, Star } from "lucide-react";
+import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink, Bot, Zap, TrendingDown, ShoppingCart, Star, AlertTriangle, RotateCcw } from "lucide-react";
+import { toast } from "sonner";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
 
@@ -83,10 +84,22 @@ function ChatPage() {
   const spokenRef = useRef<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [failure, setFailure] = useState<{ kind: "chat" | "tts" | "stt"; msg: string } | null>(null);
+  const lastSentRef = useRef<string>("");
+  const lastSpokenRef = useRef<string>("");
+
   const { messages, sendMessage, status } = useChat({
     id: "assistant",
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    onError: (e) => {
+      const msg = e?.message?.includes("429")
+        ? "الخدمة مزدحمة حالياً، جرّب بعد لحظات."
+        : "تعذّر الاتصال بحكيم. تحقق من الإنترنت وحاول مرة أخرى.";
+      setFailure({ kind: "chat", msg });
+      toast.error(msg);
+    },
   });
+
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const autoSentRef = useRef(false);
@@ -116,6 +129,7 @@ function ChatPage() {
   }, [messages, status, voiceOn]);
 
   async function speak(text: string) {
+    lastSpokenRef.current = text;
     try {
       audioRef.current?.pause();
       const r = await fetch("/api/tts", {
@@ -123,20 +137,39 @@ function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text }),
       });
-      if (!r.ok) return;
+      if (!r.ok) throw new Error("tts");
       const blob = await r.blob();
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       audioRef.current = audio;
+      setFailure((f) => (f?.kind === "tts" ? null : f));
       audio.play().catch(() => {});
-    } catch {}
+    } catch {
+      const msg = "تعذّر تشغيل الرد الصوتي.";
+      setFailure({ kind: "tts", msg });
+      toast.error(msg, { action: { label: "إعادة المحاولة", onClick: () => void speak(text) } });
+    }
   }
 
   async function send(text: string) {
     if (!text.trim()) return;
+    lastSentRef.current = text.trim();
     setInput("");
-    await sendMessage({ text });
+    setFailure(null);
+    await sendMessage({ text: text.trim() });
   }
+
+  function retry() {
+    const f = failure;
+    setFailure(null);
+    if (!f) return;
+    if (f.kind === "tts") {
+      if (lastSpokenRef.current) void speak(lastSpokenRef.current);
+      return;
+    }
+    if (lastSentRef.current) void sendMessage({ text: lastSentRef.current });
+  }
+
 
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -160,15 +193,25 @@ function ChatPage() {
         stream.getTracks().forEach((t) => t.stop());
         setRecording(false);
         const blob = new Blob(chunksRef.current, { type: mime });
-        if (blob.size < 1500) return;
+        if (blob.size < 1500) {
+          toast.error("التسجيل قصير جداً، حاول مرة أخرى.");
+          return;
+        }
         setTranscribing(true);
         try {
           const fd = new FormData();
           fd.append("file", blob, `rec.${mime.includes("mp4") ? "mp4" : "webm"}`);
           const r = await fetch("/api/stt", { method: "POST", body: fd });
+          if (!r.ok) throw new Error("stt");
           const data = await r.json();
           const text = (data?.text || "").trim();
-          if (text) await send(text);
+          if (!text) throw new Error("empty");
+          setFailure(null);
+          await send(text);
+        } catch {
+          const msg = "ما قدرنا نحوّل صوتك لنص. جرّب التسجيل مرة ثانية أو اكتب سؤالك.";
+          setFailure({ kind: "stt", msg });
+          toast.error(msg, { action: { label: "تسجيل جديد", onClick: () => void toggleRecord() } });
         } finally {
           setTranscribing(false);
         }
@@ -177,8 +220,11 @@ function ChatPage() {
       recorderRef.current = rec;
       setRecording(true);
     } catch {
-      alert("ما قدرنا نوصل للمايكروفون");
+      const msg = "ما قدرنا نوصل للمايكروفون. تأكد من إذن الميكروفون.";
+      setFailure({ kind: "stt", msg });
+      toast.error(msg);
     }
+
   }
 
   return (
@@ -306,6 +352,21 @@ function ChatPage() {
           </div>
         )}
       </div>
+
+      {failure && (
+        <div className="mt-3 flex items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+          <span className="flex-1 text-foreground">{failure.msg}</span>
+          <button
+            type="button"
+            onClick={retry}
+            className="shrink-0 flex items-center gap-1 rounded-xl bg-card border border-border px-3 py-1.5 text-xs font-bold hover:border-primary hover:text-primary transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            إعادة المحاولة
+          </button>
+        </div>
+      )}
 
       {/* شريط الإدخال */}
       <form
