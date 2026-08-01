@@ -445,9 +445,11 @@ export function TopBar() {
                       pathname={pathname}
                       open={openGroup === gi}
                       onToggle={() => setOpenGroup((prev) => (prev === gi ? null : gi))}
+                      onNavigate={() => handleMenuOpenChange(false)}
                       shortcut={gi + 1}
                     />
                   ))}
+
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
                     اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
