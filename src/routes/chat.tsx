@@ -353,6 +353,21 @@ function ChatPage() {
         )}
       </div>
 
+      {failure && (
+        <div className="mt-3 flex items-center gap-3 rounded-2xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm">
+          <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+          <span className="flex-1 text-foreground">{failure.msg}</span>
+          <button
+            type="button"
+            onClick={retry}
+            className="shrink-0 flex items-center gap-1 rounded-xl bg-card border border-border px-3 py-1.5 text-xs font-bold hover:border-primary hover:text-primary transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            إعادة المحاولة
+          </button>
+        </div>
+      )}
+
       {/* شريط الإدخال */}
       <form
         onSubmit={(e) => { e.preventDefault(); send(input); }}
