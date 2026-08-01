@@ -141,8 +141,8 @@ function Home() {
                   <div className="w-11 h-11 rounded-2xl bg-secondary text-primary flex items-center justify-center mb-3 ring-1 ring-primary/30 group-hover:scale-105 transition">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <div className="font-black text-sm md:text-base">{p.label}</div>
-                  <div className="text-[11px] text-muted-foreground mt-1">{p.note}</div>
+                  <div className="font-thuluth font-black text-sm md:text-base leading-[1.9]">{p.label}</div>
+                  <div className="font-thuluth text-[11px] text-muted-foreground mt-1 leading-[1.9]">{p.note}</div>
                 </div>
               </Link>
             );
