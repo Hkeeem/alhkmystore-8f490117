@@ -118,6 +118,154 @@ function AdminPage() {
   );
 }
 
+const VERCEL_LOGS_URL = "https://vercel.com/dashboard";
+
+const STATE_STYLES: Record<string, { label: string; cls: string }> = {
+  READY: { label: "ناجح", cls: "bg-emerald-500/15 text-emerald-500 border-emerald-500/30" },
+  ERROR: { label: "فشل", cls: "bg-destructive/15 text-destructive border-destructive/30" },
+  BUILDING: { label: "قيد البناء", cls: "bg-primary/15 text-primary border-primary/30" },
+  QUEUED: { label: "في الانتظار", cls: "bg-muted text-muted-foreground border-border" },
+  CANCELED: { label: "أُلغي", cls: "bg-muted text-muted-foreground border-border" },
+};
+
+function fmtTime(ts: number | null) {
+  if (!ts) return "—";
+  return new Date(ts).toLocaleString("ar-SA", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function DeployTab() {
+  const q = useQuery({
+    queryKey: ["deploy-status"],
+    queryFn: () => getDeployStatus(),
+    refetchInterval: 60_000,
+  });
+
+  const logsHref =
+    (q.data && "inspectorUrl" in q.data && q.data.inspectorUrl) ||
+    q.data?.dashboardUrl ||
+    VERCEL_LOGS_URL;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-bold flex items-center gap-2">
+          <Rocket className="w-5 h-5 text-primary" />
+          آخر عملية نشر (Redeploy)
+        </h2>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => q.refetch()}
+            disabled={q.isFetching}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/25 text-sm hover:bg-muted disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${q.isFetching ? "animate-spin" : ""}`} />
+            تحديث
+          </button>
+          <a
+            href={logsHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold"
+          >
+            <ExternalLink className="w-4 h-4" />
+            سجلات Vercel
+          </a>
+        </div>
+      </div>
+
+      {q.isLoading && <ListSkeleton count={2} />}
+
+      {q.error && (
+        <div className="p-4 rounded-2xl border border-destructive/30 bg-destructive/10 text-sm flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 mt-0.5 text-destructive" />
+          <div>
+            <p className="font-semibold text-destructive">تعذّر جلب حالة النشر.</p>
+            <p className="text-muted-foreground">تحقّق من مفاتيح Vercel ثم أعد المحاولة.</p>
+          </div>
+        </div>
+      )}
+
+      {q.data && !q.data.configured && (
+        <div className="p-5 rounded-2xl border border-primary/20 bg-card space-y-2 text-sm">
+          <p className="font-semibold">لم تُربط بيانات النشر بعد</p>
+          <p className="text-muted-foreground">{q.data.reason}</p>
+          <p className="text-muted-foreground">
+            أضف المفاتيح <code className="text-primary">VERCEL_TOKEN</code> و
+            <code className="text-primary"> VERCEL_PROJECT_ID</code> (و
+            <code className="text-primary"> VERCEL_TEAM_ID</code> للفرق) لعرض آخر نتيجة تلقائياً،
+            أو افتح السجلات مباشرة من الزر بالأعلى.
+          </p>
+        </div>
+      )}
+
+      {q.data?.configured && (
+        <div className="p-5 rounded-2xl border border-primary/20 bg-card shadow-card space-y-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={`px-3 py-1 rounded-full border text-xs font-bold ${
+                STATE_STYLES[q.data.state]?.cls ?? "bg-muted text-muted-foreground border-border"
+              }`}
+            >
+              {STATE_STYLES[q.data.state]?.label ?? q.data.state}
+            </span>
+            {q.data.target && (
+              <span className="text-xs text-muted-foreground">البيئة: {q.data.target}</span>
+            )}
+            {q.data.branch && (
+              <span className="text-xs text-muted-foreground">الفرع: {q.data.branch}</span>
+            )}
+          </div>
+
+          {q.data.errorMessage && (
+            <p className="text-sm text-destructive bg-destructive/10 rounded-lg p-3 break-words">
+              {q.data.errorMessage}
+            </p>
+          )}
+
+          <dl className="grid sm:grid-cols-2 gap-3 text-sm">
+            <Row label="وقت البدء" value={fmtTime(q.data.createdAt)} />
+            <Row label="وقت الانتهاء" value={fmtTime(q.data.readyAt)} />
+            <Row
+              label="المدة"
+              value={q.data.durationMs ? `${Math.round(q.data.durationMs / 1000)} ثانية` : "—"}
+            />
+            <Row label="الإصدار (Commit)" value={q.data.commitSha?.slice(0, 7) ?? "—"} />
+          </dl>
+
+          {q.data.commitMessage && (
+            <p className="text-sm text-muted-foreground break-words">
+              رسالة الإصدار: {q.data.commitMessage}
+            </p>
+          )}
+
+          {q.data.url && (
+            <a
+              href={q.data.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+            >
+              <ExternalLink className="w-4 h-4" />
+              فتح نسخة النشر
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-2">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium">{value}</dd>
+    </div>
+  );
+}
+
+
+
 function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () => void }) {
   const claim = useServerFn(claimSuperAdmin);
   const [busy, setBusy] = useState(false);
