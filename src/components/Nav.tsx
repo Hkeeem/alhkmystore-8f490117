@@ -187,8 +187,11 @@ export function TopBar() {
                 (highContrast
                   ? "bg-background/95 border-primary/40 "
                   : "bg-background/55 border-primary/15 ") +
-                "p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl transition-[width,max-width] duration-300"
+                "sidebar-panel p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl " +
+                "transition-[width,max-width,background-color,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] " +
+                "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:duration-400 data-[state=closed]:duration-250 data-[state=open]:ease-[cubic-bezier(0.22,1,0.36,1)]"
               }
+
             >
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
                 <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
