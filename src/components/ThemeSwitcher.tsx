@@ -25,12 +25,18 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
     root.classList.add(`theme-${t}`);
   };
 
-  /** الرجوع للثيم المحفوظ عند مغادرة المؤشر */
+  /** الرجوع للثيم المحفوظ — فقط عند مغادرة المبدّل بالكامل */
   const restore = () => {
     const root = document.documentElement;
     root.classList.add("theme-switching");
     root.classList.remove(...CLASSES);
     root.classList.add(`theme-${theme}`);
+  };
+
+  /** لا نرجع إلا إذا خرج التركيز خارج مجموعة الأزرار */
+  const onGroupBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+    restore();
   };
 
   return (
@@ -39,6 +45,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       role="group"
       aria-label="نمط الألوان"
       onMouseLeave={restore}
+      onBlur={onGroupBlur}
     >
       {themes.map((t) => (
         <button
@@ -46,7 +53,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
           onClick={() => commit(t.id, t.label)}
           onMouseEnter={() => preview(t.id)}
           onFocus={() => preview(t.id)}
-          onBlur={restore}
+
           aria-label={t.label}
           title={`${t.label} — معاينة فورية`}
           aria-pressed={!auto && theme === t.id}
