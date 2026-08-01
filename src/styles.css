@@ -20,6 +20,9 @@
 
   --font-sans: "Tajawal", system-ui, sans-serif;
   --font-display: "Cairo", "Tajawal", system-ui, sans-serif;
+  /* خط عربي بأسلوب الثلث/الرقعة للعناوين الفاخرة */
+  --font-thuluth: "Aref Ruqaa", "Cairo", serif;
+
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
