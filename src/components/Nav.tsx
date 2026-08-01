@@ -449,7 +449,7 @@ export function TopBar() {
 
 
               <div className="flex-1 overflow-y-auto py-6">
-                <nav className="flex flex-col gap-2">
+                <nav className="flex flex-col gap-2" onKeyDown={handleNavKeyDown} aria-label="روابط القائمة الجانبية">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
