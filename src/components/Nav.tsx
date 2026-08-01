@@ -70,14 +70,17 @@ function SidebarGroup({
   open,
   onToggle,
   shortcut,
+  onNavigate,
 }: {
   group: Group;
   pathname: string;
   open: boolean;
   onToggle: () => void;
   shortcut?: number;
+  onNavigate?: () => void;
 }) {
   const GroupIcon = group.icon;
+
   return (
     <div className="mt-2 border-t border-primary/10 pt-2">
       <button
@@ -106,7 +109,9 @@ function SidebarGroup({
                 key={it.to}
                 to={it.to}
                 preload="intent"
+                onClick={() => onNavigate?.()}
                 aria-current={active ? "page" : undefined}
+
                 className={
                   active
                     ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
@@ -407,7 +412,9 @@ export function TopBar() {
                       <Link
                         key={it.to}
                         to={it.to}
+                        onClick={() => handleMenuOpenChange(false)}
                         aria-current={active ? "page" : undefined}
+
                         style={{ animationDelay: `${60 + i * 35}ms` }}
                         className={
                           "sidebar-item " +
@@ -438,9 +445,11 @@ export function TopBar() {
                       pathname={pathname}
                       open={openGroup === gi}
                       onToggle={() => setOpenGroup((prev) => (prev === gi ? null : gi))}
+                      onNavigate={() => handleMenuOpenChange(false)}
                       shortcut={gi + 1}
                     />
                   ))}
+
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
                     اختصارات: Ctrl/⌘+B لفتح وإغلاق القائمة · Alt+رقم لاختيار قسم · Alt+↑/↓ للتنقل
