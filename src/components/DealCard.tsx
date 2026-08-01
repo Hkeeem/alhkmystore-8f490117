@@ -73,7 +73,7 @@ export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
 
         </div>
 
-        <h3 className="text-sm leading-snug line-clamp-2 min-h-[2.75rem]">{deal.title}</h3>
+        <h3 className="font-bold text-sm leading-snug line-clamp-2 min-h-[2.5rem]">{deal.title}</h3>
 
         {deal.unit && <p className="text-xs text-muted-foreground">{deal.unit}</p>}
 
