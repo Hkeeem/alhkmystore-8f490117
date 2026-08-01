@@ -32,18 +32,28 @@ function DealsPage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string | undefined>(cat);
   const [storeId, setStoreId] = useState<string | undefined>(store);
-  const [sort, setSort] = useState<"discount" | "price">("discount");
+  const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
+  const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
+
+  useEffect(() => {
+    const load = () => setPrefs(readPrefs());
+    load();
+    window.addEventListener("hkeeem-prefs-change", load);
+    return () => window.removeEventListener("hkeeem-prefs-change", load);
+  }, []);
 
   const filtered = useMemo(() => {
-    let list = deals.filter((d) => {
+    const list = deals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
       if (q && !d.title.includes(q)) return false;
       return true;
     });
+    if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [q, category, storeId, sort]);
+  }, [q, category, storeId, sort, prefs]);
+
 
   const cats = ["سوبرماركت", "مطاعم", "إلكترونيات", "صيدلية"];
 
