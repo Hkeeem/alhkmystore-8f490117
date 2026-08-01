@@ -214,6 +214,59 @@ export function TopBar() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [menuOpen]);
 
+  // إيماءات السحب على الجوال: سحب من الحافة اليمنى للفتح، وسحب لليمين للإغلاق
+  useEffect(() => {
+    const EDGE = 28;      // عرض منطقة الحافة التي تبدأ منها إيماءة الفتح
+    const DISTANCE = 60;  // أقل مسافة أفقية تُعتبر سحبة
+    const MAX_OFF_AXIS = 50;
+
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    let intent: "open" | "close" | null = null;
+
+    const isMobile = () => window.innerWidth < 768;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (!isMobile() || e.touches.length !== 1) return;
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      if (!menuOpen && startX >= window.innerWidth - EDGE) {
+        intent = "open";
+        tracking = true;
+      } else if (menuOpen) {
+        intent = "close";
+        tracking = true;
+      } else {
+        tracking = false;
+        intent = null;
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (!tracking || !intent) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = Math.abs(t.clientY - startY);
+      tracking = false;
+      if (dy > MAX_OFF_AXIS) { intent = null; return; }
+
+      if (intent === "open" && dx <= -DISTANCE) handleMenuOpenChange(true);
+      if (intent === "close" && dx >= DISTANCE) handleMenuOpenChange(false);
+      intent = null;
+    };
+
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [menuOpen]);
+
+
+
 
   const toggleSidebarWidth = () => {
     setSidebarWide((prev) => {
