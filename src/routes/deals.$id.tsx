@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
 import { ArrowRight, CalendarClock, Clock, FileText, Flame, Share2, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { recordInterest } from "@/lib/preferences";
+
 import { getDealIcon } from "@/lib/icons";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
