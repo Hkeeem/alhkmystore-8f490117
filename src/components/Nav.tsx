@@ -251,7 +251,9 @@ export function TopBar() {
               لوحة التحكم
             </Link>
           )}
+          <VisionBadgeSettings className="hidden sm:inline-flex" />
           <ThemeSwitcher />
+
 
           {user ? (
             <>
