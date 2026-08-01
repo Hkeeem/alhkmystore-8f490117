@@ -8,7 +8,7 @@ import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
 
 
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const items = [
