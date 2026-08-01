@@ -382,6 +382,7 @@ export function TopBar() {
               role="dialog"
               aria-modal="true"
               aria-label="القائمة الجانبية"
+              onKeyDown={handleNavKeyDown}
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
               onInteractOutside={() => handleMenuOpenChange(false)}
