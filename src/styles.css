@@ -494,9 +494,17 @@ html.theme-switching *:active {
 
 }
 
+@utility font-thuluth {
+  font-family: var(--font-thuluth);
+  font-weight: 700;
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+
 @utility text-gold-shine {
   background-image: linear-gradient(100deg,
     var(--shine-dark) 0%,
+
     var(--shine-light) 35%,
     var(--shine-mid) 50%,
     var(--shine-light) 65%,
