@@ -103,6 +103,54 @@ function DealsPage() {
   );
 }
 
+/** عروض حقيقية أضافها تجّار موثّقون */
+function MerchantDealsSection() {
+  const q = useQuery({ queryKey: ["published-merchant-deals"], queryFn: () => fetchPublishedDeals(12) });
+  const items = q.data ?? [];
+  if (q.isLoading || items.length === 0) return null;
+
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="font-display font-black text-lg flex items-center gap-2">
+          <BadgeCheck className="w-5 h-5 text-primary" /> عروض حقيقية من التجّار
+        </h2>
+        <Link to="/merchant" className="text-xs text-primary hover:underline flex items-center gap-1">
+          <StoreIcon className="w-3.5 h-3.5" /> أضف عرض متجرك
+        </Link>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+        {items.map((d) => (
+          <article key={d.id} className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift">
+            {d.image_url && (
+              <img src={d.image_url} alt={d.title} loading="lazy" className="w-full h-28 object-cover" />
+            )}
+            <div className="p-3 space-y-1">
+              <p className="font-bold text-sm line-clamp-2">{d.title}</p>
+              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <BadgeCheck className="w-3 h-3 text-primary" /> {d.merchants.name}
+              </p>
+              <p className="text-sm font-black text-primary">
+                {d.price} ر.س{" "}
+                <span className="text-[11px] font-normal text-muted-foreground line-through">{d.original_price}</span>
+              </p>
+              <span className="inline-block text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                وفّر {d.discount_percent}%
+              </span>
+              {d.product_url && (
+                <a href={d.product_url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-primary hover:underline pt-1">
+                  اذهب للعرض
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
 function Chip({ active, onClick, children, small }: { active: boolean; onClick: () => void; children: React.ReactNode; small?: boolean }) {
   return (
     <button
