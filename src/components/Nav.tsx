@@ -3,6 +3,9 @@ import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
+import { VisionBadge } from "@/components/VisionBadge";
+import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
+
 
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
