@@ -121,7 +121,15 @@ function DealsPage() {
         <div className="text-center py-20 text-muted-foreground">لا توجد عروض مطابقة.</div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-          {filtered.map((d, i) => <DealCard key={d.id} deal={d} rank={sort==="price"?undefined:i+1} />)}
+          {filtered.map((d, i) => (
+            <DealCard
+              key={d.id}
+              deal={d}
+              rank={sort === "price" ? undefined : i + 1}
+              reason={sort === "smart" ? smartReason(d, prefs) ?? "ترتيب ذكي" : null}
+              reasonDetail={sort === "smart" ? smartExplanation(d, prefs) : undefined}
+            />
+          ))}
         </div>
       )}
 
