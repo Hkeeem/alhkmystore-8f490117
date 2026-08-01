@@ -1,9 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon } from "lucide-react";
+import { fetchPublishedDeals } from "@/lib/merchant-api";
 import { z } from "zod";
 
 const searchSchema = z.object({
