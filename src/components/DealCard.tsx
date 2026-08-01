@@ -1,12 +1,24 @@
 import { type Deal, discountPercent, getStore } from "@/data/deals";
-import { Clock, Flame, Share2 } from "lucide-react";
+import { Clock, Flame, Share2, Info } from "lucide-react";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
 
-export function DealCard({ deal, rank }: { deal: Deal; rank?: number }) {
+export function DealCard({
+  deal,
+  rank,
+  reason,
+  reasonDetail,
+}: {
+  deal: Deal;
+  rank?: number;
+  /** سبب مختصر لترقية العرض في الترتيب الذكي */
+  reason?: string | null;
+  /** شرح تفصيلي يظهر عند الضغط على التلميح */
+  reasonDetail?: string;
+}) {
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
   const isHot = off >= 45;
