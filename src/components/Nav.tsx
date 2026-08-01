@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Scale, BarChart3, Megaphone, ShoppingBag } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -98,7 +98,7 @@ function SidebarGroup({ group, pathname }: { group: Group; pathname: string }) {
                 className={
                   active
                     ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-muted-foreground hover:bg-secondary hover:text-foreground transition-all group"
+                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/80 hover:bg-secondary hover:text-foreground transition-all group"
                 }
               >
                 {active && (
@@ -126,11 +126,14 @@ export function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarWide, setSidebarWide] = useState(false);
 
+  const [highContrast, setHighContrast] = useState(false);
+
   // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
   useEffect(() => {
     try {
       if (localStorage.getItem("hkeeem-sidebar-open") === "1") setMenuOpen(true);
       if (localStorage.getItem("hkeeem-sidebar-wide") === "1") setSidebarWide(true);
+      if (localStorage.getItem("hkeeem-sidebar-hc") === "1") setHighContrast(true);
     } catch { /* ignore */ }
   }, []);
 
@@ -151,6 +154,17 @@ export function TopBar() {
     });
   };
 
+  const toggleHighContrast = () => {
+    setHighContrast((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("hkeeem-sidebar-hc", next ? "1" : "0");
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
+
+
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
@@ -165,11 +179,15 @@ export function TopBar() {
             </SheetTrigger>
             <SheetContent
               side="right"
+              data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
                   ? "w-[300px] sm:w-[360px] max-w-[85vw] "
                   : "w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] ") +
-                "p-4 flex flex-col bg-background/55 backdrop-blur-2xl border-l border-primary/15 shadow-xl transition-[width,max-width] duration-300"
+                (highContrast
+                  ? "bg-background/95 border-primary/40 "
+                  : "bg-background/55 border-primary/15 ") +
+                "p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl transition-[width,max-width] duration-300"
               }
             >
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
@@ -178,17 +196,35 @@ export function TopBar() {
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
                   {sidebarWide && <span>HkeeemAI</span>}
-                  <button
-                    type="button"
-                    onClick={toggleSidebarWidth}
-                    aria-label={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
-                    title={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
-                    className="mr-auto p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
-                  >
-                    {sidebarWide ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-                  </button>
+                  <div className="mr-auto flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={toggleHighContrast}
+                      aria-pressed={highContrast}
+                      aria-label={highContrast ? "إيقاف وضع التباين العالي" : "تفعيل وضع التباين العالي"}
+                      title={highContrast ? "إيقاف وضع التباين العالي" : "تفعيل وضع التباين العالي"}
+                      className={
+                        "min-h-9 min-w-9 flex items-center justify-center rounded-lg transition-colors " +
+                        (highContrast
+                          ? "bg-primary text-primary-foreground"
+                          : "text-foreground/70 hover:text-foreground hover:bg-secondary/60")
+                      }
+                    >
+                      <Contrast className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={toggleSidebarWidth}
+                      aria-label={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                      title={sidebarWide ? "تصغير القائمة" : "توسيع القائمة"}
+                      className="min-h-9 min-w-9 flex items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-secondary/60 transition-colors"
+                    >
+                      {sidebarWide ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </SheetTitle>
               </SheetHeader>
+
 
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2">
@@ -203,7 +239,7 @@ export function TopBar() {
                         className={
                           active
                             ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all whitespace-nowrap"
-                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-muted-foreground hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground transition-all group whitespace-nowrap"
                         }
 
                       >
@@ -228,7 +264,7 @@ export function TopBar() {
               <SheetFooter className="mt-auto border-t border-primary/10 pt-6 pb-4">
                 <div className="flex flex-col gap-4 w-full">
                   <div className="bg-secondary/50 p-4 rounded-2xl border border-primary/10">
-                    <p className="text-[11px] text-muted-foreground leading-relaxed text-right">
+                    <p className="text-[11px] text-foreground/80 leading-relaxed text-right">
                       يسعدني استقبال طلباتكم وعروضكم عبر رابط مكتبي العقاري، وسنقوم بخدمتكم في أقرب فرصة
                     </p>
                     <p className="text-[10px] font-bold text-primary mt-2 text-right">

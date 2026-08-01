@@ -687,3 +687,15 @@ html {
     animation: none;
   }
 }
+
+/* ===== وضع التباين العالي للقائمة الجانبية ===== */
+[data-sidebar-hc="on"] {
+  --muted-foreground: var(--foreground);
+}
+
+[data-sidebar-hc="on"] a,
+[data-sidebar-hc="on"] button,
+[data-sidebar-hc="on"] p,
+[data-sidebar-hc="on"] span {
+  font-weight: 600;
+}
