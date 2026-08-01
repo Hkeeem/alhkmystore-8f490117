@@ -1,11 +1,12 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
-import { ArrowRight, Clock, Flame, Share2 } from "lucide-react";
+import { ArrowRight, CalendarClock, Clock, FileText, Flame, Share2, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { getDealIcon } from "@/lib/icons";
 import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { DealActions } from "@/components/DealActions";
+import { dealDescription, dealTerms, expiryDate, formatArabicDate } from "@/lib/deal-details";
 
 export const Route = createFileRoute("/deals/$id")({
   head: ({ params }) => {
