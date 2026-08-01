@@ -391,12 +391,14 @@ export function TopBar() {
                 menuTriggerRef.current?.focus();
               }}
               onOpenAutoFocus={(e) => {
-                // حبس التركيز: ابدأ من أول عنصر تفاعلي داخل القائمة
+                // حبس التركيز: ابدأ من أول رابط تنقل داخل القائمة
                 e.preventDefault();
                 const panel = e.currentTarget as HTMLElement;
-                const first = panel.querySelector<HTMLElement>(
-                  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
-                );
+                const first =
+                  panel.querySelector<HTMLElement>('nav a[href], nav button:not([disabled])') ??
+                  panel.querySelector<HTMLElement>(
+                    'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])',
+                  );
                 (first ?? panel).focus();
               }}
               data-sidebar-hc={highContrast ? "on" : "off"}
