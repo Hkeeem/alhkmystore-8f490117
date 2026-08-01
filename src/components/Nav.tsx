@@ -151,7 +151,7 @@ export function TopBar() {
                 <Menu className="w-5 h-5 text-primary" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col bg-background border-l border-primary/10">
+            <SheetContent side="right" className="w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] p-4 flex flex-col bg-background/55 backdrop-blur-2xl border-l border-primary/15 shadow-xl">
               <SheetHeader className="text-right border-b border-primary/10 pb-4">
                 <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
                   <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
