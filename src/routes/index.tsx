@@ -112,7 +112,7 @@ function Home() {
               { to: "/market", tag: "عقارات وتجارة", title: "سوق حكيم التجاري والعقاري الموحد", desc: "منتجات وعقارات في الرياض وجدة والخبر مع حاسبة العائد الإيجاري، مدى و STC Pay، وشحن سبل وسمسا خلال 24-48 ساعة.", cta: "تصفح السوق والحاسبة" },
             ].map((c) => (
               <Link key={c.to} to={c.to} className="bg-card rounded-3xl border border-border/60 shadow-card p-5 hover-lift flex flex-col">
-                <span className="self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30">{c.tag}</span>
+                <span className="font-thuluth self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 leading-[1.9]">{c.tag}</span>
                 <h3 className="font-thuluth text-lg mt-3 leading-[1.8]">{c.title}</h3>
                 <p className="font-thuluth text-sm text-muted-foreground mt-2 leading-[2] flex-1">{c.desc}</p>
                 <span className="font-thuluth mt-4 self-start text-sm font-bold text-primary leading-[1.9]">{c.cta} ←</span>
