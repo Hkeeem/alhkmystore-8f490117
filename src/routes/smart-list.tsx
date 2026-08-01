@@ -254,7 +254,16 @@ function SmartList() {
               const s = getStore(it.deal.storeId);
               return (
                 <div key={i} className="p-4 flex items-center gap-3 transition hover:bg-secondary/40">
-                  <div className="text-3xl">{it.deal.image}</div>
+                  {it.deal.image.startsWith("http") ? (
+                    <img
+                      src={it.deal.image}
+                      alt={it.deal.title}
+                      loading="lazy"
+                      className="w-12 h-12 rounded-xl object-cover shrink-0 bg-secondary"
+                    />
+                  ) : (
+                    <div className="text-3xl">{it.deal.image}</div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-sm truncate">{it.deal.title}</div>
                     <div className="flex items-center gap-1.5 mt-0.5">

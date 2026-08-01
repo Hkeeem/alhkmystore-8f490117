@@ -4,9 +4,6 @@ export const Route = createFileRoute("/api/tts")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const authHeader = request.headers.get("Authorization");
-        if (!authHeader) return new Response("Unauthorized", { status: 401 });
-
         const { text } = (await request.json()) as { text?: string };
         if (!text) return new Response("bad request", { status: 400 });
         const key = process.env.LOVABLE_API_KEY;
