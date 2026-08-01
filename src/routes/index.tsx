@@ -230,7 +230,7 @@ function Home() {
               <f.icon className="w-5 h-5" />
             </div>
             <h3 className="font-thuluth text-lg leading-[1.8]">{f.t}</h3>
-            <p className="text-sm text-secondary-foreground/70 mt-1">{f.d}</p>
+            <p className="font-thuluth text-sm text-secondary-foreground/70 mt-1 leading-[2]">{f.d}</p>
           </div>
         ))}
       </section>
