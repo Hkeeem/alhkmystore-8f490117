@@ -277,7 +277,7 @@ function SectionHeader({ title, subtitle, icon, href }: { title: string; subtitl
   return (
     <div className="flex items-end justify-between mb-4">
       <div>
-        <div className="flex items-center gap-2 text-primary">{icon}<h2 className="text-2xl md:text-3xl leading-snug text-foreground">{title}</h2></div>
+        <div className="flex items-center gap-2 text-primary">{icon}<h2 className="font-black text-2xl md:text-3xl leading-snug text-foreground">{title}</h2></div>
         <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{subtitle}</p>
       </div>
       {href && (
