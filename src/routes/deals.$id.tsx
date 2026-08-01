@@ -38,6 +38,11 @@ function DealDetailPage() {
   const isHot = off >= 45;
   const [shareOpen, setShareOpen] = useState(false);
   const [imgError, setImgError] = useState(false);
+
+  useEffect(() => {
+    if (deal) recordInterest(deal.category, deal.storeId);
+  }, [deal?.id]);
+
   const DealIcon = getDealIcon(deal);
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
   const router = useRouter();
