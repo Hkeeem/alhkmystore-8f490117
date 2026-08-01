@@ -93,7 +93,11 @@ function Home() {
         </div>
       </section>
 
+      {/* Intro video */}
+      <IntroVideo />
+
       {/* Pillars grid */}
+
       <section>
         <SectionHeader title="استكشف HkeeemAI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
