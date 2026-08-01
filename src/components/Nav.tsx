@@ -336,6 +336,7 @@ export function TopBar() {
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
             <SheetTrigger asChild>
               <button
+                ref={menuTriggerRef}
                 aria-label="فتح القائمة الجانبية"
                 aria-haspopup="dialog"
                 aria-expanded={menuOpen}
