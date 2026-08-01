@@ -176,7 +176,7 @@ function DealDetailPage() {
                   >
                     <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-2xl overflow-hidden">
                       {d.image?.startsWith("http") ? (
-                        <img src={d.image} alt={d.title} className="w-full h-full object-cover" />
+                        <img src={d.image} alt={d.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                       ) : (
                         <span>{d.image}</span>
                       )}
