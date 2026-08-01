@@ -235,10 +235,8 @@ export function TopBar() {
       if (!menuOpen && startX >= window.innerWidth - EDGE) {
         intent = "open";
         tracking = true;
-      } else if (menuOpen) {
-        intent = "close";
-        tracking = true;
       } else {
+        // الإغلاق صار بالنقر على الخلفية الداكنة بدل السحب
         tracking = false;
         intent = null;
       }
@@ -253,9 +251,9 @@ export function TopBar() {
       if (dy > MAX_OFF_AXIS) { intent = null; return; }
 
       if (intent === "open" && dx <= -DISTANCE) handleMenuOpenChange(true);
-      if (intent === "close" && dx >= DISTANCE) handleMenuOpenChange(false);
       intent = null;
     };
+
 
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchend", onTouchEnd, { passive: true });
@@ -303,6 +301,8 @@ export function TopBar() {
             </SheetTrigger>
             <SheetContent
               side="right"
+              onPointerDownOutside={() => handleMenuOpenChange(false)}
+              onInteractOutside={() => handleMenuOpenChange(false)}
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
