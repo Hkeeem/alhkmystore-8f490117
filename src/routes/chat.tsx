@@ -83,10 +83,22 @@ function ChatPage() {
   const spokenRef = useRef<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  const [failure, setFailure] = useState<{ kind: "chat" | "tts" | "stt"; msg: string } | null>(null);
+  const lastSentRef = useRef<string>("");
+  const lastSpokenRef = useRef<string>("");
+
   const { messages, sendMessage, status } = useChat({
     id: "assistant",
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    onError: (e) => {
+      const msg = e?.message?.includes("429")
+        ? "الخدمة مزدحمة حالياً، جرّب بعد لحظات."
+        : "تعذّر الاتصال بحكيم. تحقق من الإنترنت وحاول مرة أخرى.";
+      setFailure({ kind: "chat", msg });
+      toast.error(msg);
+    },
   });
+
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
   const autoSentRef = useRef(false);
