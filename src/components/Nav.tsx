@@ -412,7 +412,9 @@ export function TopBar() {
                       <Link
                         key={it.to}
                         to={it.to}
+                        onClick={() => handleMenuOpenChange(false)}
                         aria-current={active ? "page" : undefined}
+
                         style={{ animationDelay: `${60 + i * 35}ms` }}
                         className={
                           "sidebar-item " +
