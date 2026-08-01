@@ -40,7 +40,18 @@ const groups: Group[] = [
     icon: Building2,
     items: [{ to: "/real-estate", label: "البحث العقاري", icon: Building2, badge: "AI" }],
   },
+  {
+    label: "ذكاء حكيم AI",
+    icon: Sparkles,
+    items: [
+      { to: "/compare", label: "مقارنة الأسعار", icon: Scale },
+      { to: "/analysis", label: "تحليل المتاجر", icon: BarChart3, badge: "AI" },
+      { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
+      { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
+    ],
+  },
 ];
+
 
 /** يحدد إن كان المسار الحالي يطابق رابط القائمة (مع دعم الصفحات الفرعية) */
 function isPathActive(pathname: string, to: string) {
