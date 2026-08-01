@@ -126,11 +126,14 @@ export function TopBar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarWide, setSidebarWide] = useState(false);
 
+  const [highContrast, setHighContrast] = useState(false);
+
   // استرجاع حالة القائمة المحفوظة بعد الترطيب (hydration)
   useEffect(() => {
     try {
       if (localStorage.getItem("hkeeem-sidebar-open") === "1") setMenuOpen(true);
       if (localStorage.getItem("hkeeem-sidebar-wide") === "1") setSidebarWide(true);
+      if (localStorage.getItem("hkeeem-sidebar-hc") === "1") setHighContrast(true);
     } catch { /* ignore */ }
   }, []);
 
@@ -150,6 +153,17 @@ export function TopBar() {
       return next;
     });
   };
+
+  const toggleHighContrast = () => {
+    setHighContrast((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("hkeeem-sidebar-hc", next ? "1" : "0");
+      } catch { /* ignore */ }
+      return next;
+    });
+  };
+
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
