@@ -163,8 +163,32 @@ export function TopBar() {
 
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
+  // رسائل ARIA مباشرة (live region) لتوضيح حالة القائمة والتنقل
+  const [announcement, setAnnouncement] = useState("");
+  const announce = (msg: string) => {
+    // إعادة التعيين تضمن نطق الرسالة حتى لو تكررت
+    setAnnouncement("");
+    requestAnimationFrame(() => setAnnouncement(msg));
+  };
+
+  // إعلان القسم الحالي عند الانتقال (بعد أول تحميل)
+  const firstPathRef = useRef(true);
+  useEffect(() => {
+    if (firstPathRef.current) {
+      firstPathRef.current = false;
+      return;
+    }
+    const label = findRouteLabel(pathname);
+    setAnnouncement("");
+    const id = requestAnimationFrame(() =>
+      setAnnouncement(label ? `تم الانتقال إلى قسم ${label}` : "تم الانتقال إلى صفحة جديدة"),
+    );
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
+    announce(open ? "تم فتح القائمة الجانبية" : "تم إغلاق القائمة الجانبية");
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
@@ -175,6 +199,7 @@ export function TopBar() {
       });
     }
   };
+
 
   // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
   useEffect(() => {
