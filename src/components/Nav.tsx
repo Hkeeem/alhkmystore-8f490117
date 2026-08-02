@@ -64,6 +64,15 @@ function isPathActive(pathname: string, to: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
+// إيجاد اسم القسم الحالي لاستخدامه في رسائل ARIA
+function findRouteLabel(pathname: string): string | null {
+  const all = [...items, ...groups.flatMap((g) => g.items)];
+  const match = all.find((i) => isPathActive(pathname, i.to));
+  return match?.label ?? null;
+}
+
+
+
 function SidebarGroup({
   group,
   pathname,
