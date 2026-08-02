@@ -64,6 +64,15 @@ function isPathActive(pathname: string, to: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
+// إيجاد اسم القسم الحالي لاستخدامه في رسائل ARIA
+function findRouteLabel(pathname: string): string | null {
+  const all = [...items, ...groups.flatMap((g) => g.items)];
+  const match = all.find((i) => isPathActive(pathname, i.to));
+  return match?.label ?? null;
+}
+
+
+
 function SidebarGroup({
   group,
   pathname,
@@ -163,8 +172,32 @@ export function TopBar() {
 
   const menuTriggerRef = useRef<HTMLButtonElement | null>(null);
 
+  // رسائل ARIA مباشرة (live region) لتوضيح حالة القائمة والتنقل
+  const [announcement, setAnnouncement] = useState("");
+  const announce = (msg: string) => {
+    // إعادة التعيين تضمن نطق الرسالة حتى لو تكررت
+    setAnnouncement("");
+    requestAnimationFrame(() => setAnnouncement(msg));
+  };
+
+  // إعلان القسم الحالي عند الانتقال (بعد أول تحميل)
+  const firstPathRef = useRef(true);
+  useEffect(() => {
+    if (firstPathRef.current) {
+      firstPathRef.current = false;
+      return;
+    }
+    const label = findRouteLabel(pathname);
+    setAnnouncement("");
+    const id = requestAnimationFrame(() =>
+      setAnnouncement(label ? `تم الانتقال إلى قسم ${label}` : "تم الانتقال إلى صفحة جديدة"),
+    );
+    return () => cancelAnimationFrame(id);
+  }, [pathname]);
+
   const handleMenuOpenChange = (open: boolean) => {
     setMenuOpen(open);
+    announce(open ? "تم فتح القائمة الجانبية" : "تم إغلاق القائمة الجانبية");
     try {
       localStorage.setItem("hkeeem-sidebar-open", open ? "1" : "0");
     } catch { /* ignore */ }
@@ -175,6 +208,7 @@ export function TopBar() {
       });
     }
   };
+
 
   // اختصارات لوحة المفاتيح: Ctrl/⌘+B لفتح/إغلاق القائمة، Alt+رقم لاختيار قسم، Alt+↑/↓ للتنقل بين الأقسام
   useEffect(() => {
@@ -363,6 +397,12 @@ export function TopBar() {
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
       <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
         <VisionBadge />
+
+        {/* منطقة إعلانات ARIA المباشرة */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {announcement}
+        </div>
+
 
         <div className="flex items-center gap-4">
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
