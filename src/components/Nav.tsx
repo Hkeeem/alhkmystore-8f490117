@@ -398,6 +398,12 @@ export function TopBar() {
       <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
         <VisionBadge />
 
+        {/* منطقة إعلانات ARIA المباشرة */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {announcement}
+        </div>
+
+
         <div className="flex items-center gap-4">
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
             <SheetTrigger asChild>
