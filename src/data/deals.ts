@@ -104,6 +104,7 @@ export type Deal = {
   tags?: string[];
   expiresIn: string;
   productKey?: string; // for cross-store comparison
+  productUrl?: string; // رابط المنتج في متجر المصدر
 };
 
 /**
