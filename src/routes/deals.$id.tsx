@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
+import { deals, getStore, discountPercent, comparableGroups, type Deal } from "@/data/deals";
 import { useRealDeals } from "@/lib/real-deals";
 import { ArrowRight, CalendarClock, Clock, FileText, Flame, Share2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -72,8 +72,8 @@ function DealDetailView({ deal }: { deal: Deal }) {
   const groups = comparableGroups();
   const sameProduct =
     groups
-      .find((g) => g.some((d) => d.id === id))
-      ?.filter((d) => d.id !== id)
+      .find((g) => g.some((d) => d.id === deal.id))
+      ?.filter((d) => d.id !== deal.id)
       .sort((a, b) => a.price - b.price) || [];
 
   const dealUrl =
@@ -175,7 +175,7 @@ function DealDetailView({ deal }: { deal: Deal }) {
                   {deal.unit}
                 </div>
               )}
-              {deal.tags?.map((tag) => (
+              {deal.tags?.map((tag: string) => (
                 <span
                   key={tag}
                   className="px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-bold"
