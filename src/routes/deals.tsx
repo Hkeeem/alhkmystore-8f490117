@@ -95,6 +95,10 @@ function DealsPage() {
         ))}
       </div>
 
+      <DemoDataBanner />
+
+
+
       <div className="flex items-center gap-2 text-xs flex-wrap">
         <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
         <span className="text-muted-foreground py-1.5">ترتيب:</span>
