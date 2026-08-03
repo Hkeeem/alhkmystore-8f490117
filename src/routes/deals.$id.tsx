@@ -47,6 +47,10 @@ function DealDetailPage() {
     throw notFound();
   }
 
+  return <DealDetailView deal={deal} />;
+}
+
+function DealDetailView({ deal }: { deal: Deal }) {
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
   const isHot = off >= 45;
@@ -54,8 +58,8 @@ function DealDetailPage() {
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    if (deal) recordInterest(deal.category, deal.storeId);
-  }, [deal?.id]);
+    recordInterest(deal.category, deal.storeId);
+  }, [deal.id, deal.category, deal.storeId]);
 
   const DealIcon = getDealIcon(deal);
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
