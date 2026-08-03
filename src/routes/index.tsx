@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
-import { useRealDeals } from "@/lib/real-deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
@@ -16,8 +15,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { deals: realDeals } = useRealDeals();
-  void realDeals;
   const top = bestDeals(6);
   const groups = comparableGroups().slice(0, 3);
   const navigate = useNavigate();

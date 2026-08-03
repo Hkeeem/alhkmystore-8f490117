@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { fetchRealDealsServer } from "@/lib/real-deals.server";
+import { deals, stores } from "@/data/deals";
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -10,10 +10,10 @@ export const Route = createFileRoute("/api/chat")({
         const { messages } = (await request.json()) as { messages?: UIMessage[] };
         if (!Array.isArray(messages)) return new Response("bad request", { status: 400 });
 
-        const realDeals = await fetchRealDealsServer();
-        const catalog = realDeals.map((d) =>
-          `- [id:${d.id}] ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${d.storeName} | سعر: ${d.price} ر.س | قبل: ${d.originalPrice} ر.س | تنتهي: ${d.expiresIn}`
-        ).join("\n") || "لا توجد عروض متاحة حالياً.";
+        const catalog = deals.map((d) => {
+          const s = stores.find(x => x.id === d.storeId)!;
+          return `- [id:${d.id}] ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s.name} | سعر: ${d.price} ر.س | قبل: ${d.originalPrice} ر.س | تنتهي: ${d.expiresIn}`;
+        }).join("\n");
 
         const system = `أنت "حكيم"، مساعد سعودي ذكي وودود متخصص في عروض المملكة. تكلّم بلهجة سعودية طبيعية ومختصرة (سطرين إلى ثلاثة كحد أقصى) لأن ردودك ممكن تُقرأ بصوت عالٍ. عرّف نفسك كـ"حكيم" لما يسألك المستخدم عن اسمك.
 

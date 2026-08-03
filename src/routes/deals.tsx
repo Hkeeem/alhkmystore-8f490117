@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { discountPercent, allStores } from "@/data/deals";
-import { useRealDeals } from "@/lib/real-deals";
+import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -35,7 +35,6 @@ function DealsPage() {
   const [storeId, setStoreId] = useState<string | undefined>(store);
   const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
-  const { deals: realDeals, isLoading } = useRealDeals();
 
   useEffect(() => {
     const load = () => setPrefs(readPrefs());
@@ -45,7 +44,7 @@ function DealsPage() {
   }, []);
 
   const filtered = useMemo(() => {
-    const list = realDeals.filter((d) => {
+    const list = deals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
       if (q && !d.title.includes(q)) return false;
@@ -54,7 +53,7 @@ function DealsPage() {
     if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [realDeals, q, category, storeId, sort, prefs]);
+  }, [q, category, storeId, sort, prefs]);
 
 
   const cats = ["سوبرماركت", "مطاعم", "إلكترونيات", "صيدلية"];
@@ -88,7 +87,7 @@ function DealsPage() {
 
       <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1">
         <Chip active={!storeId} onClick={() => setStoreId(undefined)} small>كل المتاجر</Chip>
-        {allStores().filter(s => !category || s.category === category).map((s) => (
+        {stores.filter(s => !category || s.category === category).map((s) => (
           <Chip key={s.id} active={storeId === s.id} onClick={() => setStoreId(s.id)} small>
             <StoreLogo store={s} size="sm" className="ml-1 w-4 h-4 rounded" />
             {s.name}
@@ -96,6 +95,7 @@ function DealsPage() {
         ))}
       </div>
 
+      <DemoDataBanner />
 
 
 
@@ -122,15 +122,8 @@ function DealsPage() {
         </p>
       )}
 
-      {isLoading ? (
-        <div className="text-center py-20 text-muted-foreground">جاري تحميل العروض الحقيقية…</div>
-      ) : filtered.length === 0 ? (
-        <div className="text-center py-16 space-y-2">
-          <p className="font-bold">لا توجد عروض حقيقية منشورة حالياً.</p>
-          <p className="text-sm text-muted-foreground">
-            تُضاف العروض من التجّار الموثّقين ومن التحديث الآلي لمواقع المتاجر.
-          </p>
-        </div>
+      {filtered.length === 0 ? (
+        <div className="text-center py-20 text-muted-foreground">لا توجد عروض مطابقة.</div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {filtered.map((d, i) => (
