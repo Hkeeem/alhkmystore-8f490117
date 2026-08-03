@@ -9,6 +9,7 @@ import {
   listMyCashback,
 } from "@/lib/user.functions";
 import { deals, getStore, discountPercent } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 import { ListSkeleton, StatsSkeleton } from "@/components/Skeletons";
 
 type Tab = "favorites" | "alerts" | "cashback";

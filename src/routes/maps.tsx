@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 

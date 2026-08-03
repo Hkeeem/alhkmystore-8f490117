@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 import { ArrowRight, CalendarClock, Clock, FileText, Flame, Share2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { recordInterest } from "@/lib/preferences";
