@@ -31,6 +31,7 @@ function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number): num
 }
 
 function MapsPage() {
+  useRealDeals();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

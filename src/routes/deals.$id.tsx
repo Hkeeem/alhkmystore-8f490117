@@ -32,6 +32,7 @@ export const Route = createFileRoute("/deals/$id")({
 });
 
 function DealDetailPage() {
+  useRealDeals();
   const { id } = Route.useParams();
   const deal = deals.find((d) => d.id === id);
   if (!deal) throw notFound();

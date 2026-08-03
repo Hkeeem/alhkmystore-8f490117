@@ -47,6 +47,7 @@ function encodeQ(text: string): string {
 }
 
 function SmartList() {
+  useRealDeals();
   const search = Route.useSearch();
   const run = useServerFn(buildSmartList);
 

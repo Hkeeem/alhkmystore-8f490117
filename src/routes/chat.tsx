@@ -77,6 +77,7 @@ const suggestions = [
 ];
 
 function ChatPage() {
+  useRealDeals();
   const { q } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [voiceOn, setVoiceOn] = useState(true);
