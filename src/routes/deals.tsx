@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
