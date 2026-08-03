@@ -9,6 +9,7 @@ import {
   listMyCashback,
 } from "@/lib/user.functions";
 import { deals, getStore, discountPercent } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 import { ListSkeleton, StatsSkeleton } from "@/components/Skeletons";
 
 type Tab = "favorites" | "alerts" | "cashback";
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/me")({
 });
 
 function MePage() {
+  useRealDeals();
   const [tab, setTab] = useState<Tab>("favorites");
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: "favorites", label: "المفضلة", icon: Heart },

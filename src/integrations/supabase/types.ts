@@ -122,6 +122,78 @@ export type Database = {
         }
         Relationships: []
       }
+      external_deals: {
+        Row: {
+          active: boolean
+          brand: string | null
+          category: string
+          created_at: string
+          created_by: string | null
+          discount_percent: number
+          expires_at: string | null
+          fetched_at: string
+          id: string
+          image_url: string | null
+          original_price: number
+          price: number
+          product_key: string | null
+          product_url: string | null
+          source: string
+          source_key: string
+          store_id: string
+          store_name: string | null
+          title: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          brand?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          discount_percent?: number
+          expires_at?: string | null
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          original_price: number
+          price: number
+          product_key?: string | null
+          product_url?: string | null
+          source?: string
+          source_key: string
+          store_id: string
+          store_name?: string | null
+          title: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          brand?: string | null
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          discount_percent?: number
+          expires_at?: string | null
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          original_price?: number
+          price?: number
+          product_key?: string | null
+          product_url?: string | null
+          source?: string
+          source_key?: string
+          store_id?: string
+          store_name?: string | null
+          title?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string

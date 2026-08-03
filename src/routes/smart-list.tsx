@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, ListChecks, Loader2, Wallet, Share2, AlertTriangle, Link2, Check } from "lucide-react";
 import { toast } from "sonner";
 import { getStore } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 import { SkeletonBox, RowSkeleton } from "@/components/Skeletons";
 import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
@@ -46,6 +47,7 @@ function encodeQ(text: string): string {
 }
 
 function SmartList() {
+  useRealDeals();
   const search = Route.useSearch();
   const run = useServerFn(buildSmartList);
 

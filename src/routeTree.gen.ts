@@ -38,6 +38,7 @@ import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authe
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicHooksRefreshDealsRouteImport } from './routes/api/public/hooks/refresh-deals'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -184,6 +185,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHooksRefreshDealsRoute =
+  ApiPublicHooksRefreshDealsRouteImport.update({
+    id: '/api/public/hooks/refresh-deals',
+    path: '/api/public/hooks/refresh-deals',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/hooks/refresh-deals': typeof ApiPublicHooksRefreshDealsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -244,6 +252,7 @@ export interface FileRoutesByTo {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/hooks/refresh-deals': typeof ApiPublicHooksRefreshDealsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -276,6 +285,7 @@ export interface FileRoutesById {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/hooks/refresh-deals': typeof ApiPublicHooksRefreshDealsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/hooks/refresh-deals'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -338,6 +349,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/hooks/refresh-deals'
   id:
     | '__root__'
     | '/'
@@ -369,6 +381,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/hooks/refresh-deals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -394,6 +407,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  ApiPublicHooksRefreshDealsRoute: typeof ApiPublicHooksRefreshDealsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -601,6 +615,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/refresh-deals': {
+      id: '/api/public/hooks/refresh-deals'
+      path: '/api/public/hooks/refresh-deals'
+      fullPath: '/api/public/hooks/refresh-deals'
+      preLoaderRoute: typeof ApiPublicHooksRefreshDealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -676,6 +697,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
+  ApiPublicHooksRefreshDealsRoute: ApiPublicHooksRefreshDealsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

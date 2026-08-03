@@ -6,6 +6,7 @@ import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, Externa
 import { toast } from "sonner";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
+import { useRealDeals } from "@/lib/real-deals";
 
 const DEAL_TOKEN = /\{\{deal:([a-zA-Z0-9_-]+)\}\}/g;
 
@@ -76,6 +77,7 @@ const suggestions = [
 ];
 
 function ChatPage() {
+  useRealDeals();
   const { q } = Route.useSearch();
   const navigate = Route.useNavigate();
   const [voiceOn, setVoiceOn] = useState(true);

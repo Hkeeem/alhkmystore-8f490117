@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
-import { deals, stores } from "@/data/deals";
+import { fetchRealDealsServer } from "@/lib/real-deals.server";
 
 const Input = z.object({ text: z.string().min(1) });
 
@@ -19,10 +19,10 @@ const Schema = z.object({
 export const buildSmartList = createServerFn({ method: "POST" })
   .inputValidator((v: unknown) => Input.parse(v))
   .handler(async ({ data }) => {
-    const catalog = deals.map((d) => {
-      const s = stores.find((x) => x.id === d.storeId)!;
-      return `id=${d.id} | ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s.name} | سعر: ${d.price} ر.س`;
-    }).join("\n");
+    const realDeals = await fetchRealDealsServer();
+    const catalog = realDeals.map((d) =>
+      `id=${d.id} | ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${d.storeName} | سعر: ${d.price} ر.س`
+    ).join("\n") || "لا توجد عروض متاحة حالياً.";
 
     const prompt = `المستخدم كاتب قائمة تسوّق (كل سطر أو فاصلة = منتج):
 """
@@ -46,7 +46,7 @@ ${catalog}`;
       });
       const items = output.items.map((it) => ({
         requested: it.requested,
-        deal: it.dealId ? deals.find((d) => d.id === it.dealId) ?? null : null,
+        deal: it.dealId ? realDeals.find((d) => d.id === it.dealId) ?? null : null,
         note: it.note,
       }));
       const total = items.reduce((s, it) => s + (it.deal?.price ?? 0), 0);
