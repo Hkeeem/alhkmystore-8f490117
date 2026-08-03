@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
-  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle,
+  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle, Tags,
 } from "lucide-react";
+import { DealsSourceTab } from "@/components/admin/DealsSourceTab";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
   listComplaints, updateComplaint,
@@ -23,7 +24,7 @@ import {
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "deals";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -57,6 +58,7 @@ function AdminPage() {
 
   const tabs = ([
     { id: "dashboard" as const, label: "الرئيسية", icon: LayoutDashboard, allow: ["super_admin","admin","support","content_manager"] },
+    { id: "deals" as const, label: "مصادر العروض", icon: Tags, allow: ["super_admin","admin","content_manager"] },
     { id: "complaints" as const, label: "الشكاوى", icon: MessageSquareWarning, allow: ["super_admin","admin","support"] },
     { id: "suggestions" as const, label: "الاقتراحات", icon: Lightbulb, allow: ["super_admin","admin","content_manager"] },
     { id: "users" as const, label: "المستخدمون", icon: Users, allow: ["super_admin","admin"] },
@@ -102,6 +104,7 @@ function AdminPage() {
 
         <main className="min-w-0">
           {tab === "dashboard" && <DashboardTab />}
+          {tab === "deals" && <DealsSourceTab />}
           {tab === "complaints" && <ComplaintsTab />}
           {tab === "suggestions" && <SuggestionsTab />}
           {tab === "users" && <UsersTab canManageRoles={roles.includes("super_admin")} />}
