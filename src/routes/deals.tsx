@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { deals, discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
+import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -93,6 +94,10 @@ function DealsPage() {
           </Chip>
         ))}
       </div>
+
+      <DemoDataBanner />
+
+
 
       <div className="flex items-center gap-2 text-xs flex-wrap">
         <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
