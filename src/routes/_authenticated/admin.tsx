@@ -269,10 +269,15 @@ function Row({ label, value }: { label: string; value: string }) {
 function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () => void }) {
   const claim = useServerFn(claimSuperAdmin);
   const [busy, setBusy] = useState(false);
+  const [token, setToken] = useState("");
   async function handleClaim() {
+    if (!token.trim()) {
+      toast.error("أدخل رمز الإعداد السري");
+      return;
+    }
     setBusy(true);
     try {
-      const res = await claim();
+      const res = await claim({ data: { token: token.trim() } });
       if (res.claimed) {
         toast.success("تم تعيينك مديراً عاماً 👑");
         onClaimed();
@@ -280,7 +285,7 @@ function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () =>
         toast.error("توجد لوحة تحكم مُعرَّفة مسبقاً. راجع المدير العام.");
       }
     } catch (e) {
-      toast.error("تعذّر التنفيذ");
+      toast.error("رمز غير صحيح أو تعذّر التنفيذ");
     } finally {
       setBusy(false);
     }
@@ -291,16 +296,25 @@ function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () =>
         <Shield className="w-12 h-12 mx-auto text-primary" />
         <h1 className="text-xl font-bold">لوحة التحكم للمسؤولين</h1>
         <p className="text-muted-foreground text-sm">
-          هذه الصفحة متاحة فقط لفريق الإدارة. إذا كنت المسؤول الأول عن التطبيق، يمكنك تفعيل صلاحيات المدير العام الآن.
+          هذه الصفحة متاحة فقط لفريق الإدارة. إذا كنت المسؤول الأول عن التطبيق، أدخل رمز الإعداد السري لتفعيل صلاحيات المدير العام.
         </p>
         {hasClaim && (
-          <button
-            onClick={handleClaim}
-            disabled={busy}
-            className="w-full px-4 py-3 rounded-lg bg-primary text-primary-foreground font-semibold disabled:opacity-50"
-          >
-            {busy ? "جارٍ..." : "تفعيل المدير العام (لأول مرة فقط)"}
-          </button>
+          <>
+            <input
+              type="password"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              placeholder="رمز الإعداد السري"
+              className="w-full px-4 py-3 rounded-lg bg-background border border-border text-sm"
+            />
+            <button
+              onClick={handleClaim}
+              disabled={busy}
+              className="w-full px-4 py-3 rounded-lg bg-primary text-primary-foreground font-semibold disabled:opacity-50"
+            >
+              {busy ? "جارٍ..." : "تفعيل المدير العام (لأول مرة فقط)"}
+            </button>
+          </>
         )}
         <Link to="/" className="block text-sm text-primary hover:underline">العودة للرئيسية</Link>
       </div>
