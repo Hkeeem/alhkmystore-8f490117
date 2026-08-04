@@ -5,7 +5,8 @@ export const Route = createFileRoute("/api/tts")({
     handlers: {
       POST: async ({ request }) => {
         const { text } = (await request.json()) as { text?: string };
-        if (!text) return new Response("bad request", { status: 400 });
+        if (!text || typeof text !== "string") return new Response("bad request", { status: 400 });
+        if (text.length > 2000) return new Response("text too long", { status: 400 });
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("missing key", { status: 500 });
 

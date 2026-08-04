@@ -4,7 +4,7 @@ import { generateText, Output, NoObjectGeneratedError } from "ai";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 import { deals, stores } from "@/data/deals";
 
-const Input = z.object({ text: z.string().min(1) });
+const Input = z.object({ text: z.string().min(1).max(4000) });
 
 const Item = z.object({
   requested: z.string(),

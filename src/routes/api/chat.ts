@@ -9,6 +9,9 @@ export const Route = createFileRoute("/api/chat")({
       POST: async ({ request }) => {
         const { messages } = (await request.json()) as { messages?: UIMessage[] };
         if (!Array.isArray(messages)) return new Response("bad request", { status: 400 });
+        if (messages.length > 40) return new Response("too many messages", { status: 400 });
+        const totalChars = JSON.stringify(messages).length;
+        if (totalChars > 24000) return new Response("conversation too long", { status: 400 });
 
         const catalog = deals.map((d) => {
           const s = stores.find(x => x.id === d.storeId)!;

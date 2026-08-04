@@ -10,6 +10,7 @@ export const Route = createFileRoute("/api/stt")({
         const inForm = await request.formData();
         const file = inForm.get("file");
         if (!(file instanceof Blob)) return new Response("no file", { status: 400 });
+        if (file.size > 5 * 1024 * 1024) return new Response("audio too large", { status: 400 });
 
         const type = file.type || "audio/webm";
         const ext = type.includes("mp4") ? "mp4" : type.includes("wav") ? "wav" : type.includes("mpeg") ? "mp3" : "webm";
