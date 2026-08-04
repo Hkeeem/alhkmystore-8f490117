@@ -80,13 +80,18 @@ function SidebarGroup({
   onNavigate?: () => void;
 }) {
   const GroupIcon = group.icon;
+  const slug = group.label.replace(/\s+/g, "-");
+  const panelId = `sidebar-group-panel-${slug}`;
+  const buttonId = `sidebar-group-button-${slug}`;
 
   return (
     <div className="mt-2 border-t border-primary/10 pt-2">
       <button
         type="button"
+        id={buttonId}
         onClick={onToggle}
         aria-expanded={open}
+        aria-controls={panelId}
         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
       >
         <GroupIcon className="w-4.5 h-4.5 text-primary" />
@@ -100,13 +105,19 @@ function SidebarGroup({
       </button>
 
       {open && (
-        <div className="mt-1 flex flex-col gap-1 pr-3">
+        <ul
+          id={panelId}
+          role="group"
+          aria-labelledby={buttonId}
+          className="mt-1 flex flex-col gap-1 pr-3 list-none m-0 p-0"
+        >
+
           {group.items.map((it) => {
             const Icon = it.icon;
             const active = isPathActive(pathname, it.to);
             return (
+              <li key={it.to} className="contents">
               <Link
-                key={it.to}
                 to={it.to}
                 preload="intent"
                 onClick={() => onNavigate?.()}
@@ -127,9 +138,11 @@ function SidebarGroup({
                   <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{it.badge}</span>
                 )}
               </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
+
       )}
     </div>
   );
@@ -372,16 +385,19 @@ export function TopBar() {
                 aria-label="فتح القائمة الجانبية"
                 aria-haspopup="dialog"
                 aria-expanded={menuOpen}
+                aria-controls="hkeeem-sidebar"
                 className="p-2 min-h-11 min-w-11 flex items-center justify-center hover:bg-secondary rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Menu className="w-5 h-5 text-primary" />
               </button>
             </SheetTrigger>
             <SheetContent
+              id="hkeeem-sidebar"
               side="right"
               role="dialog"
               aria-modal="true"
               aria-label="القائمة الجانبية"
+
               onKeyDown={handleNavKeyDown}
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
@@ -453,12 +469,13 @@ export function TopBar() {
 
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2" aria-label="روابط القائمة الجانبية">
+                  <ul className="flex flex-col gap-2 list-none m-0 p-0" role="list">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
                     return (
+                      <li key={it.to} className="contents">
                       <Link
-                        key={it.to}
                         to={it.to}
                         onClick={() => handleMenuOpenChange(false)}
                         aria-current={active ? "page" : undefined}
@@ -482,13 +499,14 @@ export function TopBar() {
                           <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">جديد</span>
                         )}
                       </Link>
+                      </li>
                     );
                   })}
 
                   {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
                   {groups.map((g, gi) => (
+                    <li key={g.label} className="contents">
                     <SidebarGroup
-                      key={g.label}
                       group={g}
                       pathname={pathname}
                       open={openGroup === gi}
@@ -496,7 +514,11 @@ export function TopBar() {
                       onNavigate={() => handleMenuOpenChange(false)}
                       shortcut={gi + 1}
                     />
+                    </li>
                   ))}
+                  </ul>
+
+
 
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
