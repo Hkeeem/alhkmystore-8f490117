@@ -385,16 +385,19 @@ export function TopBar() {
                 aria-label="فتح القائمة الجانبية"
                 aria-haspopup="dialog"
                 aria-expanded={menuOpen}
+                aria-controls="hkeeem-sidebar"
                 className="p-2 min-h-11 min-w-11 flex items-center justify-center hover:bg-secondary rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Menu className="w-5 h-5 text-primary" />
               </button>
             </SheetTrigger>
             <SheetContent
+              id="hkeeem-sidebar"
               side="right"
               role="dialog"
               aria-modal="true"
               aria-label="القائمة الجانبية"
+
               onKeyDown={handleNavKeyDown}
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
               onPointerDownOutside={() => handleMenuOpenChange(false)}
