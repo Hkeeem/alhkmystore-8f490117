@@ -169,13 +169,25 @@ function DealDetailPage() {
               ))}
             </div>
 
-            <button
-              onClick={() => setShareOpen(true)}
-              className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground px-8 py-4 rounded-2xl font-black shadow-glow hover:shadow-soft transition"
-            >
-              <Share2 className="w-5 h-5" />
-              شارك العرض
-            </button>
+            <div className="flex flex-col md:flex-row gap-3">
+              <button
+                onClick={() => setShareOpen(true)}
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground px-8 py-4 rounded-2xl font-black shadow-glow hover:shadow-soft transition"
+              >
+                <Share2 className="w-5 h-5" />
+                شارك العرض
+              </button>
+
+              <Link
+                to="/maps"
+                search={{ deal: deal.id }}
+                className="w-full md:w-auto inline-flex items-center justify-center gap-2 bg-card border border-primary/30 text-primary px-8 py-4 rounded-2xl font-black hover:border-primary transition"
+              >
+                <MapPin className="w-5 h-5" />
+                اعرض على الخريطة
+              </Link>
+            </div>
+
 
             <DealActions deal={deal} />
           </div>
