@@ -27,10 +27,27 @@ export const getAdminContext = createServerFn({ method: "GET" })
 
 export const claimSuperAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data, error } = await context.supabase.rpc("claim_super_admin");
-    if (error) throw new Error(error.message);
-    return { claimed: !!data };
+  .inputValidator((d: unknown) => z.object({ token: z.string().min(1).max(200) }).parse(d))
+  .handler(async ({ context, data }) => {
+    const expected = process.env["ADMIN_SETUP_TOKEN"];
+    if (!expected || data.token !== expected) throw new Error("forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { count } = await supabaseAdmin
+      .from("user_roles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "super_admin");
+    if ((count ?? 0) > 0) return { claimed: false };
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: context.userId, role: "super_admin" });
+    if (error) throw new Error("failed");
+    await supabaseAdmin.from("admin_audit_log").insert({
+      actor_id: context.userId,
+      action: "bootstrap_super_admin",
+      target_table: "user_roles",
+      target_id: context.userId,
+    });
+    return { claimed: true };
   });
 
 export const getAdminStats = createServerFn({ method: "GET" })
