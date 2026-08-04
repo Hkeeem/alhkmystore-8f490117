@@ -80,13 +80,18 @@ function SidebarGroup({
   onNavigate?: () => void;
 }) {
   const GroupIcon = group.icon;
+  const slug = group.label.replace(/\s+/g, "-");
+  const panelId = `sidebar-group-panel-${slug}`;
+  const buttonId = `sidebar-group-button-${slug}`;
 
   return (
     <div className="mt-2 border-t border-primary/10 pt-2">
       <button
         type="button"
+        id={buttonId}
         onClick={onToggle}
         aria-expanded={open}
+        aria-controls={panelId}
         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
       >
         <GroupIcon className="w-4.5 h-4.5 text-primary" />
@@ -100,7 +105,13 @@ function SidebarGroup({
       </button>
 
       {open && (
-        <div className="mt-1 flex flex-col gap-1 pr-3">
+        <ul
+          id={panelId}
+          role="group"
+          aria-labelledby={buttonId}
+          className="mt-1 flex flex-col gap-1 pr-3 list-none m-0 p-0"
+        >
+
           {group.items.map((it) => {
             const Icon = it.icon;
             const active = isPathActive(pathname, it.to);
