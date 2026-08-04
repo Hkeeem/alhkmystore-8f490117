@@ -469,12 +469,13 @@ export function TopBar() {
 
               <div className="flex-1 overflow-y-auto py-6">
                 <nav className="flex flex-col gap-2" aria-label="روابط القائمة الجانبية">
+                  <ul className="flex flex-col gap-2 list-none m-0 p-0" role="list">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
                     return (
+                      <li key={it.to} className="contents">
                       <Link
-                        key={it.to}
                         to={it.to}
                         onClick={() => handleMenuOpenChange(false)}
                         aria-current={active ? "page" : undefined}
@@ -498,13 +499,14 @@ export function TopBar() {
                           <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">جديد</span>
                         )}
                       </Link>
+                      </li>
                     );
                   })}
 
                   {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
                   {groups.map((g, gi) => (
+                    <li key={g.label} className="contents">
                     <SidebarGroup
-                      key={g.label}
                       group={g}
                       pathname={pathname}
                       open={openGroup === gi}
@@ -512,7 +514,11 @@ export function TopBar() {
                       onNavigate={() => handleMenuOpenChange(false)}
                       shortcut={gi + 1}
                     />
+                    </li>
                   ))}
+                  </ul>
+
+
 
 
                   <p className="mt-3 px-4 text-[10px] text-foreground/60 leading-relaxed">
