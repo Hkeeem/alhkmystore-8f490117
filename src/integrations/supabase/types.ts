@@ -550,7 +550,6 @@ export type Database = {
         }
         Returns: undefined
       }
-      claim_super_admin: { Args: never; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
