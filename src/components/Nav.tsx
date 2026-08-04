@@ -116,8 +116,8 @@ function SidebarGroup({
             const Icon = it.icon;
             const active = isPathActive(pathname, it.to);
             return (
+              <li key={it.to} className="contents">
               <Link
-                key={it.to}
                 to={it.to}
                 preload="intent"
                 onClick={() => onNavigate?.()}
@@ -138,9 +138,11 @@ function SidebarGroup({
                   <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{it.badge}</span>
                 )}
               </Link>
+              </li>
             );
           })}
-        </div>
+        </ul>
+
       )}
     </div>
   );
