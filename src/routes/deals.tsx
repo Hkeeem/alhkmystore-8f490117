@@ -49,8 +49,14 @@ function DealsPage() {
   };
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
+    try {
+      await queryClient.refetchQueries({ queryKey: ["published-merchant-deals"], type: "active" });
+      toast.success("تم تحديث العروض");
+    } catch {
+      toast.error("تعذّر تحديث العروض، حاول مرة أخرى");
+    }
   };
+
 
   useEffect(() => {
     const load = () => setPrefs(readPrefs());
