@@ -3,17 +3,17 @@ import { useState } from "react";
 
 type DemoDataBannerProps = {
   /** true = تضمين البيانات التجريبية، false = عرض البيانات الحقيقية فقط */
-  showDemoData: boolean;
-  onShowDemoDataChange: (showDemoData: boolean) => void;
+  showDemoData?: boolean;
+  onShowDemoDataChange?: (showDemoData: boolean) => void;
   /** يعيد جلب العروض والفروع وتحديث الخريطة */
-  onRefresh: () => Promise<void> | void;
+  onRefresh?: () => Promise<void> | void;
 };
 
 /**
  * شريط للتحكم بعرض البيانات التجريبية وتحديث بيانات العروض.
  */
 export function DemoDataBanner({
-  showDemoData,
+  showDemoData = true,
   onShowDemoDataChange,
   onRefresh,
 }: DemoDataBannerProps) {
@@ -27,7 +27,7 @@ export function DemoDataBanner({
 
     try {
       setIsRefreshing(true);
-      await onRefresh();
+      await onRefresh?.();
     } finally {
       setIsRefreshing(false);
     }
@@ -65,7 +65,7 @@ export function DemoDataBanner({
               role="switch"
               aria-checked={showDemoData}
               aria-label="عرض البيانات التجريبية"
-              onClick={() => onShowDemoDataChange(!showDemoData)}
+              onClick={() => onShowDemoDataChange?.(!showDemoData)}
               className={`relative h-6 w-11 rounded-full transition-colors ${
                 showDemoData ? "bg-[#D4AF37]" : "bg-muted-foreground/30"
               }`}

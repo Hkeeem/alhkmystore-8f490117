@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon } from "lucide-react";
+import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
 import { nearestBranch, nearestCity, distanceKm, type Branch } from "@/data/store-branches";
 import L from "leaflet";
@@ -25,6 +25,7 @@ function MapsPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
+  const [query, setQuery] = useState("");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -73,6 +74,23 @@ function MapsPage() {
 
   const nearbyDeals = useMemo(() => [...mapped].sort((a, b) => a.km - b.km), [mapped]);
   const city = userLocation ? nearestCity(userLocation) : null;
+
+  const searchResults = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return nearbyDeals
+      .filter(({ deal, branch }) => {
+        const store = getStore(deal.storeId);
+        return (
+          deal.title.toLowerCase().includes(q) ||
+          store.name.toLowerCase().includes(q) ||
+          branch.name.toLowerCase().includes(q) ||
+          branch.city.toLowerCase().includes(q)
+        );
+      })
+      .slice(0, 15);
+  }, [query, nearbyDeals]);
+
 
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapped.length === 0) return;
@@ -233,6 +251,52 @@ function MapsPage() {
           {error} — تم عرض موقع افتراضي (الرياض)
         </div>
       )}
+
+      <div className="relative">
+        <div className="flex items-center gap-2 bg-card border border-primary/20 rounded-2xl px-3 py-2.5">
+          <Search className="w-4 h-4 text-primary shrink-0" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="ابحث باسم المتجر أو اسم العرض أو الفرع…"
+            aria-label="بحث داخل الخريطة"
+            className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+          />
+          {query && (
+            <button type="button" onClick={() => setQuery("")} aria-label="مسح البحث">
+              <X className="w-4 h-4 text-muted-foreground" />
+            </button>
+          )}
+        </div>
+
+        {query.trim().length > 0 && (
+          <div className="absolute z-[1000] mt-2 w-full max-h-72 overflow-y-auto bg-card border border-primary/20 rounded-2xl shadow-glow divide-y divide-border/50">
+            {searchResults.length === 0 && (
+              <div className="p-4 text-sm text-muted-foreground text-center">لا توجد نتائج مطابقة</div>
+            )}
+            {searchResults.map(({ deal, branch, km }) => (
+              <button
+                key={deal.id}
+                type="button"
+                onClick={() => {
+                  focusOnMap(deal.id);
+                  setQuery("");
+                }}
+                className="w-full text-right p-3 hover:bg-secondary/40 transition flex items-center justify-between gap-3"
+              >
+                <span className="min-w-0">
+                  <span className="block text-sm font-bold truncate">{deal.title}</span>
+                  <span className="block text-[11px] text-muted-foreground truncate">
+                    {getStore(deal.storeId).name} · {branch.name}
+                  </span>
+                </span>
+                <span className="text-[11px] font-black text-primary shrink-0">{km.toFixed(1)} كم</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
 
       <div
         ref={mapRef}
