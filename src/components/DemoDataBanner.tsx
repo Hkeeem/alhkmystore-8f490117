@@ -3,17 +3,17 @@ import { useState } from "react";
 
 type DemoDataBannerProps = {
   /** true = تضمين البيانات التجريبية، false = عرض البيانات الحقيقية فقط */
-  showDemoData: boolean;
-  onShowDemoDataChange: (showDemoData: boolean) => void;
+  showDemoData?: boolean;
+  onShowDemoDataChange?: (showDemoData: boolean) => void;
   /** يعيد جلب العروض والفروع وتحديث الخريطة */
-  onRefresh: () => Promise<void> | void;
+  onRefresh?: () => Promise<void> | void;
 };
 
 /**
  * شريط للتحكم بعرض البيانات التجريبية وتحديث بيانات العروض.
  */
 export function DemoDataBanner({
-  showDemoData,
+  showDemoData = true,
   onShowDemoDataChange,
   onRefresh,
 }: DemoDataBannerProps) {
