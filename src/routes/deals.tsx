@@ -10,6 +10,7 @@ import { fetchPublishedDeals } from "@/lib/merchant-api";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { z } from "zod";
+import { toast } from "sonner";
 
 
 const searchSchema = z.object({
