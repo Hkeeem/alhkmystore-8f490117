@@ -75,6 +75,23 @@ function MapsPage() {
   const nearbyDeals = useMemo(() => [...mapped].sort((a, b) => a.km - b.km), [mapped]);
   const city = userLocation ? nearestCity(userLocation) : null;
 
+  const searchResults = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return nearbyDeals
+      .filter(({ deal, branch }) => {
+        const store = getStore(deal.storeId);
+        return (
+          deal.title.toLowerCase().includes(q) ||
+          store.name.toLowerCase().includes(q) ||
+          branch.name.toLowerCase().includes(q) ||
+          branch.city.toLowerCase().includes(q)
+        );
+      })
+      .slice(0, 15);
+  }, [query, nearbyDeals]);
+
+
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapped.length === 0) return;
 
