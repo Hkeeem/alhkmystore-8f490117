@@ -10,6 +10,7 @@ import { fetchPublishedDeals } from "@/lib/merchant-api";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { z } from "zod";
+import { toast } from "sonner";
 
 
 const searchSchema = z.object({
@@ -49,8 +50,14 @@ function DealsPage() {
   };
 
   const handleRefresh = async () => {
-    await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
+    try {
+      await queryClient.refetchQueries({ queryKey: ["published-merchant-deals"], type: "active" });
+      toast.success("تم تحديث العروض");
+    } catch {
+      toast.error("تعذّر تحديث العروض، حاول مرة أخرى");
+    }
   };
+
 
   useEffect(() => {
     const load = () => setPrefs(readPrefs());
