@@ -113,7 +113,11 @@ function DealsPage() {
         ))}
       </div>
 
-      <DemoDataBanner />
+      <DemoDataBanner
+        showDemoData={showDemoData}
+        onShowDemoDataChange={handleShowDemoDataChange}
+        onRefresh={handleRefresh}
+      />
 
 
 
@@ -141,7 +145,11 @@ function DealsPage() {
       )}
 
       {filtered.length === 0 ? (
-        <div className="text-center py-20 text-muted-foreground">لا توجد عروض مطابقة.</div>
+        <div className="text-center py-20 text-muted-foreground">
+          {showDemoData
+            ? "لا توجد عروض مطابقة."
+            : "تم إخفاء البيانات التجريبية — تظهر هنا عروض التجّار الموثّقين فقط."}
+        </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {filtered.map((d, i) => (
