@@ -4,7 +4,7 @@ import { DealCard } from "@/components/DealCard";
 import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles } from "lucide-react";
 import { fetchPublishedDeals } from "@/lib/merchant-api";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
@@ -35,6 +35,22 @@ function DealsPage() {
   const [storeId, setStoreId] = useState<string | undefined>(store);
   const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
+  const [showDemoData, setShowDemoData] = useState(true);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const saved = localStorage.getItem("hkeeem-show-demo-data");
+    if (saved !== null) setShowDemoData(saved === "true");
+  }, []);
+
+  const handleShowDemoDataChange = (next: boolean) => {
+    setShowDemoData(next);
+    localStorage.setItem("hkeeem-show-demo-data", String(next));
+  };
+
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
+  };
 
   useEffect(() => {
     const load = () => setPrefs(readPrefs());
@@ -44,6 +60,7 @@ function DealsPage() {
   }, []);
 
   const filtered = useMemo(() => {
+    if (!showDemoData) return [];
     const list = deals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
@@ -53,7 +70,8 @@ function DealsPage() {
     if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [q, category, storeId, sort, prefs]);
+  }, [q, category, storeId, sort, prefs, showDemoData]);
+
 
 
   const cats = ["سوبرماركت", "مطاعم", "إلكترونيات", "صيدلية"];
