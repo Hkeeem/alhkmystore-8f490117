@@ -89,10 +89,12 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
           console.error("affiliate click tracking threw", e);
         }
 
+        const finalUrl = (await decorate(target, network, dealId, clickId)).toString();
+
         return new Response(null, {
           status: 302,
           headers: {
-            location: decorate(target, network, dealId, clickId).toString(),
+            location: finalUrl,
             "cache-control": "no-store, private",
             "referrer-policy": "no-referrer",
             "x-robots-tag": "noindex, nofollow",
