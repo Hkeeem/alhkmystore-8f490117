@@ -21,30 +21,42 @@ export default defineConfig({
         includeAssets: ["favicon.ico", "icon.svg", "icon-maskable.svg"],
         manifest: false, // we ship /public/manifest.webmanifest ourselves
         workbox: {
-          globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
-          navigateFallback: "/",
-          navigateFallbackDenylist: [/^\/api\//, /^\/~oauth/],
+          // Never precache HTML: the app is server-rendered and stale HTML would
+          // point at asset hashes that no longer exist (page renders unstyled).
+          globPatterns: ["**/*.{js,css,svg,png,ico,woff2}"],
+          cleanupOutdatedCaches: true,
+          skipWaiting: true,
+          clientsClaim: true,
           runtimeCaching: [
             {
               urlPattern: ({ request, url }) =>
                 request.mode === "navigate" && !url.pathname.startsWith("/api/") && !url.pathname.startsWith("/~oauth"),
               handler: "NetworkFirst",
               options: {
-                cacheName: "waffer-pages",
+                cacheName: "waffer-pages-v2",
                 networkTimeoutSeconds: 4,
-                expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 7 },
+                expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 },
               },
             },
             {
-              urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:js|css|woff2|svg|png|ico)$/.test(url.pathname),
+              urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:js|css)$/.test(url.pathname),
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: "waffer-code-v2",
+                expiration: { maxEntries: 160, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              },
+            },
+            {
+              urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:woff2|svg|png|ico)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
-                cacheName: "waffer-assets",
+                cacheName: "waffer-assets-v2",
                 expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
               },
             },
           ],
         },
+
       }),
     ],
   },

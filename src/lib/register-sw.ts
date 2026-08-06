@@ -4,6 +4,10 @@
 // so previews never serve stale HTML from a previously installed worker.
 
 const SW_PATH = "/sw.js";
+// Bump to force every client to drop old caches once (fixes unstyled pages
+// caused by a stale precached HTML shell pointing at removed asset hashes).
+const CACHE_EPOCH = "2";
+const EPOCH_KEY = "hkeeem-sw-epoch";
 
 function isRefusedContext(): boolean {
   if (typeof window === "undefined") return true;
@@ -37,7 +41,24 @@ async function unregisterMatching() {
   } catch { /* noop */ }
 }
 
+async function purgeStaleCaches() {
+  try {
+    if (typeof caches === "undefined") return;
+    const keys = await caches.keys();
+    await Promise.allSettled(keys.map((k) => caches.delete(k)));
+  } catch { /* noop */ }
+}
+
 export async function registerSW() {
+  if (typeof window !== "undefined") {
+    try {
+      if (window.localStorage.getItem(EPOCH_KEY) !== CACHE_EPOCH) {
+        window.localStorage.setItem(EPOCH_KEY, CACHE_EPOCH);
+        await unregisterMatching();
+        await purgeStaleCaches();
+      }
+    } catch { /* noop */ }
+  }
   if (isRefusedContext()) {
     await unregisterMatching();
     return;
