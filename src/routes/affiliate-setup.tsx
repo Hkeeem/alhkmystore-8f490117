@@ -207,6 +207,7 @@ function AffiliateSetupPage() {
 
       <Card className="hover-lift">
 
+
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
           <CardTitle className="flex items-center gap-2 text-lg"><KeyRound className="size-5" /> حالة المفاتيح</CardTitle>
           <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
