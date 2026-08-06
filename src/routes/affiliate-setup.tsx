@@ -206,11 +206,18 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
+      <SyncFailuresPanel />
+
       <ConversionsPanel />
 
-      <NoonCampaignPanel />
+      <div id="noon-campaign" className="scroll-mt-24">
+        <NoonCampaignPanel />
+      </div>
 
-      <SecureKeysPanel />
+      <div id="secure-keys" className="scroll-mt-24">
+        <SecureKeysPanel />
+      </div>
+
 
       <Card className="hover-lift">
 
