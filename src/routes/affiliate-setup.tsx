@@ -852,7 +852,15 @@ function NoonCampaignPanel() {
   const verify = useServerFn(verifyNoonPublisherId);
   const logEvent = useServerFn(logNoonCampaignEvent);
   const queryClient = useQueryClient();
-  const recordEvent = (payload: Parameters<typeof logNoonCampaignEvent>[0]["data"]) => {
+  const recordEvent = (payload: {
+    action: string;
+    campaignId?: string;
+    campaignName?: string;
+    previousCampaignId?: string;
+    network?: string;
+    publisherId?: string;
+    result?: string;
+  }) => {
     void logEvent({ data: payload })
       .then(() => queryClient.invalidateQueries({ queryKey: ["noon-audit-log"] }))
       .catch(() => { /* التسجيل لا يعطّل العملية */ });
