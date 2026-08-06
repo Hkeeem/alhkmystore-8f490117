@@ -78,7 +78,10 @@ function RewardsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
-      <h1 className="sr-only">الجوائز ولوحة المتصدرين</h1>
+      <h1 className="text-2xl md:text-3xl font-black text-foreground">
+        الجوائز ولوحة المتصدرين
+      </h1>
+
       {/* Hero card */}
 
       <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-6 md:p-8 shadow-glow">
