@@ -596,6 +596,72 @@ export type Database = {
         }
         Relationships: []
       }
+      report_recipients: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      report_runs: {
+        Row: {
+          created_at: string
+          days: number
+          error: string | null
+          id: string
+          period_end: string
+          period_start: string
+          recipients: number
+          status: string
+          summary: Json | null
+          triggered_by: string
+        }
+        Insert: {
+          created_at?: string
+          days?: number
+          error?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          recipients?: number
+          status?: string
+          summary?: Json | null
+          triggered_by?: string
+        }
+        Update: {
+          created_at?: string
+          days?: number
+          error?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          recipients?: number
+          status?: string
+          summary?: Json | null
+          triggered_by?: string
+        }
+        Relationships: []
+      }
       suggestions: {
         Row: {
           body: string
