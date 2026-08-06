@@ -47,3 +47,32 @@ export const runExternalSyncNow = createServerFn({ method: "POST" })
       return { success: false as const, error: "sync_failed" };
     }
   });
+
+export const getConversionsOverview = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) throw new Error("forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await supabaseAdmin
+      .from("affiliate_conversions")
+      .select("network, status, amount, commission, created_at")
+      .gte("created_at", since);
+    const rows = data ?? [];
+    const summarize = (network: string) => {
+      const items = rows.filter((r) => r.network === network);
+      return {
+        count: items.length,
+        approved: items.filter((r) => r.status === "approved").length,
+        sales: items.reduce((s, r) => s + Number(r.amount ?? 0), 0),
+        commission: items.reduce((s, r) => s + Number(r.commission ?? 0), 0),
+        lastAt: items.map((r) => r.created_at).sort().at(-1) ?? null,
+      };
+    };
+    return { amazon: summarize("amazon"), noon: summarize("noon"), other: summarize("other") };
+  });
+
+export const getPostbackStatus = createServerFn({ method: "GET" }).handler(async () => ({
+  configured: Boolean(process.env["AFFILIATE_POSTBACK_SECRET"]),
+}));
