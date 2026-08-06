@@ -76,3 +76,120 @@ export const getConversionsOverview = createServerFn({ method: "GET" })
 export const getPostbackStatus = createServerFn({ method: "GET" }).handler(async () => ({
   configured: Boolean(process.env["AFFILIATE_POSTBACK_SECRET"]),
 }));
+
+/* ------------------------- noon campaign linking ------------------------- */
+
+export type NoonCampaign = {
+  id: string;
+  name: string;
+  network: string;
+  market: string;
+  model: string;
+  deepLink: boolean;
+  note: string;
+  idHint: string;
+  match: (publisherId: string) => boolean;
+};
+
+const NOON_CAMPAIGNS: Array<Omit<NoonCampaign, "match"> & { prefixes: Array<string> }> = [
+  {
+    id: "admitad-ksa",
+    name: "noon KSA — Admitad",
+    network: "Admitad",
+    market: "السعودية",
+    model: "CPS",
+    deepLink: true,
+    note: "الأنسب لتطبيقات مقارنة الأسعار: يدعم الروابط العميقة و subid لتتبّع النقرة.",
+    idHint: "مثال: 2098765a1b… أو admitad_xxx",
+    prefixes: ["admitad", "adm_"],
+  },
+  {
+    id: "boostiny-ksa",
+    name: "noon KSA — Boostiny / Arabyads",
+    network: "Boostiny",
+    market: "السعودية",
+    model: "CPS + كوبونات",
+    deepLink: true,
+    note: "مناسب إذا كنت تعرض كوبونات نون داخل التطبيق.",
+    idHint: "مثال: bst_hkeeem أو hkeeem-noon",
+    prefixes: ["bst", "boostiny"],
+  },
+  {
+    id: "noon-direct",
+    name: "noon Affiliates — تسجيل مباشر",
+    network: "noon",
+    market: "السعودية",
+    model: "CPS",
+    deepLink: true,
+    note: "أبسط خيار عند قبول التسجيل المباشر، وتُمرَّر الهوية عبر utm_source.",
+    idHint: "مثال: hkeeem أو hkeeemai",
+    prefixes: [],
+  },
+];
+
+function pickNoonCampaign(publisherId: string) {
+  const id = publisherId.trim().toLowerCase();
+  const matched = NOON_CAMPAIGNS.find((c) => c.prefixes.some((p) => id.startsWith(p)));
+  return matched ?? NOON_CAMPAIGNS[2]!;
+}
+
+export const getNoonCampaignStatus = createServerFn({ method: "GET" }).handler(async () => {
+  const publisherId = (process.env["NOON_AFFILIATE_ID"] ?? "").trim();
+  const configured = publisherId.length > 0;
+
+  const campaigns = NOON_CAMPAIGNS.map(({ prefixes: _p, ...c }) => c);
+  const recommended = configured ? pickNoonCampaign(publisherId).id : "admitad-ksa";
+
+  let liveDeals = 0;
+  let clicks = 0;
+  let conversions = 0;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [dealsRes, clicksRes, convRes] = await Promise.all([
+      supabaseAdmin.from("external_deals").select("id", { count: "exact", head: true }).eq("source", "noon").eq("active", true),
+      supabaseAdmin.from("affiliate_clicks").select("id", { count: "exact", head: true }).eq("network", "noon"),
+      supabaseAdmin.from("affiliate_conversions").select("id", { count: "exact", head: true }).eq("network", "noon"),
+    ]);
+    liveDeals = dealsRes.count ?? 0;
+    clicks = clicksRes.count ?? 0;
+    conversions = convRes.count ?? 0;
+  } catch { /* ignore */ }
+
+  // مربوطة فعليًا = المعرّف محفوظ + عروض نون تُسحب + مرّت نقرة واحدة على الأقل عبر التحويل
+  const linked = configured && liveDeals > 0 && clicks > 0;
+
+  return {
+    configured,
+    linked,
+    maskedPublisherId: configured
+      ? `${publisherId.slice(0, 3)}${"•".repeat(Math.max(2, publisherId.length - 5))}${publisherId.slice(-2)}`
+      : null,
+    recommended,
+    campaigns,
+    stats: { liveDeals, clicks, conversions },
+    sampleDeepLink: configured
+      ? `https://www.noon.com/saudi-ar/p/?sku=EXAMPLE&utm_source=${encodeURIComponent(publisherId)}&utm_medium=affiliate&subid=<clickId>`
+      : null,
+  };
+});
+
+export const verifyNoonPublisherId = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => ({
+    publisherId: String((data as { publisherId?: unknown })?.publisherId ?? "").trim().slice(0, 120),
+  }))
+  .handler(async ({ data }) => {
+    const input = data.publisherId;
+    if (!input) return { ok: false as const, reason: "أدخل معرّف الناشر أولًا." };
+    if (!/^[A-Za-z0-9._-]{3,64}$/.test(input)) {
+      return { ok: false as const, reason: "الصيغة غير صحيحة: يُسمح بالحروف والأرقام والرموز . _ - بطول ٣ إلى ٦٤." };
+    }
+    const stored = (process.env["NOON_AFFILIATE_ID"] ?? "").trim();
+    const campaign = pickNoonCampaign(input);
+    return {
+      ok: true as const,
+      matchesStored: stored.length > 0 ? stored === input : null,
+      campaignId: campaign.id,
+      campaignName: campaign.name,
+      network: campaign.network,
+    };
+  });
