@@ -629,6 +629,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sync_events: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          keyword: string | null
+          message: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          keyword?: string | null
+          message?: string | null
+          source: string
+          status: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          keyword?: string | null
+          message?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
