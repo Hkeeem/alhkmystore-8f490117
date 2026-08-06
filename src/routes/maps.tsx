@@ -644,6 +644,28 @@ function MapsPage() {
           </label>
         </div>
 
+        <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب الفئة الرئيسية">
+          {GROUPS.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              aria-pressed={groupFilter === g.id}
+              onClick={() => {
+                setGroupFilter(g.id);
+                setCategoryFilter("الكل");
+                setStoreFilter("الكل");
+              }}
+              className={`text-[11px] font-black px-3 py-1.5 rounded-xl border transition ${
+                groupFilter === g.id
+                  ? "bg-primary text-secondary border-primary"
+                  : "bg-secondary/40 border-primary/20 hover:border-primary"
+              }`}
+            >
+              <span className="ml-1">{g.icon}</span>
+              {g.label}
+            </button>
+          ))}
+        </div>
 
 
         <div className="flex flex-wrap gap-2">
