@@ -32,6 +32,8 @@ function MapsPage() {
   const [cityFilter, setCityFilter] = useState("الكل");
   const [categoryFilter, setCategoryFilter] = useState("الكل");
   const [storeFilter, setStoreFilter] = useState("الكل");
+  const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
+  const [sortBy, setSortBy] = useState<"distance" | "discount">("distance");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -90,15 +92,32 @@ function MapsPage() {
           km: distanceKm(userLocation.lat, userLocation.lng, branch.lat, branch.lng),
         };
       })
-      .filter(Boolean) as { deal: (typeof deals)[number]; branch: Branch; km: number }[];
-  }, [userLocation, cityFilter, categoryFilter, storeFilter]);
+      .filter(Boolean)
+      .filter((m) => radiusKm === "الكل" || (m as { km: number }).km <= radiusKm) as {
+      deal: (typeof deals)[number];
+      branch: Branch;
+      km: number;
+    }[];
+  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm]);
 
-  const nearbyDeals = useMemo(() => [...mapped].sort((a, b) => a.km - b.km), [mapped]);
+  const nearbyDeals = useMemo(
+    () =>
+      [...mapped].sort((a, b) =>
+        sortBy === "distance"
+          ? a.km - b.km
+          : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
+            (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
+      ),
+    [mapped, sortBy]
+  );
   const city = userLocation ? nearestCity(userLocation) : null;
 
   const categories = useMemo(() => ["الكل", ...Array.from(new Set(deals.map((d) => d.category)))], []);
   const activeFiltersCount =
-    (cityFilter !== "الكل" ? 1 : 0) + (categoryFilter !== "الكل" ? 1 : 0) + (storeFilter !== "الكل" ? 1 : 0);
+    (cityFilter !== "الكل" ? 1 : 0) +
+    (categoryFilter !== "الكل" ? 1 : 0) +
+    (storeFilter !== "الكل" ? 1 : 0) +
+    (radiusKm !== "الكل" ? 1 : 0);
 
 
   const searchResults = useMemo(() => {
@@ -532,6 +551,7 @@ function MapsPage() {
                 setCityFilter("الكل");
                 setCategoryFilter("الكل");
                 setStoreFilter("الكل");
+                setRadiusKm("الكل");
               }}
               className="text-[11px] font-bold text-muted-foreground hover:text-primary transition"
             >
@@ -575,6 +595,37 @@ function MapsPage() {
             </select>
           </label>
         </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">نطاق المسافة</span>
+            <select
+              value={String(radiusKm)}
+              onChange={(e) => setRadiusKm(e.target.value === "الكل" ? "الكل" : Number(e.target.value))}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="الكل">كل المسافات</option>
+              <option value="5">خلال 5 كم</option>
+              <option value="10">خلال 10 كم</option>
+              <option value="25">خلال 25 كم</option>
+              <option value="50">خلال 50 كم</option>
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">ترتيب النتائج</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "distance" | "discount")}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="distance">الأقرب لموقعي</option>
+              <option value="discount">الأعلى خصمًا</option>
+            </select>
+          </label>
+        </div>
+
+
 
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => (
