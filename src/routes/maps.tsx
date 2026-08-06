@@ -47,7 +47,7 @@ function MapsPage() {
   const [groupFilter, setGroupFilter] = useState("الكل");
   const [storeFilter, setStoreFilter] = useState("الكل");
   const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
-  const [sortBy, setSortBy] = useState<"distance" | "discount">("distance");
+  const [sortBy, setSortBy] = useState<"distance" | "distance-desc" | "discount">("distance");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -135,11 +135,14 @@ function MapsPage() {
       [...mapped].sort((a, b) =>
         sortBy === "distance"
           ? a.km - b.km
-          : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
-            (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
+          : sortBy === "distance-desc"
+            ? b.km - a.km
+            : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
+              (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
       ),
     [mapped, sortBy]
   );
+
   const city = userLocation ? nearestCity(userLocation) : null;
 
   const groupCategories = useMemo(() => {
@@ -705,10 +708,11 @@ function MapsPage() {
             <span className="block text-[10px] text-muted-foreground mb-1">ترتيب النتائج</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "distance" | "discount")}
+              onChange={(e) => setSortBy(e.target.value as "distance" | "distance-desc" | "discount")}
               className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
             >
               <option value="distance">الأقرب لموقعي</option>
+              <option value="distance-desc">الأبعد عن موقعي</option>
               <option value="discount">الأعلى خصمًا</option>
             </select>
           </label>
