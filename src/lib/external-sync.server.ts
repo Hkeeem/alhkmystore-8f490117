@@ -356,40 +356,46 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
   }
   const url = `https://www.noon.com/_svc/catalog/api/v3/u/search?q=${encodeURIComponent(keyword)}&limit=20`;
 
-  let json: { hits?: NoonHit[]; products?: NoonHit[] };
-  try {
-    const response = await fetch(url, {
-      headers: {
-        accept: "application/json",
-        "x-locale": "ar-sa",
-        "x-content-type": "application/json",
-        "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
-      },
-      signal: AbortSignal.timeout(12_000),
-    });
-    if (!response.ok) {
-      console.error(`noon catalog failed [${response.status}]`);
-      await recordSyncEvent({
-        source: "noon",
-        status: "failure",
-        code: response.status === 429 ? "throttled" : "http_error",
-        message: `استجابة نون ${response.status}`,
-        keyword,
-      });
-      return [];
-    }
-    json = (await response.json()) as { hits?: NoonHit[]; products?: NoonHit[] };
-  } catch (error) {
-    console.error("noon catalog threw", error);
+  const outcome = await fetchWithRetry(
+    () =>
+      fetch(url, {
+        headers: {
+          accept: "application/json",
+          "x-locale": "ar-sa",
+          "x-content-type": "application/json",
+          "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
+        },
+        signal: AbortSignal.timeout(12_000),
+      }),
+    `noon:${keyword}`,
+  );
+
+  if (!outcome.ok) {
+    console.error(`noon catalog failed after ${outcome.attempts} attempts`);
     await recordSyncEvent({
       source: "noon",
       status: "failure",
-      code: "network_error",
-      message: error instanceof Error ? error.message : "تعذّر الاتصال بكتالوج نون",
+      code: outcome.code,
+      message: outcome.message,
       keyword,
     });
     return [];
   }
+
+  let json: { hits?: NoonHit[]; products?: NoonHit[] };
+  try {
+    json = (await outcome.response.json()) as { hits?: NoonHit[]; products?: NoonHit[] };
+  } catch (error) {
+    await recordSyncEvent({
+      source: "noon",
+      status: "failure",
+      code: "http_error",
+      message: error instanceof Error ? error.message : "استجابة نون غير صالحة",
+      keyword,
+    });
+    return [];
+  }
+
 
   const hits = json.hits ?? json.products ?? [];
   const offers: ExternalOffer[] = [];
