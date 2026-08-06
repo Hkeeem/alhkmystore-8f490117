@@ -78,6 +78,87 @@ function amazonHttpCode(status: number, body: string): SyncFailureCode {
   return "http_error";
 }
 
+/* ------------------------ إعادة المحاولة التلقائية ------------------------ */
+
+/** أقصى عدد محاولات لكل طلب مزامنة (المحاولة الأولى + إعادتان) */
+export const MAX_SYNC_ATTEMPTS = 3;
+/** التأخير الأساسي بين المحاولات بالمللي ثانية (يتضاعف تصاعديًا) */
+const RETRY_BASE_DELAY_MS = 800;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** هل يستحق رمز الاستجابة إعادة المحاولة؟ (تجاوز حد الطلبات أو خطأ مؤقت في الخادم) */
+function isRetryableStatus(status: number) {
+  return status === 429 || status === 408 || status === 425 || status >= 500;
+}
+
+/** مهلة الانتظار: نحترم Retry-After إن وُجدت، وإلا تصاعد أُسّي مع عشوائية بسيطة */
+function backoffDelay(attempt: number, retryAfter?: string | null) {
+  const seconds = retryAfter ? Number(retryAfter) : NaN;
+  if (Number.isFinite(seconds) && seconds > 0) return Math.min(seconds * 1000, 15_000);
+  return Math.min(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1), 8_000) + Math.floor(Math.random() * 250);
+}
+
+export type RetryOutcome =
+  | { ok: true; response: Response; attempts: number }
+  | { ok: false; attempts: number; code: SyncFailureCode; status?: number; body?: string; message: string };
+
+/**
+ * ينفّذ طلبًا مع إعادة محاولة تلقائية عند انقطاع الاتصال (network/timeout)
+ * أو تجاوز حد الطلبات (429) أو أخطاء الخادم المؤقتة (5xx).
+ * أخطاء المصادقة أو الطلب الخاطئ لا يُعاد تنفيذها.
+ */
+export async function fetchWithRetry(
+  buildRequest: () => Promise<Response> | Response,
+  label: string,
+): Promise<RetryOutcome> {
+  let lastMessage = "فشل الطلب";
+  let lastCode: SyncFailureCode = "network_error";
+
+  for (let attempt = 1; attempt <= MAX_SYNC_ATTEMPTS; attempt++) {
+    try {
+      const response = await buildRequest();
+      if (response.ok) return { ok: true, response, attempts: attempt };
+
+      const body = await response.text();
+      if (isRetryableStatus(response.status) && attempt < MAX_SYNC_ATTEMPTS) {
+        const wait = backoffDelay(attempt, response.headers.get("retry-after"));
+        console.warn(
+          `[${label}] المحاولة ${attempt}/${MAX_SYNC_ATTEMPTS} فشلت (${response.status}) — إعادة بعد ${wait}ms`,
+        );
+        await sleep(wait);
+        continue;
+      }
+      return {
+        ok: false,
+        attempts: attempt,
+        code: response.status === 429 ? "throttled" : "http_error",
+        status: response.status,
+        body,
+        message: `استجابة ${response.status} بعد ${attempt} من ${MAX_SYNC_ATTEMPTS} محاولات`,
+      };
+    } catch (error) {
+      lastCode = "network_error";
+      lastMessage = error instanceof Error ? error.message : "انقطاع في الاتصال";
+      if (attempt < MAX_SYNC_ATTEMPTS) {
+        const wait = backoffDelay(attempt);
+        console.warn(
+          `[${label}] المحاولة ${attempt}/${MAX_SYNC_ATTEMPTS} انقطعت (${lastMessage}) — إعادة بعد ${wait}ms`,
+        );
+        await sleep(wait);
+        continue;
+      }
+    }
+  }
+
+  return {
+    ok: false,
+    attempts: MAX_SYNC_ATTEMPTS,
+    code: lastCode,
+    message: `${lastMessage} — بعد ${MAX_SYNC_ATTEMPTS} محاولات متتالية`,
+  };
+}
+
 /* ------------------------------- Amazon ------------------------------- */
 
 async function hmac(key: ArrayBuffer | Uint8Array, data: string) {
