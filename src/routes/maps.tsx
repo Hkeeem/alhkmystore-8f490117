@@ -19,6 +19,15 @@ export const Route = createFileRoute("/maps")({
   component: MapsPage,
 });
 
+/** مجموعات رئيسية تُبسّط التصفية على الخريطة */
+const GROUPS: { id: string; label: string; icon: string; categories: string[] }[] = [
+  { id: "الكل", label: "الكل", icon: "🗺️", categories: [] },
+  { id: "مطاعم", label: "مطاعم", icon: "🍽️", categories: ["مطاعم"] },
+  { id: "متاجر", label: "متاجر", icon: "🛍️", categories: ["سوبرماركت", "إلكترونيات", "أزياء"] },
+  { id: "خدمات", label: "خدمات", icon: "🧾", categories: ["صيدلية"] },
+];
+
+
 function MapsPage() {
   const { deal: focusDealId } = Route.useSearch();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -31,6 +40,7 @@ function MapsPage() {
   const [announcement, setAnnouncement] = useState("");
   const [cityFilter, setCityFilter] = useState("الكل");
   const [categoryFilter, setCategoryFilter] = useState("الكل");
+  const [groupFilter, setGroupFilter] = useState("الكل");
   const [storeFilter, setStoreFilter] = useState("الكل");
   const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
   const [sortBy, setSortBy] = useState<"distance" | "discount">("distance");
@@ -71,7 +81,9 @@ function MapsPage() {
   /** ربط كل عرض بأقرب فرع فعلي لمتجره (مع مراعاة التصفية) */
   const mapped = useMemo(() => {
     if (!userLocation) return [];
+    const groupCats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
     return deals
+      .filter((deal) => groupFilter === "الكل" || groupCats.includes(deal.category))
       .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
       .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
@@ -98,7 +110,7 @@ function MapsPage() {
       branch: Branch;
       km: number;
     }[];
-  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter]);
 
   const nearbyDeals = useMemo(
     () =>
@@ -112,9 +124,15 @@ function MapsPage() {
   );
   const city = userLocation ? nearestCity(userLocation) : null;
 
-  const categories = useMemo(() => ["الكل", ...Array.from(new Set(deals.map((d) => d.category)))], []);
+  const groupCategories = useMemo(() => {
+    const cats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
+    const all = Array.from(new Set(deals.map((d) => d.category)));
+    return ["الكل", ...(groupFilter === "الكل" ? all : all.filter((c) => cats.includes(c)))];
+  }, [groupFilter]);
+  const categories = groupCategories;
   const activeFiltersCount =
     (cityFilter !== "الكل" ? 1 : 0) +
+    (groupFilter !== "الكل" ? 1 : 0) +
     (categoryFilter !== "الكل" ? 1 : 0) +
     (storeFilter !== "الكل" ? 1 : 0) +
     (radiusKm !== "الكل" ? 1 : 0);
@@ -552,6 +570,7 @@ function MapsPage() {
                 setCategoryFilter("الكل");
                 setStoreFilter("الكل");
                 setRadiusKm("الكل");
+                setGroupFilter("الكل");
               }}
               className="text-[11px] font-bold text-muted-foreground hover:text-primary transition"
             >
@@ -625,6 +644,28 @@ function MapsPage() {
           </label>
         </div>
 
+        <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب الفئة الرئيسية">
+          {GROUPS.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              aria-pressed={groupFilter === g.id}
+              onClick={() => {
+                setGroupFilter(g.id);
+                setCategoryFilter("الكل");
+                setStoreFilter("الكل");
+              }}
+              className={`text-[11px] font-black px-3 py-1.5 rounded-xl border transition ${
+                groupFilter === g.id
+                  ? "bg-primary text-secondary border-primary"
+                  : "bg-secondary/40 border-primary/20 hover:border-primary"
+              }`}
+            >
+              <span className="ml-1">{g.icon}</span>
+              {g.label}
+            </button>
+          ))}
+        </div>
 
 
         <div className="flex flex-wrap gap-2">
