@@ -87,7 +87,14 @@ function DealsPage() {
       <div>
         <h1 className="font-display font-black text-2xl md:text-3xl">كل العروض</h1>
         <p className="text-sm text-muted-foreground mt-1">{filtered.length} عرض متاح الآن</p>
+        <Link
+          to="/deals/panda-vs-othaim-comparison"
+          className="inline-flex items-center gap-2 mt-3 rounded-2xl border border-border px-3 py-2 text-xs font-black hover:bg-muted/50 transition"
+        >
+          🆚 عروض بنده مقابل العثيم — مقارنة أسبوعية
+        </Link>
       </div>
+
 
       <MerchantDealsSection />
 

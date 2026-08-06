@@ -30,6 +30,7 @@ import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
+import { Route as DealsPandaVsOthaimComparisonRouteImport } from './routes/deals.panda-vs-othaim-comparison'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
@@ -148,6 +149,12 @@ const RewardsIdRoute = RewardsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => RewardsRoute,
 } as any)
+const DealsPandaVsOthaimComparisonRoute =
+  DealsPandaVsOthaimComparisonRouteImport.update({
+    id: '/panda-vs-othaim-comparison',
+    path: '/panda-vs-othaim-comparison',
+    getParentRoute: () => DealsRoute,
+  } as any)
 const DealsIdRoute = DealsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -247,6 +254,7 @@ export interface FileRoutesByFullPath {
   '/api/tts': typeof ApiTtsRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
+  '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -282,6 +290,7 @@ export interface FileRoutesByTo {
   '/api/tts': typeof ApiTtsRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
+  '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -319,6 +328,7 @@ export interface FileRoutesById {
   '/api/tts': typeof ApiTtsRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
+  '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -356,6 +366,7 @@ export interface FileRouteTypes {
     | '/api/tts'
     | '/coupons/$id'
     | '/deals/$id'
+    | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/api/tts'
     | '/coupons/$id'
     | '/deals/$id'
+    | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
@@ -427,6 +439,7 @@ export interface FileRouteTypes {
     | '/api/tts'
     | '/coupons/$id'
     | '/deals/$id'
+    | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
@@ -613,6 +626,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RewardsIdRouteImport
       parentRoute: typeof RewardsRoute
     }
+    '/deals/panda-vs-othaim-comparison': {
+      id: '/deals/panda-vs-othaim-comparison'
+      path: '/panda-vs-othaim-comparison'
+      fullPath: '/deals/panda-vs-othaim-comparison'
+      preLoaderRoute: typeof DealsPandaVsOthaimComparisonRouteImport
+      parentRoute: typeof DealsRoute
+    }
     '/deals/$id': {
       id: '/deals/$id'
       path: '/$id'
@@ -737,10 +757,12 @@ const CouponsRouteWithChildren =
 
 interface DealsRouteChildren {
   DealsIdRoute: typeof DealsIdRoute
+  DealsPandaVsOthaimComparisonRoute: typeof DealsPandaVsOthaimComparisonRoute
 }
 
 const DealsRouteChildren: DealsRouteChildren = {
   DealsIdRoute: DealsIdRoute,
+  DealsPandaVsOthaimComparisonRoute: DealsPandaVsOthaimComparisonRoute,
 }
 
 const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
