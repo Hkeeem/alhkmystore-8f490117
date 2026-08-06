@@ -71,9 +71,10 @@ export async function fetchAmazonOffers(keyword: string): Promise<ExternalOffer[
 }
 
 async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
-  const accessKey = process.env["AMAZON_ACCESS_KEY"];
-  const secretKey = process.env["AMAZON_SECRET_KEY"];
-  const partnerTag = process.env["AMAZON_PARTNER_TAG"];
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const accessKey = await getIntegrationKey("AMAZON_ACCESS_KEY");
+  const secretKey = await getIntegrationKey("AMAZON_SECRET_KEY");
+  const partnerTag = await getIntegrationKey("AMAZON_PARTNER_TAG");
   if (!accessKey || !secretKey || !partnerTag) return [];
 
   const target = "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems";
@@ -193,7 +194,8 @@ type NoonHit = {
 
 /** noon.com — كتالوج البحث العام */
 export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]> {
-  const affiliateId = process.env["NOON_AFFILIATE_ID"];
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const affiliateId = await getIntegrationKey("NOON_AFFILIATE_ID");
   const url = `https://www.noon.com/_svc/catalog/api/v3/u/search?q=${encodeURIComponent(keyword)}&limit=20`;
 
   let json: { hits?: NoonHit[]; products?: NoonHit[] };

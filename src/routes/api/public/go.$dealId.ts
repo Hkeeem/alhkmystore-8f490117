@@ -13,9 +13,10 @@ function detectNetwork(url: URL): Network {
 }
 
 /** إضافة معرّفات الشراكة + وسم التتبع (subid) على الخادم فقط — لا تظهر أبداً في الواجهة */
-function decorate(url: URL, network: Network, dealId: string, clickId: string | null) {
-  const amazonTag = process.env["AMAZON_PARTNER_TAG"];
-  const noonTag = process.env["NOON_AFFILIATE_ID"];
+async function decorate(url: URL, network: Network, dealId: string, clickId: string | null) {
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const amazonTag = network === "amazon" ? await getIntegrationKey("AMAZON_PARTNER_TAG") : null;
+  const noonTag = network === "noon" ? await getIntegrationKey("NOON_AFFILIATE_ID") : null;
 
   if (network === "amazon" && amazonTag) {
     url.searchParams.set("tag", amazonTag);
