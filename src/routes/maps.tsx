@@ -276,6 +276,73 @@ function MapsPage() {
     }
   };
 
+  /** خيارات لوحة المفاتيح: الاقتراحات ثم النتائج */
+  const options = useMemo(
+    () => [
+      ...suggestions.map((s, i) => ({ id: `map-opt-sug-${i}`, type: "suggestion" as const, label: s.label })),
+      ...searchResults.map((r, i) => ({ id: `map-opt-res-${i}`, type: "result" as const, dealId: r.deal.id, label: r.deal.title })),
+    ],
+    [suggestions, searchResults]
+  );
+
+  const listboxOpen = (searchFocused || query.trim().length > 0) && options.length > 0;
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [query, cityFilter, categoryFilter, storeFilter]);
+
+  useEffect(() => {
+    if (!listboxOpen) return;
+    setAnnouncement(
+      query.trim().length > 0
+        ? `${searchResults.length} نتيجة و${suggestions.length} اقتراح متاحة. استخدم الأسهم للتنقل.`
+        : `${suggestions.length} اقتراح متاح. استخدم الأسهم للتنقل.`
+    );
+  }, [listboxOpen, searchResults.length, suggestions.length, query]);
+
+  const selectOption = (index: number) => {
+    const opt = options[index];
+    if (!opt) return;
+    if (opt.type === "suggestion") {
+      setQuery(opt.label);
+      setActiveIndex(-1);
+      setAnnouncement(`تم اختيار الاقتراح ${opt.label}`);
+    } else {
+      focusOnMap(opt.dealId);
+      setQuery("");
+      setActiveIndex(-1);
+      setAnnouncement(`تم عرض ${opt.label} على الخريطة`);
+    }
+  };
+
+  const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!listboxOpen) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActiveIndex((i) => (i + 1) % options.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex((i) => (i <= 0 ? options.length - 1 : i - 1));
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setActiveIndex(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setActiveIndex(options.length - 1);
+    } else if (e.key === "Enter") {
+      if (activeIndex >= 0) {
+        e.preventDefault();
+        selectOption(activeIndex);
+      }
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setActiveIndex(-1);
+      setSearchFocused(false);
+      setAnnouncement("تم إغلاق قائمة النتائج");
+    }
+  };
+
+
   /** بعد تحديد الموقع عبر زر "استخدم موقعي": ركّز على أقرب فرع/عرض */
   useEffect(() => {
     if (!focusNearestRef.current) return;
