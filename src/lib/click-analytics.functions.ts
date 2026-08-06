@@ -56,8 +56,12 @@ export const getClickAnalytics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator(parseFilters)
   .handler(async ({ context, data }): Promise<ClickAnalytics> => {
-    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
-    if (!isStaff) throw new Error("forbidden");
+    // الوصول للتحليلات مقصور على الأدوار الإدارية فقط (admin / super_admin)
+    const [{ data: isAdmin }, { data: isSuperAdmin }] = await Promise.all([
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" }),
+      context.supabase.rpc("has_role", { _user_id: context.userId, _role: "super_admin" }),
+    ]);
+    if (!isAdmin && !isSuperAdmin) throw new Error("forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     const since = new Date(Date.now() - data.days * 24 * 60 * 60 * 1000).toISOString();
