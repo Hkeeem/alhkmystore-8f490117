@@ -205,6 +205,8 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
+      <ConversionsPanel />
+
       <Card className="hover-lift">
 
 
