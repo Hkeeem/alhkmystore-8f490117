@@ -26,6 +26,7 @@ function MapsPage() {
   const [loading, setLoading] = useState(false);
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
   const [query, setQuery] = useState("");
+  const [searchFocused, setSearchFocused] = useState(false);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -90,6 +91,37 @@ function MapsPage() {
       })
       .slice(0, 15);
   }, [query, nearbyDeals]);
+
+  /** اقتراحات تلقائية: متاجر، مدن، فروع، عناوين عروض */
+  const suggestions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const out: { key: string; label: string; kind: string }[] = [];
+    const seen = new Set<string>();
+    const push = (label: string, kind: string) => {
+      const k = `${kind}:${label}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      out.push({ key: k, label, kind });
+    };
+
+    if (!q) {
+      // أشهر المتاجر والمدن القريبة كاقتراحات افتتاحية
+      nearbyDeals.slice(0, 6).forEach(({ deal }) => push(getStore(deal.storeId).name, "متجر"));
+      nearbyDeals.slice(0, 6).forEach(({ branch }) => push(branch.city, "مدينة"));
+      return out.slice(0, 8);
+    }
+
+    for (const { deal, branch } of nearbyDeals) {
+      const store = getStore(deal.storeId);
+      if (store.name.toLowerCase().includes(q)) push(store.name, "متجر");
+      if (branch.city.toLowerCase().includes(q)) push(branch.city, "مدينة");
+      if (branch.name.toLowerCase().includes(q)) push(branch.name, "فرع");
+      if (deal.title.toLowerCase().includes(q)) push(deal.title, "عرض");
+      if (out.length >= 20) break;
+    }
+    return out.slice(0, 8);
+  }, [query, nearbyDeals]);
+
 
 
   useEffect(() => {
@@ -258,8 +290,11 @@ function MapsPage() {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
             placeholder="ابحث باسم المتجر أو اسم العرض أو الفرع…"
             aria-label="بحث داخل الخريطة"
+            aria-autocomplete="list"
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
           />
           {query && (
@@ -268,6 +303,24 @@ function MapsPage() {
             </button>
           )}
         </div>
+
+        {(searchFocused || query.trim().length > 0) && suggestions.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-2" role="listbox" aria-label="اقتراحات البحث">
+            {suggestions.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                role="option"
+                aria-selected={query === s.label}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setQuery(s.label)}
+                className="max-w-[220px] truncate bg-secondary/50 border border-primary/20 text-[11px] font-bold px-2.5 py-1.5 rounded-xl hover:border-primary hover:bg-secondary transition"
+              >
+                <span className="text-primary">{s.kind}:</span> {s.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {query.trim().length > 0 && (
           <div className="absolute z-[1000] mt-2 w-full max-h-72 overflow-y-auto bg-card border border-primary/20 rounded-2xl shadow-glow divide-y divide-border/50">
@@ -295,6 +348,7 @@ function MapsPage() {
             ))}
           </div>
         )}
+
       </div>
 
 
