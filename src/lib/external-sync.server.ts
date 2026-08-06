@@ -337,11 +337,19 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
 
 /* ------------------------------ التزامن ------------------------------- */
 
-export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
+export type SyncSource = "amazon" | "noon" | "all";
+
+export async function syncExternalDeals(
+  keywords: string[] = DEFAULT_KEYWORDS,
+  source: SyncSource = "all",
+) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const targets: Array<"amazon" | "noon"> = source === "all" ? ["amazon", "noon"] : [source];
 
   const batches = await Promise.all(
-    keywords.flatMap((keyword) => [fetchAmazonOffers(keyword), fetchNoonOffers(keyword)]),
+    keywords.flatMap((keyword) =>
+      targets.map((t) => (t === "amazon" ? fetchAmazonOffers(keyword) : fetchNoonOffers(keyword))),
+    ),
   );
 
   const byKey = new Map<string, ExternalOffer>();
@@ -351,8 +359,9 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
   const offers = [...byKey.values()];
 
   if (offers.length === 0) {
-    await recordSyncEvent({ source: "amazon", status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
-    await recordSyncEvent({ source: "noon", status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
+    for (const t of targets) {
+      await recordSyncEvent({ source: t, status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
+    }
     return { upserted: 0, deactivated: 0, sources: { amazon: 0, noon: 0 } };
   }
 
@@ -364,8 +373,9 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
       { onConflict: "source,source_key" },
     );
   if (error) {
-    await recordSyncEvent({ source: "amazon", status: "failure", code: "upsert_failed", message: error.message });
-    await recordSyncEvent({ source: "noon", status: "failure", code: "upsert_failed", message: error.message });
+    for (const t of targets) {
+      await recordSyncEvent({ source: t, status: "failure", code: "upsert_failed", message: error.message });
+    }
     throw new Error(`upsert failed: ${error.message}`);
   }
 
@@ -374,7 +384,7 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
   const { data: stale } = await supabaseAdmin
     .from("external_deals")
     .update({ active: false })
-    .in("source", ["amazon", "noon"])
+    .in("source", targets)
     .eq("active", true)
     .lt("fetched_at", cutoff)
     .select("id");
@@ -387,12 +397,10 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
   return {
     upserted: offers.length,
     deactivated: stale?.length ?? 0,
-    sources: {
-      amazon: offers.filter((o) => o.source === "amazon").length,
-      noon: offers.filter((o) => o.source === "noon").length,
-    },
+    sources: { amazon: amazonCount, noon: noonCount },
   };
 }
+
 
 /** اختبار مباشر لمفاتيح Amazon PA-API — يُرجع نتيجة مفهومة دون كشف أي قيمة */
 export type AmazonTestResult = {
