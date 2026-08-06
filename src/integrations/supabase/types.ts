@@ -44,6 +44,47 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_clicks: {
+        Row: {
+          country: string | null
+          created_at: string
+          deal_id: string
+          id: string
+          network: string | null
+          referrer: string | null
+          source: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          deal_id: string
+          id?: string
+          network?: string | null
+          referrer?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          deal_id?: string
+          id?: string
+          network?: string | null
+          referrer?: string | null
+          source?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "merchant_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
@@ -531,6 +572,22 @@ export type Database = {
       }
     }
     Views: {
+      affiliate_click_stats: {
+        Row: {
+          clicks: number | null
+          deal_id: string | null
+          last_click_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "merchant_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cashback_user_totals: {
         Row: {
           confirmed_total: number | null
@@ -558,6 +615,17 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      register_affiliate_click: {
+        Args: {
+          _country?: string
+          _deal_id: string
+          _network?: string
+          _referrer?: string
+          _source?: string
+          _user_agent?: string
+        }
+        Returns: undefined
+      }
       revoke_user_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

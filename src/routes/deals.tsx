@@ -9,6 +9,7 @@ import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles 
 import { useLiveDeals, timeAgoAr } from "@/hooks/use-live-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
+import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
 import { z } from "zod";
 
 
@@ -215,7 +216,11 @@ function MerchantDealsSection() {
                 وفّر {d.discount_percent}%
               </span>
               {d.product_url && (
-                <a href={d.product_url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-primary hover:underline pt-1">
+                <a
+                  href={affiliateHref(d.id, "deals-live")}
+                  {...AFFILIATE_LINK_PROPS}
+                  className="block text-[11px] text-primary hover:underline pt-1"
+                >
                   اذهب للعرض
                 </a>
               )}

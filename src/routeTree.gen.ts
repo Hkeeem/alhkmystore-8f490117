@@ -38,6 +38,7 @@ import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authe
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -184,6 +185,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
+  id: '/api/public/go/$dealId',
+  path: '/api/public/go/$dealId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/go/$dealId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/go/$dealId'
   id:
     | '__root__'
     | '/'
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/rewards/$id'
+    | '/api/public/go/$dealId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -394,6 +406,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -601,6 +614,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/go/$dealId': {
+      id: '/api/public/go/$dealId'
+      path: '/api/public/go/$dealId'
+      fullPath: '/api/public/go/$dealId'
+      preLoaderRoute: typeof ApiPublicGoDealIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -676,6 +696,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
+  ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
