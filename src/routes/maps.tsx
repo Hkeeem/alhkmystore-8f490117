@@ -551,6 +551,7 @@ function MapsPage() {
                 setCityFilter("الكل");
                 setCategoryFilter("الكل");
                 setStoreFilter("الكل");
+                setRadiusKm("الكل");
               }}
               className="text-[11px] font-bold text-muted-foreground hover:text-primary transition"
             >
