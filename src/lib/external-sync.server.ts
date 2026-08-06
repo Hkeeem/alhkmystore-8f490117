@@ -231,49 +231,54 @@ async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
     ],
   });
 
-  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
-  const dateStamp = amzDate.slice(0, 8);
-  const canonicalHeaders =
-    `content-encoding:amz-1.0\n` +
-    `host:${AMAZON_HOST}\n` +
-    `x-amz-date:${amzDate}\n` +
-    `x-amz-target:${target}\n`;
-  const signedHeaders = "content-encoding;host;x-amz-date;x-amz-target";
-  const canonicalRequest = `POST\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${await sha256Hex(payload)}`;
-  const scope = `${dateStamp}/${AMAZON_REGION}/ProductAdvertisingAPI/aws4_request`;
-  const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${await sha256Hex(canonicalRequest)}`;
+  const signRequest = async () => {
+    const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const dateStamp = amzDate.slice(0, 8);
+    const canonicalHeaders =
+      `content-encoding:amz-1.0\n` +
+      `host:${AMAZON_HOST}\n` +
+      `x-amz-date:${amzDate}\n` +
+      `x-amz-target:${target}\n`;
+    const signedHeaders = "content-encoding;host;x-amz-date;x-amz-target";
+    const canonicalRequest = `POST\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${await sha256Hex(payload)}`;
+    const scope = `${dateStamp}/${AMAZON_REGION}/ProductAdvertisingAPI/aws4_request`;
+    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${await sha256Hex(canonicalRequest)}`;
 
-  let signingKey: ArrayBuffer | Uint8Array = new TextEncoder().encode(`AWS4${secretKey}`);
-  for (const part of [dateStamp, AMAZON_REGION, "ProductAdvertisingAPI", "aws4_request"]) {
-    signingKey = await hmac(signingKey, part);
-  }
-  const signature = toHex(await hmac(signingKey, stringToSign));
+    let signingKey: ArrayBuffer | Uint8Array = new TextEncoder().encode(`AWS4${secretKey}`);
+    for (const part of [dateStamp, AMAZON_REGION, "ProductAdvertisingAPI", "aws4_request"]) {
+      signingKey = await hmac(signingKey, part);
+    }
+    const signature = toHex(await hmac(signingKey, stringToSign));
 
-  const response = await fetch(`https://${AMAZON_HOST}${path}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "content-encoding": "amz-1.0",
-      "x-amz-date": amzDate,
-      "x-amz-target": target,
-      Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
-    },
-    body: payload,
-    signal: AbortSignal.timeout(12_000),
-  });
+    return fetch(`https://${AMAZON_HOST}${path}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "content-encoding": "amz-1.0",
+        "x-amz-date": amzDate,
+        "x-amz-target": target,
+        Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+      },
+      body: payload,
+      signal: AbortSignal.timeout(12_000),
+    });
+  };
 
-  if (!response.ok) {
-    const body = await response.text();
-    console.error(`Amazon PA-API failed [${response.status}]`);
+  // كل طلب يُعاد توقيعه في كل محاولة (التوقيع مرتبط بالوقت)
+  const outcome = await fetchWithRetry(signRequest, `amazon:${keyword}`);
+  if (!outcome.ok) {
+    console.error(`Amazon PA-API failed after ${outcome.attempts} attempts`);
     await recordSyncEvent({
       source: "amazon",
       status: "failure",
-      code: amazonHttpCode(response.status, body),
-      message: `استجابة أمازون ${response.status}`,
+      code: outcome.status ? amazonHttpCode(outcome.status, outcome.body ?? "") : outcome.code,
+      message: outcome.message,
       keyword,
     });
     return [];
   }
+  const response = outcome.response;
+
 
   const json = (await response.json()) as {
     SearchResult?: {
