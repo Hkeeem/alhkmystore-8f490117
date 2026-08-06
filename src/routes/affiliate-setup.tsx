@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { NoonAuditPanel } from "@/components/admin/NoonAuditPanel";
+import { logNoonCampaignEvent } from "@/lib/noon-audit.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle, ArrowLeftRight, LifeBuoy } from "lucide-react";
@@ -212,6 +214,10 @@ function AffiliateSetupPage() {
 
       <div id="noon-campaign" className="scroll-mt-24">
         <NoonCampaignPanel />
+      </div>
+
+      <div id="noon-audit" className="scroll-mt-24">
+        <NoonAuditPanel />
       </div>
 
       <div id="secure-keys" className="scroll-mt-24">
@@ -844,6 +850,21 @@ const NOON_CHOICE_KEY = "hkeeem-noon-campaign";
 function NoonCampaignPanel() {
   const fetchNoon = useServerFn(getNoonCampaignStatus);
   const verify = useServerFn(verifyNoonPublisherId);
+  const logEvent = useServerFn(logNoonCampaignEvent);
+  const queryClient = useQueryClient();
+  const recordEvent = (payload: {
+    action: string;
+    campaignId?: string;
+    campaignName?: string;
+    previousCampaignId?: string;
+    network?: string;
+    publisherId?: string;
+    result?: string;
+  }) => {
+    void logEvent({ data: payload })
+      .then(() => queryClient.invalidateQueries({ queryKey: ["noon-audit-log"] }))
+      .catch(() => { /* التسجيل لا يعطّل العملية */ });
+  };
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["noon-campaign-status"],
     queryFn: () => fetchNoon({}),
@@ -878,6 +899,14 @@ function NoonCampaignPanel() {
         return;
       }
       const auto = res.campaignId;
+      recordEvent({
+        action: "noon_verify_publisher",
+        campaignId: auto,
+        campaignName: res.campaignName,
+        network: res.network,
+        publisherId,
+        result: res.matchesStored === true ? "مطابق للمعرّف المحفوظ" : res.matchesStored === false ? "غير مطابق للمعرّف المحفوظ" : "تحقق من الصيغة فقط",
+      });
       setSelected(auto);
       try {
         localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: auto, publisherId }));
@@ -942,6 +971,17 @@ function NoonCampaignPanel() {
                   key={c.id}
                   type="button"
                   onClick={() => {
+                    if (selected !== c.id) {
+                      recordEvent({
+                        action: "noon_link_campaign",
+                        campaignId: c.id,
+                        campaignName: c.name,
+                        network: c.network,
+                        ...(selected ? { previousCampaignId: selected } : {}),
+                        ...(publisherId.trim() ? { publisherId } : {}),
+                        result: "اختيار حملة من لوحة الإعدادات",
+                      });
+                    }
                     setSelected(c.id);
                     try { localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: c.id, publisherId })); } catch { /* ignore */ }
                   }}
@@ -988,6 +1028,26 @@ function NoonCampaignPanel() {
             >
               {confirmMutation.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
               تأكيد
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!selected}
+              onClick={() => {
+                const prev = selected;
+                recordEvent({
+                  action: "noon_unlink_campaign",
+                  ...(prev ? { previousCampaignId: prev } : {}),
+                  ...(publisherId.trim() ? { publisherId } : {}),
+                  result: "فك ربط الحملة من لوحة الإعدادات",
+                });
+                setSelected(null);
+                try { localStorage.removeItem(NOON_CHOICE_KEY); } catch { /* ignore */ }
+                setResult(null);
+                toast.success("تم فك ربط الحملة وتسجيل العملية");
+              }}
+              className="press-ripple"
+            >
+              فك الربط
             </Button>
           </div>
           {result && (
