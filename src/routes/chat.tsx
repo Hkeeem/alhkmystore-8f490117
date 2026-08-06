@@ -61,7 +61,12 @@ export const Route = createFileRoute("/chat")({
     meta: [
       { title: "حكيم - المساعد الذكي لعروض المملكة" },
       { name: "description", content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية." },
+      { property: "og:title", content: "حكيم — المساعد الذكي لعروض المملكة" },
+      { property: "og:description", content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://alhkmystore.lovable.app/chat" },
     ],
+    links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/chat" }],
   }),
   component: ChatPage,
 });
@@ -395,6 +400,7 @@ function ChatPage() {
         />
         <button
           type="submit"
+          aria-label="إرسال"
           disabled={isLoading || !input.trim()}
           className="bg-gradient-hero text-primary-foreground rounded-2xl w-12 h-12 flex items-center justify-center shadow-glow disabled:opacity-50 hover:opacity-90 transition"
         >

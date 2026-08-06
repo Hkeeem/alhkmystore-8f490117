@@ -21,7 +21,10 @@ export const Route = createFileRoute("/rewards")({
       { name: "description", content: "اكسب نقاطاً في وفّر كل ما نسخت كوبون أو شاركت عرض أو بنيت قائمة تسوّق ذكية — واستبدلها بجوائز." },
       { property: "og:title", content: "الجوائز ولوحة المتصدرين — وفّر" },
       { property: "og:description", content: "اجمع النقاط وتصدّر لوحة أفضل الموفّرين في المملكة." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://alhkmystore.lovable.app/rewards" },
     ],
+    links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/rewards" }],
   }),
   component: RewardsPage,
 });
@@ -75,7 +78,9 @@ function RewardsPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
+      <h1 className="sr-only">الجوائز ولوحة المتصدرين</h1>
       {/* Hero card */}
+
       <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-6 md:p-8 shadow-glow">
         <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
         <div className="relative flex flex-col md:flex-row md:items-center gap-6 text-primary-foreground">

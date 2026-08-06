@@ -24,7 +24,12 @@ export const Route = createFileRoute("/deals")({
     meta: [
       { title: "كل العروض - وفّر" },
       { name: "description", content: "استعرض جميع عروض المتاجر السعودية مرتّبة حسب نسبة التوفير." },
+      { property: "og:title", content: "كل العروض — وفّر مع حكيم AI" },
+      { property: "og:description", content: "استعرض جميع عروض المتاجر السعودية مرتّبة حسب نسبة التوفير." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://alhkmystore.lovable.app/deals" },
     ],
+    links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/deals" }],
   }),
   component: DealsPage,
 });

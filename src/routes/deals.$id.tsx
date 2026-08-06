@@ -17,13 +17,40 @@ export const Route = createFileRoute("/deals/$id")({
     const description = deal
       ? `قارن أسعار ${deal.title} ووفّر حتى ${discountPercent(deal)}٪`
       : "تفاصيل العرض";
+    const url = `https://alhkmystore.lovable.app/deals/${params.id}`;
+    const store = deal ? getStore(deal.storeId) : undefined;
     return {
       meta: [
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: deal
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: deal.title,
+                ...(deal.image?.startsWith("http") ? { image: deal.image } : {}),
+                description,
+                offers: {
+                  "@type": "Offer",
+                  price: deal.price,
+                  priceCurrency: "SAR",
+                  url,
+                  availability: "https://schema.org/InStock",
+                  ...(store ? { seller: { "@type": "Organization", name: store.name } } : {}),
+                },
+              }),
+            },
+          ]
+        : [],
     };
   },
   component: DealDetailPage,
