@@ -61,12 +61,23 @@ function MapsPage() {
     requestLocation();
   }, [requestLocation]);
 
-  /** ربط كل عرض بأقرب فرع فعلي لمتجره */
+  /** ربط كل عرض بأقرب فرع فعلي لمتجره (مع مراعاة التصفية) */
   const mapped = useMemo(() => {
     if (!userLocation) return [];
     return deals
+      .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
+      .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
-        const branch = nearestBranch(deal.storeId, userLocation);
+        const branch =
+          cityFilter === "الكل"
+            ? nearestBranch(deal.storeId, userLocation)
+            : branches
+                .filter((b) => b.storeId === deal.storeId && b.city === cityFilter)
+                .sort(
+                  (a, b) =>
+                    distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
+                    distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+                )[0] ?? null;
         if (!branch) return null;
         return {
           deal,
@@ -75,10 +86,15 @@ function MapsPage() {
         };
       })
       .filter(Boolean) as { deal: (typeof deals)[number]; branch: Branch; km: number }[];
-  }, [userLocation]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter]);
 
   const nearbyDeals = useMemo(() => [...mapped].sort((a, b) => a.km - b.km), [mapped]);
   const city = userLocation ? nearestCity(userLocation) : null;
+
+  const categories = useMemo(() => ["الكل", ...Array.from(new Set(deals.map((d) => d.category)))], []);
+  const activeFiltersCount =
+    (cityFilter !== "الكل" ? 1 : 0) + (categoryFilter !== "الكل" ? 1 : 0) + (storeFilter !== "الكل" ? 1 : 0);
+
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
