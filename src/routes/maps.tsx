@@ -31,7 +31,10 @@ function MapsPage() {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
 
-  const requestLocation = useCallback(() => {
+  const focusNearestRef = useRef(false);
+
+  const requestLocation = useCallback((focusNearest = false) => {
+    focusNearestRef.current = focusNearest;
     if (!navigator.geolocation) {
       setError("المتصفح لا يدعم تحديد الموقع.");
       setUserLocation({ lat: 24.7136, lng: 46.6753 });
@@ -52,6 +55,7 @@ function MapsPage() {
       { timeout: 8000, enableHighAccuracy: true }
     );
   }, []);
+
 
   useEffect(() => {
     requestLocation();
@@ -253,9 +257,19 @@ function MapsPage() {
     }
   };
 
+  /** بعد تحديد الموقع عبر زر "استخدم موقعي": ركّز على أقرب فرع/عرض */
+  useEffect(() => {
+    if (!focusNearestRef.current) return;
+    const nearest = nearbyDeals[0];
+    if (!nearest || !markersRef.current[nearest.deal.id]) return;
+    focusNearestRef.current = false;
+    focusOnMap(nearest.deal.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nearbyDeals, mapped]);
+
   return (
     <main className="max-w-6xl mx-auto px-4 pt-6 pb-24 space-y-5">
-      <header className="flex items-center gap-3 justify-between">
+      <header className="flex items-center gap-3 justify-between flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-gold glow-gold flex items-center justify-center shrink-0">
             <MapPin className="w-6 h-6 text-secondary" />
@@ -267,15 +281,28 @@ function MapsPage() {
             </p>
           </div>
         </div>
-        <button
-          onClick={requestLocation}
-          disabled={loading}
-          className="flex items-center gap-2 bg-secondary/50 px-3 py-2 rounded-2xl border border-primary/20 text-xs font-bold text-primary hover:border-primary transition"
-        >
-          <Locate className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          {loading ? "جاري..." : "تحديث موقعي"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => requestLocation(true)}
+            disabled={loading}
+            className="flex items-center gap-2 bg-primary text-secondary px-3 py-2 rounded-2xl text-xs font-black hover:opacity-90 transition press-ripple"
+          >
+            <Navigation className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            {loading ? "جاري تحديد موقعك…" : "استخدم موقعي"}
+          </button>
+          <button
+            type="button"
+            onClick={() => requestLocation(false)}
+            disabled={loading}
+            className="flex items-center gap-2 bg-secondary/50 px-3 py-2 rounded-2xl border border-primary/20 text-xs font-bold text-primary hover:border-primary transition"
+          >
+            <Locate className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            تحديث موقعي
+          </button>
+        </div>
       </header>
+
 
       {error && (
         <div className="rounded-2xl bg-card border border-border/60 p-4 text-sm text-muted-foreground flex items-center gap-2">
