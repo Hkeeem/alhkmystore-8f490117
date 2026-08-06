@@ -448,3 +448,94 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     </Card>
   );
 }
+
+function ConversionsPanel() {
+  const { user } = useAuth();
+  const fetchConversions = useServerFn(getConversionsOverview);
+  const fetchPostback = useServerFn(getPostbackStatus);
+  const [origin, setOrigin] = useState("");
+  useEffect(() => setOrigin(window.location.origin), []);
+
+  const { data: postback } = useQuery({
+    queryKey: ["postback-status"],
+    queryFn: () => fetchPostback({}),
+  });
+
+  const { data, refetch, isFetching, isError } = useQuery({
+    queryKey: ["affiliate-conversions-overview"],
+    queryFn: () => fetchConversions({}),
+    enabled: Boolean(user),
+    retry: false,
+  });
+
+  const nets: { key: "amazon" | "noon" | "other"; label: string }[] = [
+    { key: "amazon", label: "Amazon" },
+    { key: "noon", label: "noon" },
+    { key: "other", label: "شبكات أخرى" },
+  ];
+
+  const postbackUrl = `${origin}/api/public/postback/{network}?key=YOUR_SECRET&order_id={order_id}&click_id={subid}&amount={sale_amount}&commission={payout}&status=approved`;
+
+  return (
+    <Card className="hover-lift border-primary/20">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-lg"><Receipt className="size-5" /> تتبّع المبيعات (Postback)</CardTitle>
+        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetch()} disabled={isFetching || !user}>
+          <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> تحديث
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center gap-2 text-xs">
+          {postback?.configured ? (
+            <Badge className="gap-1"><Check className="size-3" /> مفتاح الـ Postback مُفعّل</Badge>
+          ) : (
+            <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> يلزم إضافة AFFILIATE_POSTBACK_SECRET</Badge>
+          )}
+        </div>
+
+        <div className="rounded-xl border bg-muted/40 p-3 space-y-2">
+          <p className="text-xs text-muted-foreground">الصق هذا الرابط في إعدادات Postback لدى الشبكة (استبدل الوسوم بمتغيّرات الشبكة):</p>
+          <code dir="ltr" className="block break-all text-[11px] leading-relaxed">{postbackUrl}</code>
+          <Button
+            variant="secondary"
+            size="sm"
+            className="press-ripple"
+            onClick={() => {
+              navigator.clipboard.writeText(postbackUrl);
+              toast.success("تم نسخ رابط الـ Postback");
+            }}
+          >
+            <Copy className="size-4" /> نسخ الرابط
+          </Button>
+          <p className="text-[11px] text-muted-foreground">
+            نمرّر معرّف النقرة تلقائيًا للشبكة عبر <span dir="ltr">subid</span> (وأمازون عبر <span dir="ltr">ascsubtag</span>)، فتُرجعه الشبكة لنا لنربط كل عملية بيع بنقرتها.
+          </p>
+        </div>
+
+        {!user ? (
+          <p className="text-xs text-muted-foreground">سجّل الدخول بحساب إداري لعرض إحصائيات التحويلات.</p>
+        ) : isError ? (
+          <p className="text-xs text-muted-foreground">هذه الإحصائيات متاحة للمشرفين فقط.</p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-3">
+            {nets.map((n) => {
+              const s = data?.[n.key];
+              return (
+                <div key={n.key} className="rounded-xl border p-3 space-y-1">
+                  <span className="font-semibold" dir="ltr">{n.label}</span>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p>عمليات (٣٠ يومًا): <span className="font-semibold text-foreground">{s?.count ?? 0}</span></p>
+                    <p>مؤكدة: <span className="font-semibold text-foreground">{s?.approved ?? 0}</span></p>
+                    <p>المبيعات: <span className="font-semibold text-foreground">{(s?.sales ?? 0).toFixed(2)} ر.س</span></p>
+                    <p>العمولة: <span className="font-semibold text-foreground">{(s?.commission ?? 0).toFixed(2)} ر.س</span></p>
+                    <p>آخر عملية: {formatWhen(s?.lastAt ?? null)}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
