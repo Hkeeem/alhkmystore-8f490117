@@ -37,18 +37,24 @@ export const getSyncOverview = createServerFn({ method: "GET" }).handler(async (
 
 export const runExternalSyncNow = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((data: unknown) => {
+    const raw = String((data as { source?: unknown })?.source ?? "all");
+    const source = (["amazon", "noon", "all"].includes(raw) ? raw : "all") as "amazon" | "noon" | "all";
+    return { source };
+  })
+  .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
     try {
-      const { syncExternalDeals } = await import("@/lib/external-sync.server");
-      const result = await syncExternalDeals();
-      return { success: true as const, ...result };
+      const { syncExternalDeals, DEFAULT_KEYWORDS } = await import("@/lib/external-sync.server");
+      const result = await syncExternalDeals(DEFAULT_KEYWORDS, data.source);
+      return { success: true as const, source: data.source, ...result };
     } catch (error) {
       console.error("manual external sync failed", error);
-      return { success: false as const, error: "sync_failed" };
+      return { success: false as const, source: data.source, error: "sync_failed" };
     }
   });
+
 
 export const getConversionsOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
