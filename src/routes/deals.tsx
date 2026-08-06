@@ -168,21 +168,33 @@ function DealsPage() {
   );
 }
 
-/** عروض حقيقية أضافها تجّار موثّقون */
+/** عروض حقيقية أضافها تجّار موثّقون — تُحدّث أول بأول */
 function MerchantDealsSection() {
-  const q = useQuery({ queryKey: ["published-merchant-deals"], queryFn: () => fetchPublishedDeals(12) });
+  const q = useLiveDeals(12);
   const items = q.data ?? [];
   if (q.isLoading || items.length === 0) return null;
 
   return (
     <section className="space-y-3">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <h2 className="font-display font-black text-lg flex items-center gap-2">
           <BadgeCheck className="w-5 h-5 text-primary" /> عروض حقيقية من التجّار
+          <span
+            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${q.live ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
+            aria-live="polite"
+          >
+            <span className={`w-1.5 h-1.5 rounded-full ${q.live ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
+            {q.live ? "مباشر" : "تحديث دوري"}
+          </span>
         </h2>
-        <Link to="/merchant" className="text-xs text-primary hover:underline flex items-center gap-1">
-          <StoreIcon className="w-3.5 h-3.5" /> أضف عرض متجرك
-        </Link>
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] text-muted-foreground">
+            {q.isFetching ? "جارٍ التحديث…" : `آخر تحديث ${timeAgoAr(q.dataUpdatedAt)}`}
+          </span>
+          <Link to="/merchant" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <StoreIcon className="w-3.5 h-3.5" /> أضف عرض متجرك
+          </Link>
+        </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
         {items.map((d) => (
