@@ -62,6 +62,15 @@ function toHex(buffer: ArrayBuffer) {
 
 /** Amazon Product Advertising API v5 — SearchItems */
 export async function fetchAmazonOffers(keyword: string): Promise<ExternalOffer[]> {
+  try {
+    return await amazonSearch(keyword);
+  } catch (error) {
+    console.error("Amazon PA-API threw", error);
+    return [];
+  }
+}
+
+async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
   const accessKey = process.env["AMAZON_ACCESS_KEY"];
   const secretKey = process.env["AMAZON_SECRET_KEY"];
   const partnerTag = process.env["AMAZON_PARTNER_TAG"];
@@ -113,6 +122,7 @@ export async function fetchAmazonOffers(keyword: string): Promise<ExternalOffer[
       Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
     },
     body: payload,
+    signal: AbortSignal.timeout(12_000),
   });
 
   if (!response.ok) {
@@ -195,6 +205,7 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
         "x-content-type": "application/json",
         "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
       },
+      signal: AbortSignal.timeout(12_000),
     });
     if (!response.ok) {
       console.error(`noon catalog failed [${response.status}]`);
