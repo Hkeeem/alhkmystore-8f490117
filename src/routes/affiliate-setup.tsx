@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt } from "lucide-react";
+import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
+import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue } from "@/lib/integration-keys.functions";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/affiliate-setup")({
@@ -209,6 +210,8 @@ function AffiliateSetupPage() {
 
       <NoonCampaignPanel />
 
+      <SecureKeysPanel />
+
       <Card className="hover-lift">
 
 
@@ -233,7 +236,7 @@ function AffiliateSetupPage() {
             </div>
           ))}
           <p className="text-xs text-muted-foreground pt-1">
-            عندما تجهز أي مفتاح أخبرني في المحادثة وسأفتح نموذج إدخال آمن — لا ترسل المفاتيح كنص في الشات.
+            القيم مخزّنة مشفّرة داخل قاعدة البيانات ولا تُعرض هنا إطلاقًا — تظهر الحالة فقط. استخدم بطاقة «تخزين آمن ومشفّر للمفاتيح» بالأعلى للإدخال أو التحديث.
           </p>
         </CardContent>
       </Card>
@@ -709,6 +712,123 @@ function NoonCampaignPanel() {
             <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{data.sampleDeepLink}</code>
           </div>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+/* --------------------- تخزين آمن ومشفّر للمفاتيح --------------------- */
+
+const SECURE_KEY_FIELDS: Array<{ name: string; label: string; hint: string }> = [
+  { name: "AMAZON_ACCESS_KEY", label: "أمازون — Access Key", hint: "من لوحة Amazon Associates / PA-API" },
+  { name: "AMAZON_SECRET_KEY", label: "أمازون — Secret Key", hint: "يُعرض مرة واحدة فقط عند الإنشاء" },
+  { name: "AMAZON_PARTNER_TAG", label: "أمازون — Partner Tag", hint: "مثال: hkeeem-21" },
+  { name: "NOON_AFFILIATE_ID", label: "نون — Publisher ID", hint: "معرّف الناشر في حملة نون" },
+];
+
+function SecureKeysPanel() {
+  const { user } = useAuth();
+  const fetchKeys = useServerFn(getIntegrationKeysStatus);
+  const saveKey = useServerFn(saveIntegrationKeyValue);
+  const removeKey = useServerFn(removeIntegrationKeyValue);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["integration-keys-status"],
+    queryFn: () => fetchKeys({}),
+  });
+
+  const save = useMutation({
+    mutationFn: (vars: { name: string; value: string }) => saveKey({ data: vars }),
+    onSuccess: (res, vars) => {
+      if (!res?.ok) { toast.error(res?.reason ?? "تعذّر الحفظ"); return; }
+      setDrafts((p) => ({ ...p, [vars.name]: "" }));
+      toast.success("تم الحفظ مشفّرًا داخل قاعدة البيانات");
+      refetch();
+    },
+    onError: () => toast.error("غير مصرّح — هذه الخطوة للمشرفين فقط"),
+  });
+
+  const remove = useMutation({
+    mutationFn: (name: string) => removeKey({ data: { name } }),
+    onSuccess: () => { toast.success("تم حذف المفتاح"); refetch(); },
+    onError: () => toast.error("غير مصرّح — هذه الخطوة للمشرفين فقط"),
+  });
+
+  return (
+    <Card className="hover-lift">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <ShieldCheck className="size-5" /> تخزين آمن ومشفّر للمفاتيح
+        </CardTitle>
+        <Badge variant="secondary" className="gap-1"><Lock className="size-3" /> AES-256</Badge>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <p className="text-xs text-muted-foreground">
+          تُشفَّر القيم قبل حفظها في قاعدة البيانات ولا يمكن استرجاعها من الواجهة أبدًا — تظهر الحالة فقط:
+          «مفعّل» أو «غير مُضاف». تُستعمل القيم داخل الخادم فقط عند سحب العروض وتوليد روابط الشراء.
+        </p>
+
+        {SECURE_KEY_FIELDS.map((field) => {
+          const row = data?.find((r) => r.name === field.name);
+          const configured = Boolean(row?.configured);
+          return (
+            <div key={field.name} className="rounded-xl border p-3 space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-semibold">{field.label}</div>
+                  <div className="text-[11px] text-muted-foreground">{field.hint}</div>
+                </div>
+                {isLoading ? (
+                  <span className="text-xs text-muted-foreground">جارٍ الفحص…</span>
+                ) : configured ? (
+                  <Badge className="gap-1"><Check className="size-3" /> مفعّل</Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <CircleDashed className="size-3" /> غير مُضاف
+                  </Badge>
+                )}
+              </div>
+
+              {user ? (
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input
+                    type="password"
+                    dir="ltr"
+                    autoComplete="new-password"
+                    placeholder={configured ? "أدخل قيمة جديدة للاستبدال" : "الصق القيمة هنا"}
+                    aria-label={field.label}
+                    value={drafts[field.name] ?? ""}
+                    onChange={(e) => setDrafts((p) => ({ ...p, [field.name]: e.target.value }))}
+                    className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  />
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      className="press-ripple"
+                      disabled={save.isPending || (drafts[field.name] ?? "").trim().length < 3}
+                      onClick={() => save.mutate({ name: field.name, value: (drafts[field.name] ?? "").trim() })}
+                    >
+                      حفظ مشفّر
+                    </Button>
+                    {row?.storedInDatabase ? (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={remove.isPending}
+                        onClick={() => remove.mutate(field.name)}
+                      >
+                        حذف
+                      </Button>
+                    ) : null}
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">سجّل الدخول بحساب مشرف لإدخال أو تحديث المفاتيح.</p>
+              )}
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
   );
