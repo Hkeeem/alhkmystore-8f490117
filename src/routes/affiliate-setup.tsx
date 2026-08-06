@@ -2,14 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle } from "lucide-react";
+import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle, ArrowLeftRight, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
+import { getSyncFailures, getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
 import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue, testAmazonConnection } from "@/lib/integration-keys.functions";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -188,7 +188,7 @@ function AffiliateSetupPage() {
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-3xl space-y-8">
-      <header className="space-y-3">
+      <header id="top" className="space-y-3 scroll-mt-24">
         <Badge variant="secondary" className="gap-1"><Link2 className="size-3" /> ربط المصادر الحقيقية</Badge>
         <h1 className="text-3xl font-bold">دليل تفعيل أمازون ونون خطوة بخطوة</h1>
         <p className="text-muted-foreground">
@@ -206,11 +206,18 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
+      <SyncFailuresPanel />
+
       <ConversionsPanel />
 
-      <NoonCampaignPanel />
+      <div id="noon-campaign" className="scroll-mt-24">
+        <NoonCampaignPanel />
+      </div>
 
-      <SecureKeysPanel />
+      <div id="secure-keys" className="scroll-mt-24">
+        <SecureKeysPanel />
+      </div>
+
 
       <Card className="hover-lift">
 
@@ -240,6 +247,8 @@ function AffiliateSetupPage() {
           </p>
         </CardContent>
       </Card>
+
+      <div id="steps" className="scroll-mt-24" />
 
       <StepSection
         icon={<ShoppingCart className="size-5" />}
@@ -507,6 +516,154 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         <p className="text-[11px] text-muted-foreground text-center">
           التحديث التلقائي يعمل كل ٦ ساعات؛ هذا الزر لتشغيل دورة فورية.
         </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+/* ------------------- أسباب آخر فشل للتحديث لكل مصدر ------------------- */
+
+const FAILURE_GUIDE: Record<string, { title: string; hint: string; fixes: Array<{ label: string; href: string; external?: boolean }> }> = {
+  missing_keys: {
+    title: "إعدادات ناقصة",
+    hint: "لم تُحفظ كل المفاتيح المطلوبة، لذلك تخطّى النظام هذا المصدر.",
+    fixes: [
+      { label: "أضف المفاتيح الآن", href: "#secure-keys" },
+      { label: "اذهب لخطوات الإعداد", href: "#steps" },
+    ],
+  },
+  auth_error: {
+    title: "مفاتيح غير صالحة أو توقيع خاطئ",
+    hint: "رفضت أمازون الطلب: تأكد من Access Key و Secret Key وأنهما لنفس الحساب.",
+    fixes: [
+      { label: "حدّث المفاتيح", href: "#secure-keys" },
+      { label: "لوحة مفاتيح أمازون", href: "https://affiliate-program.amazon.sa/assoc_credentials/home", external: true },
+    ],
+  },
+  partner_tag_invalid: {
+    title: "Partner Tag غير مقبول",
+    hint: "وسم الشريك غير مرتبط بحساب PA-API أو مكتوب بشكل خاطئ.",
+    fixes: [
+      { label: "صحّح Partner Tag", href: "#secure-keys" },
+      { label: "إدارة أوسمة التتبع", href: "https://affiliate-program.amazon.sa/home/tags", external: true },
+    ],
+  },
+  throttled: {
+    title: "تجاوز حد الطلبات",
+    hint: "المصدر أرجع 429؛ ستُعاد المحاولة في الدورة القادمة تلقائيًا.",
+    fixes: [{ label: "شغّل دورة يدوية لاحقًا", href: "#top" }],
+  },
+  http_error: {
+    title: "استجابة غير متوقعة من المصدر",
+    hint: "رفض المصدر الطلب أو تغيّرت واجهته؛ راجع الإعدادات ثم أعد المحاولة.",
+    fixes: [
+      { label: "راجع الإعدادات", href: "#secure-keys" },
+      { label: "أعد اختبار الاتصال", href: "#top" },
+    ],
+  },
+  network_error: {
+    title: "تعذّر الاتصال",
+    hint: "انقطع الاتصال بخوادم المصدر أو انتهت المهلة.",
+    fixes: [{ label: "أعد تشغيل التحديث", href: "#top" }],
+  },
+  upsert_failed: {
+    title: "فشل حفظ العروض في قاعدة البيانات",
+    hint: "وصلت العروض لكن تعذّر تخزينها؛ أعد المحاولة وإن تكرر راجع سجل الأخطاء.",
+    fixes: [{ label: "أعد تشغيل التحديث", href: "#top" }],
+  },
+  empty_result: {
+    title: "لم تصل أي عروض",
+    hint: "لم يُرجع المصدر نتائج — غالبًا بسبب مفاتيح ناقصة أو رفض الواجهة.",
+    fixes: [
+      { label: "أكمل الإعدادات", href: "#secure-keys" },
+      { label: "راجع حملة نون", href: "#noon-campaign" },
+    ],
+  },
+};
+
+function SyncFailuresPanel() {
+  const fetchFailures = useServerFn(getSyncFailures);
+  const { data, refetch, isFetching } = useQuery({
+    queryKey: ["sync-failures"],
+    queryFn: () => fetchFailures({}),
+  });
+
+  const rows = [
+    { key: "amazon", label: "Amazon", info: data?.amazon ?? null },
+    { key: "noon", label: "noon", info: data?.noon ?? null },
+  ];
+
+  return (
+    <Card className="hover-lift border-destructive/25">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <LifeBuoy className="size-5" /> أسباب آخر فشل للتحديث
+        </CardTitle>
+        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetch()} disabled={isFetching}>
+          <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> تحديث
+        </Button>
+      </CardHeader>
+      <CardContent className="grid gap-3 sm:grid-cols-2">
+        {rows.map(({ key, label, info }) => {
+          const guide = info ? FAILURE_GUIDE[info.code] ?? FAILURE_GUIDE["http_error"]! : null;
+          const recovered = Boolean(info?.recoveredAt);
+          return (
+            <div
+              key={key}
+              className={`rounded-xl border p-3 space-y-2 ${
+                info && !recovered ? "border-destructive/40 bg-destructive/5" : "border-border"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-semibold" dir="ltr">{label}</span>
+                {!info ? (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground"><Check className="size-3" /> لا فشل مسجّل</Badge>
+                ) : recovered ? (
+                  <Badge variant="outline" className="gap-1"><Check className="size-3" /> عاد للعمل</Badge>
+                ) : (
+                  <Badge variant="destructive" className="gap-1"><XCircle className="size-3" /> يحتاج إصلاح</Badge>
+                )}
+              </div>
+
+              {!info || !guide ? (
+                <p className="text-xs text-muted-foreground">لم يُسجَّل أي فشل لهذا المصدر حتى الآن.</p>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">{guide.title}</p>
+                  <p className="text-xs text-muted-foreground">{guide.hint}</p>
+                  {info.message && (
+                    <p className="text-[11px] text-muted-foreground rounded-md bg-muted/50 p-2" dir="auto">
+                      {info.message}{info.keyword ? ` — أثناء البحث عن «${info.keyword}»` : ""}
+                    </p>
+                  )}
+                  <p className="text-[11px] text-muted-foreground">وقت الفشل: {formatWhen(info.at)}</p>
+                  {recovered && (
+                    <p className="text-[11px] text-muted-foreground">آخر نجاح بعده: {formatWhen(info.recoveredAt)}</p>
+                  )}
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {guide.fixes.map((fix) => (
+                      <Button
+                        key={fix.label}
+                        asChild
+                        size="sm"
+                        variant="outline"
+                        className="press-ripple h-8 text-xs"
+                      >
+                        <a
+                          href={fix.href}
+                          {...(fix.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                        >
+                          {fix.external ? <ExternalLink className="size-3.5" /> : <ArrowLeftRight className="size-3.5" />}
+                          {fix.label}
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </CardContent>
     </Card>
   );
