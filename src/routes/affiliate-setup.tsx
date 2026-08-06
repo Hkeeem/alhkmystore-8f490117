@@ -220,7 +220,12 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
+      <div id="sync-schedule" className="scroll-mt-24">
+        <SyncSchedulePanel />
+      </div>
+
       <SyncFailuresPanel />
+
 
       <ConversionsPanel />
 
