@@ -38,6 +38,46 @@ function pct(original: number, price: number) {
   return Math.round(((original - price) / original) * 100);
 }
 
+/* --------------------------- سجل أحداث التحديث --------------------------- */
+
+export type SyncFailureCode =
+  | "missing_keys"
+  | "auth_error"
+  | "partner_tag_invalid"
+  | "throttled"
+  | "http_error"
+  | "network_error"
+  | "upsert_failed"
+  | "empty_result";
+
+export async function recordSyncEvent(entry: {
+  source: string;
+  status: "success" | "failure";
+  code?: string;
+  message?: string;
+  keyword?: string;
+}) {
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("sync_events").insert({
+      source: entry.source,
+      status: entry.status,
+      code: entry.code ?? null,
+      message: entry.message ? entry.message.slice(0, 500) : null,
+      keyword: entry.keyword ?? null,
+    });
+  } catch (error) {
+    console.error("recordSyncEvent failed", error);
+  }
+}
+
+function amazonHttpCode(status: number, body: string): SyncFailureCode {
+  if (status === 429) return "throttled";
+  if (status === 401 || status === 403 || /Signature|UnrecognizedClient|InvalidSignature/i.test(body)) return "auth_error";
+  if (/PartnerTag|InvalidPartnerTag|AssociateValidation/i.test(body)) return "partner_tag_invalid";
+  return "http_error";
+}
+
 /* ------------------------------- Amazon ------------------------------- */
 
 async function hmac(key: ArrayBuffer | Uint8Array, data: string) {
@@ -66,6 +106,13 @@ export async function fetchAmazonOffers(keyword: string): Promise<ExternalOffer[
     return await amazonSearch(keyword);
   } catch (error) {
     console.error("Amazon PA-API threw", error);
+    await recordSyncEvent({
+      source: "amazon",
+      status: "failure",
+      code: "network_error",
+      message: error instanceof Error ? error.message : "تعذّر الاتصال بخوادم أمازون",
+      keyword,
+    });
     return [];
   }
 }
@@ -75,7 +122,15 @@ async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
   const accessKey = await getIntegrationKey("AMAZON_ACCESS_KEY");
   const secretKey = await getIntegrationKey("AMAZON_SECRET_KEY");
   const partnerTag = await getIntegrationKey("AMAZON_PARTNER_TAG");
-  if (!accessKey || !secretKey || !partnerTag) return [];
+  if (!accessKey || !secretKey || !partnerTag) {
+    const missing = [
+      !accessKey && "AMAZON_ACCESS_KEY",
+      !secretKey && "AMAZON_SECRET_KEY",
+      !partnerTag && "AMAZON_PARTNER_TAG",
+    ].filter(Boolean).join(" · ");
+    await recordSyncEvent({ source: "amazon", status: "failure", code: "missing_keys", message: `مفاتيح ناقصة: ${missing}`, keyword });
+    return [];
+  }
 
   const target = "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems";
   const path = "/paapi5/searchitems";
@@ -127,7 +182,15 @@ async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
   });
 
   if (!response.ok) {
-    console.error(`Amazon PA-API failed [${response.status}]: ${await response.text()}`);
+    const body = await response.text();
+    console.error(`Amazon PA-API failed [${response.status}]`);
+    await recordSyncEvent({
+      source: "amazon",
+      status: "failure",
+      code: amazonHttpCode(response.status, body),
+      message: `استجابة أمازون ${response.status}`,
+      keyword,
+    });
     return [];
   }
 
@@ -196,6 +259,15 @@ type NoonHit = {
 export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]> {
   const { getIntegrationKey } = await import("@/lib/integration-keys.server");
   const affiliateId = await getIntegrationKey("NOON_AFFILIATE_ID");
+  if (!affiliateId) {
+    await recordSyncEvent({
+      source: "noon",
+      status: "failure",
+      code: "missing_keys",
+      message: "مفاتيح ناقصة: NOON_AFFILIATE_ID",
+      keyword,
+    });
+  }
   const url = `https://www.noon.com/_svc/catalog/api/v3/u/search?q=${encodeURIComponent(keyword)}&limit=20`;
 
   let json: { hits?: NoonHit[]; products?: NoonHit[] };
@@ -211,11 +283,25 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
     });
     if (!response.ok) {
       console.error(`noon catalog failed [${response.status}]`);
+      await recordSyncEvent({
+        source: "noon",
+        status: "failure",
+        code: response.status === 429 ? "throttled" : "http_error",
+        message: `استجابة نون ${response.status}`,
+        keyword,
+      });
       return [];
     }
     json = (await response.json()) as { hits?: NoonHit[]; products?: NoonHit[] };
   } catch (error) {
     console.error("noon catalog threw", error);
+    await recordSyncEvent({
+      source: "noon",
+      status: "failure",
+      code: "network_error",
+      message: error instanceof Error ? error.message : "تعذّر الاتصال بكتالوج نون",
+      keyword,
+    });
     return [];
   }
 
@@ -265,6 +351,8 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
   const offers = [...byKey.values()];
 
   if (offers.length === 0) {
+    await recordSyncEvent({ source: "amazon", status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
+    await recordSyncEvent({ source: "noon", status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
     return { upserted: 0, deactivated: 0, sources: { amazon: 0, noon: 0 } };
   }
 
@@ -275,7 +363,11 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
       offers.map((offer) => ({ ...offer, fetched_at: now })),
       { onConflict: "source,source_key" },
     );
-  if (error) throw new Error(`upsert failed: ${error.message}`);
+  if (error) {
+    await recordSyncEvent({ source: "amazon", status: "failure", code: "upsert_failed", message: error.message });
+    await recordSyncEvent({ source: "noon", status: "failure", code: "upsert_failed", message: error.message });
+    throw new Error(`upsert failed: ${error.message}`);
+  }
 
   // أي عرض لم يعد يظهر في المصدر منذ 24 ساعة يُعطّل تلقائياً
   const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -286,6 +378,11 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
     .eq("active", true)
     .lt("fetched_at", cutoff)
     .select("id");
+
+  const amazonCount = offers.filter((o) => o.source === "amazon").length;
+  const noonCount = offers.filter((o) => o.source === "noon").length;
+  if (amazonCount > 0) await recordSyncEvent({ source: "amazon", status: "success", message: `${amazonCount} عرضًا` });
+  if (noonCount > 0) await recordSyncEvent({ source: "noon", status: "success", message: `${noonCount} عرضًا` });
 
   return {
     upserted: offers.length,
