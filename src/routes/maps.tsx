@@ -81,7 +81,9 @@ function MapsPage() {
   /** ربط كل عرض بأقرب فرع فعلي لمتجره (مع مراعاة التصفية) */
   const mapped = useMemo(() => {
     if (!userLocation) return [];
+    const groupCats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
     return deals
+      .filter((deal) => groupFilter === "الكل" || groupCats.includes(deal.category))
       .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
       .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
