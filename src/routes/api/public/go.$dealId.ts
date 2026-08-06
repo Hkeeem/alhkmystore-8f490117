@@ -65,6 +65,7 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
         const source = new URL(request.url).searchParams.get("s")?.slice(0, 120) ?? null;
 
         // التتبع لا يعطّل التحويل أبداً
+        let dbg = "ok";
         try {
           const { error: trackError } = await supabaseAdmin.rpc("register_affiliate_click", {
             _deal_id: dealId,
@@ -74,9 +75,9 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
             _user_agent: request.headers.get("user-agent") ?? undefined,
             _country: request.headers.get("cf-ipcountry") ?? undefined,
           });
-          if (trackError) console.error("affiliate click tracking failed", trackError);
+          if (trackError) dbg = JSON.stringify(trackError);
         } catch (e) {
-          console.error("affiliate click tracking threw", e);
+          dbg = String(e);
         }
 
         return new Response(null, {
