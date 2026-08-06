@@ -302,7 +302,7 @@ export async function runWeeklyReport(options: {
     await supabaseAdmin.from("report_runs").insert({
       period_start: periodStart, period_end: periodEnd, days,
       status: "skipped", recipients: 0, error: "لا يوجد مستلمون مفعّلون",
-      summary: summary as unknown as Record<string, unknown>,
+      summary: JSON.parse(JSON.stringify(summary)),
       triggered_by: options.triggeredBy ?? "cron",
     });
     return { sent: false, recipients: 0, summary, error: "لا يوجد مستلمون مفعّلون" };
@@ -315,7 +315,7 @@ export async function runWeeklyReport(options: {
     await supabaseAdmin.from("report_runs").insert({
       period_start: periodStart, period_end: periodEnd, days,
       status: "failed", recipients: recipients.length, error: message.slice(0, 800),
-      summary: summary as unknown as Record<string, unknown>,
+      summary: JSON.parse(JSON.stringify(summary)),
       triggered_by: options.triggeredBy ?? "cron",
     });
     return { sent: false, recipients: recipients.length, summary, error: message };
@@ -324,7 +324,7 @@ export async function runWeeklyReport(options: {
   await supabaseAdmin.from("report_runs").insert({
     period_start: periodStart, period_end: periodEnd, days,
     status: options.testEmail ? "test" : "sent", recipients: recipients.length,
-    summary: summary as unknown as Record<string, unknown>,
+    summary: JSON.parse(JSON.stringify(summary)),
     triggered_by: options.triggeredBy ?? "cron",
   });
 
