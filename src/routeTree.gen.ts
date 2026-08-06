@@ -37,6 +37,7 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
 import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
@@ -186,6 +187,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSyncLogRoute = AuthenticatedSyncLogRouteImport.update({
+  id: '/sync-log',
+  path: '/sync-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMerchantReviewRoute =
   AuthenticatedMerchantReviewRouteImport.update({
     id: '/merchant-review',
@@ -256,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -293,6 +300,7 @@ export interface FileRoutesByTo {
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -332,6 +340,7 @@ export interface FileRoutesById {
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/_authenticated/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/_authenticated/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -371,6 +380,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/merchant'
     | '/merchant-review'
+    | '/sync-log'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -408,6 +418,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/merchant'
     | '/merchant-review'
+    | '/sync-log'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -446,6 +457,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me'
     | '/_authenticated/merchant'
     | '/_authenticated/merchant-review'
+    | '/_authenticated/sync-log'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -688,6 +700,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/sync-log': {
+      id: '/_authenticated/sync-log'
+      path: '/sync-log'
+      fullPath: '/sync-log'
+      preLoaderRoute: typeof AuthenticatedSyncLogRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/merchant-review': {
       id: '/_authenticated/merchant-review'
       path: '/merchant-review'
@@ -752,6 +771,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
   AuthenticatedMerchantReviewRoute: typeof AuthenticatedMerchantReviewRoute
+  AuthenticatedSyncLogRoute: typeof AuthenticatedSyncLogRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -759,6 +779,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
   AuthenticatedMerchantReviewRoute: AuthenticatedMerchantReviewRoute,
+  AuthenticatedSyncLogRoute: AuthenticatedSyncLogRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -831,13 +852,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
