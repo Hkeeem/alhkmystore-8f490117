@@ -14,6 +14,18 @@ import { Separator } from "@/components/ui/separator";
 import { getSyncFailures, getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
 import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue, testAmazonConnection } from "@/lib/integration-keys.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { buildNoonDeepLinkPreview } from "@/lib/noon-deeplink-preview";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+
 
 export const Route = createFileRoute("/affiliate-setup")({
   head: () => ({
