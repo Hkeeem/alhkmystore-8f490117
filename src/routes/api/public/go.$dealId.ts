@@ -12,21 +12,25 @@ function detectNetwork(url: URL): Network {
   return "other";
 }
 
-/** إضافة معرّفات الشراكة على الخادم فقط — لا تظهر أبداً في الواجهة */
-function decorate(url: URL, network: Network, dealId: string) {
+/** إضافة معرّفات الشراكة + وسم التتبع (subid) على الخادم فقط — لا تظهر أبداً في الواجهة */
+function decorate(url: URL, network: Network, dealId: string, clickId: string | null) {
   const amazonTag = process.env["AMAZON_PARTNER_TAG"];
   const noonTag = process.env["NOON_AFFILIATE_ID"];
 
   if (network === "amazon" && amazonTag) {
     url.searchParams.set("tag", amazonTag);
     url.searchParams.set("linkCode", "ll1");
+    // أمازون تُرجع هذا الوسم داخل تقارير/Postback المبيعات
+    if (clickId) url.searchParams.set("ascsubtag", clickId);
   }
   if (network === "noon" && noonTag) {
     url.searchParams.set("utm_source", noonTag);
   }
+  if (clickId && network !== "amazon") url.searchParams.set("subid", clickId);
   url.searchParams.set("utm_medium", "affiliate");
   url.searchParams.set("utm_campaign", "hkeeem-ai");
   url.searchParams.set("utm_content", dealId);
+  if (clickId) url.searchParams.set("utm_id", clickId);
   return url;
 }
 
