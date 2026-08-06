@@ -296,3 +296,101 @@ export async function syncExternalDeals(keywords: string[] = DEFAULT_KEYWORDS) {
     },
   };
 }
+
+/** اختبار مباشر لمفاتيح Amazon PA-API — يُرجع نتيجة مفهومة دون كشف أي قيمة */
+export type AmazonTestResult = {
+  ok: boolean;
+  code: string;
+  message: string;
+  items?: number;
+};
+
+export async function testAmazonCredentials(): Promise<AmazonTestResult> {
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const accessKey = await getIntegrationKey("AMAZON_ACCESS_KEY");
+  const secretKey = await getIntegrationKey("AMAZON_SECRET_KEY");
+  const partnerTag = await getIntegrationKey("AMAZON_PARTNER_TAG");
+
+  const missing = [
+    !accessKey && "Access Key",
+    !secretKey && "Secret Key",
+    !partnerTag && "Partner Tag",
+  ].filter(Boolean) as string[];
+  if (missing.length > 0) {
+    return { ok: false, code: "missing_keys", message: `مفاتيح ناقصة: ${missing.join(" · ")}` };
+  }
+
+  const target = "com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems";
+  const path = "/paapi5/searchitems";
+  const payload = JSON.stringify({
+    Keywords: "laptop",
+    PartnerTag: partnerTag,
+    PartnerType: "Associates",
+    Marketplace: "www.amazon.sa",
+    ItemCount: 1,
+    Resources: ["ItemInfo.Title"],
+  });
+
+  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const canonicalHeaders =
+    `content-encoding:amz-1.0\n` +
+    `host:${AMAZON_HOST}\n` +
+    `x-amz-date:${amzDate}\n` +
+    `x-amz-target:${target}\n`;
+  const signedHeaders = "content-encoding;host;x-amz-date;x-amz-target";
+  const canonicalRequest = `POST\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${await sha256Hex(payload)}`;
+  const scope = `${dateStamp}/${AMAZON_REGION}/ProductAdvertisingAPI/aws4_request`;
+  const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${await sha256Hex(canonicalRequest)}`;
+
+  let signingKey: ArrayBuffer | Uint8Array = new TextEncoder().encode(`AWS4${secretKey}`);
+  for (const part of [dateStamp, AMAZON_REGION, "ProductAdvertisingAPI", "aws4_request"]) {
+    signingKey = await hmac(signingKey, part);
+  }
+  const signature = toHex(await hmac(signingKey, stringToSign));
+
+  let response: Response;
+  try {
+    response = await fetch(`https://${AMAZON_HOST}${path}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "content-encoding": "amz-1.0",
+        "x-amz-date": amzDate,
+        "x-amz-target": target,
+        "x-amz-security-scope": "test",
+        Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+      },
+      body: payload,
+      signal: AbortSignal.timeout(12_000),
+    });
+  } catch (error) {
+    console.error("amazon test request failed", error);
+    return { ok: false, code: "network", message: "تعذّر الوصول إلى خوادم أمازون (انتهت المهلة أو خطأ شبكة)." };
+  }
+
+  if (response.ok) {
+    const json = (await response.json()) as { SearchResult?: { Items?: unknown[] } };
+    const items = json.SearchResult?.Items?.length ?? 0;
+    return { ok: true, code: "ok", items, message: `الاتصال ناجح — أمازون ردّت بـ ${items} نتيجة تجريبية.` };
+  }
+
+  const text = (await response.text()).slice(0, 400);
+  let code = `http_${response.status}`;
+  let message = `فشل الاتصال (رمز ${response.status}).`;
+  if (/InvalidSignature|SignatureDoesNotMatch/i.test(text)) {
+    code = "invalid_signature";
+    message = "التوقيع غير صحيح — تأكد من Access Key و Secret Key.";
+  } else if (/InvalidPartnerTag|InvalidAssociate/i.test(text)) {
+    code = "invalid_partner_tag";
+    message = "Partner Tag غير صالح لسوق amazon.sa.";
+  } else if (response.status === 429 || /TooManyRequests|Throttl/i.test(text)) {
+    code = "throttled";
+    message = "المفاتيح تعمل لكن تم تجاوز حد الطلبات مؤقتًا — أعد المحاولة بعد دقيقة.";
+  } else if (/AccessDenied|not.*eligible|Unauthorized/i.test(text)) {
+    code = "not_eligible";
+    message = "الحساب غير مؤهّل لـ PA-API بعد — يلزم تحقيق ٣ مبيعات مؤهلة أولًا.";
+  }
+  console.error(`amazon test failed [${response.status}]: ${text}`);
+  return { ok: false, code, message };
+}

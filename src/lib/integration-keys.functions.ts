@@ -41,3 +41,14 @@ export const removeIntegrationKeyValue = createServerFn({ method: "POST" })
     await deleteIntegrationKey(data.name);
     return { ok: true as const };
   });
+
+/** اختبار اتصال حقيقي بمفاتيح Amazon PA-API — للمشرفين فقط، ولا يعيد أي قيمة سرية. */
+export const testAmazonConnection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) throw new Error("forbidden");
+    const { testAmazonCredentials } = await import("@/lib/external-sync.server");
+    const result = await testAmazonCredentials();
+    return { ...result, testedAt: new Date().toISOString() };
+  });
