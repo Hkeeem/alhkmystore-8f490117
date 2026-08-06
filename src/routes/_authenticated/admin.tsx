@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
-  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle,
+  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle, MousePointerClick, Globe, Link2,
 } from "lucide-react";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
@@ -20,10 +20,11 @@ import { getDeployStatus } from "@/lib/deploy.functions";
 import {
   adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
 } from "@/lib/user.functions";
+import { getClickAnalytics } from "@/lib/click-analytics.functions";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks";
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -64,6 +65,7 @@ function AdminPage() {
     { id: "premium" as const, label: "Premium", icon: Crown, allow: ["super_admin","admin"] },
     { id: "cashback" as const, label: "كاش باك", icon: Wallet, allow: ["super_admin","admin"] },
     { id: "alerts" as const, label: "تنبيهات الأسعار", icon: BellRing, allow: ["super_admin","admin"] },
+    { id: "clicks" as const, label: "تحليلات النقرات", icon: MousePointerClick, allow: ["super_admin","admin","content_manager"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
     { id: "deploy" as const, label: "حالة النشر", icon: Rocket, allow: ["super_admin","admin"] },
   ]).filter((t) => can(t.allow));
@@ -109,6 +111,7 @@ function AdminPage() {
           {tab === "premium" && <PremiumTab />}
           {tab === "cashback" && <CashbackAdminTab />}
           {tab === "alerts" && <AlertsAdminTab />}
+          {tab === "clicks" && <ClickAnalyticsTab />}
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
 
@@ -654,6 +657,174 @@ function AlertsAdminTab() {
           {a.triggered_at && <span className="text-xs text-green-500">✓ أُطلق</span>}
         </div>
       ))}
+    </div>
+  );
+}
+
+const PERIODS = [
+  { days: 7, label: "آخر 7 أيام" },
+  { days: 30, label: "آخر 30 يوماً" },
+  { days: 90, label: "آخر 90 يوماً" },
+  { days: 365, label: "آخر سنة" },
+];
+
+function ClickAnalyticsTab() {
+  const [days, setDays] = useState(30);
+  const [country, setCountry] = useState("");
+  const [referrer, setReferrer] = useState("");
+
+  const q = useQuery({
+    queryKey: ["click-analytics", days, country, referrer],
+    queryFn: () => getClickAnalytics({ data: { days, country, referrer } }),
+  });
+
+  const d = q.data;
+  const maxDay = Math.max(1, ...(d?.byDay ?? []).map((x) => x.clicks));
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h2 className="text-lg font-bold flex items-center gap-2">
+          <MousePointerClick className="w-5 h-5 text-primary" />
+          تحليلات نقرات الأفلييت
+        </h2>
+        <button
+          onClick={() => q.refetch()}
+          disabled={q.isFetching}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-primary/25 text-sm hover:bg-muted disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 ${q.isFetching ? "animate-spin" : ""}`} />
+          تحديث
+        </button>
+      </div>
+
+      <div className="p-4 rounded-2xl border border-primary/20 bg-card grid sm:grid-cols-3 gap-3">
+        <label className="text-xs space-y-1">
+          <span className="text-muted-foreground">الفترة الزمنية</span>
+          <select
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="w-full px-3 py-2 rounded-lg bg-background border border-primary/20 text-sm"
+          >
+            {PERIODS.map((p) => <option key={p.days} value={p.days}>{p.label}</option>)}
+          </select>
+        </label>
+        <label className="text-xs space-y-1">
+          <span className="text-muted-foreground flex items-center gap-1"><Globe className="w-3 h-3" /> الدولة</span>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="w-full px-3 py-2 rounded-lg bg-background border border-primary/20 text-sm"
+          >
+            <option value="">كل الدول</option>
+            {(d?.countryOptions ?? []).map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </label>
+        <label className="text-xs space-y-1">
+          <span className="text-muted-foreground flex items-center gap-1"><Link2 className="w-3 h-3" /> المُحيل (Referrer)</span>
+          <input
+            list="referrer-options"
+            value={referrer}
+            onChange={(e) => setReferrer(e.target.value)}
+            placeholder="مثال: google.com"
+            className="w-full px-3 py-2 rounded-lg bg-background border border-primary/20 text-sm"
+          />
+          <datalist id="referrer-options">
+            {(d?.referrerOptions ?? []).map((r) => <option key={r} value={r} />)}
+          </datalist>
+        </label>
+      </div>
+
+      {q.isLoading && <ListSkeleton count={3} />}
+
+      {d && (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { label: "إجمالي النقرات", value: d.totalClicks.toLocaleString("ar-SA") },
+              { label: "عروض نشطة بالنقر", value: d.uniqueDeals.toLocaleString("ar-SA") },
+              { label: "أعلى دولة", value: d.topCountry ?? "—" },
+              { label: "آخر نقرة", value: d.lastClickAt ? new Date(d.lastClickAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" }) : "—" },
+            ].map((s) => (
+              <div key={s.label} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift">
+                <p className="text-xs text-muted-foreground">{s.label}</p>
+                <p className="text-xl font-bold text-primary mt-1 truncate">{s.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-4 rounded-2xl border border-primary/20 bg-card">
+            <p className="text-sm font-semibold mb-3">النقرات عبر الزمن</p>
+            {d.byDay.length === 0 ? (
+              <p className="text-xs text-muted-foreground">لا توجد نقرات في هذه الفترة.</p>
+            ) : (
+              <div className="flex items-end gap-1 h-32">
+                {d.byDay.map((x) => (
+                  <div key={x.day} className="flex-1 min-w-[3px] bg-primary/70 rounded-t hover:bg-primary transition" style={{ height: `${(x.clicks / maxDay) * 100}%` }} title={`${x.day}: ${x.clicks}`} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-3">
+            {[
+              { title: "حسب الدولة", rows: d.byCountry },
+              { title: "حسب المُحيل", rows: d.byReferrer },
+              { title: "حسب الشبكة", rows: d.byNetwork },
+            ].map((b) => (
+              <div key={b.title} className="p-4 rounded-2xl border border-primary/20 bg-card">
+                <p className="text-sm font-semibold mb-2">{b.title}</p>
+                {b.rows.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">لا توجد بيانات.</p>
+                ) : (
+                  <ul className="space-y-1.5">
+                    {b.rows.map((r) => (
+                      <li key={r.key} className="flex items-center justify-between gap-2 text-xs">
+                        <span className="truncate">{r.key}</span>
+                        <span className="font-bold text-primary shrink-0">{r.clicks}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-primary/20 bg-card overflow-x-auto">
+            <p className="text-sm font-semibold p-4 pb-2">أداء كل عرض</p>
+            {d.deals.length === 0 ? (
+              <p className="text-xs text-muted-foreground p-4 pt-0">لا توجد نقرات مطابقة للفلاتر.</p>
+            ) : (
+              <table className="w-full text-sm">
+                <thead className="text-xs text-muted-foreground border-b border-primary/15">
+                  <tr>
+                    <th className="text-right p-3 font-medium">العرض</th>
+                    <th className="text-right p-3 font-medium">نقرات الفترة</th>
+                    <th className="text-right p-3 font-medium">الإجمالي الكلي</th>
+                    <th className="text-right p-3 font-medium">التحويلات</th>
+                    <th className="text-right p-3 font-medium">العمولة</th>
+                    <th className="text-right p-3 font-medium">آخر نقرة</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {d.deals.map((row) => (
+                    <tr key={row.dealId} className="border-b border-primary/10 last:border-0 hover:bg-muted/40">
+                      <td className="p-3 max-w-[240px] truncate">{row.title}</td>
+                      <td className="p-3 font-bold text-primary">{row.clicks}</td>
+                      <td className="p-3">{row.totalClicksAllTime}</td>
+                      <td className="p-3">{row.conversions}</td>
+                      <td className="p-3">{row.commission.toFixed(2)} ر.س</td>
+                      <td className="p-3 text-xs text-muted-foreground">
+                        {row.lastClickAt ? new Date(row.lastClickAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" }) : "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
