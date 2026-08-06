@@ -40,6 +40,7 @@ function MapsPage() {
   const [announcement, setAnnouncement] = useState("");
   const [cityFilter, setCityFilter] = useState("الكل");
   const [categoryFilter, setCategoryFilter] = useState("الكل");
+  const [groupFilter, setGroupFilter] = useState("الكل");
   const [storeFilter, setStoreFilter] = useState("الكل");
   const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
   const [sortBy, setSortBy] = useState<"distance" | "discount">("distance");
