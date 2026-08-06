@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
-  Wallet, BellRing, Rocket, RefreshCw, ExternalLink, AlertTriangle, MousePointerClick, Globe, Link2,
+  Wallet, BellRing, Rocket, Mail, RefreshCw, ExternalLink, AlertTriangle, MousePointerClick, Globe, Link2,
 } from "lucide-react";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
@@ -21,10 +21,12 @@ import {
   adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
 } from "@/lib/user.functions";
 import { getClickAnalytics } from "@/lib/click-analytics.functions";
+import { ReportsTab } from "@/components/admin/ReportsTab";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks" | "reports";
+
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -66,6 +68,7 @@ function AdminPage() {
     { id: "cashback" as const, label: "كاش باك", icon: Wallet, allow: ["super_admin","admin"] },
     { id: "alerts" as const, label: "تنبيهات الأسعار", icon: BellRing, allow: ["super_admin","admin"] },
     { id: "clicks" as const, label: "تحليلات النقرات", icon: MousePointerClick, allow: ["super_admin","admin","content_manager"] },
+    { id: "reports" as const, label: "التقارير الدورية", icon: Mail, allow: ["super_admin","admin"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
     { id: "deploy" as const, label: "حالة النشر", icon: Rocket, allow: ["super_admin","admin"] },
   ]).filter((t) => can(t.allow));
@@ -112,6 +115,7 @@ function AdminPage() {
           {tab === "cashback" && <CashbackAdminTab />}
           {tab === "alerts" && <AlertsAdminTab />}
           {tab === "clicks" && <ClickAnalyticsTab />}
+          {tab === "reports" && <ReportsTab />}
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
 

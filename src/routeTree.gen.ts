@@ -40,6 +40,7 @@ import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
+import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
 import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
@@ -199,6 +200,12 @@ const ApiPublicPostbackNetworkRoute =
     path: '/api/public/postback/$network',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksWeeklyReportRoute =
+  ApiPublicHooksWeeklyReportRouteImport.update({
+    id: '/api/public/hooks/weekly-report',
+    path: '/api/public/hooks/weekly-report',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSyncExternalDealsRoute =
   ApiPublicHooksSyncExternalDealsRouteImport.update({
     id: '/api/public/hooks/sync-external-deals',
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
 }
 export interface FileRoutesByTo {
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
 }
 export interface FileRoutesById {
@@ -313,6 +322,7 @@ export interface FileRoutesById {
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
+  '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
 }
 export interface FileRouteTypes {
@@ -349,6 +359,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
+    | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
+    | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
   id:
     | '__root__'
@@ -418,6 +430,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/sync-external-deals'
+    | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
   fileRoutesById: FileRoutesById
 }
@@ -447,6 +460,7 @@ export interface RootRouteChildren {
   ApiTtsRoute: typeof ApiTtsRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
+  ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
   ApiPublicPostbackNetworkRoute: typeof ApiPublicPostbackNetworkRoute
 }
 
@@ -669,6 +683,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPostbackNetworkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/weekly-report': {
+      id: '/api/public/hooks/weekly-report'
+      path: '/api/public/hooks/weekly-report'
+      fullPath: '/api/public/hooks/weekly-report'
+      preLoaderRoute: typeof ApiPublicHooksWeeklyReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sync-external-deals': {
       id: '/api/public/hooks/sync-external-deals'
       path: '/api/public/hooks/sync-external-deals'
@@ -761,6 +782,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiTtsRoute: ApiTtsRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
   ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
+  ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,
   ApiPublicPostbackNetworkRoute: ApiPublicPostbackNetworkRoute,
 }
 export const routeTree = rootRouteImport
