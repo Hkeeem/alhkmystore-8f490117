@@ -33,6 +33,10 @@ function MapsPage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [locStatus, setLocStatus] = useState<
+    "idle" | "loading" | "granted" | "denied" | "unavailable" | "timeout" | "unsupported"
+  >("idle");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
