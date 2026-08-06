@@ -38,6 +38,7 @@ import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authe
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -185,6 +186,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHooksSyncExternalDealsRoute =
+  ApiPublicHooksSyncExternalDealsRouteImport.update({
+    id: '/api/public/hooks/sync-external-deals',
+    path: '/api/public/hooks/sync-external-deals',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
   id: '/api/public/go/$dealId',
   path: '/api/public/go/$dealId',
@@ -221,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -252,6 +260,7 @@ export interface FileRoutesByTo {
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -285,6 +294,7 @@ export interface FileRoutesById {
   '/deals/$id': typeof DealsIdRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/deals/$id'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/sync-external-deals'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/deals/$id'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/sync-external-deals'
   id:
     | '__root__'
     | '/'
@@ -381,6 +393,7 @@ export interface FileRouteTypes {
     | '/deals/$id'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/sync-external-deals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -407,6 +420,7 @@ export interface RootRouteChildren {
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
+  ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -614,6 +628,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/sync-external-deals': {
+      id: '/api/public/hooks/sync-external-deals'
+      path: '/api/public/hooks/sync-external-deals'
+      fullPath: '/api/public/hooks/sync-external-deals'
+      preLoaderRoute: typeof ApiPublicHooksSyncExternalDealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/go/$dealId': {
       id: '/api/public/go/$dealId'
       path: '/api/public/go/$dealId'
@@ -697,17 +718,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
+  ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
