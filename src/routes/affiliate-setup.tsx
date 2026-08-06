@@ -1013,6 +1013,7 @@ function NoonCampaignPanel() {
               المحفوظ حاليًا داخل التطبيق: <code dir="ltr">{data.maskedPublisherId}</code>
             </p>
           )}
+
           <div className="flex gap-2">
             <input
               value={publisherId}
