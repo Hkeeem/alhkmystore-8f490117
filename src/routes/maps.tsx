@@ -516,6 +516,7 @@ function MapsPage() {
           <Search className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
           <input
             id="map-search-input"
+            ref={searchInputRef}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
