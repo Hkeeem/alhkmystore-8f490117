@@ -69,16 +69,21 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
         const source = new URL(request.url).searchParams.get("s")?.slice(0, 120) ?? null;
 
         // التتبع لا يعطّل التحويل أبداً
+        let clickId: string | null = null;
         try {
-          const { error: trackError } = await supabaseAdmin.rpc("register_affiliate_click", {
-            _deal_id: dealId,
-            _network: network,
-            _source: source ?? undefined,
-            _referrer: request.headers.get("referer") ?? undefined,
-            _user_agent: request.headers.get("user-agent") ?? undefined,
-            _country: request.headers.get("cf-ipcountry") ?? undefined,
-          });
+          const { data: newClickId, error: trackError } = await supabaseAdmin.rpc(
+            "register_affiliate_click_returning",
+            {
+              _deal_id: dealId,
+              _network: network,
+              _source: source ?? undefined,
+              _referrer: request.headers.get("referer") ?? undefined,
+              _user_agent: request.headers.get("user-agent") ?? undefined,
+              _country: request.headers.get("cf-ipcountry") ?? undefined,
+            },
+          );
           if (trackError) console.error("affiliate click tracking failed", trackError);
+          else clickId = (newClickId as string | null) ?? null;
         } catch (e) {
           console.error("affiliate click tracking threw", e);
         }
@@ -86,7 +91,7 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
         return new Response(null, {
           status: 302,
           headers: {
-            location: decorate(target, network, dealId).toString(),
+            location: decorate(target, network, dealId, clickId).toString(),
             "cache-control": "no-store, private",
             "referrer-policy": "no-referrer",
             "x-robots-tag": "noindex, nofollow",
