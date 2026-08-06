@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus } from "@/lib/affiliate-setup.functions";
+import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/affiliate-setup")({
@@ -206,6 +206,8 @@ function AffiliateSetupPage() {
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
       <ConversionsPanel />
+
+      <NoonCampaignPanel />
 
       <Card className="hover-lift">
 
@@ -533,6 +535,178 @@ function ConversionsPanel() {
                 </div>
               );
             })}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+const NOON_CHOICE_KEY = "hkeeem-noon-campaign";
+
+function NoonCampaignPanel() {
+  const fetchNoon = useServerFn(getNoonCampaignStatus);
+  const verify = useServerFn(verifyNoonPublisherId);
+  const { data, isLoading, refetch, isFetching } = useQuery({
+    queryKey: ["noon-campaign-status"],
+    queryFn: () => fetchNoon({}),
+  });
+
+  const [selected, setSelected] = useState<string | null>(null);
+  const [publisherId, setPublisherId] = useState("");
+  const [result, setResult] = useState<null | { ok: boolean; text: string; tone: "ok" | "warn" | "bad" }>(null);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(NOON_CHOICE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { campaignId?: string; publisherId?: string };
+        if (parsed.campaignId) setSelected(parsed.campaignId);
+        if (parsed.publisherId) setPublisherId(parsed.publisherId);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  // اختيار تلقائي للحملة الموصى بها عند أول تحميل
+  useEffect(() => {
+    if (!selected && data?.recommended) setSelected(data.recommended);
+  }, [data?.recommended, selected]);
+
+  const confirmMutation = useMutation({
+    mutationFn: (id: string) => verify({ data: { publisherId: id } }),
+    onSuccess: (res) => {
+      if (!res.ok) {
+        setResult({ ok: false, text: res.reason, tone: "bad" });
+        toast.error(res.reason);
+        return;
+      }
+      const auto = res.campaignId;
+      setSelected(auto);
+      try {
+        localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: auto, publisherId }));
+      } catch { /* ignore */ }
+      if (res.matchesStored === true) {
+        setResult({ ok: true, text: `مطابق للمعرّف المحفوظ داخل التطبيق — الحملة: ${res.campaignName}.`, tone: "ok" });
+        toast.success("تم تأكيد Publisher ID ✓");
+      } else if (res.matchesStored === false) {
+        setResult({ ok: false, text: `الصيغة صحيحة لكنه لا يطابق المعرّف المحفوظ حاليًا. حدّث NOON_AFFILIATE_ID إن كان هذا هو الصحيح. الحملة المقترحة: ${res.campaignName}.`, tone: "warn" });
+        toast.warning("المعرّف لا يطابق المحفوظ");
+      } else {
+        setResult({ ok: true, text: `الصيغة صحيحة. الحملة المقترحة تلقائيًا: ${res.campaignName} (${res.network}). احفظ المعرّف داخل التطبيق لتفعيل الربط.`, tone: "warn" });
+        toast.success("تم التحقق من الصيغة");
+      }
+    },
+    onError: () => toast.error("تعذّر التحقق"),
+  });
+
+  const chosen = data?.campaigns.find((c) => c.id === selected) ?? null;
+
+  return (
+    <Card className="hover-lift">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <PlugZap className="size-5" /> حملة noon و Publisher ID
+        </CardTitle>
+        <div className="flex items-center gap-2">
+          {isLoading ? null : data?.linked ? (
+            <Badge className="gap-1"><Check className="size-3" /> مربوطة بالفعل</Badge>
+          ) : data?.configured ? (
+            <Badge variant="secondary" className="gap-1"><CircleDashed className="size-3" /> بانتظار أول نقرة</Badge>
+          ) : (
+            <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> غير مربوطة</Badge>
+          )}
+          <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
+            <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} />
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-3 gap-2 text-center">
+          {[
+            { label: "عروض نون النشطة", value: data?.stats.liveDeals ?? 0 },
+            { label: "نقرات محوّلة", value: data?.stats.clicks ?? 0 },
+            { label: "مبيعات مُسجّلة", value: data?.stats.conversions ?? 0 },
+          ].map((s) => (
+            <div key={s.label} className="rounded-lg border px-2 py-3">
+              <p className="text-lg font-bold text-primary">{s.value}</p>
+              <p className="text-[11px] text-muted-foreground">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">١) اختيار الحملة تلقائيًا</p>
+          <div className="grid gap-2">
+            {(data?.campaigns ?? []).map((c) => {
+              const active = selected === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => {
+                    setSelected(c.id);
+                    try { localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: c.id, publisherId })); } catch { /* ignore */ }
+                  }}
+                  className={`text-right rounded-xl border p-3 transition ${active ? "border-primary bg-primary/5" : "hover:bg-muted/50"}`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-semibold text-sm">{c.name}</span>
+                    <span className="flex items-center gap-1">
+                      {c.id === data?.recommended && <Badge variant="secondary" className="text-[10px]">موصى بها</Badge>}
+                      {active && <Check className="size-4 text-primary" />}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">{c.note}</p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {c.network} · {c.market} · {c.model} {c.deepLink ? "· روابط عميقة ✓" : ""}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">٢) تأكيد Publisher ID</p>
+          {data?.maskedPublisherId && (
+            <p className="text-xs text-muted-foreground">
+              المحفوظ حاليًا داخل التطبيق: <code dir="ltr">{data.maskedPublisherId}</code>
+            </p>
+          )}
+          <div className="flex gap-2">
+            <input
+              value={publisherId}
+              onChange={(e) => setPublisherId(e.target.value)}
+              dir="ltr"
+              placeholder={chosen?.idHint ?? "publisher id"}
+              className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm"
+            />
+            <Button
+              onClick={() => confirmMutation.mutate(publisherId)}
+              disabled={confirmMutation.isPending || !publisherId.trim()}
+              className="press-ripple"
+            >
+              {confirmMutation.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
+              تأكيد
+            </Button>
+          </div>
+          {result && (
+            <p className={`text-xs ${result.tone === "ok" ? "text-primary" : result.tone === "warn" ? "text-amber-500" : "text-destructive"}`}>
+              {result.text}
+            </p>
+          )}
+          <p className="text-[11px] text-muted-foreground">
+            التأكيد يتحقق من الصيغة ويطابقها مع المعرّف المحفوظ دون كشفه، ويختار الحملة المناسبة تلقائيًا.
+          </p>
+        </div>
+
+        {data?.sampleDeepLink && (
+          <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
+            <p className="text-xs font-semibold">معاينة الرابط العميق الفعلي</p>
+            <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{data.sampleDeepLink}</code>
           </div>
         )}
       </CardContent>
