@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock } from "lucide-react";
+import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
-import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue } from "@/lib/integration-keys.functions";
+import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue, testAmazonConnection } from "@/lib/integration-keys.functions";
 import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/affiliate-setup")({
@@ -355,6 +355,21 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const { user } = useAuth();
   const fetchOverview = useServerFn(getSyncOverview);
   const startSync = useServerFn(runExternalSyncNow);
+  const runAmazonTest = useServerFn(testAmazonConnection);
+  const [amazonTest, setAmazonTest] = useState<{ ok: boolean; message: string; testedAt: string } | null>(null);
+
+  const amazonCheck = useMutation({
+    mutationFn: () => runAmazonTest({}),
+    onSuccess: (res) => {
+      setAmazonTest({ ok: res.ok, message: res.message, testedAt: res.testedAt });
+      if (res.ok) toast.success(res.message);
+      else toast.error(res.message);
+    },
+    onError: () => {
+      setAmazonTest({ ok: false, message: "غير مصرّح — اختبار الاتصال متاح للمشرفين فقط.", testedAt: new Date().toISOString() });
+      toast.error("غير مصرّح لك بإجراء الاختبار");
+    },
+  });
 
   const { data: overview, refetch: refetchOverview, isFetching: overviewFetching } = useQuery({
     queryKey: ["external-sync-overview"],
@@ -428,6 +443,49 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   <p dir="ltr" className="text-[11px]">ينقص: {s.missing.join(" · ")}</p>
                 )}
               </div>
+
+              {s.name === "Amazon" && (
+                <div className="space-y-2 pt-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full press-ripple"
+                    disabled={!user || amazonCheck.isPending}
+                    onClick={() => amazonCheck.mutate()}
+                  >
+                    {amazonCheck.isPending ? (
+                      <RefreshCw className="size-4 animate-spin" />
+                    ) : (
+                      <Wifi className="size-4" />
+                    )}
+                    {amazonCheck.isPending ? "جارٍ الاختبار…" : "اختبار الاتصال"}
+                  </Button>
+                  {amazonTest && (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className={`flex items-start gap-2 rounded-lg border p-2 text-[11px] ${
+                        amazonTest.ok
+                          ? "border-primary/40 bg-primary/5 text-foreground"
+                          : "border-destructive/40 bg-destructive/5 text-foreground"
+                      }`}
+                    >
+                      {amazonTest.ok ? (
+                        <Check className="size-3.5 mt-0.5 shrink-0" />
+                      ) : (
+                        <XCircle className="size-3.5 mt-0.5 shrink-0" />
+                      )}
+                      <span>
+                        {amazonTest.message}
+                        <span className="block text-muted-foreground">آخر اختبار: {formatWhen(amazonTest.testedAt)}</span>
+                      </span>
+                    </div>
+                  )}
+                  {!user && (
+                    <p className="text-[11px] text-muted-foreground">سجّل الدخول بحساب مشرف لتشغيل الاختبار.</p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

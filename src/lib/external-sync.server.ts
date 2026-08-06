@@ -358,7 +358,6 @@ export async function testAmazonCredentials(): Promise<AmazonTestResult> {
         "content-encoding": "amz-1.0",
         "x-amz-date": amzDate,
         "x-amz-target": target,
-        "x-amz-security-scope": "test",
         Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
       },
       body: payload,
