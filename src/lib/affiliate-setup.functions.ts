@@ -294,3 +294,44 @@ export const setSyncSchedule = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, reason: "غير مصرّح — هذه الخطوة للمشرفين فقط" };
     return { ok: true as const, schedule: data.schedule, active: data.active };
   });
+
+export type SyncLogEntry = {
+  id: string;
+  source: string;
+  status: string;
+  code: string | null;
+  message: string | null;
+  keyword: string | null;
+  created_at: string;
+};
+
+/** سجل عمليات المزامنة (Amazon / noon) — للفريق الإداري فقط */
+export const listSyncEvents = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => {
+    const d = (data ?? {}) as { source?: unknown; status?: unknown; limit?: unknown };
+    const source = ["amazon", "noon"].includes(String(d.source)) ? String(d.source) : "all";
+    const status = ["success", "failure"].includes(String(d.status)) ? String(d.status) : "all";
+    const limit = Math.min(Math.max(Number(d.limit) || 100, 10), 300);
+    return { source, status, limit };
+  })
+  .handler(async ({ data, context }) => {
+    const { data: isStaff } = await (context.supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ data: unknown }>)("is_staff", { _user_id: context.userId });
+    if (!isStaff) return { ok: false as const, reason: "غير مصرّح — هذه الصفحة للفريق الإداري فقط" };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin
+      .from("sync_events")
+      .select("id, source, status, code, message, keyword, created_at")
+      .order("created_at", { ascending: false })
+      .limit(data.limit);
+    if (data.source !== "all") q = q.eq("source", data.source);
+    if (data.status !== "all") q = q.eq("status", data.status);
+
+    const { data: rows, error } = await q;
+    if (error) return { ok: false as const, reason: "تعذّر قراءة السجل" };
+    return { ok: true as const, events: (rows ?? []) as SyncLogEntry[] };
+  });

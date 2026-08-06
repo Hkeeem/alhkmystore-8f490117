@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NoonAuditPanel } from "@/components/admin/NoonAuditPanel";
 import { SyncSchedulePanel } from "@/components/admin/SyncSchedulePanel";
@@ -222,8 +222,13 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
-      <div id="sync-schedule" className="scroll-mt-24">
+      <div id="sync-schedule" className="scroll-mt-24 space-y-3">
         <SyncSchedulePanel />
+        <div className="text-sm">
+          <Link to="/sync-log" className="text-primary underline underline-offset-4">
+            عرض سجل عمليات المزامنة الكامل (Amazon وnoon) ←
+          </Link>
+        </div>
       </div>
 
       <SyncFailuresPanel />
