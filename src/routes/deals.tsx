@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles } from "lucide-react";
 import { fetchPublishedDeals } from "@/lib/merchant-api";
+import { useLiveDeals, timeAgoAr } from "@/hooks/use-live-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { z } from "zod";
