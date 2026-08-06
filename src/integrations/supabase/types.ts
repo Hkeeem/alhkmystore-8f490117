@@ -312,6 +312,33 @@ export type Database = {
         }
         Relationships: []
       }
+      integration_credentials: {
+        Row: {
+          created_at: string
+          id: string
+          key_name: string
+          updated_at: string
+          updated_by: string | null
+          value_ciphertext: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_name: string
+          updated_at?: string
+          updated_by?: string | null
+          value_ciphertext: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_name?: string
+          updated_at?: string
+          updated_by?: string | null
+          value_ciphertext?: string
+        }
+        Relationships: []
+      }
       merchant_deals: {
         Row: {
           category: string
