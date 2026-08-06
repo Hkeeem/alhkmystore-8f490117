@@ -596,6 +596,37 @@ function MapsPage() {
           </label>
         </div>
 
+        <div className="grid grid-cols-2 gap-2">
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">نطاق المسافة</span>
+            <select
+              value={String(radiusKm)}
+              onChange={(e) => setRadiusKm(e.target.value === "الكل" ? "الكل" : Number(e.target.value))}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="الكل">كل المسافات</option>
+              <option value="5">خلال 5 كم</option>
+              <option value="10">خلال 10 كم</option>
+              <option value="25">خلال 25 كم</option>
+              <option value="50">خلال 50 كم</option>
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">ترتيب النتائج</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "distance" | "discount")}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="distance">الأقرب لموقعي</option>
+              <option value="discount">الأعلى خصمًا</option>
+            </select>
+          </label>
+        </div>
+
+
+
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => (
             <button
