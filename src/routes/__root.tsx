@@ -84,6 +84,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "الذكاء الاقتصادي للمملكة: قرارات شراء أذكى في دقائق." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "google-site-verification",
+        content: "AC4RPtk9MfT0OS3OiEocjDzCHnXq8gZ2ujMtswOKir4",
+      },
+
     ],
     links: [
       { rel: "stylesheet", href: appCss },
