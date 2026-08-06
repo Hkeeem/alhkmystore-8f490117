@@ -135,11 +135,14 @@ function MapsPage() {
       [...mapped].sort((a, b) =>
         sortBy === "distance"
           ? a.km - b.km
-          : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
-            (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
+          : sortBy === "distance-desc"
+            ? b.km - a.km
+            : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
+              (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
       ),
     [mapped, sortBy]
   );
+
   const city = userLocation ? nearestCity(userLocation) : null;
 
   const groupCategories = useMemo(() => {
