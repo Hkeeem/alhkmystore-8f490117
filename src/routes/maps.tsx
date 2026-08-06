@@ -91,6 +91,37 @@ function MapsPage() {
       .slice(0, 15);
   }, [query, nearbyDeals]);
 
+  /** اقتراحات تلقائية: متاجر، مدن، فروع، عناوين عروض */
+  const suggestions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const out: { key: string; label: string; kind: string }[] = [];
+    const seen = new Set<string>();
+    const push = (label: string, kind: string) => {
+      const k = `${kind}:${label}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      out.push({ key: k, label, kind });
+    };
+
+    if (!q) {
+      // أشهر المتاجر والمدن القريبة كاقتراحات افتتاحية
+      nearbyDeals.slice(0, 6).forEach(({ deal }) => push(getStore(deal.storeId).name, "متجر"));
+      nearbyDeals.slice(0, 6).forEach(({ branch }) => push(branch.city, "مدينة"));
+      return out.slice(0, 8);
+    }
+
+    for (const { deal, branch } of nearbyDeals) {
+      const store = getStore(deal.storeId);
+      if (store.name.toLowerCase().includes(q)) push(store.name, "متجر");
+      if (branch.city.toLowerCase().includes(q)) push(branch.city, "مدينة");
+      if (branch.name.toLowerCase().includes(q)) push(branch.name, "فرع");
+      if (deal.title.toLowerCase().includes(q)) push(deal.title, "عرض");
+      if (out.length >= 20) break;
+    }
+    return out.slice(0, 8);
+  }, [query, nearbyDeals]);
+
+
 
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapped.length === 0) return;
