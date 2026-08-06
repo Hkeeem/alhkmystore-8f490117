@@ -27,6 +27,9 @@ function MapsPage() {
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [cityFilter, setCityFilter] = useState("الكل");
+  const [categoryFilter, setCategoryFilter] = useState("الكل");
+  const [storeFilter, setStoreFilter] = useState("الكل");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
