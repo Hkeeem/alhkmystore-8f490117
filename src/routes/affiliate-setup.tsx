@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle, ArrowLeftRight, LifeBuoy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -385,18 +385,62 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     queryFn: () => fetchOverview({}),
   });
 
+  type SyncKey = "amazon" | "noon" | "all";
+  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" } | null>>({
+    amazon: null,
+    noon: null,
+    all: null,
+  });
+  const timersRef = useRef<Record<string, ReturnType<typeof setInterval> | undefined>>({});
+
+  useEffect(() => () => {
+    Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
+  }, []);
+
+  const startProgress = (key: SyncKey) => {
+    const stages = ["الاتصال بالمصدر…", "سحب العروض…", "تحليل الأسعار…", "حفظ التحديثات…"];
+    let value = 6;
+    setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]! } }));
+    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    timersRef.current[key] = setInterval(() => {
+      value = Math.min(92, value + Math.random() * 9);
+      const stage = stages[Math.min(stages.length - 1, Math.floor(value / 25))]!;
+      setProgress((p) => ({ ...p, [key]: { value, stage } }));
+    }, 700);
+  };
+
+  const endProgress = (key: SyncKey, ok: boolean, stage: string) => {
+    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
+  };
+
   const sync = useMutation({
-    mutationFn: () => startSync({}),
-    onSuccess: (res) => {
+    mutationFn: (source: SyncKey) => {
+      startProgress(source);
+      return startSync({ data: { source } });
+    },
+    onSuccess: (res, source) => {
       if (res.success) {
-        toast.success(`تم التحديث — ${res.upserted} عرضًا (أمازون ${res.sources.amazon} / نون ${res.sources.noon})`);
+        const count = source === "amazon" ? res.sources.amazon : source === "noon" ? res.sources.noon : res.upserted;
+        endProgress(source, true, `اكتملت المزامنة — ${count} عرضًا`);
+        toast.success(
+          source === "all"
+            ? `تم التحديث — ${res.upserted} عرضًا (أمازون ${res.sources.amazon} / نون ${res.sources.noon})`
+            : `تم تحديث ${source === "amazon" ? "أمازون" : "نون"} — ${count} عرضًا`,
+        );
         refetchOverview();
       } else {
+        endProgress(source, false, "تعذّر إكمال المزامنة");
         toast.error("تعذّر تشغيل التحديث، حاول لاحقًا");
       }
     },
-    onError: () => toast.error("غير مصرّح لك بتشغيل التحديث"),
+    onError: (_e, source) => {
+      endProgress(source, false, "غير مصرّح بتشغيل التحديث");
+      toast.error("غير مصرّح لك بتشغيل التحديث");
+    },
   });
+
+  const runningKey = sync.isPending ? (sync.variables as SyncKey) : null;
 
   const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
   const noonReady = Boolean(status?.noonAffiliateId);
@@ -404,6 +448,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
   const sources = [
     {
+      key: "amazon" as const,
       name: "Amazon",
       ready: amazonReady,
       missing: [
@@ -415,6 +460,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       last: overview?.amazon.lastFetchedAt ?? null,
     },
     {
+      key: "noon" as const,
       name: "noon",
       ready: noonReady,
       missing: [!status?.noonAffiliateId && "NOON_AFFILIATE_ID"].filter(Boolean) as string[],
@@ -450,6 +496,31 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                 <p>آخر تحديث: {formatWhen(s.last)}</p>
                 {s.missing.length > 0 && (
                   <p dir="ltr" className="text-[11px]">ينقص: {s.missing.join(" · ")}</p>
+                )}
+              </div>
+
+              <div className="space-y-2 pt-1">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="w-full press-ripple"
+                  disabled={!user || !s.ready || sync.isPending}
+                  onClick={() => sync.mutate(s.key)}
+                >
+                  {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+                  {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
+                </Button>
+                {progress[s.key] && (
+                  <div className="space-y-1" role="status" aria-live="polite">
+                    <Progress value={progress[s.key]!.value} aria-label={`تقدّم مزامنة ${s.name}`} />
+                    <p
+                      className={`text-[11px] ${
+                        progress[s.key]!.done === "fail" ? "text-destructive" : "text-muted-foreground"
+                      }`}
+                    >
+                      {progress[s.key]!.stage}
+                    </p>
+                  </div>
                 )}
               </div>
 
@@ -508,11 +579,19 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         <Button
           className="w-full press-ripple"
           disabled={!anyReady || !user || sync.isPending}
-          onClick={() => sync.mutate()}
+          onClick={() => sync.mutate("all")}
         >
-          {sync.isPending ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
-          {sync.isPending ? "جارٍ سحب العروض…" : "بدء التحديثات الآن"}
+          {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
         </Button>
+        {progress.all && (
+          <div className="space-y-1" role="status" aria-live="polite">
+            <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
+            <p className={`text-[11px] text-center ${progress.all.done === "fail" ? "text-destructive" : "text-muted-foreground"}`}>
+              {progress.all.stage}
+            </p>
+          </div>
+        )}
         <p className="text-[11px] text-muted-foreground text-center">
           التحديث التلقائي يعمل كل ٦ ساعات؛ هذا الزر لتشغيل دورة فورية.
         </p>
