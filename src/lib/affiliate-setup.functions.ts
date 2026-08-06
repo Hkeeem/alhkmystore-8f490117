@@ -2,7 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getAffiliateKeyStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const has = (name: string) => Boolean(process.env[name] && String(process.env[name]).trim().length > 0);
+  const { getIntegrationKeyPresence } = await import("@/lib/integration-keys.server");
+  const rows = await getIntegrationKeyPresence();
+  const has = (name: string) => rows.find((r) => r.name === name)?.configured ?? false;
   return {
     amazonAccessKey: has("AMAZON_ACCESS_KEY"),
     amazonSecretKey: has("AMAZON_SECRET_KEY"),
@@ -134,7 +136,8 @@ function pickNoonCampaign(publisherId: string) {
 }
 
 export const getNoonCampaignStatus = createServerFn({ method: "GET" }).handler(async () => {
-  const publisherId = (process.env["NOON_AFFILIATE_ID"] ?? "").trim();
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const publisherId = ((await getIntegrationKey("NOON_AFFILIATE_ID")) ?? "").trim();
   const configured = publisherId.length > 0;
 
   const campaigns = NOON_CAMPAIGNS.map(({ prefixes: _p, ...c }) => c);
@@ -183,7 +186,8 @@ export const verifyNoonPublisherId = createServerFn({ method: "POST" })
     if (!/^[A-Za-z0-9._-]{3,64}$/.test(input)) {
       return { ok: false as const, reason: "الصيغة غير صحيحة: يُسمح بالحروف والأرقام والرموز . _ - بطول ٣ إلى ٦٤." };
     }
-    const stored = (process.env["NOON_AFFILIATE_ID"] ?? "").trim();
+    const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+    const stored = ((await getIntegrationKey("NOON_AFFILIATE_ID")) ?? "").trim();
     const campaign = pickNoonCampaign(input);
     return {
       ok: true as const,
