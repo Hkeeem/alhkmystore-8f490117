@@ -188,7 +188,7 @@ function AffiliateSetupPage() {
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-3xl space-y-8">
-      <header className="space-y-3">
+      <header id="top" className="space-y-3 scroll-mt-24">
         <Badge variant="secondary" className="gap-1"><Link2 className="size-3" /> ربط المصادر الحقيقية</Badge>
         <h1 className="text-3xl font-bold">دليل تفعيل أمازون ونون خطوة بخطوة</h1>
         <p className="text-muted-foreground">
@@ -247,6 +247,8 @@ function AffiliateSetupPage() {
           </p>
         </CardContent>
       </Card>
+
+      <div id="steps" className="scroll-mt-24" />
 
       <StepSection
         icon={<ShoppingCart className="size-5" />}
