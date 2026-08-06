@@ -25,6 +25,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -121,6 +122,11 @@ const AnalysisRoute = AnalysisRouteImport.update({
   path: '/analysis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
+  id: '/affiliate-setup',
+  path: '/affiliate-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdsRoute = AdsRouteImport.update({
   id: '/ads',
   path: '/ads',
@@ -201,6 +207,7 @@ const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ads': typeof AdsRoute
+  '/affiliate-setup': typeof AffiliateSetupRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -233,6 +240,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ads': typeof AdsRoute
+  '/affiliate-setup': typeof AffiliateSetupRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ads': typeof AdsRoute
+  '/affiliate-setup': typeof AffiliateSetupRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -301,6 +310,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ads'
+    | '/affiliate-setup'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/ads'
+    | '/affiliate-setup'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/ads'
+    | '/affiliate-setup'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -400,6 +412,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdsRoute: typeof AdsRoute
+  AffiliateSetupRoute: typeof AffiliateSetupRoute
   AnalysisRoute: typeof AnalysisRoute
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
@@ -535,6 +548,13 @@ declare module '@tanstack/react-router' {
       path: '/analysis'
       fullPath: '/analysis'
       preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/affiliate-setup': {
+      id: '/affiliate-setup'
+      path: '/affiliate-setup'
+      fullPath: '/affiliate-setup'
+      preLoaderRoute: typeof AffiliateSetupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ads': {
@@ -698,6 +718,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdsRoute: AdsRoute,
+  AffiliateSetupRoute: AffiliateSetupRoute,
   AnalysisRoute: AnalysisRoute,
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
@@ -723,3 +744,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

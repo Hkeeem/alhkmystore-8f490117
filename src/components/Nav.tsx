@@ -53,6 +53,7 @@ const groups: Group[] = [
       { to: "/analysis", label: "تحليل المتاجر", icon: BarChart3, badge: "AI" },
       { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
       { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
+      { to: "/affiliate-setup", label: "ربط أمازون ونون", icon: Link2, badge: "دليل" },
     ],
   },
 ];
