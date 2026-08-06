@@ -9,6 +9,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { listSyncEvents } from "@/lib/affiliate-setup.functions";
 
+/** يطابق MAX_SYNC_ATTEMPTS في محرك المزامنة */
+const MAX_SYNC_ATTEMPTS = 3;
+
 export const Route = createFileRoute("/_authenticated/sync-log")({
   component: SyncLogPage,
   head: () => ({
@@ -45,12 +48,14 @@ const STATUSES = [
 
 const REASONS: Record<string, string> = {
   missing_keys: "مفاتيح الربط غير مكتملة",
-  http_error: "فشل الاتصال بمزوّد العروض",
-  rate_limited: "تجاوز حد الطلبات المسموح",
-  invalid_response: "استجابة غير صالحة من المزوّد",
-  unauthorized: "المفاتيح مرفوضة أو منتهية",
+  auth_error: "المفاتيح مرفوضة أو التوقيع غير صحيح",
+  partner_tag_invalid: "Partner Tag غير صالح",
+  throttled: "تجاوز حد الطلبات — أُعيدت المحاولة تلقائيًا",
+  network_error: "انقطاع في الاتصال — أُعيدت المحاولة تلقائيًا",
+  http_error: "استجابة غير صالحة من المزوّد",
+  upsert_failed: "تعذّر حفظ العروض في قاعدة البيانات",
+  empty_result: "لم تُرجع الدورة أي عروض",
 };
-
 function formatDate(value: string) {
   return new Date(value).toLocaleString("ar-SA", {
     dateStyle: "medium",
@@ -80,7 +85,7 @@ function SyncLogPage() {
             سجل عمليات المزامنة
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            كل عملية سحب عروض من Amazon وnoon مع وقتها وحالتها وسبب الفشل إن حصل.
+            كل عملية سحب عروض من Amazon وnoon مع وقتها وحالتها وسبب الفشل إن حصل. عند انقطاع الاتصال أو تجاوز حد الطلبات تُعاد المحاولة تلقائيًا حتى {MAX_SYNC_ATTEMPTS} محاولات بتأخير تصاعدي قبل تسجيل الفشل.
           </p>
         </div>
         <Button
