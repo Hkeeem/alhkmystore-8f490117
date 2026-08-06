@@ -1022,13 +1022,14 @@ function NoonCampaignPanel() {
               className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm"
             />
             <Button
-              onClick={() => confirmMutation.mutate(publisherId)}
+              onClick={() => setPreviewOpen(true)}
               disabled={confirmMutation.isPending || !publisherId.trim()}
               className="press-ripple"
             >
               {confirmMutation.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
               تأكيد
             </Button>
+
             <Button
               variant="outline"
               disabled={!selected}
