@@ -11,6 +11,17 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "حكيم AI — أفضل عروض وكوبونات السعودية" },
+      { name: "description", content: "منصة سعودية ذكية تجمع أفضل العروض والكوبونات ومقارنة الأسعار في مكان واحد، مرتّبة بالذكاء الاصطناعي." },
+      { property: "og:title", content: "حكيم AI — أفضل عروض وكوبونات السعودية" },
+      { property: "og:description", content: "قارن الأسعار واكتشف أعلى نسب التوفير في المتاجر السعودية بالذكاء الاصطناعي." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://alhkmystore.lovable.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/" }],
+  }),
   component: Home,
 });
 
