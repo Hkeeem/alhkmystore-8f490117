@@ -572,6 +572,22 @@ export type Database = {
       }
     }
     Views: {
+      affiliate_click_stats: {
+        Row: {
+          clicks: number | null
+          deal_id: string | null
+          last_click_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "merchant_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cashback_user_totals: {
         Row: {
           confirmed_total: number | null
