@@ -69,10 +69,10 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
           await supabaseAdmin.rpc("register_affiliate_click", {
             _deal_id: dealId,
             _network: network,
-            _source: source,
-            _referrer: request.headers.get("referer"),
-            _user_agent: request.headers.get("user-agent"),
-            _country: request.headers.get("cf-ipcountry"),
+            _source: source ?? undefined,
+            _referrer: request.headers.get("referer") ?? undefined,
+            _user_agent: request.headers.get("user-agent") ?? undefined,
+            _country: request.headers.get("cf-ipcountry") ?? undefined,
           });
         } catch {
           /* تجاهل أخطاء التتبع */

@@ -215,7 +215,11 @@ function MerchantDealsSection() {
                 وفّر {d.discount_percent}%
               </span>
               {d.product_url && (
-                <a href={d.product_url} target="_blank" rel="noopener noreferrer" className="block text-[11px] text-primary hover:underline pt-1">
+                <a
+                  href={affiliateHref(d.id, "deals-live")}
+                  {...AFFILIATE_LINK_PROPS}
+                  className="block text-[11px] text-primary hover:underline pt-1"
+                >
                   اذهب للعرض
                 </a>
               )}
