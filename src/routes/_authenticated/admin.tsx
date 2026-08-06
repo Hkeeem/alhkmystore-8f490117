@@ -21,10 +21,12 @@ import {
   adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
 } from "@/lib/user.functions";
 import { getClickAnalytics } from "@/lib/click-analytics.functions";
+import { ReportsTab } from "@/components/admin/ReportsTab";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks" | "reports";
+
 
 
 export const Route = createFileRoute("/_authenticated/admin")({
