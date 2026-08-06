@@ -22,6 +22,7 @@ import {
 } from "@/lib/user.functions";
 import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
+import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
@@ -67,7 +68,7 @@ function AdminPage() {
     { id: "premium" as const, label: "Premium", icon: Crown, allow: ["super_admin","admin"] },
     { id: "cashback" as const, label: "كاش باك", icon: Wallet, allow: ["super_admin","admin"] },
     { id: "alerts" as const, label: "تنبيهات الأسعار", icon: BellRing, allow: ["super_admin","admin"] },
-    { id: "clicks" as const, label: "تحليلات النقرات", icon: MousePointerClick, allow: ["super_admin","admin","content_manager"] },
+    { id: "clicks" as const, label: "تحليلات النقرات", icon: MousePointerClick, allow: ["super_admin","admin"] },
     { id: "reports" as const, label: "التقارير الدورية", icon: Mail, allow: ["super_admin","admin"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
     { id: "deploy" as const, label: "حالة النشر", icon: Rocket, allow: ["super_admin","admin"] },
@@ -701,6 +702,12 @@ function ClickAnalyticsTab() {
           تحديث
         </button>
       </div>
+
+      <SavedFiltersBar
+        scope="clicks"
+        current={{ days, country, referrer }}
+        onApply={(f) => { setDays(f.days); setCountry(f.country); setReferrer(f.referrer); }}
+      />
 
       <div className="p-4 rounded-2xl border border-primary/20 bg-card grid sm:grid-cols-3 gap-3">
         <label className="text-xs space-y-1">
