@@ -197,3 +197,53 @@ export const verifyNoonPublisherId = createServerFn({ method: "POST" })
       network: campaign.network,
     };
   });
+
+/* --------------------- أسباب آخر فشل في تحديث المصادر --------------------- */
+
+export type SyncFailureInfo = {
+  source: "amazon" | "noon";
+  code: string;
+  message: string | null;
+  keyword: string | null;
+  at: string;
+  recoveredAt: string | null;
+};
+
+export const getSyncFailures = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const sources = ["amazon", "noon"] as const;
+  const out: Record<string, SyncFailureInfo | null> = { amazon: null, noon: null };
+
+  for (const source of sources) {
+    const { data: failure } = await supabaseAdmin
+      .from("sync_events")
+      .select("source, code, message, keyword, created_at")
+      .eq("source", source)
+      .eq("status", "failure")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!failure) continue;
+
+    const { data: success } = await supabaseAdmin
+      .from("sync_events")
+      .select("created_at")
+      .eq("source", source)
+      .eq("status", "success")
+      .gt("created_at", failure.created_at)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    out[source] = {
+      source,
+      code: failure.code ?? "http_error",
+      message: failure.message ?? null,
+      keyword: failure.keyword ?? null,
+      at: failure.created_at,
+      recoveredAt: success?.created_at ?? null,
+    };
+  }
+
+  return out as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
+});
