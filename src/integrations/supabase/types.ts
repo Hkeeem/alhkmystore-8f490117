@@ -816,6 +816,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_sync_schedule: { Args: never; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -852,6 +853,10 @@ export type Database = {
           _target: string
         }
         Returns: undefined
+      }
+      set_sync_schedule: {
+        Args: { _active?: boolean; _schedule: string }
+        Returns: Json
       }
     }
     Enums: {
