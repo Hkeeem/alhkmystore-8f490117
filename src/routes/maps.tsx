@@ -19,6 +19,15 @@ export const Route = createFileRoute("/maps")({
   component: MapsPage,
 });
 
+/** مجموعات رئيسية تُبسّط التصفية على الخريطة */
+const GROUPS: { id: string; label: string; icon: string; categories: string[] }[] = [
+  { id: "الكل", label: "الكل", icon: "🗺️", categories: [] },
+  { id: "مطاعم", label: "مطاعم", icon: "🍽️", categories: ["مطاعم"] },
+  { id: "متاجر", label: "متاجر", icon: "🛍️", categories: ["سوبرماركت", "إلكترونيات", "أزياء"] },
+  { id: "خدمات", label: "خدمات", icon: "🧾", categories: ["صيدلية"] },
+];
+
+
 function MapsPage() {
   const { deal: focusDealId } = Route.useSearch();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
