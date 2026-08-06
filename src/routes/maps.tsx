@@ -110,7 +110,7 @@ function MapsPage() {
       branch: Branch;
       km: number;
     }[];
-  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter]);
 
   const nearbyDeals = useMemo(
     () =>
@@ -124,9 +124,15 @@ function MapsPage() {
   );
   const city = userLocation ? nearestCity(userLocation) : null;
 
-  const categories = useMemo(() => ["الكل", ...Array.from(new Set(deals.map((d) => d.category)))], []);
+  const groupCategories = useMemo(() => {
+    const cats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
+    const all = Array.from(new Set(deals.map((d) => d.category)));
+    return ["الكل", ...(groupFilter === "الكل" ? all : all.filter((c) => cats.includes(c)))];
+  }, [groupFilter]);
+  const categories = groupCategories;
   const activeFiltersCount =
     (cityFilter !== "الكل" ? 1 : 0) +
+    (groupFilter !== "الكل" ? 1 : 0) +
     (categoryFilter !== "الكل" ? 1 : 0) +
     (storeFilter !== "الكل" ? 1 : 0) +
     (radiusKm !== "الكل" ? 1 : 0);
