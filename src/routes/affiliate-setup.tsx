@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NoonAuditPanel } from "@/components/admin/NoonAuditPanel";
 import { SyncSchedulePanel } from "@/components/admin/SyncSchedulePanel";
