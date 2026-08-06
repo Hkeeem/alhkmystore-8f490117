@@ -1078,13 +1078,83 @@ function NoonCampaignPanel() {
           </p>
         </div>
 
-        {data?.sampleDeepLink && (
-          <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
-            <p className="text-xs font-semibold">معاينة الرابط العميق الفعلي</p>
-            <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{data.sampleDeepLink}</code>
-          </div>
-        )}
+        <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
+          <p className="text-xs font-semibold">معاينة الرابط العميق المتوقّع</p>
+          <p className="text-[11px] text-muted-foreground">
+            هذا شكل الرابط الذي سيفتحه الزبون بعد المرور على <code dir="ltr">/api/public/go/:dealId</code> بمعرّف نقرة تجريبي.
+          </p>
+          <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">
+            {publisherId.trim() ? preview.url : (data?.sampleDeepLink ?? preview.url)}
+          </code>
+        </div>
+
+        <AlertDialog open={previewOpen} onOpenChange={setPreviewOpen}>
+          <AlertDialogContent className="max-w-lg">
+            <AlertDialogHeader>
+              <AlertDialogTitle>تأكيد الحفظ — معاينة الوجهة</AlertDialogTitle>
+              <AlertDialogDescription>
+                راجع الرابط ووسوم التتبع قبل الحفظ. الوجهة: <span dir="ltr">{preview.destinationHost}</span>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <div className="space-y-3 text-right">
+              {!preview.valid && (
+                <p className="text-xs text-destructive">
+                  تنبيه: صيغة المعرّف غير مطابقة (يُسمح بالحروف والأرقام و . _ - بطول ٣ إلى ٦٤).
+                </p>
+              )}
+              <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
+                <p className="text-[11px] font-semibold">رابط التحويل داخل التطبيق</p>
+                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{preview.redirectUrl}</code>
+              </div>
+              <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
+                <p className="text-[11px] font-semibold">الرابط النهائي على نون</p>
+                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{preview.url}</code>
+              </div>
+              <div className="rounded-lg border divide-y">
+                {preview.params.map((p) => (
+                  <div key={p.key} className="flex items-start justify-between gap-3 px-3 py-2">
+                    <div className="min-w-0">
+                      <code className="text-[11px] font-semibold" dir="ltr">{p.key}</code>
+                      <p className="text-[10px] text-muted-foreground">{p.label}</p>
+                    </div>
+                    <code className="text-[10px] text-muted-foreground break-all max-w-[50%]" dir="ltr">{p.value}</code>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="press-ripple"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(preview.url);
+                    toast.success("تم نسخ رابط المعاينة");
+                  }}
+                >
+                  <Copy className="size-3.5" /> نسخ الرابط
+                </Button>
+                <Button variant="outline" size="sm" className="press-ripple" asChild>
+                  <a href={preview.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="size-3.5" /> فتح للاختبار
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>رجوع للتعديل</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => confirmMutation.mutate(publisherId)}
+                disabled={!preview.valid || confirmMutation.isPending}
+              >
+                تأكيد الحفظ
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </CardContent>
+
     </Card>
   );
 }
