@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -58,6 +59,11 @@ const StoresRoute = StoresRouteImport.update({
 const SmartListRoute = SmartListRouteImport.update({
   id: '/smart-list',
   path: '/smart-list',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsRoute = RewardsRouteImport.update({
@@ -242,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
@@ -316,6 +324,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
@@ -354,6 +363,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
     | '/terms'
@@ -390,6 +400,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
     | '/terms'
@@ -427,6 +438,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
     | '/terms'
@@ -465,6 +477,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SmartListRoute: typeof SmartListRoute
   StoresRoute: typeof StoresRoute
   TermsRoute: typeof TermsRoute
@@ -498,6 +511,13 @@ declare module '@tanstack/react-router' {
       path: '/smart-list'
       fullPath: '/smart-list'
       preLoaderRoute: typeof SmartListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards': {
@@ -796,6 +816,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SmartListRoute: SmartListRoute,
   StoresRoute: StoresRoute,
   TermsRoute: TermsRoute,
@@ -810,3 +831,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
