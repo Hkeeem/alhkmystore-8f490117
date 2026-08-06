@@ -253,3 +253,44 @@ export const getSyncFailures = createServerFn({ method: "GET" }).handler(async (
 
   return out as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
 });
+
+/** قراءة إعدادات المزامنة المجدولة (فترة التشغيل + الحالة) — للمشرفين */
+export const getSyncSchedule = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data, error } = await (context.supabase.rpc as unknown as (
+      fn: string,
+    ) => Promise<{ data: unknown; error: { message: string } | null }>)("get_sync_schedule");
+    if (error) return { ok: false as const, reason: "غير مصرّح أو تعذّر قراءة الجدولة" };
+    return { ok: true as const, schedule: data as {
+      exists: boolean;
+      jobid?: number;
+      schedule?: string;
+      active?: boolean;
+      lastStatus?: string | null;
+      lastRunAt?: string | null;
+    } };
+  });
+
+/** تحديث فترة المزامنة التلقائية (تعبير cron) أو إيقافها — للمشرفين فقط */
+export const setSyncSchedule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => {
+    const d = data as { schedule?: unknown; active?: unknown };
+    const schedule = String(d?.schedule ?? "").trim().slice(0, 40);
+    return { schedule, active: d?.active !== false };
+  })
+  .handler(async ({ data, context }) => {
+    if (!/^[0-9*/,\- ]{5,40}$/.test(data.schedule)) {
+      return { ok: false as const, reason: "صيغة الجدولة غير صحيحة" };
+    }
+    const { error } = await (context.supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ error: { message: string } | null }>)("set_sync_schedule", {
+      _schedule: data.schedule,
+      _active: data.active,
+    });
+    if (error) return { ok: false as const, reason: "غير مصرّح — هذه الخطوة للمشرفين فقط" };
+    return { ok: true as const, schedule: data.schedule, active: data.active };
+  });

@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { NoonAuditPanel } from "@/components/admin/NoonAuditPanel";
+import { SyncSchedulePanel } from "@/components/admin/SyncSchedulePanel";
+
 import { logNoonCampaignEvent } from "@/lib/noon-audit.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
@@ -220,7 +222,12 @@ function AffiliateSetupPage() {
 
       <ReadinessPanel status={status} statusLoading={isLoading} />
 
+      <div id="sync-schedule" className="scroll-mt-24">
+        <SyncSchedulePanel />
+      </div>
+
       <SyncFailuresPanel />
+
 
       <ConversionsPanel />
 
