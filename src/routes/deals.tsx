@@ -170,7 +170,7 @@ function DealsPage() {
 
 /** عروض حقيقية أضافها تجّار موثّقون — تُحدّث أول بأول */
 function MerchantDealsSection() {
-  const q = useLiveDeals(12);
+  const q = useLiveDeals(24);
   const items = q.data ?? [];
   if (q.isLoading || items.length === 0) return null;
 
