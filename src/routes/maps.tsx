@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
-import { nearestBranch, nearestCity, distanceKm, type Branch } from "@/data/store-branches";
+import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
