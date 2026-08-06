@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter } from "lucide-react";
+import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import L from "leaflet";
@@ -33,6 +33,10 @@ function MapsPage() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [locStatus, setLocStatus] = useState<
+    "idle" | "loading" | "granted" | "denied" | "unavailable" | "timeout" | "unsupported"
+  >("idle");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -52,26 +56,40 @@ function MapsPage() {
 
   const requestLocation = useCallback((focusNearest = false) => {
     focusNearestRef.current = focusNearest;
-    if (!navigator.geolocation) {
-      setError("المتصفح لا يدعم تحديد الموقع.");
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocStatus("unsupported");
+      setError("متصفحك لا يدعم خدمة تحديد الموقع.");
       setUserLocation({ lat: 24.7136, lng: 46.6753 });
       return;
     }
     setLoading(true);
+    setLocStatus("loading");
     setError(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setLoading(false);
+        setLocStatus("granted");
+        setError(null);
       },
-      () => {
-        setError("يرجى السماح بالوصول للموقع لعرض العروض القريبة.");
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          setLocStatus("denied");
+          setError("تم رفض إذن الموقع. فعّل الإذن من إعدادات المتصفح، أو ابحث يدويًا عن المتجر أو الحي.");
+        } else if (err.code === err.TIMEOUT) {
+          setLocStatus("timeout");
+          setError("انتهت مهلة تحديد موقعك. حاول مرة أخرى، أو ابحث يدويًا عن المتجر أو الحي.");
+        } else {
+          setLocStatus("unavailable");
+          setError("تعذّر تحديد موقعك حاليًا (الخدمة غير متاحة). جرّب لاحقًا أو ابحث يدويًا.");
+        }
         setLoading(false);
         setUserLocation({ lat: 24.7136, lng: 46.6753 });
       },
       { timeout: 8000, enableHighAccuracy: true }
     );
   }, []);
+
 
 
   useEffect(() => {
@@ -429,12 +447,63 @@ function MapsPage() {
       </header>
 
 
-      {error && (
-        <div className="rounded-2xl bg-card border border-border/60 p-4 text-sm text-muted-foreground flex items-center gap-2">
-          <Navigation className="w-4 h-4 text-primary shrink-0" />
-          {error} — تم عرض موقع افتراضي (الرياض)
+      {locStatus === "loading" && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-2xl bg-card border border-primary/20 p-4 text-sm flex items-center gap-2"
+        >
+          <Loader2 className="w-4 h-4 text-primary shrink-0 animate-spin" aria-hidden="true" />
+          <span>جاري تحديد موقعك… قد يطلب المتصفح إذن الوصول للموقع.</span>
         </div>
       )}
+
+      {error && locStatus !== "loading" && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-2xl bg-card border border-destructive/40 p-4 text-sm space-y-3"
+        >
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-1">
+              <p className="font-bold text-foreground">
+                {locStatus === "denied" ? "إذن الموقع مرفوض" : "تعذّر تحديد موقعك"}
+              </p>
+              <p className="text-muted-foreground">{error}</p>
+              <p className="text-xs text-muted-foreground">
+                عرضنا الخريطة على موقع افتراضي (الرياض) حتى تتمكن من التصفح.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {locStatus !== "unsupported" && (
+              <button
+                type="button"
+                onClick={() => requestLocation(true)}
+                disabled={loading}
+                className="flex items-center gap-1.5 bg-primary text-secondary px-3 py-2 rounded-xl text-xs font-black hover:opacity-90 transition press-ripple disabled:opacity-60"
+              >
+                <Navigation className="w-3.5 h-3.5" aria-hidden="true" />
+                إعادة المحاولة
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSearchFocused(true);
+                searchInputRef.current?.focus();
+                searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className="flex items-center gap-1.5 bg-secondary/50 border border-primary/20 text-primary px-3 py-2 rounded-xl text-xs font-bold hover:border-primary transition"
+            >
+              <Search className="w-3.5 h-3.5" aria-hidden="true" />
+              ابحث يدويًا عن المتجر أو الحي
+            </button>
+          </div>
+        </div>
+      )}
+
 
       <div className="relative">
         <div
@@ -447,6 +516,7 @@ function MapsPage() {
           <Search className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
           <input
             id="map-search-input"
+            ref={searchInputRef}
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
