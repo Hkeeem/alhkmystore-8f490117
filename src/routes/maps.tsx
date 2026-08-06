@@ -447,12 +447,63 @@ function MapsPage() {
       </header>
 
 
-      {error && (
-        <div className="rounded-2xl bg-card border border-border/60 p-4 text-sm text-muted-foreground flex items-center gap-2">
-          <Navigation className="w-4 h-4 text-primary shrink-0" />
-          {error} — تم عرض موقع افتراضي (الرياض)
+      {locStatus === "loading" && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-2xl bg-card border border-primary/20 p-4 text-sm flex items-center gap-2"
+        >
+          <Loader2 className="w-4 h-4 text-primary shrink-0 animate-spin" aria-hidden="true" />
+          <span>جاري تحديد موقعك… قد يطلب المتصفح إذن الوصول للموقع.</span>
         </div>
       )}
+
+      {error && locStatus !== "loading" && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="rounded-2xl bg-card border border-destructive/40 p-4 text-sm space-y-3"
+        >
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-1">
+              <p className="font-bold text-foreground">
+                {locStatus === "denied" ? "إذن الموقع مرفوض" : "تعذّر تحديد موقعك"}
+              </p>
+              <p className="text-muted-foreground">{error}</p>
+              <p className="text-xs text-muted-foreground">
+                عرضنا الخريطة على موقع افتراضي (الرياض) حتى تتمكن من التصفح.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {locStatus !== "unsupported" && (
+              <button
+                type="button"
+                onClick={() => requestLocation(true)}
+                disabled={loading}
+                className="flex items-center gap-1.5 bg-primary text-secondary px-3 py-2 rounded-xl text-xs font-black hover:opacity-90 transition press-ripple disabled:opacity-60"
+              >
+                <Navigation className="w-3.5 h-3.5" aria-hidden="true" />
+                إعادة المحاولة
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => {
+                setSearchFocused(true);
+                searchInputRef.current?.focus();
+                searchInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              }}
+              className="flex items-center gap-1.5 bg-secondary/50 border border-primary/20 text-primary px-3 py-2 rounded-xl text-xs font-bold hover:border-primary transition"
+            >
+              <Search className="w-3.5 h-3.5" aria-hidden="true" />
+              ابحث يدويًا عن المتجر أو الحي
+            </button>
+          </div>
+        </div>
+      )}
+
 
       <div className="relative">
         <div
