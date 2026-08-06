@@ -85,6 +85,59 @@ export type Database = {
           },
         ]
       }
+      affiliate_conversions: {
+        Row: {
+          amount: number
+          click_id: string | null
+          commission: number
+          created_at: string
+          currency: string
+          deal_id: string | null
+          id: string
+          network: string
+          order_id: string
+          raw: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          click_id?: string | null
+          commission?: number
+          created_at?: string
+          currency?: string
+          deal_id?: string | null
+          id?: string
+          network: string
+          order_id: string
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          click_id?: string | null
+          commission?: number
+          created_at?: string
+          currency?: string
+          deal_id?: string | null
+          id?: string
+          network?: string
+          order_id?: string
+          raw?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_conversions_click_id_fkey"
+            columns: ["click_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_clicks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
@@ -625,6 +678,17 @@ export type Database = {
           _user_agent?: string
         }
         Returns: undefined
+      }
+      register_affiliate_click_returning: {
+        Args: {
+          _country?: string
+          _deal_id: string
+          _network?: string
+          _referrer?: string
+          _source?: string
+          _user_agent?: string
+        }
+        Returns: string
       }
       revoke_user_role: {
         Args: {
