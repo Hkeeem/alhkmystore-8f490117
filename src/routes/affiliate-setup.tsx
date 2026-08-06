@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy } from "lucide-react";
+import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { getAffiliateKeyStatus } from "@/lib/affiliate-setup.functions";
+import { getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/affiliate-setup")({
   head: () => ({
@@ -202,7 +203,11 @@ function AffiliateSetupPage() {
         </div>
       </header>
 
+      <ReadinessPanel status={status} statusLoading={isLoading} />
+
       <Card className="hover-lift">
+
+
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
           <CardTitle className="flex items-center gap-2 text-lg"><KeyRound className="size-5" /> حالة المفاتيح</CardTitle>
           <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
@@ -319,5 +324,125 @@ function StepSection({
         })}
       </ol>
     </section>
+  );
+}
+
+type KeyStatus = {
+  amazonAccessKey: boolean;
+  amazonSecretKey: boolean;
+  amazonPartnerTag: boolean;
+  noonAffiliateId: boolean;
+};
+
+function formatWhen(iso: string | null) {
+  if (!iso) return "لم يتم بعد";
+  const diffMin = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (diffMin < 1) return "الآن";
+  if (diffMin < 60) return `قبل ${diffMin} دقيقة`;
+  const h = Math.round(diffMin / 60);
+  if (h < 24) return `قبل ${h} ساعة`;
+  return `قبل ${Math.round(h / 24)} يوم`;
+}
+
+function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusLoading: boolean }) {
+  const { user } = useAuth();
+  const fetchOverview = useServerFn(getSyncOverview);
+  const startSync = useServerFn(runExternalSyncNow);
+
+  const { data: overview, refetch: refetchOverview, isFetching: overviewFetching } = useQuery({
+    queryKey: ["external-sync-overview"],
+    queryFn: () => fetchOverview({}),
+  });
+
+  const sync = useMutation({
+    mutationFn: () => startSync({}),
+    onSuccess: (res) => {
+      if (res.success) {
+        toast.success(`تم التحديث — ${res.upserted} عرضًا (أمازون ${res.sources.amazon} / نون ${res.sources.noon})`);
+        refetchOverview();
+      } else {
+        toast.error("تعذّر تشغيل التحديث، حاول لاحقًا");
+      }
+    },
+    onError: () => toast.error("غير مصرّح لك بتشغيل التحديث"),
+  });
+
+  const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
+  const noonReady = Boolean(status?.noonAffiliateId);
+  const anyReady = amazonReady || noonReady;
+
+  const sources = [
+    {
+      name: "Amazon",
+      ready: amazonReady,
+      missing: [
+        !status?.amazonAccessKey && "AMAZON_ACCESS_KEY",
+        !status?.amazonSecretKey && "AMAZON_SECRET_KEY",
+        !status?.amazonPartnerTag && "AMAZON_PARTNER_TAG",
+      ].filter(Boolean) as string[],
+      active: overview?.amazon.active ?? 0,
+      last: overview?.amazon.lastFetchedAt ?? null,
+    },
+    {
+      name: "noon",
+      ready: noonReady,
+      missing: [!status?.noonAffiliateId && "NOON_AFFILIATE_ID"].filter(Boolean) as string[],
+      active: overview?.noon.active ?? 0,
+      last: overview?.noon.lastFetchedAt ?? null,
+    },
+  ];
+
+  return (
+    <Card className="hover-lift border-primary/30">
+      <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+        <CardTitle className="flex items-center gap-2 text-lg"><PlugZap className="size-5" /> جاهزية الربط</CardTitle>
+        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetchOverview()} disabled={overviewFetching}>
+          <RefreshCw className={`size-4 ${overviewFetching ? "animate-spin" : ""}`} /> تحديث الحالة
+        </Button>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {sources.map((s) => (
+            <div key={s.name} className="rounded-xl border p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-semibold" dir="ltr">{s.name}</span>
+                {statusLoading ? (
+                  <span className="text-xs text-muted-foreground">جارٍ الفحص…</span>
+                ) : s.ready ? (
+                  <Badge className="gap-1"><Check className="size-3" /> جاهز</Badge>
+                ) : (
+                  <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> ناقص</Badge>
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p>عروض نشطة: <span className="font-semibold text-foreground">{s.active}</span></p>
+                <p>آخر تحديث: {formatWhen(s.last)}</p>
+                {s.missing.length > 0 && (
+                  <p dir="ltr" className="text-[11px]">ينقص: {s.missing.join(" · ")}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {!user ? (
+          <p className="text-xs text-muted-foreground">سجّل الدخول بحساب إداري لتشغيل التحديثات يدويًا.</p>
+        ) : !anyReady ? (
+          <p className="text-xs text-muted-foreground">أكمل إضافة مفاتيح مصدر واحد على الأقل ليُفعَّل زر بدء التحديثات.</p>
+        ) : null}
+
+        <Button
+          className="w-full press-ripple"
+          disabled={!anyReady || !user || sync.isPending}
+          onClick={() => sync.mutate()}
+        >
+          {sync.isPending ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          {sync.isPending ? "جارٍ سحب العروض…" : "بدء التحديثات الآن"}
+        </Button>
+        <p className="text-[11px] text-muted-foreground text-center">
+          التحديث التلقائي يعمل كل ٦ ساعات؛ هذا الزر لتشغيل دورة فورية.
+        </p>
+      </CardContent>
+    </Card>
   );
 }
