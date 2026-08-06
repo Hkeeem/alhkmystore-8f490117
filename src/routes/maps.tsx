@@ -32,6 +32,8 @@ function MapsPage() {
   const [cityFilter, setCityFilter] = useState("الكل");
   const [categoryFilter, setCategoryFilter] = useState("الكل");
   const [storeFilter, setStoreFilter] = useState("الكل");
+  const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
+  const [sortBy, setSortBy] = useState<"distance" | "discount">("distance");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
