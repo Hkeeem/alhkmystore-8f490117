@@ -331,71 +331,118 @@ function MapsPage() {
       )}
 
       <div className="relative">
-        <div className="flex items-center gap-2 bg-card border border-primary/20 rounded-2xl px-3 py-2.5">
-          <Search className="w-4 h-4 text-primary shrink-0" />
+        <div
+          className="flex items-center gap-2 bg-card border border-primary/20 rounded-2xl px-3 py-2.5"
+          role="combobox"
+          aria-expanded={listboxOpen}
+          aria-owns="map-search-listbox"
+          aria-haspopup="listbox"
+        >
+          <Search className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
           <input
+            id="map-search-input"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setActiveIndex(-1);
+            }}
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 150)}
+            onKeyDown={onSearchKeyDown}
             placeholder="ابحث باسم المتجر أو اسم العرض أو الفرع…"
             aria-label="بحث داخل الخريطة"
             aria-autocomplete="list"
+            aria-controls="map-search-listbox"
+            aria-activedescendant={activeIndex >= 0 ? options[activeIndex]?.id : undefined}
+            aria-describedby="map-search-help"
+            autoComplete="off"
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
           />
           {query && (
-            <button type="button" onClick={() => setQuery("")} aria-label="مسح البحث">
-              <X className="w-4 h-4 text-muted-foreground" />
+            <button
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setActiveIndex(-1);
+              }}
+              aria-label="مسح البحث"
+              className="min-h-11 min-w-11 flex items-center justify-center"
+            >
+              <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
             </button>
           )}
         </div>
 
-        {(searchFocused || query.trim().length > 0) && suggestions.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2" role="listbox" aria-label="اقتراحات البحث">
-            {suggestions.map((s) => (
-              <button
-                key={s.key}
-                type="button"
-                role="option"
-                aria-selected={query === s.label}
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={() => setQuery(s.label)}
-                className="max-w-[220px] truncate bg-secondary/50 border border-primary/20 text-[11px] font-bold px-2.5 py-1.5 rounded-xl hover:border-primary hover:bg-secondary transition"
-              >
-                <span className="text-primary">{s.kind}:</span> {s.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <p id="map-search-help" className="sr-only">
+          استخدم سهمي الأعلى والأسفل للتنقل بين الاقتراحات والنتائج، Enter للاختيار، Escape للإغلاق.
+        </p>
+        <div aria-live="polite" role="status" className="sr-only">
+          {announcement}
+        </div>
 
-        {query.trim().length > 0 && (
-          <div className="absolute z-[1000] mt-2 w-full max-h-72 overflow-y-auto bg-card border border-primary/20 rounded-2xl shadow-glow divide-y divide-border/50">
-            {searchResults.length === 0 && (
-              <div className="p-4 text-sm text-muted-foreground text-center">لا توجد نتائج مطابقة</div>
+        {listboxOpen && (
+          <div id="map-search-listbox" role="listbox" aria-label="اقتراحات ونتائج بحث الخريطة">
+            {suggestions.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {suggestions.map((s, i) => (
+                  <button
+                    key={s.key}
+                    id={`map-opt-sug-${i}`}
+                    type="button"
+                    role="option"
+                    aria-selected={activeIndex === i}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onMouseEnter={() => setActiveIndex(i)}
+                    onClick={() => selectOption(i)}
+                    className={`max-w-[220px] truncate border text-[11px] font-bold px-2.5 py-1.5 rounded-xl transition ${
+                      activeIndex === i
+                        ? "bg-secondary border-primary ring-2 ring-primary/40"
+                        : "bg-secondary/50 border-primary/20 hover:border-primary"
+                    }`}
+                  >
+                    <span className="text-primary">{s.kind}:</span> {s.label}
+                  </button>
+                ))}
+              </div>
             )}
-            {searchResults.map(({ deal, branch, km }) => (
-              <button
-                key={deal.id}
-                type="button"
-                onClick={() => {
-                  focusOnMap(deal.id);
-                  setQuery("");
-                }}
-                className="w-full text-right p-3 hover:bg-secondary/40 transition flex items-center justify-between gap-3"
-              >
-                <span className="min-w-0">
-                  <span className="block text-sm font-bold truncate">{deal.title}</span>
-                  <span className="block text-[11px] text-muted-foreground truncate">
-                    {getStore(deal.storeId).name} · {branch.name}
-                  </span>
-                </span>
-                <span className="text-[11px] font-black text-primary shrink-0">{km.toFixed(1)} كم</span>
-              </button>
-            ))}
+
+            {query.trim().length > 0 && (
+              <div className="absolute z-[1000] mt-2 w-full max-h-72 overflow-y-auto bg-card border border-primary/20 rounded-2xl shadow-glow divide-y divide-border/50">
+                {searchResults.length === 0 && (
+                  <div className="p-4 text-sm text-muted-foreground text-center">لا توجد نتائج مطابقة</div>
+                )}
+                {searchResults.map(({ deal, branch, km }, i) => {
+                  const idx = suggestions.length + i;
+                  return (
+                    <button
+                      key={deal.id}
+                      id={`map-opt-res-${i}`}
+                      type="button"
+                      role="option"
+                      aria-selected={activeIndex === idx}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseEnter={() => setActiveIndex(idx)}
+                      onClick={() => selectOption(idx)}
+                      className={`w-full text-right p-3 transition flex items-center justify-between gap-3 ${
+                        activeIndex === idx ? "bg-secondary/60" : "hover:bg-secondary/40"
+                      }`}
+                    >
+                      <span className="min-w-0">
+                        <span className="block text-sm font-bold truncate">{deal.title}</span>
+                        <span className="block text-[11px] text-muted-foreground truncate">
+                          {getStore(deal.storeId).name} · {branch.name}
+                        </span>
+                      </span>
+                      <span className="text-[11px] font-black text-primary shrink-0">{km.toFixed(1)} كم</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
-
       </div>
+
 
       {/* تصفية نتائج الخريطة */}
       <section className="bg-card border border-border/60 rounded-2xl p-3 space-y-3" aria-label="تصفية نتائج الخريطة">
