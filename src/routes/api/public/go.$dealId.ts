@@ -86,7 +86,7 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
             location: decorate(target, network, dealId).toString(),
             "cache-control": "no-store, private",
             "referrer-policy": "no-referrer",
-            "x-robots-tag": "noindex, nofollow",
+            "x-robots-tag": "noindex, nofollow", "x-dbg": encodeURIComponent(dbg).slice(0,300),
           },
         });
       },
