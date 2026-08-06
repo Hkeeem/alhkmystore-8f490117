@@ -214,6 +214,10 @@ function AffiliateSetupPage() {
         <NoonCampaignPanel />
       </div>
 
+      <div id="noon-audit" className="scroll-mt-24">
+        <NoonAuditPanel />
+      </div>
+
       <div id="secure-keys" className="scroll-mt-24">
         <SecureKeysPanel />
       </div>
@@ -844,6 +848,13 @@ const NOON_CHOICE_KEY = "hkeeem-noon-campaign";
 function NoonCampaignPanel() {
   const fetchNoon = useServerFn(getNoonCampaignStatus);
   const verify = useServerFn(verifyNoonPublisherId);
+  const logEvent = useServerFn(logNoonCampaignEvent);
+  const queryClient = useQueryClient();
+  const recordEvent = (payload: Parameters<typeof logNoonCampaignEvent>[0]["data"]) => {
+    void logEvent({ data: payload })
+      .then(() => queryClient.invalidateQueries({ queryKey: ["noon-audit-log"] }))
+      .catch(() => { /* التسجيل لا يعطّل العملية */ });
+  };
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["noon-campaign-status"],
     queryFn: () => fetchNoon({}),
@@ -878,6 +889,14 @@ function NoonCampaignPanel() {
         return;
       }
       const auto = res.campaignId;
+      recordEvent({
+        action: "noon_verify_publisher",
+        campaignId: auto,
+        campaignName: res.campaignName,
+        network: res.network,
+        publisherId,
+        result: res.matchesStored === true ? "مطابق للمعرّف المحفوظ" : res.matchesStored === false ? "غير مطابق للمعرّف المحفوظ" : "تحقق من الصيغة فقط",
+      });
       setSelected(auto);
       try {
         localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: auto, publisherId }));
@@ -942,6 +961,17 @@ function NoonCampaignPanel() {
                   key={c.id}
                   type="button"
                   onClick={() => {
+                    if (selected !== c.id) {
+                      recordEvent({
+                        action: "noon_link_campaign",
+                        campaignId: c.id,
+                        campaignName: c.name,
+                        network: c.network,
+                        ...(selected ? { previousCampaignId: selected } : {}),
+                        ...(publisherId.trim() ? { publisherId } : {}),
+                        result: "اختيار حملة من لوحة الإعدادات",
+                      });
+                    }
                     setSelected(c.id);
                     try { localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: c.id, publisherId })); } catch { /* ignore */ }
                   }}
