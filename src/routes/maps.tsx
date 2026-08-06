@@ -52,26 +52,40 @@ function MapsPage() {
 
   const requestLocation = useCallback((focusNearest = false) => {
     focusNearestRef.current = focusNearest;
-    if (!navigator.geolocation) {
-      setError("المتصفح لا يدعم تحديد الموقع.");
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocStatus("unsupported");
+      setError("متصفحك لا يدعم خدمة تحديد الموقع.");
       setUserLocation({ lat: 24.7136, lng: 46.6753 });
       return;
     }
     setLoading(true);
+    setLocStatus("loading");
     setError(null);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
         setLoading(false);
+        setLocStatus("granted");
+        setError(null);
       },
-      () => {
-        setError("يرجى السماح بالوصول للموقع لعرض العروض القريبة.");
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          setLocStatus("denied");
+          setError("تم رفض إذن الموقع. فعّل الإذن من إعدادات المتصفح، أو ابحث يدويًا عن المتجر أو الحي.");
+        } else if (err.code === err.TIMEOUT) {
+          setLocStatus("timeout");
+          setError("انتهت مهلة تحديد موقعك. حاول مرة أخرى، أو ابحث يدويًا عن المتجر أو الحي.");
+        } else {
+          setLocStatus("unavailable");
+          setError("تعذّر تحديد موقعك حاليًا (الخدمة غير متاحة). جرّب لاحقًا أو ابحث يدويًا.");
+        }
         setLoading(false);
         setUserLocation({ lat: 24.7136, lng: 46.6753 });
       },
       { timeout: 8000, enableHighAccuracy: true }
     );
   }, []);
+
 
 
   useEffect(() => {
