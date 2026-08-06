@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle, ArrowLeftRight, LifeBuoy } from "lucide-react";
@@ -1018,6 +1018,26 @@ function NoonCampaignPanel() {
             >
               {confirmMutation.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
               تأكيد
+            </Button>
+            <Button
+              variant="outline"
+              disabled={!selected}
+              onClick={() => {
+                const prev = selected;
+                recordEvent({
+                  action: "noon_unlink_campaign",
+                  ...(prev ? { previousCampaignId: prev } : {}),
+                  ...(publisherId.trim() ? { publisherId } : {}),
+                  result: "فك ربط الحملة من لوحة الإعدادات",
+                });
+                setSelected(null);
+                try { localStorage.removeItem(NOON_CHOICE_KEY); } catch { /* ignore */ }
+                setResult(null);
+                toast.success("تم فك ربط الحملة وتسجيل العملية");
+              }}
+              className="press-ripple"
+            >
+              فك الربط
             </Button>
           </div>
           {result && (
