@@ -31,7 +31,10 @@ function MapsPage() {
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
 
-  const requestLocation = useCallback(() => {
+  const focusNearestRef = useRef(false);
+
+  const requestLocation = useCallback((focusNearest = false) => {
+    focusNearestRef.current = focusNearest;
     if (!navigator.geolocation) {
       setError("المتصفح لا يدعم تحديد الموقع.");
       setUserLocation({ lat: 24.7136, lng: 46.6753 });
@@ -52,6 +55,7 @@ function MapsPage() {
       { timeout: 8000, enableHighAccuracy: true }
     );
   }, []);
+
 
   useEffect(() => {
     requestLocation();
