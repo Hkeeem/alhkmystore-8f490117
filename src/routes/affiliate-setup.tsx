@@ -872,7 +872,11 @@ function NoonCampaignPanel() {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [publisherId, setPublisherId] = useState("");
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [result, setResult] = useState<null | { ok: boolean; text: string; tone: "ok" | "warn" | "bad" }>(null);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const preview = buildNoonDeepLinkPreview({ publisherId, origin });
+
 
   useEffect(() => {
     try {
