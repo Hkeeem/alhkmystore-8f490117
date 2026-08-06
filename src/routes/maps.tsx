@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X } from "lucide-react";
+import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
-import { nearestBranch, nearestCity, distanceKm, type Branch } from "@/data/store-branches";
+import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -27,6 +27,9 @@ function MapsPage() {
   const [selectedDeal, setSelectedDeal] = useState<string | null>(focusDealId ?? null);
   const [query, setQuery] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
+  const [cityFilter, setCityFilter] = useState("الكل");
+  const [categoryFilter, setCategoryFilter] = useState("الكل");
+  const [storeFilter, setStoreFilter] = useState("الكل");
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
@@ -61,12 +64,23 @@ function MapsPage() {
     requestLocation();
   }, [requestLocation]);
 
-  /** ربط كل عرض بأقرب فرع فعلي لمتجره */
+  /** ربط كل عرض بأقرب فرع فعلي لمتجره (مع مراعاة التصفية) */
   const mapped = useMemo(() => {
     if (!userLocation) return [];
     return deals
+      .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
+      .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
-        const branch = nearestBranch(deal.storeId, userLocation);
+        const branch =
+          cityFilter === "الكل"
+            ? nearestBranch(deal.storeId, userLocation)
+            : branches
+                .filter((b) => b.storeId === deal.storeId && b.city === cityFilter)
+                .sort(
+                  (a, b) =>
+                    distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
+                    distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
+                )[0] ?? null;
         if (!branch) return null;
         return {
           deal,
@@ -75,10 +89,15 @@ function MapsPage() {
         };
       })
       .filter(Boolean) as { deal: (typeof deals)[number]; branch: Branch; km: number }[];
-  }, [userLocation]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter]);
 
   const nearbyDeals = useMemo(() => [...mapped].sort((a, b) => a.km - b.km), [mapped]);
   const city = userLocation ? nearestCity(userLocation) : null;
+
+  const categories = useMemo(() => ["الكل", ...Array.from(new Set(deals.map((d) => d.category)))], []);
+  const activeFiltersCount =
+    (cityFilter !== "الكل" ? 1 : 0) + (categoryFilter !== "الكل" ? 1 : 0) + (storeFilter !== "الكل" ? 1 : 0);
+
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -377,6 +396,98 @@ function MapsPage() {
         )}
 
       </div>
+
+      {/* تصفية نتائج الخريطة */}
+      <section className="bg-card border border-border/60 rounded-2xl p-3 space-y-3" aria-label="تصفية نتائج الخريطة">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-xs font-black">
+            <Filter className="w-4 h-4 text-primary" />
+            تصفية النتائج
+            {activeFiltersCount > 0 && (
+              <span className="bg-primary/10 text-primary px-2 py-0.5 rounded-full text-[10px]">
+                {activeFiltersCount} فلتر
+              </span>
+            )}
+          </div>
+          {activeFiltersCount > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setCityFilter("الكل");
+                setCategoryFilter("الكل");
+                setStoreFilter("الكل");
+              }}
+              className="text-[11px] font-bold text-muted-foreground hover:text-primary transition"
+            >
+              مسح الفلاتر
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">المدينة</span>
+            <select
+              value={cityFilter}
+              onChange={(e) => setCityFilter(e.target.value)}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="الكل">كل المدن</option>
+              {CITIES.map((c) => (
+                <option key={c.name} value={c.name}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="block text-[10px] text-muted-foreground mb-1">التاجر</span>
+            <select
+              value={storeFilter}
+              onChange={(e) => setStoreFilter(e.target.value)}
+              className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
+            >
+              <option value="الكل">كل التجّار</option>
+              {stores
+                .filter((s) => categoryFilter === "الكل" || s.category === categoryFilter)
+                .map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+            </select>
+          </label>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <button
+              key={c}
+              type="button"
+              aria-pressed={categoryFilter === c}
+              onClick={() => {
+                setCategoryFilter(c);
+                setStoreFilter("الكل");
+              }}
+              className={`text-[11px] font-bold px-2.5 py-1.5 rounded-xl border transition ${
+                categoryFilter === c
+                  ? "bg-primary text-secondary border-primary"
+                  : "bg-secondary/40 border-primary/20 hover:border-primary"
+              }`}
+            >
+              {c === "الكل" ? "كل الأنواع" : c}
+            </button>
+          ))}
+        </div>
+
+        <div className="text-[11px] text-muted-foreground">
+          {nearbyDeals.length > 0
+            ? `${nearbyDeals.length} عرض مطابق`
+            : "لا توجد عروض مطابقة لهذه التصفية — جرّب توسيع الخيارات"}
+        </div>
+      </section>
+
 
 
       <div
