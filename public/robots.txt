@@ -1,13 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /auth
-Disallow: /admin
-Disallow: /me
-Disallow: /merchant
-Disallow: /merchant-review
-Disallow: /sync-log
-Disallow: /affiliate-setup
-Disallow: /delete-account
-Disallow: /api/
 
 Sitemap: https://alhkmystore.lovable.app/sitemap.xml

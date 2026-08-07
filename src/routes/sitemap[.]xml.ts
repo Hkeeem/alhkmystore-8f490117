@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { deals } from "@/data/deals";
-import { coupons } from "@/data/coupons";
-import { REWARDS_CATALOG } from "@/lib/rewards";
 
 const BASE_URL = "https://alhkmystore.lovable.app";
 
@@ -39,28 +37,12 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "daily" as const,
             priority: "0.7",
           })),
-          ...coupons.map((c) => ({
-            path: `/coupons/${c.id}`,
-            changefreq: "weekly" as const,
-            priority: "0.6",
-          })),
-          ...REWARDS_CATALOG.map((r) => ({
-            path: `/rewards/${r.id}`,
-            changefreq: "monthly" as const,
-            priority: "0.5",
-          })),
         ];
 
-        const escapeXml = (v: string) =>
-          v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-
-        const seen = new Set<string>();
-        const urls = entries
-          .filter((e) => (seen.has(e.path) ? false : (seen.add(e.path), true)))
-          .map((e) =>
+        const urls = entries.map((e) =>
           [
             `  <url>`,
-            `    <loc>${escapeXml(BASE_URL + e.path)}</loc>`,
+            `    <loc>${BASE_URL}${e.path}</loc>`,
             e.changefreq ? `    <changefreq>${e.changefreq}</changefreq>` : null,
             e.priority ? `    <priority>${e.priority}</priority>` : null,
             `  </url>`,
