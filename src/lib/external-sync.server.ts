@@ -78,87 +78,6 @@ function amazonHttpCode(status: number, body: string): SyncFailureCode {
   return "http_error";
 }
 
-/* ------------------------ إعادة المحاولة التلقائية ------------------------ */
-
-/** أقصى عدد محاولات لكل طلب مزامنة (المحاولة الأولى + إعادتان) */
-export const MAX_SYNC_ATTEMPTS = 3;
-/** التأخير الأساسي بين المحاولات بالمللي ثانية (يتضاعف تصاعديًا) */
-const RETRY_BASE_DELAY_MS = 800;
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** هل يستحق رمز الاستجابة إعادة المحاولة؟ (تجاوز حد الطلبات أو خطأ مؤقت في الخادم) */
-function isRetryableStatus(status: number) {
-  return status === 429 || status === 408 || status === 425 || status >= 500;
-}
-
-/** مهلة الانتظار: نحترم Retry-After إن وُجدت، وإلا تصاعد أُسّي مع عشوائية بسيطة */
-function backoffDelay(attempt: number, retryAfter?: string | null) {
-  const seconds = retryAfter ? Number(retryAfter) : NaN;
-  if (Number.isFinite(seconds) && seconds > 0) return Math.min(seconds * 1000, 15_000);
-  return Math.min(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1), 8_000) + Math.floor(Math.random() * 250);
-}
-
-export type RetryOutcome =
-  | { ok: true; response: Response; attempts: number }
-  | { ok: false; attempts: number; code: SyncFailureCode; status?: number; body?: string; message: string };
-
-/**
- * ينفّذ طلبًا مع إعادة محاولة تلقائية عند انقطاع الاتصال (network/timeout)
- * أو تجاوز حد الطلبات (429) أو أخطاء الخادم المؤقتة (5xx).
- * أخطاء المصادقة أو الطلب الخاطئ لا يُعاد تنفيذها.
- */
-export async function fetchWithRetry(
-  buildRequest: () => Promise<Response> | Response,
-  label: string,
-): Promise<RetryOutcome> {
-  let lastMessage = "فشل الطلب";
-  let lastCode: SyncFailureCode = "network_error";
-
-  for (let attempt = 1; attempt <= MAX_SYNC_ATTEMPTS; attempt++) {
-    try {
-      const response = await buildRequest();
-      if (response.ok) return { ok: true, response, attempts: attempt };
-
-      const body = await response.text();
-      if (isRetryableStatus(response.status) && attempt < MAX_SYNC_ATTEMPTS) {
-        const wait = backoffDelay(attempt, response.headers.get("retry-after"));
-        console.warn(
-          `[${label}] المحاولة ${attempt}/${MAX_SYNC_ATTEMPTS} فشلت (${response.status}) — إعادة بعد ${wait}ms`,
-        );
-        await sleep(wait);
-        continue;
-      }
-      return {
-        ok: false,
-        attempts: attempt,
-        code: response.status === 429 ? "throttled" : "http_error",
-        status: response.status,
-        body,
-        message: `استجابة ${response.status} بعد ${attempt} من ${MAX_SYNC_ATTEMPTS} محاولات`,
-      };
-    } catch (error) {
-      lastCode = "network_error";
-      lastMessage = error instanceof Error ? error.message : "انقطاع في الاتصال";
-      if (attempt < MAX_SYNC_ATTEMPTS) {
-        const wait = backoffDelay(attempt);
-        console.warn(
-          `[${label}] المحاولة ${attempt}/${MAX_SYNC_ATTEMPTS} انقطعت (${lastMessage}) — إعادة بعد ${wait}ms`,
-        );
-        await sleep(wait);
-        continue;
-      }
-    }
-  }
-
-  return {
-    ok: false,
-    attempts: MAX_SYNC_ATTEMPTS,
-    code: lastCode,
-    message: `${lastMessage} — بعد ${MAX_SYNC_ATTEMPTS} محاولات متتالية`,
-  };
-}
-
 /* ------------------------------- Amazon ------------------------------- */
 
 async function hmac(key: ArrayBuffer | Uint8Array, data: string) {
@@ -231,54 +150,49 @@ async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
     ],
   });
 
-  const signRequest = async () => {
-    const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
-    const dateStamp = amzDate.slice(0, 8);
-    const canonicalHeaders =
-      `content-encoding:amz-1.0\n` +
-      `host:${AMAZON_HOST}\n` +
-      `x-amz-date:${amzDate}\n` +
-      `x-amz-target:${target}\n`;
-    const signedHeaders = "content-encoding;host;x-amz-date;x-amz-target";
-    const canonicalRequest = `POST\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${await sha256Hex(payload)}`;
-    const scope = `${dateStamp}/${AMAZON_REGION}/ProductAdvertisingAPI/aws4_request`;
-    const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${await sha256Hex(canonicalRequest)}`;
+  const amzDate = new Date().toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const canonicalHeaders =
+    `content-encoding:amz-1.0\n` +
+    `host:${AMAZON_HOST}\n` +
+    `x-amz-date:${amzDate}\n` +
+    `x-amz-target:${target}\n`;
+  const signedHeaders = "content-encoding;host;x-amz-date;x-amz-target";
+  const canonicalRequest = `POST\n${path}\n\n${canonicalHeaders}\n${signedHeaders}\n${await sha256Hex(payload)}`;
+  const scope = `${dateStamp}/${AMAZON_REGION}/ProductAdvertisingAPI/aws4_request`;
+  const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${scope}\n${await sha256Hex(canonicalRequest)}`;
 
-    let signingKey: ArrayBuffer | Uint8Array = new TextEncoder().encode(`AWS4${secretKey}`);
-    for (const part of [dateStamp, AMAZON_REGION, "ProductAdvertisingAPI", "aws4_request"]) {
-      signingKey = await hmac(signingKey, part);
-    }
-    const signature = toHex(await hmac(signingKey, stringToSign));
+  let signingKey: ArrayBuffer | Uint8Array = new TextEncoder().encode(`AWS4${secretKey}`);
+  for (const part of [dateStamp, AMAZON_REGION, "ProductAdvertisingAPI", "aws4_request"]) {
+    signingKey = await hmac(signingKey, part);
+  }
+  const signature = toHex(await hmac(signingKey, stringToSign));
 
-    return fetch(`https://${AMAZON_HOST}${path}`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "content-encoding": "amz-1.0",
-        "x-amz-date": amzDate,
-        "x-amz-target": target,
-        Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
-      },
-      body: payload,
-      signal: AbortSignal.timeout(12_000),
-    });
-  };
+  const response = await fetch(`https://${AMAZON_HOST}${path}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "content-encoding": "amz-1.0",
+      "x-amz-date": amzDate,
+      "x-amz-target": target,
+      Authorization: `AWS4-HMAC-SHA256 Credential=${accessKey}/${scope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+    },
+    body: payload,
+    signal: AbortSignal.timeout(12_000),
+  });
 
-  // كل طلب يُعاد توقيعه في كل محاولة (التوقيع مرتبط بالوقت)
-  const outcome = await fetchWithRetry(signRequest, `amazon:${keyword}`);
-  if (!outcome.ok) {
-    console.error(`Amazon PA-API failed after ${outcome.attempts} attempts`);
+  if (!response.ok) {
+    const body = await response.text();
+    console.error(`Amazon PA-API failed [${response.status}]`);
     await recordSyncEvent({
       source: "amazon",
       status: "failure",
-      code: outcome.status ? amazonHttpCode(outcome.status, outcome.body ?? "") : outcome.code,
-      message: outcome.message,
+      code: amazonHttpCode(response.status, body),
+      message: `استجابة أمازون ${response.status}`,
       keyword,
     });
     return [];
   }
-  const response = outcome.response;
-
 
   const json = (await response.json()) as {
     SearchResult?: {
@@ -356,46 +270,40 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
   }
   const url = `https://www.noon.com/_svc/catalog/api/v3/u/search?q=${encodeURIComponent(keyword)}&limit=20`;
 
-  const outcome = await fetchWithRetry(
-    () =>
-      fetch(url, {
-        headers: {
-          accept: "application/json",
-          "x-locale": "ar-sa",
-          "x-content-type": "application/json",
-          "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
-        },
-        signal: AbortSignal.timeout(12_000),
-      }),
-    `noon:${keyword}`,
-  );
-
-  if (!outcome.ok) {
-    console.error(`noon catalog failed after ${outcome.attempts} attempts`);
-    await recordSyncEvent({
-      source: "noon",
-      status: "failure",
-      code: outcome.code,
-      message: outcome.message,
-      keyword,
-    });
-    return [];
-  }
-
   let json: { hits?: NoonHit[]; products?: NoonHit[] };
   try {
-    json = (await outcome.response.json()) as { hits?: NoonHit[]; products?: NoonHit[] };
+    const response = await fetch(url, {
+      headers: {
+        accept: "application/json",
+        "x-locale": "ar-sa",
+        "x-content-type": "application/json",
+        "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
+      },
+      signal: AbortSignal.timeout(12_000),
+    });
+    if (!response.ok) {
+      console.error(`noon catalog failed [${response.status}]`);
+      await recordSyncEvent({
+        source: "noon",
+        status: "failure",
+        code: response.status === 429 ? "throttled" : "http_error",
+        message: `استجابة نون ${response.status}`,
+        keyword,
+      });
+      return [];
+    }
+    json = (await response.json()) as { hits?: NoonHit[]; products?: NoonHit[] };
   } catch (error) {
+    console.error("noon catalog threw", error);
     await recordSyncEvent({
       source: "noon",
       status: "failure",
-      code: "http_error",
-      message: error instanceof Error ? error.message : "استجابة نون غير صالحة",
+      code: "network_error",
+      message: error instanceof Error ? error.message : "تعذّر الاتصال بكتالوج نون",
       keyword,
     });
     return [];
   }
-
 
   const hits = json.hits ?? json.products ?? [];
   const offers: ExternalOffer[] = [];
