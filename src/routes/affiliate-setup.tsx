@@ -416,12 +416,14 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   });
 
   type SyncKey = "amazon" | "noon" | "all";
-  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" } | null>>({
+  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>>({
     amazon: null,
     noon: null,
     all: null,
   });
   const timersRef = useRef<Record<string, ReturnType<typeof setInterval> | undefined>>({});
+  const cancelledRef = useRef<Record<string, boolean>>({});
+  const [cancelled, setCancelled] = useState<Record<string, boolean>>({});
 
   useEffect(() => () => {
     Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
@@ -444,12 +446,28 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
   };
 
+  const cancelSync = (key: SyncKey) => {
+    cancelledRef.current[key] = true;
+    setCancelled((c) => ({ ...c, [key]: true }));
+    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    setProgress((p) => ({
+      ...p,
+      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", done: "cancelled" },
+    }));
+    toast.info(
+      key === "all" ? "تم إلغاء مزامنة كل المصادر" : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
+    );
+  };
+
   const sync = useMutation({
     mutationFn: (source: SyncKey) => {
+      cancelledRef.current[source] = false;
+      setCancelled((c) => ({ ...c, [source]: false }));
       startProgress(source);
       return startSync({ data: { source } });
     },
     onSuccess: (res, source) => {
+      if (cancelledRef.current[source]) return;
       if (res.success) {
         const count = source === "amazon" ? res.sources.amazon : source === "noon" ? res.sources.noon : res.upserted;
         endProgress(source, true, `اكتملت المزامنة — ${count} عرضًا`);
@@ -465,12 +483,15 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       }
     },
     onError: (_e, source) => {
+      if (cancelledRef.current[source]) return;
       endProgress(source, false, "غير مصرّح بتشغيل التحديث");
       toast.error("غير مصرّح لك بتشغيل التحديث");
     },
   });
 
-  const runningKey = sync.isPending ? (sync.variables as SyncKey) : null;
+  const pendingKey = sync.isPending ? (sync.variables as SyncKey) : null;
+  const runningKey = pendingKey && !cancelled[pendingKey] ? pendingKey : null;
+
 
   const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
   const noonReady = Boolean(status?.noonAffiliateId);
