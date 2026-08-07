@@ -84,8 +84,52 @@ export const logNoonCampaignEvent = createServerFn({ method: "POST" })
       meta,
     });
     if (error) throw new Error(error.message);
-    return { ok: true as const };
+
+    // تنبيه فوري لكل المشرفين بهذا التغيير الحسّاس
+    let notified = 0;
+    try {
+      const { data: actor } = await supabaseAdmin
+        .from("profiles")
+        .select("display_name")
+        .eq("id", context.userId)
+        .maybeSingle();
+      const actorName = (actor?.display_name as string) || "مشرف";
+
+      const { data: staffRows } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id")
+        .in("role", ["super_admin", "admin", "support", "content_manager"]);
+      const recipients = [...new Set((staffRows ?? []).map((r) => r.user_id as string))];
+
+      if (recipients.length) {
+        const bits: Array<string> = [];
+        if (data.campaignName) bits.push(`الحملة: ${data.campaignName}`);
+        else if (data.campaignId) bits.push(`الحملة: ${data.campaignId}`);
+        if (data.previousCampaignId) bits.push(`السابقة: ${data.previousCampaignId}`);
+        if (data.publisherId) bits.push(`Publisher ID: ${maskSecretValue(data.publisherId)}`);
+        if (data.result) bits.push(data.result);
+
+        const title = `noon — ${NOON_AUDIT_ACTIONS[data.action]}`;
+        const body = `بواسطة ${actorName}${bits.length ? ` • ${bits.join(" • ")}` : ""}`;
+
+        const { error: notifyError } = await supabaseAdmin.from("notifications").insert(
+          recipients.map((uid) => ({
+            user_id: uid,
+            title,
+            body,
+            link: "/affiliate-setup",
+            is_broadcast: false,
+          })),
+        );
+        if (!notifyError) notified = recipients.length;
+      }
+    } catch {
+      // فشل التنبيه لا يُبطل تسجيل الحدث
+    }
+
+    return { ok: true as const, notified };
   });
+
 
 /** قراءة سجل تدقيق noon — للمشرفين فقط. */
 export const listNoonAuditLog = createServerFn({ method: "GET" })
