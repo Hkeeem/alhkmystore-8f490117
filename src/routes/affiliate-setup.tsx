@@ -561,12 +561,25 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
                   {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
                 </Button>
+                {runningKey === s.key && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full press-ripple border-destructive/40 text-destructive"
+                    onClick={() => cancelSync(s.key)}
+                    aria-label={`إلغاء مزامنة ${s.name}`}
+                  >
+                    <XCircle className="size-4" /> إلغاء المزامنة
+                  </Button>
+                )}
                 {progress[s.key] && (
                   <div className="space-y-1" role="status" aria-live="polite">
                     <Progress value={progress[s.key]!.value} aria-label={`تقدّم مزامنة ${s.name}`} />
                     <p
                       className={`text-[11px] ${
-                        progress[s.key]!.done === "fail" ? "text-destructive" : "text-muted-foreground"
+                        progress[s.key]!.done === "fail" || progress[s.key]!.done === "cancelled"
+                          ? "text-destructive"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {progress[s.key]!.stage}
