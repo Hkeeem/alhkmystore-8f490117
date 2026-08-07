@@ -555,7 +555,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   size="sm"
                   variant="secondary"
                   className="w-full press-ripple"
-                  disabled={!user || !s.ready || sync.isPending}
+                  disabled={!user || !s.ready || runningKey !== null}
                   onClick={() => sync.mutate(s.key)}
                 >
                   {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
@@ -642,7 +642,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
         <Button
           className="w-full press-ripple"
-          disabled={!anyReady || !user || sync.isPending}
+          disabled={!anyReady || !user || runningKey !== null}
           onClick={() => sync.mutate("all")}
         >
           {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
