@@ -648,10 +648,20 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
           {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
           {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
         </Button>
+        {runningKey === "all" && (
+          <Button
+            variant="outline"
+            className="w-full press-ripple border-destructive/40 text-destructive"
+            onClick={() => cancelSync("all")}
+            aria-label="إلغاء مزامنة كل المصادر"
+          >
+            <XCircle className="size-4" /> إلغاء المزامنة
+          </Button>
+        )}
         {progress.all && (
           <div className="space-y-1" role="status" aria-live="polite">
             <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
-            <p className={`text-[11px] text-center ${progress.all.done === "fail" ? "text-destructive" : "text-muted-foreground"}`}>
+            <p className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
               {progress.all.stage}
             </p>
           </div>
