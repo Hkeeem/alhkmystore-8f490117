@@ -416,12 +416,14 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   });
 
   type SyncKey = "amazon" | "noon" | "all";
-  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" } | null>>({
+  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>>({
     amazon: null,
     noon: null,
     all: null,
   });
   const timersRef = useRef<Record<string, ReturnType<typeof setInterval> | undefined>>({});
+  const cancelledRef = useRef<Record<string, boolean>>({});
+  const [cancelled, setCancelled] = useState<Record<string, boolean>>({});
 
   useEffect(() => () => {
     Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
@@ -444,12 +446,28 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
   };
 
+  const cancelSync = (key: SyncKey) => {
+    cancelledRef.current[key] = true;
+    setCancelled((c) => ({ ...c, [key]: true }));
+    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    setProgress((p) => ({
+      ...p,
+      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", done: "cancelled" },
+    }));
+    toast.info(
+      key === "all" ? "تم إلغاء مزامنة كل المصادر" : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
+    );
+  };
+
   const sync = useMutation({
     mutationFn: (source: SyncKey) => {
+      cancelledRef.current[source] = false;
+      setCancelled((c) => ({ ...c, [source]: false }));
       startProgress(source);
       return startSync({ data: { source } });
     },
     onSuccess: (res, source) => {
+      if (cancelledRef.current[source]) return;
       if (res.success) {
         const count = source === "amazon" ? res.sources.amazon : source === "noon" ? res.sources.noon : res.upserted;
         endProgress(source, true, `اكتملت المزامنة — ${count} عرضًا`);
@@ -465,12 +483,15 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       }
     },
     onError: (_e, source) => {
+      if (cancelledRef.current[source]) return;
       endProgress(source, false, "غير مصرّح بتشغيل التحديث");
       toast.error("غير مصرّح لك بتشغيل التحديث");
     },
   });
 
-  const runningKey = sync.isPending ? (sync.variables as SyncKey) : null;
+  const pendingKey = sync.isPending ? (sync.variables as SyncKey) : null;
+  const runningKey = pendingKey && !cancelled[pendingKey] ? pendingKey : null;
+
 
   const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
   const noonReady = Boolean(status?.noonAffiliateId);
@@ -534,18 +555,31 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   size="sm"
                   variant="secondary"
                   className="w-full press-ripple"
-                  disabled={!user || !s.ready || sync.isPending}
+                  disabled={!user || !s.ready || runningKey !== null}
                   onClick={() => sync.mutate(s.key)}
                 >
                   {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
                   {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
                 </Button>
+                {runningKey === s.key && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full press-ripple border-destructive/40 text-destructive"
+                    onClick={() => cancelSync(s.key)}
+                    aria-label={`إلغاء مزامنة ${s.name}`}
+                  >
+                    <XCircle className="size-4" /> إلغاء المزامنة
+                  </Button>
+                )}
                 {progress[s.key] && (
                   <div className="space-y-1" role="status" aria-live="polite">
                     <Progress value={progress[s.key]!.value} aria-label={`تقدّم مزامنة ${s.name}`} />
                     <p
                       className={`text-[11px] ${
-                        progress[s.key]!.done === "fail" ? "text-destructive" : "text-muted-foreground"
+                        progress[s.key]!.done === "fail" || progress[s.key]!.done === "cancelled"
+                          ? "text-destructive"
+                          : "text-muted-foreground"
                       }`}
                     >
                       {progress[s.key]!.stage}
@@ -608,16 +642,26 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
         <Button
           className="w-full press-ripple"
-          disabled={!anyReady || !user || sync.isPending}
+          disabled={!anyReady || !user || runningKey !== null}
           onClick={() => sync.mutate("all")}
         >
           {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
           {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
         </Button>
+        {runningKey === "all" && (
+          <Button
+            variant="outline"
+            className="w-full press-ripple border-destructive/40 text-destructive"
+            onClick={() => cancelSync("all")}
+            aria-label="إلغاء مزامنة كل المصادر"
+          >
+            <XCircle className="size-4" /> إلغاء المزامنة
+          </Button>
+        )}
         {progress.all && (
           <div className="space-y-1" role="status" aria-live="polite">
             <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
-            <p className={`text-[11px] text-center ${progress.all.done === "fail" ? "text-destructive" : "text-muted-foreground"}`}>
+            <p className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
               {progress.all.stage}
             </p>
           </div>
