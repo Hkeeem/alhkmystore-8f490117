@@ -66,10 +66,20 @@ export async function recordSyncEvent(entry: {
       message: entry.message ? entry.message.slice(0, 500) : null,
       keyword: entry.keyword ?? null,
     });
+    if (entry.status === "failure") {
+      const { maybeAlertSyncFailure } = await import("@/lib/sync-alerts.server");
+      await maybeAlertSyncFailure({
+        source: entry.source,
+        ...(entry.code ? { code: entry.code } : {}),
+        ...(entry.message ? { message: entry.message } : {}),
+        ...(entry.keyword ? { keyword: entry.keyword } : {}),
+      });
+    }
   } catch (error) {
     console.error("recordSyncEvent failed", error);
   }
 }
+
 
 function amazonHttpCode(status: number, body: string): SyncFailureCode {
   if (status === 429) return "throttled";
