@@ -416,7 +416,8 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   });
 
   type SyncKey = "amazon" | "noon" | "all";
-  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>>({
+  type ProgressState = { value: number; stage: string; elapsed: number; done?: "ok" | "fail" | "cancelled" };
+  const [progress, setProgress] = useState<Record<SyncKey, ProgressState | null>>({
     amazon: null,
     noon: null,
     all: null,
@@ -424,6 +425,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const timersRef = useRef<Record<string, ReturnType<typeof setInterval> | undefined>>({});
   const cancelledRef = useRef<Record<string, boolean>>({});
   const [cancelled, setCancelled] = useState<Record<string, boolean>>({});
+  const busyRef = useRef(false);
 
   useEffect(() => () => {
     Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
@@ -432,18 +434,25 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const startProgress = (key: SyncKey) => {
     const stages = ["الاتصال بالمصدر…", "سحب العروض…", "تحليل الأسعار…", "حفظ التحديثات…"];
     let value = 6;
-    setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]! } }));
+    const startedAt = Date.now();
+    setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]!, elapsed: 0 } }));
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
     timersRef.current[key] = setInterval(() => {
       value = Math.min(92, value + Math.random() * 9);
       const stage = stages[Math.min(stages.length - 1, Math.floor(value / 25))]!;
-      setProgress((p) => ({ ...p, [key]: { value, stage } }));
+      setProgress((p) => ({
+        ...p,
+        [key]: { value, stage, elapsed: Math.round((Date.now() - startedAt) / 1000) },
+      }));
     }, 700);
   };
 
   const endProgress = (key: SyncKey, ok: boolean, stage: string) => {
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
-    setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
+    setProgress((p) => ({
+      ...p,
+      [key]: { value: 100, stage, elapsed: p[key]?.elapsed ?? 0, done: ok ? "ok" : "fail" },
+    }));
   };
 
   const cancelSync = (key: SyncKey) => {
@@ -452,7 +461,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
     setProgress((p) => ({
       ...p,
-      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", done: "cancelled" },
+      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", elapsed: p[key]?.elapsed ?? 0, done: "cancelled" },
     }));
     toast.info(
       key === "all" ? "تم إلغاء مزامنة كل المصادر" : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
@@ -487,10 +496,25 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       endProgress(source, false, "غير مصرّح بتشغيل التحديث");
       toast.error("غير مصرّح لك بتشغيل التحديث");
     },
+    onSettled: () => {
+      busyRef.current = false;
+    },
   });
 
   const pendingKey = sync.isPending ? (sync.variables as SyncKey) : null;
   const runningKey = pendingKey && !cancelled[pendingKey] ? pendingKey : null;
+  const busy = sync.isPending;
+
+  /** يمنع تشغيل دورة جديدة أثناء وجود دورة قيد التنفيذ (نقر متكرر أو مزدوج) */
+  const startSyncOnce = (key: SyncKey) => {
+    if (busyRef.current || sync.isPending) {
+      toast.info("هناك دورة مزامنة قيد التنفيذ بالفعل — انتظر انتهاءها أو ألغِها.");
+      return;
+    }
+    busyRef.current = true;
+    sync.mutate(key);
+  };
+
 
 
   const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
@@ -555,8 +579,9 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   size="sm"
                   variant="secondary"
                   className="w-full press-ripple"
-                  disabled={!user || !s.ready || runningKey !== null}
-                  onClick={() => sync.mutate(s.key)}
+                  disabled={!user || !s.ready || busy}
+                  onClick={() => startSyncOnce(s.key)}
+
                 >
                   {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
                   {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
@@ -642,11 +667,17 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
         <Button
           className="w-full press-ripple"
-          disabled={!anyReady || !user || runningKey !== null}
-          onClick={() => sync.mutate("all")}
+          disabled={!anyReady || !user || busy}
+          aria-busy={runningKey === "all"}
+          aria-live="polite"
+          onClick={() => startSyncOnce("all")}
         >
-          {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
-          {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
+          {busy ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          {runningKey === "all"
+            ? `جارٍ سحب العروض… ${Math.round(progress.all?.value ?? 0)}%`
+            : busy
+              ? "دورة مزامنة قيد التنفيذ…"
+              : "تحديث كل المصادر الآن"}
         </Button>
         {runningKey === "all" && (
           <Button
@@ -661,11 +692,15 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         {progress.all && (
           <div className="space-y-1" role="status" aria-live="polite">
             <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
-            <p className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
-              {progress.all.stage}
-            </p>
+            <div className={`flex items-center justify-between text-[11px] ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
+              <span>{progress.all.stage}</span>
+              <span dir="ltr">
+                {Math.round(progress.all.value)}% · {progress.all.elapsed}s
+              </span>
+            </div>
           </div>
         )}
+
         <p className="text-[11px] text-muted-foreground text-center">
           التحديث التلقائي يعمل كل ٦ ساعات؛ هذا الزر لتشغيل دورة فورية.
         </p>
