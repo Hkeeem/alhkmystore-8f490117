@@ -579,8 +579,9 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   size="sm"
                   variant="secondary"
                   className="w-full press-ripple"
-                  disabled={!user || !s.ready || runningKey !== null}
-                  onClick={() => sync.mutate(s.key)}
+                  disabled={!user || !s.ready || busy}
+                  onClick={() => startSyncOnce(s.key)}
+
                 >
                   {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
                   {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
