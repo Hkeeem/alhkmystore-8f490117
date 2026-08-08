@@ -667,11 +667,17 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
         <Button
           className="w-full press-ripple"
-          disabled={!anyReady || !user || runningKey !== null}
-          onClick={() => sync.mutate("all")}
+          disabled={!anyReady || !user || busy}
+          aria-busy={runningKey === "all"}
+          aria-live="polite"
+          onClick={() => startSyncOnce("all")}
         >
-          {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
-          {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
+          {busy ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          {runningKey === "all"
+            ? `جارٍ سحب العروض… ${Math.round(progress.all?.value ?? 0)}%`
+            : busy
+              ? "دورة مزامنة قيد التنفيذ…"
+              : "تحديث كل المصادر الآن"}
         </Button>
         {runningKey === "all" && (
           <Button
@@ -686,11 +692,15 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         {progress.all && (
           <div className="space-y-1" role="status" aria-live="polite">
             <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
-            <p className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
-              {progress.all.stage}
-            </p>
+            <div className={`flex items-center justify-between text-[11px] ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
+              <span>{progress.all.stage}</span>
+              <span dir="ltr">
+                {Math.round(progress.all.value)}% · {progress.all.elapsed}s
+              </span>
+            </div>
           </div>
         )}
+
         <p className="text-[11px] text-muted-foreground text-center">
           التحديث التلقائي يعمل كل ٦ ساعات؛ هذا الزر لتشغيل دورة فورية.
         </p>
