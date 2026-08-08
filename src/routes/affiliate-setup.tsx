@@ -416,7 +416,8 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   });
 
   type SyncKey = "amazon" | "noon" | "all";
-  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>>({
+  type ProgressState = { value: number; stage: string; elapsed: number; done?: "ok" | "fail" | "cancelled" };
+  const [progress, setProgress] = useState<Record<SyncKey, ProgressState | null>>({
     amazon: null,
     noon: null,
     all: null,
@@ -424,6 +425,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const timersRef = useRef<Record<string, ReturnType<typeof setInterval> | undefined>>({});
   const cancelledRef = useRef<Record<string, boolean>>({});
   const [cancelled, setCancelled] = useState<Record<string, boolean>>({});
+  const busyRef = useRef(false);
 
   useEffect(() => () => {
     Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
@@ -432,18 +434,25 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const startProgress = (key: SyncKey) => {
     const stages = ["الاتصال بالمصدر…", "سحب العروض…", "تحليل الأسعار…", "حفظ التحديثات…"];
     let value = 6;
-    setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]! } }));
+    const startedAt = Date.now();
+    setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]!, elapsed: 0 } }));
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
     timersRef.current[key] = setInterval(() => {
       value = Math.min(92, value + Math.random() * 9);
       const stage = stages[Math.min(stages.length - 1, Math.floor(value / 25))]!;
-      setProgress((p) => ({ ...p, [key]: { value, stage } }));
+      setProgress((p) => ({
+        ...p,
+        [key]: { value, stage, elapsed: Math.round((Date.now() - startedAt) / 1000) },
+      }));
     }, 700);
   };
 
   const endProgress = (key: SyncKey, ok: boolean, stage: string) => {
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
-    setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
+    setProgress((p) => ({
+      ...p,
+      [key]: { value: 100, stage, elapsed: p[key]?.elapsed ?? 0, done: ok ? "ok" : "fail" },
+    }));
   };
 
   const cancelSync = (key: SyncKey) => {
@@ -452,7 +461,7 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     timersRef.current[key] && clearInterval(timersRef.current[key]!);
     setProgress((p) => ({
       ...p,
-      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", done: "cancelled" },
+      [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", elapsed: p[key]?.elapsed ?? 0, done: "cancelled" },
     }));
     toast.info(
       key === "all" ? "تم إلغاء مزامنة كل المصادر" : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
@@ -487,10 +496,25 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       endProgress(source, false, "غير مصرّح بتشغيل التحديث");
       toast.error("غير مصرّح لك بتشغيل التحديث");
     },
+    onSettled: () => {
+      busyRef.current = false;
+    },
   });
 
   const pendingKey = sync.isPending ? (sync.variables as SyncKey) : null;
   const runningKey = pendingKey && !cancelled[pendingKey] ? pendingKey : null;
+  const busy = sync.isPending;
+
+  /** يمنع تشغيل دورة جديدة أثناء وجود دورة قيد التنفيذ (نقر متكرر أو مزدوج) */
+  const startSyncOnce = (key: SyncKey) => {
+    if (busyRef.current || sync.isPending) {
+      toast.info("هناك دورة مزامنة قيد التنفيذ بالفعل — انتظر انتهاءها أو ألغِها.");
+      return;
+    }
+    busyRef.current = true;
+    sync.mutate(key);
+  };
+
 
 
   const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
