@@ -20,6 +20,67 @@ const CODE_LABELS: Record<string, string> = {
 const SOURCE_LABELS: Record<string, string> = { amazon: "أمازون", noon: "نون" };
 
 /**
+ * إرسال التنبيه عبر قنوات خارجية: البريد الإلكتروني (Resend) وSlack.
+ * أي قناة غير مهيّأة تُتجاوز بهدوء دون إفشال التنبيه الداخلي.
+ */
+async function notifyExternalChannels(alert: { title: string; body: string }): Promise<{
+  email: string;
+  slack: string;
+}> {
+  const out = { email: "skipped", slack: "skipped" };
+
+  // 1) البريد الإلكتروني — نفس قائمة مستلمي التقارير المفعّلين
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data } = await supabaseAdmin
+      .from("report_recipients")
+      .select("email")
+      .eq("active", true);
+    const emails = (data ?? []).map((r) => r.email as string).filter(Boolean);
+    if (!emails.length) {
+      out.email = "no_recipients";
+    } else if (!process.env["RESEND_API_KEY"]) {
+      out.email = "not_configured";
+    } else {
+      const { sendReportEmail } = await import("@/lib/weekly-report.server");
+      const html = `<div dir="rtl" style="font-family:system-ui,sans-serif">
+        <h2 style="color:#b42318;margin:0 0 8px">${alert.title}</h2>
+        <p style="font-size:15px;line-height:1.8">${alert.body}</p>
+        <p style="font-size:13px;color:#666">راجع سجل المزامنة داخل لوحة التحكم لمعرفة التفاصيل.</p>
+      </div>`;
+      await sendReportEmail(emails, `[حكيم AI] ${alert.title}`, html, `${alert.title}\n${alert.body}`);
+      out.email = `sent:${emails.length}`;
+    }
+  } catch (error) {
+    console.error("sync alert email failed", error);
+    out.email = "failed";
+  }
+
+  // 2) Slack — عبر Incoming Webhook إن كان مضبوطًا
+  const webhook = process.env["SLACK_ALERT_WEBHOOK_URL"];
+  if (!webhook) return out;
+  try {
+    const res = await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: `:rotating_light: *${alert.title}*\n${alert.body}` }),
+      signal: AbortSignal.timeout(8_000),
+    });
+    if (!res.ok) {
+      console.error(`slack alert failed [${res.status}]: ${await res.text()}`);
+      out.slack = `failed_${res.status}`;
+    } else {
+      out.slack = "sent";
+    }
+  } catch (error) {
+    console.error("slack alert threw", error);
+    out.slack = "failed";
+  }
+
+  return out;
+}
+
+/**
  * تُستدعى بعد تسجيل حدث فشل. تحسب عدد الإخفاقات المتتالية منذ آخر نجاح،
  * وترسل تنبيهًا لكل الفريق الإداري مرة واحدة فقط لكل سلسلة إخفاقات.
  */
