@@ -90,6 +90,9 @@ export async function maybeAlertSyncFailure(entry: {
       );
     }
 
+    // قناة إضافية: بريد إلكتروني (Resend) + Slack إن كان الويبهوك مضبوطًا
+    const channels = await notifyExternalChannels({ title, body });
+
     await supabaseAdmin.from("admin_audit_log").insert({
       actor_id: null,
       action: "sync_failure_alert",
@@ -100,10 +103,13 @@ export async function maybeAlertSyncFailure(entry: {
         code: entry.code ?? "unknown",
         message: entry.message?.slice(0, 300) ?? "",
         notified: String(recipients.length),
+        email: channels.email,
+        slack: channels.slack,
       },
     });
 
-    return { alerted: true as const, failures, notified: recipients.length };
+    return { alerted: true as const, failures, notified: recipients.length, channels };
+
   } catch (error) {
     console.error("maybeAlertSyncFailure failed", error);
     return { alerted: false as const, failures: 0 };
