@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.lovable.alhkmystore.twa",
+        "sha256_cert_fingerprints": ["22:BD:01:BB:F5:0B:76:2E:B8:F8:CA:09:02:02:1C:EE:DB:44:32:BB:87:E3:FD:D3:A5:89:01:9B:57:35:C7:F5"]
+      }
+    }]
