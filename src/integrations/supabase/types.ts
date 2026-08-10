@@ -695,6 +695,45 @@ export type Database = {
         }
         Relationships: []
       }
+      search_console_snapshots: {
+        Row: {
+          created_at: string
+          details: Json | null
+          id: string
+          indexed: number
+          indexed_urls: number
+          inspected_urls: number
+          site_url: string
+          sitemap_errors: number
+          sitemap_warnings: number
+          submitted: number
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          indexed?: number
+          indexed_urls?: number
+          inspected_urls?: number
+          site_url: string
+          sitemap_errors?: number
+          sitemap_warnings?: number
+          submitted?: number
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          indexed?: number
+          indexed_urls?: number
+          inspected_urls?: number
+          site_url?: string
+          sitemap_errors?: number
+          sitemap_warnings?: number
+          submitted?: number
+        }
+        Relationships: []
+      }
       suggestions: {
         Row: {
           body: string

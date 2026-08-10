@@ -224,11 +224,15 @@ function AffiliateSetupPage() {
 
       <div id="sync-schedule" className="scroll-mt-24 space-y-3">
         <SyncSchedulePanel />
-        <div className="text-sm">
+        <div className="flex flex-wrap gap-4 text-sm">
           <Link to="/sync-log" className="text-primary underline underline-offset-4">
             عرض سجل عمليات المزامنة الكامل (Amazon وnoon) ←
           </Link>
+          <Link to="/search-console" className="text-primary underline underline-offset-4">
+            سجل الزحف والفهرسة من Search Console ←
+          </Link>
         </div>
+
       </div>
 
       <SyncFailuresPanel />
