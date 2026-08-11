@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CalendarClock, Check, RefreshCw, PauseCircle, PlayCircle } from "lucide-react";
+import { CalendarClock, Check, RefreshCw, PauseCircle, PlayCircle, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { getSyncSchedule, setSyncSchedule } from "@/lib/affiliate-setup.functions";
+import { getSyncSchedule, runExternalSyncNow, setSyncSchedule } from "@/lib/affiliate-setup.functions";
+
 
 /** خيارات فترات جاهزة (تعبير cron) */
 const PRESETS: Array<{ label: string; cron: string }> = [
@@ -23,9 +24,37 @@ function describeCron(cron: string) {
   return found ? found.label : `مخصص (${cron})`;
 }
 
+type TestSource = "amazon" | "noon";
+
 export function SyncSchedulePanel() {
   const fetchSchedule = useServerFn(getSyncSchedule);
   const saveSchedule = useServerFn(setSyncSchedule);
+  const runNow = useServerFn(runExternalSyncNow);
+  const [testing, setTesting] = useState<TestSource | null>(null);
+  const [lastTest, setLastTest] = useState<{ source: TestSource; ok: boolean; at: string; detail: string } | null>(null);
+
+  async function runTest(source: TestSource) {
+    setTesting(source);
+    const label = source === "amazon" ? "أمازون" : "نون";
+    try {
+      const res = (await runNow({ data: { source } })) as
+        | { success: true; inserted?: number; updated?: number; total?: number }
+        | { success: false; error?: string };
+      const ok = Boolean(res?.success);
+      const detail = ok
+        ? `مضاف ${(res as { inserted?: number }).inserted ?? 0} · محدّث ${(res as { updated?: number }).updated ?? 0}`
+        : "فشل الاختبار";
+      setLastTest({ source, ok, at: new Date().toISOString(), detail });
+      if (ok) toast.success(`اختبار مزامنة ${label} نجح — ${detail}`);
+      else toast.error(`اختبار مزامنة ${label} فشل`);
+    } catch {
+      setLastTest({ source, ok: false, at: new Date().toISOString(), detail: "غير مصرّح أو خطأ في الخادم" });
+      toast.error("تعذّر تشغيل الاختبار — للمشرفين فقط");
+    } finally {
+      setTesting(null);
+    }
+  }
+
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sync-schedule"],
@@ -140,6 +169,38 @@ export function SyncSchedulePanel() {
           {save.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
           حفظ الجدولة
         </Button>
+
+        <div className="space-y-2 rounded-lg border border-dashed p-3">
+          <p className="text-sm font-semibold flex items-center gap-2">
+            <FlaskConical className="size-4" /> تشغيل اختبار فوري
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            يجرّب سحب العروض الآن دون حفظ أو تغيير الجدولة.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {(["amazon", "noon"] as TestSource[]).map((s) => (
+              <Button
+                key={s}
+                variant="outline"
+                size="sm"
+                className="press-ripple"
+                disabled={testing !== null}
+                onClick={() => runTest(s)}
+                aria-label={`تشغيل اختبار مزامنة ${s === "amazon" ? "أمازون" : "نون"}`}
+              >
+                {testing === s ? <RefreshCw className="size-4 animate-spin" /> : <FlaskConical className="size-4" />}
+                اختبار {s === "amazon" ? "أمازون" : "نون"}
+              </Button>
+            ))}
+          </div>
+          {lastTest && (
+            <p className={`text-[11px] ${lastTest.ok ? "text-primary" : "text-destructive"}`}>
+              آخر اختبار ({lastTest.source === "amazon" ? "أمازون" : "نون"}):{" "}
+              {lastTest.ok ? "نجح" : "فشل"} · {lastTest.detail} ·{" "}
+              {new Date(lastTest.at).toLocaleString("ar-SA")}
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
