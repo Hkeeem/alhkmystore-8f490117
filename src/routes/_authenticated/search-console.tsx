@@ -72,7 +72,18 @@ function SearchConsolePage() {
     onSuccess: () => void snapshots.refetch(),
   });
 
+  const runInspection = useServerFn(inspectPages);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>(MONITORED_PATHS.slice(0, 3));
+  const inspection = useMutation({
+    mutationFn: (paths: string[]) => runInspection({ data: { siteUrl, paths } }),
+    onSuccess: () => void snapshots.refetch(),
+  });
+
+  const togglePath = (p: string) =>
+    setSelectedPaths((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]));
+
   const data = report.data;
+
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
