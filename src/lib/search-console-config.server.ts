@@ -1,17 +1,2 @@
 export { listVerifiedProperties } from "@/lib/search-console.server";
-
-export const SITE_TARGET = "https://alhkmystore.lovable.app/";
-
-// Core routes we monitor for crawl/index health after every deals update.
-export const MONITORED_PATHS = [
-  "/",
-  "/deals",
-  "/deals/panda-vs-othaim-comparison",
-  "/coupons",
-  "/stores",
-  "/market",
-  "/compare",
-  "/real-estate",
-  "/cars",
-  "/maps",
-];
+export { MONITORED_PATHS, SITE_TARGET } from "@/lib/search-console-paths";
