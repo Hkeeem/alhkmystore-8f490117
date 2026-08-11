@@ -127,3 +127,55 @@ async function notifyStaff(message: string) {
     console.error("search console alert fan-out failed", error);
   }
 }
+
+export type UrlInspectionReport =
+  | { status: "error"; error: string }
+  | { status: "selection_required"; candidates: string[] }
+  | {
+      status: "ok";
+      siteUrl: string;
+      inspections: Awaited<ReturnType<typeof inspectUrls>>;
+      totals: { inspected: number; indexedUrls: number };
+    };
+
+export async function inspectSelectedPaths(
+  selectedSiteUrl: string | null,
+  paths: string[],
+): Promise<UrlInspectionReport> {
+  try {
+    const properties = await listVerifiedProperties(SITE_TARGET);
+    if (properties.length === 0) return { status: "error", error: "no_verified_property" };
+    let siteUrl = selectedSiteUrl;
+    if (siteUrl) {
+      if (!properties.includes(siteUrl)) return { status: "error", error: "property_not_verified" };
+    } else if (properties.length === 1) {
+      siteUrl = properties[0]!;
+    } else {
+      return { status: "selection_required", candidates: properties };
+    }
+
+    const origin = new URL(SITE_TARGET).origin;
+    const urls = paths.map((p) => (p.startsWith("http") ? p : `${origin}${p.startsWith("/") ? p : `/${p}`}`));
+    const inspections = await inspectUrls(siteUrl, urls);
+    const totals = {
+      inspected: inspections.length,
+      indexedUrls: inspections.filter((i) => i.isIndexed).length,
+    };
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("search_console_snapshots").insert({
+      site_url: siteUrl,
+      submitted: 0,
+      indexed: 0,
+      sitemap_errors: 0,
+      sitemap_warnings: 0,
+      inspected_urls: totals.inspected,
+      indexed_urls: totals.indexedUrls,
+      details: { mode: "url_inspection", inspections },
+    });
+
+    return { status: "ok", siteUrl, inspections, totals };
+  } catch (error) {
+    return { status: "error", error: error instanceof Error ? error.message : "unknown_error" };
+  }
+}

@@ -9,8 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getCrawlReport,
+  inspectPages,
   listCrawlSnapshots,
 } from "@/lib/search-console.functions";
+import { MONITORED_PATHS } from "@/lib/search-console-paths";
+
 
 export const Route = createFileRoute("/_authenticated/search-console")({
   component: SearchConsolePage,
@@ -69,7 +72,18 @@ function SearchConsolePage() {
     onSuccess: () => void snapshots.refetch(),
   });
 
+  const runInspection = useServerFn(inspectPages);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>(MONITORED_PATHS.slice(0, 3));
+  const inspection = useMutation({
+    mutationFn: (paths: string[]) => runInspection({ data: { siteUrl, paths } }),
+    onSuccess: () => void snapshots.refetch(),
+  });
+
+  const togglePath = (p: string) =>
+    setSelectedPaths((prev) => (prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]));
+
   const data = report.data;
+
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
@@ -227,6 +241,93 @@ function SearchConsolePage() {
 
       <Card className="mt-6">
         <CardHeader>
+          <CardTitle className="text-base">طلب فحص URL بعد تحديث العروض</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            اختر الصفحات التي تغيّرت بعد تحديث العروض ثم أرسل طلب فحص URL إلى Search Console. تُحفظ
+            النتيجة في جدول السجل بالأسفل.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {MONITORED_PATHS.map((p) => (
+              <Button
+                key={p}
+                size="sm"
+                variant={selectedPaths.includes(p) ? "default" : "outline"}
+                onClick={() => togglePath(p)}
+              >
+                {p}
+              </Button>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              onClick={() => inspection.mutate(selectedPaths)}
+              disabled={inspection.isPending || selectedPaths.length === 0}
+            >
+              <Search className={`ml-2 h-4 w-4 ${inspection.isPending ? "animate-pulse" : ""}`} />
+              {inspection.isPending ? "جارٍ إرسال الطلب…" : `فحص ${selectedPaths.length} صفحة`}
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => setSelectedPaths([])}>
+              مسح الاختيار
+            </Button>
+          </div>
+
+          {inspection.isPending && <Skeleton className="h-16 w-full rounded-2xl" />}
+
+          {inspection.data?.status === "error" && (
+            <div className="flex items-center gap-2 rounded-2xl border border-destructive/40 p-3 text-sm text-destructive">
+              <AlertTriangle className="h-4 w-4" />
+              {ERROR_LABEL[inspection.data.error] ?? `تعذّر تنفيذ الفحص (${inspection.data.error}).`}
+            </div>
+          )}
+
+          {inspection.data?.status === "selection_required" && (
+            <div className="flex flex-wrap gap-2">
+              {inspection.data.candidates.map((c) => (
+                <Button
+                  key={c}
+                  variant={siteUrl === c ? "default" : "outline"}
+                  onClick={() => {
+                    setSiteUrl(c);
+                    inspection.mutate(selectedPaths);
+                  }}
+                >
+                  <Globe className="ml-2 h-4 w-4" />
+                  {c}
+                </Button>
+              ))}
+            </div>
+          )}
+
+          {inspection.data?.status === "ok" && (
+            <div className="space-y-2">
+              <div className="text-xs text-muted-foreground">
+                نتيجة الفحص: {inspection.data.totals.indexedUrls}/{inspection.data.totals.inspected} صفحة
+                مفهرسة.
+              </div>
+              {inspection.data.inspections.map((i) => (
+                <div
+                  key={i.url}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border p-3 text-sm"
+                >
+                  <span className="break-all">{new URL(i.url).pathname}</span>
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <Badge variant={i.isIndexed ? "default" : "destructive"}>
+                      {COVERAGE_LABEL[i.verdict] ?? i.verdict}
+                    </Badge>
+                    <span className="text-muted-foreground">{i.coverageState}</span>
+                    <span className="text-muted-foreground">آخر زحف: {formatDate(i.lastCrawlTime)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
           <CardTitle className="text-base">سجل الفحوصات السابقة</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -234,20 +335,38 @@ function SearchConsolePage() {
           {!snapshots.isLoading && (snapshots.data?.length ?? 0) === 0 && (
             <p className="text-sm text-muted-foreground">لا توجد فحوصات محفوظة بعد.</p>
           )}
-          {(snapshots.data ?? []).map((s) => (
-            <div
-              key={s.id}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border p-3 text-xs"
-            >
-              <span>{formatDate(s.created_at)}</span>
-              <span className="text-muted-foreground">
-                مفهرسة: {s.indexed_urls}/{s.inspected_urls} — خريطة: {s.indexed}/{s.submitted} — أخطاء:{" "}
-                {s.sitemap_errors}
-              </span>
-            </div>
-          ))}
+          {(snapshots.data ?? []).map((s) => {
+            const isUrlInspection =
+              (s.details as { mode?: string } | null)?.mode === "url_inspection";
+            return (
+              <div
+                key={s.id}
+                className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border p-3 text-xs"
+              >
+                <span className="flex items-center gap-2">
+                  <Badge variant={isUrlInspection ? "default" : "secondary"}>
+                    {isUrlInspection ? "فحص URL" : "فحص شامل"}
+                  </Badge>
+                  {formatDate(s.created_at)}
+                </span>
+                <span className="text-muted-foreground">
+                  {isUrlInspection ? (
+                    <>
+                      مفهرسة: {s.indexed_urls}/{s.inspected_urls}
+                    </>
+                  ) : (
+                    <>
+                      مفهرسة: {s.indexed_urls}/{s.inspected_urls} — خريطة: {s.indexed}/{s.submitted} —
+                      أخطاء: {s.sitemap_errors}
+                    </>
+                  )}
+                </span>
+              </div>
+            );
+          })}
         </CardContent>
       </Card>
+
     </main>
   );
 }
