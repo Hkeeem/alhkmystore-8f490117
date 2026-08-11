@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { CalendarClock, Check, RefreshCw, PauseCircle, PlayCircle } from "lucide-react";
+import { CalendarClock, Check, RefreshCw, PauseCircle, PlayCircle, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { getSyncSchedule, setSyncSchedule } from "@/lib/affiliate-setup.functions";
+import { getSyncSchedule, runExternalSyncNow, setSyncSchedule } from "@/lib/affiliate-setup.functions";
+
 
 /** خيارات فترات جاهزة (تعبير cron) */
 const PRESETS: Array<{ label: string; cron: string }> = [
