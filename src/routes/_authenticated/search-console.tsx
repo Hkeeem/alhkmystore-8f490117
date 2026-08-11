@@ -9,8 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getCrawlReport,
+  inspectPages,
   listCrawlSnapshots,
 } from "@/lib/search-console.functions";
+import { MONITORED_PATHS } from "@/lib/search-console-paths";
+
 
 export const Route = createFileRoute("/_authenticated/search-console")({
   component: SearchConsolePage,
