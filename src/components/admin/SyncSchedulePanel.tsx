@@ -169,6 +169,38 @@ export function SyncSchedulePanel() {
           {save.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
           حفظ الجدولة
         </Button>
+
+        <div className="space-y-2 rounded-lg border border-dashed p-3">
+          <p className="text-sm font-semibold flex items-center gap-2">
+            <FlaskConical className="size-4" /> تشغيل اختبار فوري
+          </p>
+          <p className="text-[11px] text-muted-foreground">
+            يجرّب سحب العروض الآن دون حفظ أو تغيير الجدولة.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {(["amazon", "noon"] as TestSource[]).map((s) => (
+              <Button
+                key={s}
+                variant="outline"
+                size="sm"
+                className="press-ripple"
+                disabled={testing !== null}
+                onClick={() => runTest(s)}
+                aria-label={`تشغيل اختبار مزامنة ${s === "amazon" ? "أمازون" : "نون"}`}
+              >
+                {testing === s ? <RefreshCw className="size-4 animate-spin" /> : <FlaskConical className="size-4" />}
+                اختبار {s === "amazon" ? "أمازون" : "نون"}
+              </Button>
+            ))}
+          </div>
+          {lastTest && (
+            <p className={`text-[11px] ${lastTest.ok ? "text-primary" : "text-destructive"}`}>
+              آخر اختبار ({lastTest.source === "amazon" ? "أمازون" : "نون"}):{" "}
+              {lastTest.ok ? "نجح" : "فشل"} · {lastTest.detail} ·{" "}
+              {new Date(lastTest.at).toLocaleString("ar-SA")}
+            </p>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
