@@ -24,9 +24,37 @@ function describeCron(cron: string) {
   return found ? found.label : `مخصص (${cron})`;
 }
 
+type TestSource = "amazon" | "noon";
+
 export function SyncSchedulePanel() {
   const fetchSchedule = useServerFn(getSyncSchedule);
   const saveSchedule = useServerFn(setSyncSchedule);
+  const runNow = useServerFn(runExternalSyncNow);
+  const [testing, setTesting] = useState<TestSource | null>(null);
+  const [lastTest, setLastTest] = useState<{ source: TestSource; ok: boolean; at: string; detail: string } | null>(null);
+
+  async function runTest(source: TestSource) {
+    setTesting(source);
+    const label = source === "amazon" ? "أمازون" : "نون";
+    try {
+      const res = (await runNow({ data: { source } })) as
+        | { success: true; inserted?: number; updated?: number; total?: number }
+        | { success: false; error?: string };
+      const ok = Boolean(res?.success);
+      const detail = ok
+        ? `مضاف ${(res as { inserted?: number }).inserted ?? 0} · محدّث ${(res as { updated?: number }).updated ?? 0}`
+        : "فشل الاختبار";
+      setLastTest({ source, ok, at: new Date().toISOString(), detail });
+      if (ok) toast.success(`اختبار مزامنة ${label} نجح — ${detail}`);
+      else toast.error(`اختبار مزامنة ${label} فشل`);
+    } catch {
+      setLastTest({ source, ok: false, at: new Date().toISOString(), detail: "غير مصرّح أو خطأ في الخادم" });
+      toast.error("تعذّر تشغيل الاختبار — للمشرفين فقط");
+    } finally {
+      setTesting(null);
+    }
+  }
+
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sync-schedule"],
