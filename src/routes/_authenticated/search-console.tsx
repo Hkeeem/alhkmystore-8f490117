@@ -239,7 +239,10 @@ function SearchConsolePage() {
         </div>
       )}
 
+      <SnapshotSchedulePanel />
+
       <Card className="mt-6">
+
         <CardHeader>
           <CardTitle className="text-base">طلب فحص URL بعد تحديث العروض</CardTitle>
         </CardHeader>
