@@ -2,15 +2,18 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertTriangle, CheckCircle2, Globe, RefreshCw, Search, TrendingDown } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock, Globe, RefreshCw, Search, TrendingDown } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getCrawlReport,
+  getSnapshotSchedule,
   inspectPages,
   listCrawlSnapshots,
+  setSnapshotSchedule,
 } from "@/lib/search-console.functions";
 import { MONITORED_PATHS } from "@/lib/search-console-paths";
 
@@ -56,6 +59,91 @@ const ERROR_LABEL: Record<string, string> = {
   no_verified_property: "لا توجد خاصية متحقق منها تغطي هذا الموقع.",
   property_not_verified: "الخاصية المختارة غير متحقق منها.",
 };
+
+const INTERVAL_OPTIONS = [
+  { label: "كل 3 ساعات", value: "20 */3 * * *" },
+  { label: "كل 6 ساعات", value: "20 */6 * * *" },
+  { label: "كل 12 ساعة", value: "20 */12 * * *" },
+  { label: "يومياً", value: "20 3 * * *" },
+];
+
+function SnapshotSchedulePanel() {
+  const readSchedule = useServerFn(getSnapshotSchedule);
+  const writeSchedule = useServerFn(setSnapshotSchedule);
+
+  const schedule = useQuery({
+    queryKey: ["sc-schedule"],
+    queryFn: () => readSchedule({ data: undefined }),
+  });
+
+  const save = useMutation({
+    mutationFn: (vars: { schedule: string; active: boolean }) => writeSchedule({ data: vars }),
+    onSuccess: (res) => {
+      if (res.ok) {
+        toast.success("تم تحديث الجدولة التلقائية");
+        void schedule.refetch();
+      } else {
+        toast.error(res.reason);
+      }
+    },
+    onError: () => toast.error("تعذّر تحديث الجدولة"),
+  });
+
+  const info = schedule.data?.ok ? schedule.data.schedule : null;
+  const current = info?.schedule ?? "20 */6 * * *";
+  const active = info?.active !== false;
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="text-base flex items-center gap-2">
+          <Clock className="w-4 h-4 text-primary" />
+          التحديث التلقائي لبيانات Search Console
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {schedule.isLoading ? (
+          <Skeleton className="h-16 w-full" />
+        ) : !info?.exists ? (
+          <p className="text-sm text-muted-foreground">لم يتم إنشاء المهمة المجدولة بعد.</p>
+        ) : (
+          <>
+            <div className="flex flex-wrap items-center gap-2 text-sm">
+              <Badge variant={active ? "default" : "secondary"}>{active ? "مُفعّلة" : "متوقفة"}</Badge>
+              <span className="text-muted-foreground">آخر تشغيل: {formatDate(info.lastRunAt ?? null)}</span>
+              {info.lastStatus && <Badge variant="outline">{info.lastStatus}</Badge>}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {INTERVAL_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.value}
+                  size="sm"
+                  variant={current === opt.value ? "default" : "outline"}
+                  disabled={save.isPending}
+                  onClick={() => save.mutate({ schedule: opt.value, active: true })}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={save.isPending}
+                onClick={() => save.mutate({ schedule: current, active: !active })}
+              >
+                {active ? "إيقاف مؤقت" : "إعادة التشغيل"}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              تجلب المهمة أحدث بيانات الفهرسة وخرائط الموقع وتحفظها تلقائياً كلقطة جديدة في السجل، مع تنبيه الفريق عند
+              انخفاض عدد الصفحات المفهرسة.
+            </p>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 function SearchConsolePage() {
   const fetchReport = useServerFn(getCrawlReport);
