@@ -855,6 +855,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_search_console_schedule: { Args: never; Returns: Json }
       get_sync_schedule: { Args: never; Returns: Json }
       has_role: {
         Args: {
@@ -892,6 +893,10 @@ export type Database = {
           _target: string
         }
         Returns: undefined
+      }
+      set_search_console_schedule: {
+        Args: { _active?: boolean; _schedule: string }
+        Returns: Json
       }
       set_sync_schedule: {
         Args: { _active?: boolean; _schedule: string }

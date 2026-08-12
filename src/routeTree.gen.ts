@@ -46,6 +46,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
 import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
+import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -238,6 +239,12 @@ const ApiPublicHooksSyncExternalDealsRoute =
     path: '/api/public/hooks/sync-external-deals',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksSearchConsoleSnapshotRoute =
+  ApiPublicHooksSearchConsoleSnapshotRouteImport.update({
+    id: '/api/public/hooks/search-console-snapshot',
+    path: '/api/public/hooks/search-console-snapshot',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
   id: '/api/public/go/$dealId',
   path: '/api/public/go/$dealId',
@@ -279,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -318,6 +326,7 @@ export interface FileRoutesByTo {
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -359,6 +368,7 @@ export interface FileRoutesById {
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -439,6 +450,7 @@ export interface FileRouteTypes {
     | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -479,6 +491,7 @@ export interface FileRouteTypes {
     | '/deals/panda-vs-othaim-comparison'
     | '/rewards/$id'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -510,6 +523,7 @@ export interface RootRouteChildren {
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
+  ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
   ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
   ApiPublicPostbackNetworkRoute: typeof ApiPublicPostbackNetworkRoute
@@ -776,6 +790,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncExternalDealsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/search-console-snapshot': {
+      id: '/api/public/hooks/search-console-snapshot'
+      path: '/api/public/hooks/search-console-snapshot'
+      fullPath: '/api/public/hooks/search-console-snapshot'
+      preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/go/$dealId': {
       id: '/api/public/go/$dealId'
       path: '/api/public/go/$dealId'
@@ -867,6 +888,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
+  ApiPublicHooksSearchConsoleSnapshotRoute:
+    ApiPublicHooksSearchConsoleSnapshotRoute,
   ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
   ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,
   ApiPublicPostbackNetworkRoute: ApiPublicPostbackNetworkRoute,
@@ -874,13 +897,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
