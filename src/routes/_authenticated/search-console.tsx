@@ -17,6 +17,7 @@ import {
 } from "@/lib/search-console.functions";
 import { MONITORED_PATHS } from "@/lib/search-console-paths";
 import { IndexingTrendCharts } from "@/components/admin/IndexingTrendCharts";
+import { SearchConsoleExport } from "@/components/admin/SearchConsoleExport";
 
 
 export const Route = createFileRoute("/_authenticated/search-console")({
@@ -329,6 +330,8 @@ function SearchConsolePage() {
       )}
 
       <IndexingTrendCharts />
+
+      <SearchConsoleExport />
 
       <SnapshotSchedulePanel />
 
