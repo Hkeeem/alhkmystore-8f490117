@@ -327,6 +327,8 @@ function SearchConsolePage() {
         </div>
       )}
 
+      <IndexingTrendCharts />
+
       <SnapshotSchedulePanel />
 
       <Card className="mt-6">
