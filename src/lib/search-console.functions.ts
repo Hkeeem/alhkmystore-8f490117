@@ -107,3 +107,35 @@ export const setSnapshotSchedule = createServerFn({ method: "POST" })
     if (error) return { ok: false as const, reason: "غير مصرّح — هذه الخطوة للمشرفين فقط" };
     return { ok: true as const, schedule: data.schedule, active: data.active };
   });
+
+/** اتجاه الفهرسة والزحف خلال آخر 30 يوماً — للفريق الإداري */
+export const getIndexingTrend = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) throw new Error("forbidden");
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { data } = await context.supabase
+      .from("search_console_snapshots")
+      .select("submitted, indexed, inspected_urls, indexed_urls, sitemap_errors, created_at")
+      .gte("created_at", since)
+      .order("created_at", { ascending: true })
+      .limit(500);
+
+    const byDay = new Map<
+      string,
+      { day: string; indexedUrls: number; inspected: number; crawled: number; submitted: number; errors: number }
+    >();
+    for (const row of data ?? []) {
+      const day = String(row.created_at).slice(0, 10);
+      byDay.set(day, {
+        day,
+        indexedUrls: row.indexed_urls ?? 0,
+        inspected: row.inspected_urls ?? 0,
+        crawled: row.indexed ?? 0,
+        submitted: row.submitted ?? 0,
+        errors: row.sitemap_errors ?? 0,
+      });
+    }
+    return Array.from(byDay.values());
+  });

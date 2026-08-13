@@ -16,6 +16,7 @@ import {
   setSnapshotSchedule,
 } from "@/lib/search-console.functions";
 import { MONITORED_PATHS } from "@/lib/search-console-paths";
+import { IndexingTrendCharts } from "@/components/admin/IndexingTrendCharts";
 
 
 export const Route = createFileRoute("/_authenticated/search-console")({
@@ -326,6 +327,8 @@ function SearchConsolePage() {
           </Card>
         </div>
       )}
+
+      <IndexingTrendCharts />
 
       <SnapshotSchedulePanel />
 
