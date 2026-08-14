@@ -59,29 +59,43 @@ export async function buildCrawlReport(
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: prev } = await supabaseAdmin
+    const { data: history } = await supabaseAdmin
       .from("search_console_snapshots")
       .select("indexed, indexed_urls, created_at")
       .eq("site_url", siteUrl)
       .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .limit(7);
 
-    const previous = prev
-      ? { indexed: prev.indexed, indexedUrls: prev.indexed_urls, createdAt: prev.created_at }
+    const rows = history ?? [];
+    const useAvg = baselineMode === "avg7" || (baselineMode === "auto" && rows.length >= 3);
+    const avgRows = useAvg ? rows : rows.slice(0, 1);
+
+    const previous = avgRows.length
+      ? {
+          indexed: Math.round(avgRows.reduce((s, r) => s + (r.indexed ?? 0), 0) / avgRows.length),
+          indexedUrls:
+            Math.round((avgRows.reduce((s, r) => s + (r.indexed_urls ?? 0), 0) / avgRows.length) * 10) / 10,
+          createdAt: avgRows[0]!.created_at,
+        }
       : null;
 
-    const delta = previous ? totals.indexedUrls - previous.indexedUrls : 0;
+    const baseline = {
+      mode: (useAvg ? "avg7" : "last") as "avg7" | "last",
+      label: useAvg ? `متوسط آخر ${avgRows.length} فحوصات` : "آخر لقطة سابقة",
+      samples: avgRows.length,
+    };
+
+    const delta = previous ? Math.round((totals.indexedUrls - previous.indexedUrls) * 10) / 10 : 0;
 
     let alert: { level: "drop" | "sitemap_errors" | "none"; message: string; delta: number } = {
       level: "none",
-      message: "لا يوجد انخفاض في الفهرسة منذ آخر فحص.",
+      message: `لا يوجد انخفاض في الفهرسة مقارنةً بـ${baseline.label}.`,
       delta,
     };
     if (previous && delta < 0) {
       alert = {
         level: "drop",
-        message: `انخفض عدد الصفحات المفهرسة بمقدار ${Math.abs(delta)} صفحة بعد آخر تحديث للعروض.`,
+        message: `انخفض عدد الصفحات المفهرسة بمقدار ${Math.abs(delta)} صفحة مقارنةً بـ${baseline.label}.`,
         delta,
       };
     } else if (totals.errors > 0) {
@@ -91,6 +105,7 @@ export async function buildCrawlReport(
         delta,
       };
     }
+
 
     await supabaseAdmin.from("search_console_snapshots").insert({
       site_url: siteUrl,
