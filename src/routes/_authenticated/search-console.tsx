@@ -278,8 +278,9 @@ function SearchConsolePage() {
                 <div className="font-bold">{data.alert.message}</div>
                 {data.previous && (
                   <div className="mt-1 text-xs text-muted-foreground">
-                    آخر فحص سابق: {formatDate(data.previous.createdAt)} — كانت {data.previous.indexedUrls} صفحة
-                    مفهرسة من الصفحات المراقبة.
+                    محور المقارنة: {data.baseline.label} ({data.baseline.samples} لقطة، أحدثها{" "}
+                    {formatDate(data.previous.createdAt)}) — {data.previous.indexedUrls} صفحة مفهرسة من الصفحات
+                    المراقبة.
                   </div>
                 )}
               </div>
