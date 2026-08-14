@@ -10,7 +10,7 @@ export function DropAlerts() {
   const fetchAlerts = useServerFn(getRecentDropAlerts);
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["sc-drop-alerts"],
-    queryFn: () => fetchAlerts({ data: {} }),
+    queryFn: () => fetchAlerts(),
     refetchInterval: 15 * 60 * 1000,
   });
 
