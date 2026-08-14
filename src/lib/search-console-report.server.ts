@@ -122,7 +122,7 @@ export async function buildCrawlReport(
       await notifyStaff(alert.message);
     }
 
-    return { status: "ok", siteUrl, sitemaps, inspections, totals, previous, alert };
+    return { status: "ok", siteUrl, sitemaps, inspections, totals, previous, baseline, alert };
   } catch (error) {
     return { status: "error", error: error instanceof Error ? error.message : "unknown_error" };
   }
