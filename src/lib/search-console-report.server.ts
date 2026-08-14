@@ -1,6 +1,8 @@
 import { inspectUrls, listSitemaps, listVerifiedProperties } from "@/lib/search-console.server";
 import { MONITORED_PATHS, SITE_TARGET } from "@/lib/search-console-config.server";
 
+export type BaselineMode = "last" | "avg7" | "auto";
+
 export type CrawlReport =
   | { status: "error"; error: string }
   | { status: "selection_required"; candidates: string[] }
@@ -18,10 +20,15 @@ export type CrawlReport =
         indexedUrls: number;
       };
       previous: { indexed: number; indexedUrls: number; createdAt: string } | null;
+      baseline: { mode: "last" | "avg7"; label: string; samples: number };
       alert: { level: "drop" | "sitemap_errors" | "none"; message: string; delta: number };
     };
 
-export async function buildCrawlReport(selectedSiteUrl: string | null): Promise<CrawlReport> {
+export async function buildCrawlReport(
+  selectedSiteUrl: string | null,
+  baselineMode: BaselineMode = "auto",
+): Promise<CrawlReport> {
+
   let siteUrl = selectedSiteUrl;
   try {
     const properties = await listVerifiedProperties(SITE_TARGET);
