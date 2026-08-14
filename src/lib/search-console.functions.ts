@@ -159,7 +159,7 @@ export const getRecentDropAlerts = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .limit(200);
 
-    const rows = (data ?? []).filter((r) => (r.inspected_urls ?? 1) !== 0 || true);
+    const rows = data ?? [];
     if (rows.length === 0) return { ok: true as const, alerts: [], latestAt: null };
 
     const now = Date.now();
