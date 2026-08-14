@@ -147,10 +147,17 @@ function SnapshotSchedulePanel() {
   );
 }
 
+const BASELINE_OPTIONS = [
+  { value: "auto" as const, label: "تلقائي" },
+  { value: "avg7" as const, label: "متوسط آخر 7 فحوصات" },
+  { value: "last" as const, label: "آخر لقطة فقط" },
+];
+
 function SearchConsolePage() {
   const fetchReport = useServerFn(getCrawlReport);
   const fetchSnapshots = useServerFn(listCrawlSnapshots);
   const [siteUrl, setSiteUrl] = useState<string | null>(null);
+  const [baseline, setBaseline] = useState<"auto" | "avg7" | "last">("auto");
 
   const snapshots = useQuery({
     queryKey: ["sc-snapshots"],
@@ -158,7 +165,7 @@ function SearchConsolePage() {
   });
 
   const report = useMutation({
-    mutationFn: (selected: string | null) => fetchReport({ data: { siteUrl: selected } }),
+    mutationFn: (selected: string | null) => fetchReport({ data: { siteUrl: selected, baseline } }),
     onSuccess: () => void snapshots.refetch(),
   });
 
@@ -193,6 +200,26 @@ function SearchConsolePage() {
           {report.isPending ? "جارٍ الفحص…" : "فحص الآن"}
         </Button>
       </header>
+
+      <Card className="mb-6">
+        <CardContent className="flex flex-wrap items-center gap-2 p-4">
+          <span className="text-sm font-bold">محور المقارنة:</span>
+          {BASELINE_OPTIONS.map((opt) => (
+            <Button
+              key={opt.value}
+              size="sm"
+              variant={baseline === opt.value ? "default" : "outline"}
+              onClick={() => setBaseline(opt.value)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+          <span className="w-full text-xs text-muted-foreground">
+            «تلقائي» يقارن بمتوسط آخر 7 فحوصات عند توفّر 3 لقطات أو أكثر، وإلا يقارن بآخر لقطة سابقة.
+          </span>
+        </CardContent>
+      </Card>
+
 
       {report.isPending && <Skeleton className="h-40 w-full rounded-2xl" />}
 
