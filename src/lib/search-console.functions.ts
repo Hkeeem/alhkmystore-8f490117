@@ -143,3 +143,76 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
     }
     return Array.from(byDay.values());
   });
+
+/** تنبيهات الهبوط الملحوظ خلال آخر 24–48 ساعة — للفريق الإداري */
+export const getRecentDropAlerts = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) throw new Error("forbidden");
+
+    const since = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
+    const { data } = await context.supabase
+      .from("search_console_snapshots")
+      .select("indexed, indexed_urls, submitted, created_at")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    const rows = (data ?? []).filter((r) => (r.inspected_urls ?? 1) !== 0 || true);
+    if (rows.length === 0) return { ok: true as const, alerts: [], latestAt: null };
+
+    const now = Date.now();
+    const latest = rows[0]!;
+    const at = (r: { created_at: string }) => new Date(r.created_at).getTime();
+    const window24 = rows.filter((r) => now - at(r) <= 24 * 60 * 60 * 1000);
+    const window48 = rows.filter((r) => {
+      const age = now - at(r);
+      return age > 24 * 60 * 60 * 1000 && age <= 48 * 60 * 60 * 1000;
+    });
+
+    const avg = (list: typeof rows, key: "indexed" | "indexed_urls") =>
+      list.length ? list.reduce((s, r) => s + (r[key] ?? 0), 0) / list.length : null;
+
+    const metrics = [
+      { key: "indexed_urls" as const, label: "الصفحات المراقبة المفهرسة" },
+      { key: "indexed" as const, label: "روابط مفهرسة عبر خريطة الموقع (زحف Google)" },
+    ];
+
+    const alerts: {
+      metric: string;
+      label: string;
+      current: number;
+      baseline: number;
+      delta: number;
+      percent: number;
+      severity: "critical" | "warning";
+      message: string;
+    }[] = [];
+
+    for (const m of metrics) {
+      const current = avg(window24, m.key);
+      const baseline = avg(window48, m.key);
+      if (current === null || baseline === null || baseline <= 0) continue;
+      const delta = Math.round((current - baseline) * 10) / 10;
+      const percent = Math.round(((current - baseline) / baseline) * 1000) / 10;
+      if (percent > -10 && delta > -2) continue;
+      alerts.push({
+        metric: m.key,
+        label: m.label,
+        current: Math.round(current * 10) / 10,
+        baseline: Math.round(baseline * 10) / 10,
+        delta,
+        percent,
+        severity: percent <= -25 ? "critical" : "warning",
+        message: `انخفض ${m.label} بنسبة ${Math.abs(percent)}% (${Math.abs(delta)}) خلال آخر 24 ساعة مقارنةً بالـ24 ساعة التي سبقتها.`,
+      });
+    }
+
+    return {
+      ok: true as const,
+      alerts,
+      latestAt: latest.created_at,
+      samples: { last24: window24.length, prev24: window48.length },
+    };
+  });
