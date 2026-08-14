@@ -21,14 +21,18 @@ export const getSearchConsoleProperties = createServerFn({ method: "POST" })
 export const getCrawlReport = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => {
-    const siteUrl = (input as { siteUrl?: unknown })?.siteUrl;
-    return { siteUrl: typeof siteUrl === "string" && siteUrl ? siteUrl : null };
+    const raw = input as { siteUrl?: unknown; baseline?: unknown };
+    const baseline = raw?.baseline === "last" || raw?.baseline === "avg7" ? raw.baseline : "auto";
+    return {
+      siteUrl: typeof raw?.siteUrl === "string" && raw.siteUrl ? raw.siteUrl : null,
+      baseline: baseline as "last" | "avg7" | "auto",
+    };
   })
   .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
     const { buildCrawlReport } = await import("@/lib/search-console-report.server");
-    return buildCrawlReport(data.siteUrl);
+    return buildCrawlReport(data.siteUrl, data.baseline);
   });
 
 export const inspectPages = createServerFn({ method: "POST" })
