@@ -18,7 +18,6 @@ import {
 import { MONITORED_PATHS } from "@/lib/search-console-paths";
 import { IndexingTrendCharts } from "@/components/admin/IndexingTrendCharts";
 import { SearchConsoleExport } from "@/components/admin/SearchConsoleExport";
-import { SnapshotComparison } from "@/components/admin/SnapshotComparison";
 
 
 export const Route = createFileRoute("/_authenticated/search-console")({
@@ -329,8 +328,6 @@ function SearchConsolePage() {
           </Card>
         </div>
       )}
-
-      <SnapshotComparison />
 
       <IndexingTrendCharts />
 
