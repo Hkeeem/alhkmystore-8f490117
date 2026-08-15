@@ -24,21 +24,11 @@ async function runSnapshot(request: Request) {
     if (report.status !== "ok") {
       return Response.json({ success: false, status: report.status }, { status: 200 });
     }
-    let emailNotification: { status: string; alerts: number } = { status: "skipped", alerts: 0 };
-    try {
-      const { notifyDropAlertsByEmail } = await import("@/lib/search-console-alerts.server");
-      emailNotification = await notifyDropAlertsByEmail(report.siteUrl);
-    } catch (error) {
-      console.error("drop alert email notification failed", error);
-      emailNotification = { status: "failed", alerts: 0 };
-    }
-
     return Response.json({
       success: true,
       siteUrl: report.siteUrl,
       totals: report.totals,
       alert: report.alert,
-      emailNotification,
     });
   } catch (error) {
     console.error("search console snapshot failed", error);
