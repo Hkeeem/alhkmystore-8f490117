@@ -16,6 +16,7 @@ import {
   setSnapshotSchedule,
 } from "@/lib/search-console.functions";
 import { MONITORED_PATHS } from "@/lib/search-console-paths";
+import { DropAlerts } from "@/components/admin/DropAlerts";
 import { IndexingTrendCharts } from "@/components/admin/IndexingTrendCharts";
 import { SearchConsoleExport } from "@/components/admin/SearchConsoleExport";
 
@@ -356,6 +357,8 @@ function SearchConsolePage() {
           </Card>
         </div>
       )}
+
+      <DropAlerts />
 
       <IndexingTrendCharts />
 
