@@ -112,30 +112,60 @@ export const setSnapshotSchedule = createServerFn({ method: "POST" })
     return { ok: true as const, schedule: data.schedule, active: data.active };
   });
 
-/** اتجاه الفهرسة والزحف خلال آخر 30 يوماً — للفريق الإداري */
+/** اتجاه الفهرسة والزحف خلال آخر 30 يوماً — مع إمكانية تحديد نطاق الصفحات */
 export const getIndexingTrend = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: unknown) => {
+    const raw = (input ?? {}) as { scope?: unknown; paths?: unknown };
+    const scope = typeof raw.scope === "string" && raw.scope.trim() ? raw.scope.trim().slice(0, 60) : "all";
+    const paths = Array.isArray(raw.paths)
+      ? raw.paths.filter((p): p is string => typeof p === "string" && p.trim().length > 0).slice(0, 25)
+      : [];
+    return { scope, paths };
+  })
+  .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-    const { data } = await context.supabase
+    const { data: rows } = await context.supabase
       .from("search_console_snapshots")
-      .select("submitted, indexed, inspected_urls, indexed_urls, sitemap_errors, created_at")
+      .select("submitted, indexed, inspected_urls, indexed_urls, sitemap_errors, details, created_at")
       .gte("created_at", since)
       .order("created_at", { ascending: true })
       .limit(500);
+
+    const filtered = data.scope !== "all" || data.paths.length > 0;
+    const matches = (url: string) => {
+      let pathname = url;
+      try {
+        pathname = new URL(url).pathname;
+      } catch {
+        /* keep raw value */
+      }
+      if (data.paths.length > 0) return data.paths.includes(pathname);
+      if (data.scope === "all") return true;
+      return pathname === data.scope || pathname.startsWith(`${data.scope.replace(/\/$/, "")}/`);
+    };
 
     const byDay = new Map<
       string,
       { day: string; indexedUrls: number; inspected: number; crawled: number; submitted: number; errors: number }
     >();
-    for (const row of data ?? []) {
+    for (const row of rows ?? []) {
       const day = String(row.created_at).slice(0, 10);
+      let indexedUrls = row.indexed_urls ?? 0;
+      let inspected = row.inspected_urls ?? 0;
+      if (filtered) {
+        const inspections =
+          (row.details as { inspections?: { url?: string; isIndexed?: boolean }[] } | null)?.inspections ?? [];
+        const scoped = inspections.filter((i) => typeof i.url === "string" && matches(i.url));
+        inspected = scoped.length;
+        indexedUrls = scoped.filter((i) => i.isIndexed).length;
+      }
       byDay.set(day, {
         day,
-        indexedUrls: row.indexed_urls ?? 0,
-        inspected: row.inspected_urls ?? 0,
+        indexedUrls,
+        inspected,
         crawled: row.indexed ?? 0,
         submitted: row.submitted ?? 0,
         errors: row.sitemap_errors ?? 0,
@@ -143,6 +173,7 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
     }
     return Array.from(byDay.values());
   });
+
 
 /** تنبيهات الهبوط الملحوظ خلال آخر 24–48 ساعة — للفريق الإداري */
 export const getRecentDropAlerts = createServerFn({ method: "POST" })
