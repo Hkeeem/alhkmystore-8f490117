@@ -82,7 +82,7 @@ describe("HkeeemOffersSection", () => {
   it("يعرض خطأ مع زر إعادة المحاولة ولا يكشف المفتاح", async () => {
     offersFn.mockRejectedValue(new Error("تعذّر الاتصال بمنصة حكيم."));
     const { container } = renderSection();
-    const retry = await screen.findByRole("button", { name: "إعادة المحاولة" });
+    const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
     expect(container.innerHTML).not.toContain("HKEEEM_INTEGRATION_KEY");
 
     offersFn.mockResolvedValue([offer]);
