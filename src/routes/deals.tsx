@@ -10,6 +10,7 @@ import { useLiveDeals, timeAgoAr } from "@/hooks/use-live-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
+import { HkeeemOffersSection } from "@/components/HkeeemOffersSection";
 import { z } from "zod";
 
 
@@ -97,6 +98,8 @@ function DealsPage() {
 
 
       <MerchantDealsSection />
+
+      <HkeeemOffersSection />
 
       <div className="relative">
 
