@@ -15,14 +15,12 @@ export function HkeeemOffersSection() {
     queryKey: ["hkeeem-offers", filters],
     queryFn: () => fetchOffers({ data: filters }),
     staleTime: 5 * 60_000,
-    retry: 1,
   });
 
   const storesQuery = useQuery({
     queryKey: ["hkeeem-stores"],
     queryFn: () => fetchStores({}),
     staleTime: 5 * 60_000,
-    retry: 1,
   });
 
   const offers = offersQuery.data ?? [];
