@@ -68,6 +68,9 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
   if (!res.ok) {
     // سجل خادمي فقط، دون أي جزء من المفتاح
     console.error("[hkeeem] request failed", { status: res.status, path: url.pathname });
+    if (res.status === 401 || res.status === 403) {
+      throw new Error("لم تقبل منصة حكيم مفتاح التكامل الحالي.");
+    }
     throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
   }
 
