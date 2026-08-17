@@ -65,7 +65,11 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
     throw new Error("تعذّر الاتصال بمنصة حكيم.");
   }
 
-  if (!res.ok) throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
+  if (!res.ok) {
+    // سجل خادمي فقط، دون أي جزء من المفتاح
+    console.error("[hkeeem] request failed", { status: res.status, path: url.pathname });
+    throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
+  }
 
   const json = (await res.json().catch(() => null)) as { data?: unknown; error?: unknown } | null;
   if (!json) throw new Error("استجابة غير صالحة من منصة حكيم.");
