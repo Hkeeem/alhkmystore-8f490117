@@ -3,7 +3,7 @@
  * المفتاح HKEEEM_INTEGRATION_KEY لا يُرسل أبدًا إلى المتصفح ولا يُسجَّل.
  */
 
-const BASE = "https://hkeemai-6t676tsq.manus.space/api/integration/offers";
+const BASE = "https://hkeeemai-platform.vercel.app/api/integration/offers";
 const CACHE_TTL_MS = 5 * 60_000;
 
 export type HkeeemOffer = {
@@ -72,6 +72,12 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
       throw new Error("لم تقبل منصة حكيم مفتاح التكامل الحالي.");
     }
     throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
+  }
+
+  const contentType = res.headers?.get?.("content-type") ?? "";
+  if (contentType && !contentType.includes("json")) {
+    console.error("[hkeeem] non-json response", { status: res.status, contentType, path: url.pathname });
+    throw new Error("منصة حكيم لا تُرجع بيانات عروض على هذا العنوان حالياً.");
   }
 
   const json = (await res.json().catch(() => null)) as { data?: unknown; error?: unknown } | null;
