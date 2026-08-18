@@ -6,6 +6,14 @@ import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions"
 
 type Filters = { category?: string; platform?: string; storeId?: string };
 
+function getErrorMessage(err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err);
+  if (msg.includes("HKEEEM_AUTH:")) return "مفتاح التكامل مع حكيم غير مقبول حالياً. راجع إعدادات التكامل.";
+  if (msg.includes("HKEEEM_RATE_LIMIT:")) return "تجاوزنا الحد المسموح من طلبات حكيم. جرّب مرة أخرى بعد قليل.";
+  if (msg.includes("HKEEEM_SERVER:")) return "منصة حكيم تواجه ضغطاً فنياً حالياً. جرّب لاحقاً.";
+  return "تعذّر جلب عروض حكيم الذكية. تحقق من الاتصال وأعد المحاولة.";
+}
+
 export function HkeeemOffersSection() {
   const fetchOffers = useServerFn(getHkeeemOffers);
   const fetchStores = useServerFn(getHkeeemStores);
