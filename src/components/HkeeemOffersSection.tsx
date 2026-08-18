@@ -6,6 +6,14 @@ import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions"
 
 type Filters = { category?: string; platform?: string; storeId?: string };
 
+function getErrorMessage(err: unknown): string {
+  const msg = err instanceof Error ? err.message : String(err);
+  if (msg.includes("HKEEEM_AUTH:")) return "مفتاح التكامل مع حكيم غير مقبول حالياً. راجع إعدادات التكامل.";
+  if (msg.includes("HKEEEM_RATE_LIMIT:")) return "تجاوزنا الحد المسموح من طلبات حكيم. جرّب مرة أخرى بعد قليل.";
+  if (msg.includes("HKEEEM_SERVER:")) return "منصة حكيم تواجه ضغطاً فنياً حالياً. جرّب لاحقاً.";
+  return "تعذّر جلب عروض حكيم الذكية. تحقق من الاتصال وأعد المحاولة.";
+}
+
 export function HkeeemOffersSection() {
   const fetchOffers = useServerFn(getHkeeemOffers);
   const fetchStores = useServerFn(getHkeeemStores);
@@ -91,7 +99,7 @@ export function HkeeemOffersSection() {
         </div>
       ) : offersQuery.isError ? (
         <div role="alert" className="rounded-3xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3">
-          <p className="text-sm font-bold text-destructive">تعذّر جلب عروض HkeeemAI الآن.</p>
+          <p className="text-sm font-bold text-destructive">{getErrorMessage(offersQuery.error)}</p>
           <button
             onClick={() => offersQuery.refetch()}
             className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-xs font-black press-ripple"

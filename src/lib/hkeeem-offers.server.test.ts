@@ -26,16 +26,26 @@ describe("hkeeem offers server", () => {
     expect((init.headers as Record<string, string>)["X-Hkeeem-Integration-Key"]).toBe(KEY);
   });
 
-  it("لا يكشف المفتاح في رسائل الخطأ", async () => {
+  it("لا يكشف المفتاح في رسائل الخطأ ويعرض رسالة آمنة للمصادقة", async () => {
     mockFetch({ error: "invalid-integration-key" }, false, 401);
     await expect(fetchHkeeemOffers({ platform: `p-${Math.random()}` })).rejects.toThrow(
-      /تعذّر جلب البيانات من منصة حكيم/,
+      /HKEEEM_AUTH: مفتاح التكامل/,
     );
     try {
       await fetchHkeeemOffers({ platform: `p2-${Math.random()}` });
     } catch (e) {
       expect(String((e as Error).message)).not.toContain(KEY);
     }
+  });
+
+  it("يعرض رسالة مختلفة لخطأ 429", async () => {
+    mockFetch({ error: "rate-limit" }, false, 429);
+    await expect(fetchHkeeemOffers({})).rejects.toThrow(/HKEEEM_RATE_LIMIT:/);
+  });
+
+  it("يعرض رسالة مختلفة لخطأ 5xx", async () => {
+    mockFetch({ error: "server-error" }, false, 503);
+    await expect(fetchHkeeemOffers({})).rejects.toThrow(/HKEEEM_SERVER:/);
   });
 
   it("يتجاهل العروض الناقصة (بدون عنوان أو رابط شراء)", () => {
