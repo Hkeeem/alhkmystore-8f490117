@@ -80,7 +80,7 @@ describe("HkeeemOffersSection", () => {
   });
 
   it("يعرض خطأ مع زر إعادة المحاولة ولا يكشف المفتاح", async () => {
-    offersFn.mockRejectedValue(new Error("HKEEEM_NETWORK: تعذّر الاتصال بمنصة حكيم."));
+    offersFn.mockRejectedValue(new Error("تعذّر الاتصال بمنصة حكيم."));
     const { container } = renderSection();
     const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
     expect(container.innerHTML).not.toContain("HKEEEM_INTEGRATION_KEY");
@@ -88,24 +88,6 @@ describe("HkeeemOffersSection", () => {
     offersFn.mockResolvedValue([offer]);
     await userEvent.click(retry);
     await waitFor(() => expect(screen.getByText("سماعة لاسلكية")).toBeTruthy());
-  });
-
-  it("يعرض رسالة مصادقة آمنة لخطأ 401", async () => {
-    offersFn.mockRejectedValue(new Error("HKEEEM_AUTH: مفتاح التكامل مع منصة حكيم غير مقبول حالياً."));
-    renderSection();
-    expect(await screen.findByText(/مفتاح التكامل مع حكيم غير مقبول/)).toBeTruthy();
-  });
-
-  it("يعرض رسالة تقييد معدل الطلبات لخطأ 429", async () => {
-    offersFn.mockRejectedValue(new Error("HKEEEM_RATE_LIMIT: تجاوزنا الحد المسموح من طلبات منصة حكيم."));
-    renderSection();
-    expect(await screen.findByText(/تجاوزنا الحد المسموح/)).toBeTruthy();
-  });
-
-  it("يعرض رسالة اعتلال خادم حكيم لخطأ 5xx", async () => {
-    offersFn.mockRejectedValue(new Error("HKEEEM_SERVER: منصة حكيم تواجه ضغطاً فنياً حالياً."));
-    renderSection();
-    expect(await screen.findByText(/منصة حكيم تواجه ضغطاً/)).toBeTruthy();
   });
 
   it("يمرر الفلتر إلى الدالة الخادمية عند الاختيار", async () => {

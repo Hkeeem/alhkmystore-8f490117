@@ -45,25 +45,9 @@ function pick(row: Record<string, unknown>, keys: string[]): unknown {
   return null;
 }
 
-function classifyHttpError(status: number): { category: string; message: string } {
-  if (status === 401 || status === 403) {
-    return { category: "auth", message: "HKEEEM_AUTH: مفتاح التكامل مع منصة حكيم غير مقبول حالياً." };
-  }
-  if (status === 429) {
-    return { category: "rate-limit", message: "HKEEEM_RATE_LIMIT: تجاوزنا الحد المسموح من طلبات منصة حكيم." };
-  }
-  if (status >= 500 && status < 600) {
-    return { category: "upstream-server", message: "HKEEEM_SERVER: منصة حكيم تواجه ضغطاً فنياً حالياً." };
-  }
-  return { category: "client/other", message: "HKEEEM_GENERIC: تعذّر جلب البيانات من منصة حكيم." };
-}
-
 async function callApi(params: Record<string, string>): Promise<unknown[]> {
   const key = process.env["HKEEEM_INTEGRATION_KEY"];
-  if (!key) {
-    console.error("[hkeeem] integration key not configured");
-    throw new Error("HKEEEM_CONFIG: تكامل حكيم غير مُهيّأ.");
-  }
+  if (!key) throw new Error("تكامل حكيم غير مُهيّأ.");
 
   const url = new URL(BASE);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
@@ -78,26 +62,21 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
       headers: { "X-Hkeeem-Integration-Key": key, Accept: "application/json" },
     });
   } catch {
-    console.error("[hkeeem] network error calling upstream", { path: url.pathname });
-    throw new Error("HKEEEM_NETWORK: تعذّر الاتصال بمنصة حكيم.");
+    throw new Error("تعذّر الاتصال بمنصة حكيم.");
   }
 
   if (!res.ok) {
-    const { category, message } = classifyHttpError(res.status);
-    // سجل خادمي فقط؛ لا يُرسل المفتاح إلى المتصفح
-    console.error(`[hkeeem] ${category} error`, { status: res.status, path: url.pathname });
-    throw new Error(message);
+    // سجل خادمي فقط، دون أي جزء من المفتاح
+    console.error("[hkeeem] request failed", { status: res.status, path: url.pathname });
+    if (res.status === 401 || res.status === 403) {
+      throw new Error("لم تقبل منصة حكيم مفتاح التكامل الحالي.");
+    }
+    throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
   }
 
   const json = (await res.json().catch(() => null)) as { data?: unknown; error?: unknown } | null;
-  if (!json) {
-    console.error("[hkeeem] invalid JSON response", { status: res.status, path: url.pathname });
-    throw new Error("HKEEEM_INVALID_JSON: استجابة غير صالحة من منصة حكيم.");
-  }
-  if (json.error) {
-    console.error("[hkeeem] upstream error payload", { status: res.status, path: url.pathname });
-    throw new Error("HKEEEM_UPSTREAM: تعذّر جلب البيانات من منصة حكيم.");
-  }
+  if (!json) throw new Error("استجابة غير صالحة من منصة حكيم.");
+  if (json.error) throw new Error("تعذّر جلب البيانات من منصة حكيم.");
 
   const data = Array.isArray(json.data)
     ? json.data
