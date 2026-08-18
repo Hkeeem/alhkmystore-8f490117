@@ -29,7 +29,7 @@ describe("hkeeem offers server", () => {
   it("لا يكشف المفتاح في رسائل الخطأ", async () => {
     mockFetch({ error: "invalid-integration-key" }, false, 401);
     await expect(fetchHkeeemOffers({ platform: `p-${Math.random()}` })).rejects.toThrow(
-      /تعذّر جلب البيانات من منصة حكيم/,
+      /مفتاح التكامل/,
     );
     try {
       await fetchHkeeemOffers({ platform: `p2-${Math.random()}` });
