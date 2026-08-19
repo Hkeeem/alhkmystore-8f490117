@@ -78,6 +78,13 @@ export function HkeeemOffersSection() {
             ))}
           </FilterRow>
         )}
+        <FilterRow label="نسبة الخصم">
+          {DISCOUNT_STEPS.map((d) => (
+            <FilterChip key={d} active={filters.minDiscount === d} onClick={() => set("minDiscount", d)}>
+              {d}%+
+            </FilterChip>
+          ))}
+        </FilterRow>
       </div>
 
       {offersQuery.isPending ? (
