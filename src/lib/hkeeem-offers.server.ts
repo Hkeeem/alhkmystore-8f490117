@@ -115,6 +115,8 @@ export function normalizeOffer(raw: unknown): HkeeemOffer | null {
     savingsScore: num(pick(row, ["savingsScore", "savings_score", "score"])),
     category: str(pick(row, ["category", "categoryName"])),
     platform: str(pick(row, ["platform", "source"])),
+    sourceUrl: str(pick(row, ["sourceUrl", "source_url", "officialUrl", "official_url"])),
+    updatedAt: str(pick(row, ["updatedAt", "updated_at", "lastUpdated", "last_updated", "publishedAt"])),
   };
 }
 
@@ -124,7 +126,9 @@ export async function fetchHkeeemOffers(query: HkeeemQuery): Promise<HkeeemOffer
     platform: query.platform ?? "",
     storeId: query.storeId ?? "",
   });
-  return rows.map(normalizeOffer).filter((o): o is HkeeemOffer => o !== null);
+  const offers = rows.map(normalizeOffer).filter((o): o is HkeeemOffer => o !== null);
+  const min = query.minDiscount ?? 0;
+  return min > 0 ? offers.filter((o) => (o.discountPercent ?? 0) >= min) : offers;
 }
 
 export async function fetchHkeeemStores(): Promise<HkeeemStore[]> {
