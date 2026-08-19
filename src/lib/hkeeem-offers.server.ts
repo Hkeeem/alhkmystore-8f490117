@@ -3,7 +3,7 @@
  * المفتاح HKEEEM_INTEGRATION_KEY لا يُرسل أبدًا إلى المتصفح ولا يُسجَّل.
  */
 
-const BASE = "https://hkeemai-6t676tsq.manus.space/api/integration/offers";
+const BASE = "https://hkeeemai-platform.vercel.app/api/integration/offers";
 const CACHE_TTL_MS = 5 * 60_000;
 
 export type HkeeemOffer = {
@@ -19,11 +19,13 @@ export type HkeeemOffer = {
   savingsScore: number | null;
   category: string | null;
   platform: string | null;
+  sourceUrl: string | null;
+  updatedAt: string | null;
 };
 
 export type HkeeemStore = { id: string; name: string };
 
-export type HkeeemQuery = { category?: string; platform?: string; storeId?: string };
+export type HkeeemQuery = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
 
 type CacheEntry = { at: number; value: unknown };
 const cache = new Map<string, CacheEntry>();
