@@ -3,7 +3,7 @@
  * المفتاح HKEEEM_INTEGRATION_KEY لا يُرسل أبدًا إلى المتصفح ولا يُسجَّل.
  */
 
-const BASE = "https://hkeemai-6t676tsq.manus.space/api/integration/offers";
+const BASE = "https://hkeeemai-platform.vercel.app/api/integration/offers";
 const CACHE_TTL_MS = 5 * 60_000;
 
 export type HkeeemOffer = {
@@ -19,11 +19,13 @@ export type HkeeemOffer = {
   savingsScore: number | null;
   category: string | null;
   platform: string | null;
+  sourceUrl: string | null;
+  updatedAt: string | null;
 };
 
 export type HkeeemStore = { id: string; name: string };
 
-export type HkeeemQuery = { category?: string; platform?: string; storeId?: string };
+export type HkeeemQuery = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
 
 type CacheEntry = { at: number; value: unknown };
 const cache = new Map<string, CacheEntry>();
@@ -113,6 +115,8 @@ export function normalizeOffer(raw: unknown): HkeeemOffer | null {
     savingsScore: num(pick(row, ["savingsScore", "savings_score", "score"])),
     category: str(pick(row, ["category", "categoryName"])),
     platform: str(pick(row, ["platform", "source"])),
+    sourceUrl: str(pick(row, ["sourceUrl", "source_url", "officialUrl", "official_url"])),
+    updatedAt: str(pick(row, ["updatedAt", "updated_at", "lastUpdated", "last_updated", "publishedAt"])),
   };
 }
 
@@ -122,7 +126,9 @@ export async function fetchHkeeemOffers(query: HkeeemQuery): Promise<HkeeemOffer
     platform: query.platform ?? "",
     storeId: query.storeId ?? "",
   });
-  return rows.map(normalizeOffer).filter((o): o is HkeeemOffer => o !== null);
+  const offers = rows.map(normalizeOffer).filter((o): o is HkeeemOffer => o !== null);
+  const min = query.minDiscount ?? 0;
+  return min > 0 ? offers.filter((o) => (o.discountPercent ?? 0) >= min) : offers;
 }
 
 export async function fetchHkeeemStores(): Promise<HkeeemStore[]> {

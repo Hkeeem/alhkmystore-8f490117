@@ -1,0 +1,30 @@
+import { describe, it, expect } from "vitest";
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+
+/** يثبت أن مفتاح التكامل لا يظهر في أي كود يصل إلى المتصفح */
+describe("أمان مفتاح تكامل حكيم", () => {
+  const clientDirs = ["src/components", "src/routes", "src/hooks", "src/data"];
+
+  function walk(dir: string): string[] {
+    return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+      const p = join(dir, e.name);
+      if (e.isDirectory()) return walk(p);
+      return /\.(ts|tsx)$/.test(e.name) ? [p] : [];
+    });
+  }
+
+  it("لا يُذكر HKEEEM_INTEGRATION_KEY في كود الواجهة", () => {
+    const offenders = clientDirs
+      .flatMap(walk)
+      .filter((f) => !f.includes(".server.") && !f.endsWith(".test.ts") && !f.endsWith(".test.tsx"))
+      .filter((f) => readFileSync(f, "utf8").includes("HKEEEM_INTEGRATION_KEY"));
+    expect(offenders).toEqual([]);
+  });
+
+  it("لا يستورد مكوّن العروض وحدة الخادم مباشرة", () => {
+    const src = readFileSync("src/components/HkeeemOffersSection.tsx", "utf8");
+    expect(src).not.toContain("hkeeem-offers.server");
+    expect(src).not.toContain("process.env");
+  });
+});

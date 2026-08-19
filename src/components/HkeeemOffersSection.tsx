@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, RefreshCw, ExternalLink } from "lucide-react";
+import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon } from "lucide-react";
 import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions";
+import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 
-type Filters = { category?: string; platform?: string; storeId?: string };
+type Filters = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
+
+const DISCOUNT_STEPS = [20, 30, 50, 70];
 
 export function HkeeemOffersSection() {
   const fetchOffers = useServerFn(getHkeeemOffers);
@@ -34,7 +37,7 @@ export function HkeeemOffersSection() {
     [offers],
   );
 
-  const set = (key: keyof Filters, value?: string) =>
+  const set = (key: keyof Filters, value?: string | number) =>
     setFilters((prev) => ({ ...prev, [key]: prev[key] === value ? undefined : value }));
 
   return (
@@ -75,6 +78,13 @@ export function HkeeemOffersSection() {
             ))}
           </FilterRow>
         )}
+        <FilterRow label="نسبة الخصم">
+          {DISCOUNT_STEPS.map((d) => (
+            <FilterChip key={d} active={filters.minDiscount === d} onClick={() => set("minDiscount", d)}>
+              {d}%+
+            </FilterChip>
+          ))}
+        </FilterRow>
       </div>
 
       {offersQuery.isPending ? (
@@ -137,6 +147,17 @@ export function HkeeemOffersSection() {
                     <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{o.platform}</span>
                   )}
                 </div>
+                {(o.sourceUrl || o.updatedAt) && (
+                  <p className="text-[10px] text-muted-foreground">
+                    {o.sourceUrl && (
+                      <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                        المصدر الرسمي
+                      </a>
+                    )}
+                    {o.sourceUrl && o.updatedAt ? " · " : ""}
+                    {o.updatedAt && <span>آخر تحديث {formatDateAr(o.updatedAt)}</span>}
+                  </p>
+                )}
                 <a
                   href={o.purchaseUrl}
                   target="_blank"
@@ -150,7 +171,50 @@ export function HkeeemOffersSection() {
           ))}
         </div>
       )}
+
+      <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
     </section>
+  );
+}
+
+function formatDateAr(value: string) {
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
+}
+
+/** دليل المتاجر الرسمية — روابط رسمية فقط دون أكواد أو أسعار مُختلقة */
+function StoresDirectory({ offerStoreNames }: { offerStoreNames: string[] }) {
+  const names = useMemo(() => new Set(offerStoreNames.filter(Boolean)), [offerStoreNames]);
+
+  return (
+    <div className="space-y-2 pt-2">
+      <h3 className="font-display font-black text-base flex items-center gap-2">
+        <StoreIcon className="w-4 h-4 text-primary" /> دليل المتاجر الرسمية
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        {STORES_DIRECTORY.map((s) => {
+          const hasOffers = names.has(s.name);
+          return (
+            <a
+              key={s.id}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-2xl border border-border bg-card p-3 hover:border-primary transition flex flex-col gap-0.5"
+            >
+              <span className="font-bold text-xs">{s.name}</span>
+              <span className="text-[10px] text-muted-foreground">
+                {s.category} · {s.region}
+              </span>
+              {!hasOffers && (
+                <span className="text-[10px] text-muted-foreground">لا توجد عروض موثقة متاحة حاليًا</span>
+              )}
+            </a>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
