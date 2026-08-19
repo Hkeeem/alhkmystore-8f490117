@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, RefreshCw, ExternalLink } from "lucide-react";
+import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon } from "lucide-react";
 import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions";
+import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 
-type Filters = { category?: string; platform?: string; storeId?: string };
+type Filters = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
+
+const DISCOUNT_STEPS = [20, 30, 50, 70];
 
 export function HkeeemOffersSection() {
   const fetchOffers = useServerFn(getHkeeemOffers);
