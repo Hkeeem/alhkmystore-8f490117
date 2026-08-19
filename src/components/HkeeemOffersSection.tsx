@@ -37,7 +37,7 @@ export function HkeeemOffersSection() {
     [offers],
   );
 
-  const set = (key: keyof Filters, value?: string) =>
+  const set = (key: keyof Filters, value?: string | number) =>
     setFilters((prev) => ({ ...prev, [key]: prev[key] === value ? undefined : value }));
 
   return (
