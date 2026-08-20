@@ -106,7 +106,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@type": "Organization",
               name: "حكيم AI",
               url: "https://alhkmystore.lovable.app/",
-              logo: "https://alhkmystore.lovable.app/icon.svg",
+              logo: "https://alhkmystore.lovable.app/hkeeem_512.png",
             },
             {
               "@type": "WebSite",
