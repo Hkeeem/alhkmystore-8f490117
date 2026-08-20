@@ -30,6 +30,40 @@ export type HkeeemQuery = { category?: string; platform?: string; storeId?: stri
 type CacheEntry = { at: number; value: unknown };
 const cache = new Map<string, CacheEntry>();
 
+/** حالة التكامل — لا تحتوي على أي جزء من المفتاح */
+export type HkeeemStatus = {
+  configured: boolean;
+  lastSuccessAt: string | null;
+  lastSuccessCount: number | null;
+  lastFailureAt: string | null;
+  lastFailureReason: string | null;
+  lastFailureStatus: number | null;
+};
+
+const status: Omit<HkeeemStatus, "configured"> = {
+  lastSuccessAt: null,
+  lastSuccessCount: null,
+  lastFailureAt: null,
+  lastFailureReason: null,
+  lastFailureStatus: null,
+};
+
+function recordSuccess(count: number) {
+  status.lastSuccessAt = new Date().toISOString();
+  status.lastSuccessCount = count;
+}
+
+function recordFailure(reason: string, httpStatus: number | null) {
+  status.lastFailureAt = new Date().toISOString();
+  status.lastFailureReason = reason;
+  status.lastFailureStatus = httpStatus;
+}
+
+export function getHkeeemStatus(): HkeeemStatus {
+  return { configured: Boolean(process.env["HKEEEM_INTEGRATION_KEY"]), ...status };
+}
+
+
 function num(v: unknown): number | null {
   if (v === null || v === undefined || v === "") return null;
   const n = Number(v);
