@@ -57,6 +57,13 @@ function Home() {
         <div className="absolute -bottom-28 -right-16 w-96 h-96 rounded-full bg-accent/30 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
         <div className="relative">
+          <img
+            src="/hkeeem_512.png"
+            alt="شعار حكيم AI — حرف الحاء الذهبي"
+            width={96}
+            height={96}
+            className="w-20 h-20 md:w-24 md:h-24 rounded-3xl mb-5 shadow-glow border border-primary/30"
+          />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur text-xs font-bold mb-5 border border-primary/40">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
             <span className="text-gold-shine">HkeeemAI — الذكاء الاقتصادي</span>
