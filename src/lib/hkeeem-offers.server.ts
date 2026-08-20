@@ -3,7 +3,7 @@
  * المفتاح HKEEEM_INTEGRATION_KEY لا يُرسل أبدًا إلى المتصفح ولا يُسجَّل.
  */
 
-const BASE = "https://hkeeemai-platform.vercel.app/api/integration/offers";
+const BASE = "https://offersalhkmy.manus.space/api/integration/offers";
 const CACHE_TTL_MS = 5 * 60_000;
 
 export type HkeeemOffer = {
