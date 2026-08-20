@@ -13,6 +13,15 @@ vi.mock("@tanstack/react-start", () => ({
 vi.mock("@/lib/hkeeem-offers.functions", () => ({
   getHkeeemOffers: (args: unknown) => offersFn(args),
   getHkeeemStores: (args: unknown) => storesFn(args),
+  getHkeeemIntegrationStatus: () =>
+    Promise.resolve({
+      configured: true,
+      lastSuccessAt: null,
+      lastSuccessCount: null,
+      lastFailureAt: null,
+      lastFailureReason: null,
+      lastFailureStatus: null,
+    }),
 }));
 
 import { HkeeemOffersSection } from "./HkeeemOffersSection";
