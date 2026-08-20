@@ -172,7 +172,10 @@ export function HkeeemOffersSection() {
         </div>
       )}
 
+      <HkeeemStatusPanel refreshKey={offersQuery.dataUpdatedAt + offersQuery.errorUpdatedAt} />
+
       <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+
     </section>
   );
 }
