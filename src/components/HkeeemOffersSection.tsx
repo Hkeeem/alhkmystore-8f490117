@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon } from "lucide-react";
 import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
+import { HkeeemStatusPanel } from "@/components/HkeeemStatusPanel";
 
 type Filters = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
 
@@ -172,7 +173,10 @@ export function HkeeemOffersSection() {
         </div>
       )}
 
+      <HkeeemStatusPanel refreshKey={offersQuery.dataUpdatedAt + offersQuery.errorUpdatedAt} />
+
       <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+
     </section>
   );
 }

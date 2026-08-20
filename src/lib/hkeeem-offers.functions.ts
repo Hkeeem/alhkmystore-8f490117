@@ -26,3 +26,9 @@ export const getHkeeemStores = createServerFn({ method: "GET" }).handler(async (
   const { fetchHkeeemStores } = await import("@/lib/hkeeem-offers.server");
   return fetchHkeeemStores();
 });
+
+export const getHkeeemIntegrationStatus = createServerFn({ method: "GET" }).handler(async () => {
+  const { getHkeeemStatus } = await import("@/lib/hkeeem-offers.server");
+  return getHkeeemStatus();
+});
+

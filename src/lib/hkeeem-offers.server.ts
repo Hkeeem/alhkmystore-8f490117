@@ -30,6 +30,40 @@ export type HkeeemQuery = { category?: string; platform?: string; storeId?: stri
 type CacheEntry = { at: number; value: unknown };
 const cache = new Map<string, CacheEntry>();
 
+/** حالة التكامل — لا تحتوي على أي جزء من المفتاح */
+export type HkeeemStatus = {
+  configured: boolean;
+  lastSuccessAt: string | null;
+  lastSuccessCount: number | null;
+  lastFailureAt: string | null;
+  lastFailureReason: string | null;
+  lastFailureStatus: number | null;
+};
+
+const status: Omit<HkeeemStatus, "configured"> = {
+  lastSuccessAt: null,
+  lastSuccessCount: null,
+  lastFailureAt: null,
+  lastFailureReason: null,
+  lastFailureStatus: null,
+};
+
+function recordSuccess(count: number) {
+  status.lastSuccessAt = new Date().toISOString();
+  status.lastSuccessCount = count;
+}
+
+function recordFailure(reason: string, httpStatus: number | null) {
+  status.lastFailureAt = new Date().toISOString();
+  status.lastFailureReason = reason;
+  status.lastFailureStatus = httpStatus;
+}
+
+export function getHkeeemStatus(): HkeeemStatus {
+  return { configured: Boolean(process.env["HKEEEM_INTEGRATION_KEY"]), ...status };
+}
+
+
 function num(v: unknown): number | null {
   if (v === null || v === undefined || v === "") return null;
   const n = Number(v);
@@ -49,7 +83,10 @@ function pick(row: Record<string, unknown>, keys: string[]): unknown {
 
 async function callApi(params: Record<string, string>): Promise<unknown[]> {
   const key = process.env["HKEEEM_INTEGRATION_KEY"];
-  if (!key) throw new Error("تكامل حكيم غير مُهيّأ.");
+  if (!key) {
+    recordFailure("تكامل حكيم غير مُهيّأ.", null);
+    throw new Error("تكامل حكيم غير مُهيّأ.");
+  }
 
   const url = new URL(BASE);
   for (const [k, v] of Object.entries(params)) if (v) url.searchParams.set(k, v);
@@ -64,21 +101,30 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
       headers: { "X-Hkeeem-Integration-Key": key, Accept: "application/json" },
     });
   } catch {
+    recordFailure("تعذّر الاتصال بمنصة حكيم.", null);
     throw new Error("تعذّر الاتصال بمنصة حكيم.");
   }
 
   if (!res.ok) {
     // سجل خادمي فقط، دون أي جزء من المفتاح
     console.error("[hkeeem] request failed", { status: res.status, path: url.pathname });
-    if (res.status === 401 || res.status === 403) {
-      throw new Error("لم تقبل منصة حكيم مفتاح التكامل الحالي.");
-    }
-    throw new Error(`تعذّر جلب البيانات من منصة حكيم (${res.status}).`);
+    const msg =
+      res.status === 401 || res.status === 403
+        ? "لم تقبل منصة حكيم مفتاح التكامل الحالي."
+        : `تعذّر جلب البيانات من منصة حكيم (${res.status}).`;
+    recordFailure(msg, res.status);
+    throw new Error(msg);
   }
 
   const json = (await res.json().catch(() => null)) as { data?: unknown; error?: unknown } | null;
-  if (!json) throw new Error("استجابة غير صالحة من منصة حكيم.");
-  if (json.error) throw new Error("تعذّر جلب البيانات من منصة حكيم.");
+  if (!json) {
+    recordFailure("استجابة غير صالحة من منصة حكيم.", res.status);
+    throw new Error("استجابة غير صالحة من منصة حكيم.");
+  }
+  if (json.error) {
+    recordFailure("تعذّر جلب البيانات من منصة حكيم.", res.status);
+    throw new Error("تعذّر جلب البيانات من منصة حكيم.");
+  }
 
   const data = Array.isArray(json.data)
     ? json.data
@@ -86,8 +132,10 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
       ? ((json.data as { offers: unknown[] }).offers)
       : [];
 
+  recordSuccess(data.length);
   cache.set(cacheKey, { at: Date.now(), value: data });
   return data;
+
 }
 
 export function normalizeOffer(raw: unknown): HkeeemOffer | null {
