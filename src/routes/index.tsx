@@ -4,6 +4,7 @@ import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
+import { OffersSection } from "@/components/OffersSection";
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
@@ -78,7 +79,6 @@ function Home() {
             عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لقرارات شراء أفضل بأقل وقت.
           </p>
 
-          {/* AI search */}
           <form onSubmit={submitSearch} className="mt-7 max-w-2xl">
             <div className="flex items-center gap-2 bg-white/95 rounded-2xl p-2 shadow-glow border border-primary/20">
               <div className="pl-3 text-primary">
@@ -113,12 +113,10 @@ function Home() {
         </div>
       </section>
 
-      {/* Intro video */}
       <LazySection minHeight={340}>
         <IntroVideo />
       </LazySection>
 
-      {/* قدرات الذكاء الاقتصادي */}
       <LazySection minHeight={420}>
         <section>
           <SectionHeader title="قدرات الذكاء الاقتصادي" subtitle="مقارنة، تحليل، توليد محتوى، وسوق موحد" icon={<Zap className="w-5 h-5" />} />
@@ -139,9 +137,6 @@ function Home() {
           </div>
         </section>
       </LazySection>
-
-
-      {/* Pillars grid */}
 
       <section>
         <SectionHeader title="استكشف HkeeemAI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
@@ -168,6 +163,11 @@ function Home() {
         </div>
       </section>
 
+      {/* عروض حية من قاعدة البيانات */}
+      <LazySection minHeight={300}>
+        <OffersSection />
+      </LazySection>
+
       {/* Best deals */}
       <LazySection minHeight={520}>
       <section>
@@ -185,7 +185,6 @@ function Home() {
       </section>
       </LazySection>
 
-      {/* Price comparison */}
       <LazySection minHeight={620} id="compare-wrap">
       <section id="compare">
         <SectionHeader title="مقارنة الأسعار" subtitle="نفس المنتج، أرخص متجر أوّلاً" icon={<TrendingDown className="w-5 h-5" />} />
@@ -218,7 +217,7 @@ function Home() {
                           <SIcon className="w-4 h-4" strokeWidth={2.2} />
                         </div>
                         <span className="flex-1 text-sm font-medium truncate">{s.name}</span>
-                        {i === 0 ? (
+                        {i === 0? (
                           <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">الأفضل</span>
                         ) : (
                           <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
@@ -235,7 +234,6 @@ function Home() {
       </section>
       </LazySection>
 
-      {/* Value strip */}
       <LazySection minHeight={220}>
       <section className="grid md:grid-cols-3 gap-4">
         {[
@@ -254,7 +252,6 @@ function Home() {
       </section>
       </LazySection>
 
-      {/* Stores strip */}
       <LazySection minHeight={140}>
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
@@ -305,4 +302,4 @@ function SectionHeader({ title, subtitle, icon, href }: { title: string; subtitl
       )}
     </div>
   );
-}
+                }
