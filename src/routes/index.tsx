@@ -65,9 +65,9 @@ function Home() {
             height={96}
             className="w-20 h-20 md:w-24 md:h-24 rounded-3xl mb-5 shadow-glow border border-primary/30"
           />
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur text-xs font-bold mb-5 border border-primary/40">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur text-sm font-bold mb-5 border border-primary/50">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="text-gold-shine">HkeeemAI — الذكاء الاقتصادي</span>
+            <span className="font-bold text-primary-foreground">HkeeemAI — الذكاء الاقتصادي</span>
           </div>
           <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
             تسوّق ذكي…
@@ -75,7 +75,7 @@ function Home() {
             <span className="text-gold-shine">توفير أكثر</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-sm md:text-lg text-white/80 leading-relaxed">
+          <p className="mt-5 max-w-xl text-base md:text-lg font-medium text-primary-foreground/95 leading-loose">
             عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لقرارات شراء أفضل بأقل وقت.
           </p>
 
@@ -88,7 +88,7 @@ function Home() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="اسأل حكيم: مثلاً «أرخص أرز بسمتي؟» أو «أفضل عرض جوال»"
-                className="flex-1 bg-transparent outline-none text-secondary placeholder:text-secondary/50 py-2 text-sm md:text-base"
+                className="flex-1 bg-transparent outline-none text-secondary placeholder:text-secondary/70 py-2 text-sm md:text-base"
                 aria-label="بحث ذكي"
               />
               <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
@@ -98,7 +98,7 @@ function Home() {
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
               {["أرز بسمتي", "زيت دوار الشمس", "iPhone 16", "عروض النهدي"].map((s) => (
-                <button key={s} type="button" onClick={() => { setQ(s); }} className="leading-normal text-[11px] px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur border border-white/15">
+                <button key={s} type="button" onClick={() => { setQ(s); }} className="leading-normal text-[13px] font-semibold px-3 py-1.5 rounded-full bg-black/30 hover:bg-black/45 backdrop-blur border border-white/25">
                   {s}
                 </button>
               ))}
@@ -281,9 +281,9 @@ function Home() {
 
 function Stat({ n, l }: { n: string; l: string }) {
   return (
-    <div className="bg-white/10 backdrop-blur rounded-2xl p-3 text-center border border-white/10">
-      <div className="font-display font-black text-lg md:text-2xl bg-gradient-gold bg-clip-text text-transparent">{n}</div>
-      <div className="text-[10px] md:text-xs text-white/80">{l}</div>
+    <div className="bg-black/35 backdrop-blur rounded-2xl p-3 text-center border border-white/20">
+      <div className="font-display font-black text-xl md:text-2xl text-primary-foreground">{n}</div>
+      <div className="text-xs md:text-sm font-semibold text-primary-foreground/90">{l}</div>
     </div>
   );
 }
