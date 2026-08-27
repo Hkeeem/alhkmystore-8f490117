@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Check, Palette, RotateCcw, Square, Sparkles } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Bell, Check, Palette, RotateCcw, Square, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -44,6 +44,13 @@ function SettingsPage() {
         <p className="text-muted-foreground text-sm">
           اختر لون التمييز وشكل البطاقات وانحناء الزوايا — التغيير يظهر فورًا ويُحفظ على جهازك.
         </p>
+        <Link
+          to="/notifications"
+          className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm font-bold transition-colors hover:bg-muted hover:text-primary"
+        >
+          <Bell className="w-4 h-4 text-primary" />
+          إعدادات الإشعارات
+        </Link>
       </header>
 
       {/* نمط الثيم المعدني */}
