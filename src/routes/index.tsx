@@ -236,6 +236,7 @@ function Home() {
         </div>
       </section>
       </LazySection>
+      )}
 
       <LazySection minHeight={220}>
       <section className="grid md:grid-cols-3 gap-4">
