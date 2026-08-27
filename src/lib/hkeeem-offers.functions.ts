@@ -19,12 +19,21 @@ export const getHkeeemOffers = createServerFn({ method: "GET" })
   })
   .handler(async ({ data }) => {
     const { fetchHkeeemOffers } = await import("@/lib/hkeeem-offers.server");
-    return fetchHkeeemOffers(data);
+    try {
+      return await fetchHkeeemOffers(data);
+    } catch {
+      // حالة فارغة آمنة بدل كسر الواجهة
+      return [];
+    }
   });
 
 export const getHkeeemStores = createServerFn({ method: "GET" }).handler(async () => {
   const { fetchHkeeemStores } = await import("@/lib/hkeeem-offers.server");
-  return fetchHkeeemStores();
+  try {
+    return await fetchHkeeemStores();
+  } catch {
+    return [];
+  }
 });
 
 export const getHkeeemIntegrationStatus = createServerFn({ method: "GET" }).handler(async () => {
