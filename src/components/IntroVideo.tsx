@@ -16,6 +16,8 @@ export function IntroVideo() {
   const [nearby, setNearby] = useState(false);
   // اكتمل التحميل المسبق فيفتح الفيديو فورًا
   const [prefetched, setPrefetched] = useState(false);
+  // حالة فشل تحميل الفيديو لعرض بديل لطيف
+  const [failed, setFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
