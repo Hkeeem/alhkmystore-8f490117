@@ -73,7 +73,7 @@ export function HkeeemCatalogSection() {
           ))}
         </div>
       ) : query.isError || catalog?.unavailable ? (
-        <div className="rounded-3xl border border-border bg-card p-6 text-center space-y-3">
+        <div role="alert" className="rounded-3xl border border-border bg-card p-6 text-center space-y-3">
           <p className="text-sm font-bold text-muted-foreground">{GENERIC_ERROR}</p>
           <button
             onClick={() => query.refetch()}
