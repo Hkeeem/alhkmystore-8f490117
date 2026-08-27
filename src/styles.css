@@ -389,35 +389,33 @@ html.theme-switching *:active {
 
 
 
-/* ===== خلفية شفافة خلف شعار HkeeemAI مكتوب عليها 2030 ===== */
+/* ===== شعار رؤية 2030 الرسمي كخلفية شفافة خلف شعار HkeeemAI ===== */
 .vision-2030-bg {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-family: var(--font-display);
-  font-weight: 900;
-  font-size: var(--vision-size, 2.6rem);
-  line-height: 1;
-  letter-spacing: -0.04em;
+  width: var(--vision-size, 6rem);
+  height: auto;
+  aspect-ratio: 640 / 428;
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  background-image: var(--gradient-gold);
-  background-clip: text;
-  color: transparent;
-  white-space: nowrap;
+  object-fit: contain;
+  /* سطوع خفيف يوازن الظهور على الخلفيات الداكنة والفاتحة */
+  filter: brightness(1.15) saturate(1.1);
 }
 
 /* الأحجام */
-.vision-2030-bg.vision-sm { --vision-size: 1.8rem; }
-.vision-2030-bg.vision-md { --vision-size: 2.6rem; }
-.vision-2030-bg.vision-lg { --vision-size: 3.6rem; }
+.vision-2030-bg.vision-sm { --vision-size: 3.2rem; }
+.vision-2030-bg.vision-md { --vision-size: 4.5rem; }
+.vision-2030-bg.vision-lg { --vision-size: 6rem; }
 
-/* المكان داخل الترويسة (يدعم RTL عبر الخصائص المنطقية) */
-.vision-2030-bg.vision-start { inset-inline-start: 0.5rem; }
-.vision-2030-bg.vision-end { inset-inline-end: 1rem; }
+/* المكان داخل الترويسة (إحداثيات ثابتة لضمان التمركز الدقيق في RTL) */
+.vision-2030-bg.vision-start { right: 0.5rem; left: auto; }
+.vision-2030-bg.vision-end { left: 1rem; right: auto; }
 .vision-2030-bg.vision-center {
-  inset-inline-start: 50%;
+  left: 50%;
+  right: auto;
   transform: translate(-50%, -50%);
 }
 
