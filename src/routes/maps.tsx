@@ -4,8 +4,8 @@ import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon
 import { stores, deals, getStore } from "@/data/deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import { useLiveDeals } from "@/hooks/use-live-deals";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import type * as Leaflet from "leaflet";
+type L = typeof Leaflet;
 
 export const Route = createFileRoute("/maps")({
   validateSearch: (search: Record<string, unknown>) => ({
