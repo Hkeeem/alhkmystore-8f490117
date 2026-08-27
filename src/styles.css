@@ -410,11 +410,12 @@ html.theme-switching *:active {
 .vision-2030-bg.vision-md { --vision-size: 4.5rem; }
 .vision-2030-bg.vision-lg { --vision-size: 6rem; }
 
-/* المكان داخل الترويسة (يدعم RTL عبر الخصائص المنطقية) */
-.vision-2030-bg.vision-start { inset-inline-start: 0.5rem; }
-.vision-2030-bg.vision-end { inset-inline-end: 1rem; }
+/* المكان داخل الترويسة (إحداثيات ثابتة لضمان التمركز الدقيق في RTL) */
+.vision-2030-bg.vision-start { right: 0.5rem; left: auto; }
+.vision-2030-bg.vision-end { left: 1rem; right: auto; }
 .vision-2030-bg.vision-center {
-  inset-inline-start: 50%;
+  left: 50%;
+  right: auto;
   transform: translate(-50%, -50%);
 }
 
