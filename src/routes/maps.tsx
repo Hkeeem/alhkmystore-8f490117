@@ -52,6 +52,8 @@ function MapsPage() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<Record<string, L.Marker>>({});
+  const liveMarkersRef = useRef<L.Marker[]>([]);
+  const { data: liveDeals } = useLiveDeals(100);
 
   const focusNearestRef = useRef(false);
 
