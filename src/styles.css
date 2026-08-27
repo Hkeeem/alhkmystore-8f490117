@@ -394,25 +394,25 @@ html.theme-switching *:active {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: var(--vision-size, 6rem);
+  width: var(--vision-size, 4.5rem);
   height: auto;
   aspect-ratio: 640 / 428;
   pointer-events: none;
   user-select: none;
   z-index: 0;
   object-fit: contain;
-  /* سطوع خفيف يوازن الظهور على الخلفيات الداكنة والفاتحة */
-  filter: brightness(1.15) saturate(1.1);
+  /* تباين أعلى لضمان وضوح الشعار دون التداخل مع النص */
+  filter: brightness(1.25) contrast(1.05) saturate(1.15);
 }
 
 /* الأحجام */
-.vision-2030-bg.vision-sm { --vision-size: 3.2rem; }
-.vision-2030-bg.vision-md { --vision-size: 4.5rem; }
-.vision-2030-bg.vision-lg { --vision-size: 6rem; }
+.vision-2030-bg.vision-sm { --vision-size: 2.8rem; }
+.vision-2030-bg.vision-md { --vision-size: 4rem; }
+.vision-2030-bg.vision-lg { --vision-size: 5.5rem; }
 
 /* المكان داخل الترويسة (إحداثيات ثابتة لضمان التمركز الدقيق في RTL) */
-.vision-2030-bg.vision-start { right: 0.5rem; left: auto; }
-.vision-2030-bg.vision-end { left: 1rem; right: auto; }
+.vision-2030-bg.vision-start { right: -0.25rem; left: auto; }
+.vision-2030-bg.vision-end { left: -0.5rem; right: auto; }
 .vision-2030-bg.vision-center {
   left: 50%;
   right: auto;

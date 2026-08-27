@@ -16,9 +16,9 @@ export interface VisionBadgeSettings {
 
 export const DEFAULT_BADGE: VisionBadgeSettings = {
   visible: true,
-  opacity: 55,
-  position: "center",
-  size: "sm",
+  opacity: 40,
+  position: "end",
+  size: "md",
 };
 
 export const BADGE_POSITIONS: { id: BadgePosition; label: string }[] = [
