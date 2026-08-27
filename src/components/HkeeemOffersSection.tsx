@@ -48,6 +48,10 @@ export function HkeeemOffersSection() {
     status?.lastSuccessAt && !Number.isNaN(new Date(status.lastSuccessAt).getTime())
       ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" })
       : "لا يوجد";
+  const statusAnnouncement = `حالة مزامنة عروض HkeeemAI: ${isAvailable ? "متاح" : "غير متاح"}. آخر مزامنة ناجحة: ${
+    statusQuery.isPending ? "جارٍ التحقق" : lastSuccessLabel
+  }`;
+
 
   const categories = useMemo(
     () => Array.from(new Set(offers.map((o) => o.category).filter(Boolean))) as string[],
