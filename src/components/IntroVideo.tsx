@@ -96,47 +96,57 @@ export function IntroVideo() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-card">
-      <div className="absolute -top-24 -left-16 w-72 h-72 rounded-full bg-primary/20 blur-3xl" />
-      <div className="relative grid md:grid-cols-2 gap-6 p-5 md:p-8 items-center">
-        <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold mb-4">
+    <section
+      ref={sectionRef}
+      className="relative w-full max-w-7xl mx-auto overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-primary/20 shadow-glow group"
+    >
+      {/* طبقة الغلاف/الفيديو الثابتة مع قص مناسب */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={introPoster.url}
+          alt=""
+          loading="lazy"
+          className="w-full h-full object-cover object-center transition-transform duration-[15s] ease-out group-hover:scale-105"
+        />
+        {/* طبقات تدرج لضمان قراءة النص على كل الأحجام */}
+        <div className="absolute inset-0 bg-secondary/50" />
+        <div className="absolute inset-0 bg-linear-to-t from-secondary via-secondary/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-l from-secondary/80 via-secondary/20 to-transparent hidden md:block" />
+      </div>
+
+      {/* المحتوى الأمامي */}
+      <div className="relative z-10 aspect-square md:aspect-video w-full flex flex-col justify-end md:justify-center p-6 md:p-12 lg:p-20">
+        <div className="max-w-2xl transform transition-transform duration-700 group-hover:translate-x-[-0.5rem]">
+          {/* شارة القسم */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-md text-primary text-xs font-bold mb-4 md:mb-6">
             <Sparkles className="w-3.5 h-3.5" />
             تعرّف على حكيم AI
           </div>
-          <h2 className="font-display text-2xl md:text-4xl font-black leading-tight">
+
+          {/* العنوان */}
+          <h2 className="font-display text-3xl md:text-5xl lg:text-6xl font-black leading-tight text-foreground mb-3 md:mb-5 drop-shadow-lg">
             دقيقة واحدة… <span className="text-gold-shine">وتفهم الفكرة كاملة</span>
           </h2>
-          <p className="mt-3 text-sm md:text-base text-muted-foreground leading-relaxed">
+
+          {/* الوصف */}
+          <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed max-w-lg mb-6 md:mb-8">
             كيف يجمع حكيم AI عروض المتاجر، ويقارن الأسعار، ويرشّح لك الأوفر تلقائيًا.
           </p>
+
+          {/* زر التشغيل */}
           <button
             onClick={() => setOpen(true)}
-            className="mt-6 inline-flex items-center gap-2 bg-gradient-gold text-secondary font-bold px-5 py-3 rounded-2xl hover-lift press-ripple"
+            className="inline-flex items-center gap-2 bg-gradient-gold text-secondary font-bold px-5 py-3 rounded-2xl hover-lift press-ripple shadow-glow"
+            aria-label="تشغيل الفيديو التعريفي"
           >
             <Play className="w-4 h-4" />
             شغّل الفيديو التعريفي
           </button>
         </div>
-
-        <button
-          onClick={() => setOpen(true)}
-          className="group relative rounded-2xl overflow-hidden border border-primary/25 shadow-glow"
-          aria-label="تشغيل الفيديو التعريفي"
-        >
-          <img
-            src={introPoster.url}
-            alt="غلاف الفيديو التعريفي لحكيم AI"
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
-          <span className="absolute inset-0 flex items-center justify-center bg-secondary/30 group-hover:bg-secondary/20 transition">
-            <span className="w-14 h-14 rounded-full bg-gradient-gold text-secondary flex items-center justify-center shadow-glow">
-              <Play className="w-6 h-6" />
-            </span>
-          </span>
-        </button>
       </div>
+
+      {/* إطار زخرفي */}
+      <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-primary/10 rounded-[2rem] md:rounded-[3rem]" />
 
       {/* تحميل مسبق مخفي: يبدأ عند اقتراب القسم فيفتح الفيديو فورًا لاحقًا */}
       {nearby && !open && (
