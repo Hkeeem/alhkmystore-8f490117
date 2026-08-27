@@ -27,11 +27,11 @@
     y="56%"
     text-anchor="middle"
     dominant-baseline="middle"
-    font-family="Inter, Arial, sans-serif"
+    font-family="Cairo, Tajawal, Arial, sans-serif"
     font-size="285"
     font-weight="900"
     fill="url(#gold)"
     filter="url(#shadow)">
-    H
+    ح
   </text>
 </svg>
