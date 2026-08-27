@@ -539,8 +539,11 @@ html.theme-switching *:active {
 @utility font-thuluth {
   font-family: var(--font-thuluth);
   font-weight: 700;
-  line-height: 1.7;
+  line-height: 1.9;
   letter-spacing: 0;
+  /* حد رفيع يزيد وضوح الخط الزخرفي فوق الخلفيات الذهبية */
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 @utility text-gold-shine {
@@ -554,8 +557,11 @@ html.theme-switching *:active {
   background-size: 300% 100%;
   background-clip: text;
   color: transparent;
+  /* ظل خفيف يفصل النص عن الخلفية ويرفع وضوحه */
+  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 0.35));
   animation: goldShine 4s ease-in-out infinite;
 }
+
 
 @utility glass-card {
   background-color: oklch(1 0 0 / 0.72);
