@@ -49,7 +49,7 @@ export function VisionBadgeSettings({ className = "" }: { className?: string }) 
           </div>
 
           <div>
-            <div className="text-xs font-bold mb-2">المكان داخل الترويسة</div>
+            <div className="text-xs font-bold mb-2">المكان خلف شعار HkeeemAI</div>
             <div className="grid grid-cols-3 gap-1.5">
               {BADGE_POSITIONS.map((p) => (
                 <button
