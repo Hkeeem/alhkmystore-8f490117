@@ -44,6 +44,23 @@ function DealsPage() {
   const [category, setCategory] = useState<string | undefined>(cat);
   const [storeId, setStoreId] = useState<string | undefined>(store);
   const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
+  const [quickFilter, setQuickFilter] = useState<DealFilter>("الكل");
+  const [interest, setInterest] = useState<Interest>("electronics");
+
+  const applyQuickFilter = (f: DealFilter) => {
+    setQuickFilter(f);
+    if (f === "الكل") { setCategory(undefined); return; }
+    if (f === "أرخص اليوم") { setSort("price"); return; }
+    if (f === "أكبر توفير") { setSort("discount"); return; }
+    setCategory(f);
+  };
+
+  const applyInterest = (i: Interest) => {
+    setInterest(i);
+    const nextCategory = i === "electronics" ? "إلكترونيات" : "سوبرماركت";
+    setCategory(nextCategory);
+    setQuickFilter(nextCategory as DealFilter);
+  };
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
   const [showDemoData, setShowDemoData] = useState(true);
   const queryClient = useQueryClient();
@@ -117,6 +134,11 @@ function DealsPage() {
         />
       </div>
 
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <DealsFilter activeFilter={quickFilter} onChange={applyQuickFilter} />
+        <InterestToggle interest={interest} onChange={applyInterest} />
+      </div>
+
       <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1">
         <Chip active={!category} onClick={() => setCategory(undefined)}>الكل</Chip>
         {cats.map((c) => (
@@ -185,6 +207,7 @@ function DealsPage() {
         </div>
       )}
 
+      <MapButton />
     </main>
   );
 }
