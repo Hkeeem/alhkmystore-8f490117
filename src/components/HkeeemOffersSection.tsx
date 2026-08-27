@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon } from "lucide-react";
-import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions";
+import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon, CheckCircle2, XCircle } from "lucide-react";
+import { getHkeeemOffers, getHkeeemStores, getHkeeemIntegrationStatus } from "@/lib/hkeeem-offers.functions";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 import { HkeeemStatusPanel } from "@/components/HkeeemStatusPanel";
 
@@ -31,7 +31,23 @@ export function HkeeemOffersSection() {
     refetchInterval: 15 * 60_000,
   });
 
+  const fetchStatus = useServerFn(getHkeeemIntegrationStatus);
+  const statusQuery = useQuery({
+    queryKey: ["hkeeem-status"],
+    queryFn: () => fetchStatus({}),
+    refetchInterval: 60_000,
+  });
+
   const offers = offersQuery.data ?? [];
+  const status = statusQuery.data;
+  const lastSuccess = status?.lastSuccessAt ? new Date(status.lastSuccessAt).getTime() : null;
+  const lastFailure = status?.lastFailureAt ? new Date(status.lastFailureAt).getTime() : null;
+  const isAvailable =
+    !offersQuery.isError && (offers.length > 0 || (lastSuccess !== null && (lastFailure === null || lastSuccess >= lastFailure)));
+  const lastSuccessLabel =
+    status?.lastSuccessAt && !Number.isNaN(new Date(status.lastSuccessAt).getTime())
+      ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" })
+      : "لا يوجد";
 
   const categories = useMemo(
     () => Array.from(new Set(offers.map((o) => o.category).filter(Boolean))) as string[],
@@ -58,6 +74,26 @@ export function HkeeemOffersSection() {
         >
           <RefreshCw className={`w-3.5 h-3.5 ${offersQuery.isFetching ? "animate-spin" : ""}`} /> تحديث
         </button>
+      </div>
+
+      {/* شارة حالة المزامنة */}
+      <div
+        className={`flex items-center gap-2 flex-wrap rounded-2xl border px-3 py-2 text-[11px] font-bold ${
+          isAvailable ? "border-primary/30 bg-primary/5" : "border-destructive/30 bg-destructive/5"
+        }`}
+        role="status"
+        aria-live="polite"
+        aria-label="حالة مزامنة عروض HkeeemAI"
+      >
+        {isAvailable ? (
+          <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" />
+        ) : (
+          <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" />
+        )}
+        <span>{isAvailable ? "متاح" : "غير متاح"}</span>
+        <span className="text-muted-foreground font-medium">
+          · آخر مزامنة ناجحة: {statusQuery.isPending ? "…" : lastSuccessLabel}
+        </span>
       </div>
 
       {/* الفلاتر */}

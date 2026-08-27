@@ -108,4 +108,19 @@ describe("HkeeemOffersSection", () => {
       expect(offersFn).toHaveBeenCalledWith({ data: expect.objectContaining({ category: "إلكترونيات" }) }),
     );
   });
+  it("يعرض شارة الحالة مع تاريخ آخر نجاح", async () => {
+    offersFn.mockResolvedValue([offer]);
+    renderSection();
+    await screen.findByText("سماعة لاسلكية");
+    const badge = await screen.findByRole("status");
+    expect(badge.textContent).toContain("متاح");
+    expect(badge.textContent).toContain("آخر مزامنة ناجحة");
+  });
+
+  it("يعرض شارة غير متاح عند فشل الجلب", async () => {
+    offersFn.mockRejectedValue(new Error("تعذّر الاتصال"));
+    renderSection();
+    const badge = await screen.findByRole("status");
+    await waitFor(() => expect(badge.textContent).toContain("غير متاح"));
+  });
 });
