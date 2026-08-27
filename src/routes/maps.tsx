@@ -220,7 +220,6 @@ function MapsPage() {
     // تحميل كسول لمكتبة الخرائط — تمنع كسر العرض من الخادم (SSR)
     (async () => {
       const L = (await import("leaflet")).default;
-      // @ts-expect-error استيراد CSS جانبي مطلوب للخريطة
       await import("leaflet/dist/leaflet.css");
       if (cancelled || !mapRef.current || mapInstanceRef.current) return;
       LRef.current = L;
