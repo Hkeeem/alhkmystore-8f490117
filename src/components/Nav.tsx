@@ -563,15 +563,14 @@ export function TopBar() {
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); }}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); } }}
             tabIndex={0}
-            className="relative z-10 w-10 h-10 rounded-full bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden cursor-pointer transition-transform hover:scale-105 active:scale-95"
+            className="relative z-10 w-10 h-10 rounded-full bg-gradient-to-br from-primary/90 to-primary/60 flex items-center justify-center ring-2 ring-primary/40 shadow-[0_0_14px_oklch(0.75_0.16_78_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
           >
-            <div className="absolute inset-0 bg-gradient-gold opacity-25" />
-            <span className="relative font-display font-black text-xl text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]">H</span>
+            <span className="relative font-display font-black text-2xl text-primary-foreground drop-shadow-md select-none">H</span>
           </span>
-          <div className="relative flex flex-col leading-tight">
+          <div className="relative flex flex-col leading-tight px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
             <VisionBadge />
-            <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine">HkeeemAI</span>
-            <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5">تسوّق أذكى… وفّر أكثر</span>
+            <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
+            <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">تسوّق أذكى… وفّر أكثر</span>
           </div>
         </Link>
 
