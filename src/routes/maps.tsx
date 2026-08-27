@@ -786,11 +786,24 @@ function MapsPage() {
 
 
 
-      <div
-        ref={mapRef}
-        className="w-full h-[55vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
-        style={{ background: "#e8e0d5" }}
-      />
+      <div className="relative">
+        <div
+          ref={mapRef}
+          className="w-full h-[58vh] md:h-[65vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
+          style={{ background: "#e8e0d5" }}
+          role="application"
+          aria-label="خريطة العروض والفروع القريبة"
+        />
+        {userLocation && mapped.length === 0 && (
+          <div className="absolute inset-0 z-[500] rounded-3xl bg-background/70 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-center space-y-1 px-6">
+              <MapPin className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
+              <p className="font-black text-sm">لا توجد عروض ضمن هذه التصفية</p>
+              <p className="text-xs text-muted-foreground">وسّع نطاق المسافة أو امسح الفلاتر لعرض كل العروض</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {userLocation && (
         <div className="grid grid-cols-3 gap-3">
