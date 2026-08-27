@@ -418,7 +418,7 @@ function MapsPage() {
         </div>`);
       liveMarkersRef.current.push(marker);
     }
-  }, [liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
+  }, [mapReady, liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
 
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
