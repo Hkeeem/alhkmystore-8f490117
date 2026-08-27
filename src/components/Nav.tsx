@@ -54,6 +54,7 @@ const groups: Group[] = [
       { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
       { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
       { to: "/affiliate-setup", label: "ربط أمازون ونون", icon: Link2, badge: "دليل" },
+      { to: "/agents", label: "وكلاء حكيم", icon: ShieldCheck, badge: "جديد" },
     ],
   },
 ];
