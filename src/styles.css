@@ -439,10 +439,45 @@ html.theme-switching *:active {
 
     font-family: var(--font-sans);
 
-    font-feature-settings: "ss01", "kern";
+    /* وضوح أعلى للنص العربي: وزن متوسط، تباعد أسطر مريح، وتحسين الحواف */
+    font-weight: 500;
+
+    font-size: 1.0625rem;
+
+    line-height: 1.85;
+
+    letter-spacing: 0;
+
+    font-feature-settings: "kern";
+
+    text-rendering: optimizeLegibility;
 
     -webkit-font-smoothing: antialiased;
 
+    -moz-osx-font-smoothing: grayscale;
+
+  }
+
+  /* لا نصغّر النص عن الحد المقروء في أي مكان */
+  .text-\[10px\],
+  .text-\[11px\],
+  .text-\[12px\] {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  p,
+  li,
+  label,
+  span,
+  button,
+  a {
+    letter-spacing: 0;
+  }
+
+  small,
+  .text-xs {
+    font-weight: 600;
   }
 
   h1,
@@ -454,11 +489,43 @@ html.theme-switching *:active {
 
     font-weight: 900;
 
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+
+    line-height: 1.5;
+
+    text-wrap: balance;
 
   }
 
-}@utility bg-gradient-hero {
+}
+
+/* وضوح النص فوق الخلفيات الذهبية المتدرجة */
+.bg-gradient-hero,
+.bg-gradient-gold,
+.bg-gradient-hot {
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.35);
+}
+
+.bg-gradient-hero .text-muted-foreground,
+.bg-gradient-gold .text-muted-foreground {
+  color: color-mix(in oklab, var(--color-foreground) 88%, transparent);
+}
+
+/* لا نسمح بشفافية تُضعف قراءة النص */
+.bg-gradient-hero [class*="/60"],
+.bg-gradient-hero [class*="/70"],
+.bg-gradient-gold [class*="/60"],
+.bg-gradient-gold [class*="/70"] {
+  opacity: 1;
+}
+
+::placeholder {
+  color: color-mix(in oklab, var(--color-foreground) 65%, transparent);
+  font-weight: 500;
+}
+
+@utility bg-gradient-hero {
+
 
   background-image: var(--gradient-hero);
 
@@ -497,8 +564,11 @@ html.theme-switching *:active {
 @utility font-thuluth {
   font-family: var(--font-thuluth);
   font-weight: 700;
-  line-height: 1.7;
+  line-height: 1.9;
   letter-spacing: 0;
+  /* حد رفيع يزيد وضوح الخط الزخرفي فوق الخلفيات الذهبية */
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 @utility text-gold-shine {
@@ -512,8 +582,11 @@ html.theme-switching *:active {
   background-size: 300% 100%;
   background-clip: text;
   color: transparent;
+  /* ظل خفيف يفصل النص عن الخلفية ويرفع وضوحه */
+  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 0.35));
   animation: goldShine 4s ease-in-out infinite;
 }
+
 
 @utility glass-card {
   background-color: oklch(1 0 0 / 0.72);
