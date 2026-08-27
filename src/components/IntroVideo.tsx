@@ -201,25 +201,33 @@ export function IntroVideo() {
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-secondary">
-            <button
-              onClick={togglePlay}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
-              aria-label={playing ? "إيقاف مؤقت" : "تشغيل"}
-            >
-              {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              {playing ? "إيقاف" : "تشغيل"}
-            </button>
-            <button
-              onClick={() => setMuted((m) => !m)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
-              aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
-            >
-              {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              {muted ? "صوت" : "كتم"}
-            </button>
-            <span className="ms-auto text-[11px] text-primary-foreground/60">
-              يتم حفظ إعداد الصوت لزيارتك القادمة
-            </span>
+            {!failed ? (
+              <>
+                <button
+                  onClick={togglePlay}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+                  aria-label={playing ? "إيقاف مؤقت" : "تشغيل"}
+                >
+                  {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  {playing ? "إيقاف" : "تشغيل"}
+                </button>
+                <button
+                  onClick={() => setMuted((m) => !m)}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+                  aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
+                >
+                  {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  {muted ? "صوت" : "كتم"}
+                </button>
+                <span className="ms-auto text-[11px] text-primary-foreground/60">
+                  يتم حفظ إعداد الصوت لزيارتك القادمة
+                </span>
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                التشغيل غير متاح حاليًا، جرّب إعادة المحاولة أو تصفّح التطبيق.
+              </span>
+            )}
           </div>
         </DialogContent>
       </Dialog>
