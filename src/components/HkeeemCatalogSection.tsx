@@ -72,7 +72,7 @@ export function HkeeemCatalogSection() {
             </div>
           ))}
         </div>
-      ) : query.isError ? (
+      ) : query.isError || catalog?.unavailable ? (
         <div role="alert" className="rounded-3xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3">
           <p className="text-sm font-bold text-destructive">{GENERIC_ERROR}</p>
           <button
