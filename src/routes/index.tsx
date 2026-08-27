@@ -168,6 +168,12 @@ function Home() {
         <OffersSection />
       </LazySection>
 
+      {/* عروض السوشال ميديا الأقوى */}
+      <LazySection minHeight={420}>
+        <SocialOffersSection />
+      </LazySection>
+
+
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
       <LazySection minHeight={520}>
