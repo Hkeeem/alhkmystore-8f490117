@@ -342,6 +342,67 @@ function MapsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapped, focusDealId]);
 
+  /** طبقة العروض الحقيقية الحية من التجار — تُثبَّت حول مركز مدينة التاجر */
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+
+    liveMarkersRef.current.forEach((m) => map.removeLayer(m));
+    liveMarkersRef.current = [];
+    if (!liveDeals || liveDeals.length === 0) return;
+
+    const visible = liveDeals.filter((d) => {
+      const city = d.merchants?.city;
+      if (cityFilter !== "الكل" && city !== cityFilter) return false;
+      if (categoryFilter !== "الكل" && d.category !== categoryFilter) return false;
+      return CITIES.some((c) => c.name === city);
+    });
+
+    for (const d of visible) {
+      const city = CITIES.find((c) => c.name === d.merchants.city)!;
+      // إزاحة ثابتة حول مركز المدينة حتى لا تتكدس الدبابيس فوق بعضها
+      const h = [...d.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+      const angle = (h % 360) * (Math.PI / 180);
+      const r = 0.008 + (h % 7) * 0.004;
+      const lat = city.lat + Math.sin(angle) * r;
+      const lng = city.lng + Math.cos(angle) * r;
+
+      const off = d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100);
+      const icon = L.divIcon({
+        className: "",
+        html: `
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="background:#111;color:#D4AF37;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #D4AF37;box-shadow:0 2px 10px rgba(0,0,0,0.45);white-space:nowrap;">
+              ${d.merchants.name} · خصم ${off}%
+            </div>
+            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #111;margin-top:-1px;"></div>
+          </div>`,
+        iconSize: [90, 30],
+        iconAnchor: [45, 30],
+        popupAnchor: [0, -32],
+      });
+
+      const marker = L.marker([lat, lng], { icon }).addTo(map);
+      const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      const buyBtn = d.product_url
+        ? `<a href="${d.product_url}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#111;color:#D4AF37;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🛒 صفحة العرض لدى التاجر</a>`
+        : "";
+      marker.bindPopup(`
+        <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:210px;max-width:250px;">
+          <div style="font-size:10px;font-weight:900;color:#B8860B;margin-bottom:2px;">⚡ عرض حقيقي من التاجر — ${d.merchants.city}</div>
+          <div style="font-size:13px;font-weight:900;">${d.title}</div>
+          <div style="font-size:11px;color:#888;margin:4px 0 6px;">${d.merchants.name}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;font-weight:900;color:#B8860B;">${d.price} ر.س</span>
+            <span style="font-size:11px;color:#999;text-decoration:line-through;">${d.original_price} ر.س</span>
+          </div>
+          ${buyBtn}
+          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#D4AF37;color:#111;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 توجيه إلى ${d.merchants.city}</a>
+        </div>`);
+      liveMarkersRef.current.push(marker);
+    }
+  }, [liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
+
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
     const marker = markersRef.current[dealId];
