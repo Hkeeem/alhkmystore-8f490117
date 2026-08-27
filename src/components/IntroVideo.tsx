@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Play, Pause, Volume2, VolumeX, Loader2, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import introVideo from "@/assets/hkeem-intro-v2.mp4.asset.json";
-import introPoster from "@/assets/hkeem-intro-poster.png.asset.json";
+import introVideo from "@/assets/intro-video.mp4.asset.json";
+import introPoster from "@/assets/intro-poster.jpg.asset.json";
 
 const MUTE_KEY = "hkeeem-video-muted";
 
