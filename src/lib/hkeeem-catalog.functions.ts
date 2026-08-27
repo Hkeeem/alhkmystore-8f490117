@@ -8,5 +8,17 @@ export const getHkeeemCatalog = createServerFn({ method: "GET" })
   })
   .handler(async ({ data }) => {
     const { fetchHkeeemCatalog } = await import("@/lib/hkeeem-catalog.server");
-    return fetchHkeeemCatalog(data.limit);
+    try {
+      const catalog = await fetchHkeeemCatalog(data.limit);
+      return { ...catalog, unavailable: false as boolean };
+    } catch {
+      // لا نرمي الخطأ حتى لا تنكسر الواجهة — نعيد حالة فارغة آمنة
+      return {
+        offers: [],
+        stores: [],
+        lastUpdatedAt: new Date().toISOString(),
+        stale: false,
+        unavailable: true as boolean,
+      };
+    }
   });
