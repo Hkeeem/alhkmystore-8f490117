@@ -1,6 +1,13 @@
-import { useMemo, useState } from "react";
-import { ExternalLink, Megaphone, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ExternalLink, Megaphone, Search, Sparkles, Star } from "lucide-react";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
+import {
+  loadSocialPrefs,
+  rankSocialStores,
+  recordSocialClick,
+  toggleFavoriteCategory,
+  type SocialPrefs,
+} from "@/lib/social-rank";
 
 type Platform = {
   id: string;
@@ -56,20 +63,43 @@ const TOP_SOCIAL_STORE_IDS = [
   "trendyol", "sephora-sa", "golden-scent", "ikea-sa", "home-centre", "floward", "almosafer",
 ];
 
+const EMPTY_PREFS: SocialPrefs = { storeClicks: {}, platformClicks: {}, favoriteCategories: [] };
+
 export function SocialOffersSection() {
   const [platform, setPlatform] = useState<string>("snapchat");
   const [q, setQ] = useState("");
+  const [prefs, setPrefs] = useState<SocialPrefs>(EMPTY_PREFS);
+  const [personalized, setPersonalized] = useState(true);
+
+  useEffect(() => {
+    const stored = loadSocialPrefs();
+    setPrefs(stored);
+    const top = Object.entries(stored.platformClicks).sort((a, b) => b[1] - a[1])[0];
+    if (top && PLATFORMS.some((p) => p.id === top[0])) setPlatform(top[0]);
+  }, []);
 
   const active = PLATFORMS.find((p) => p.id === platform)!;
 
-  const stores = useMemo(() => {
-    const ranked = TOP_SOCIAL_STORE_IDS
+  const categories = useMemo(() => {
+    const pool = TOP_SOCIAL_STORE_IDS
       .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
       .filter(Boolean) as typeof STORES_DIRECTORY;
+    return Array.from(new Set(pool.map((s) => s.category)));
+  }, []);
+
+  const ranked = useMemo(() => {
     const text = q.trim();
-    if (!text) return ranked;
-    return STORES_DIRECTORY.filter((s) => s.name.includes(text) || s.category.includes(text));
-  }, [q]);
+    const pool = text
+      ? STORES_DIRECTORY.filter((s) => s.name.includes(text) || s.category.includes(text))
+      : (TOP_SOCIAL_STORE_IDS
+          .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
+          .filter(Boolean) as typeof STORES_DIRECTORY);
+    return rankSocialStores(pool, platform, personalized ? prefs : EMPTY_PREFS);
+  }, [q, platform, prefs, personalized]);
+
+  const handleOpen = (storeId: string) => {
+    setPrefs((prev) => recordSocialClick(prev, storeId, platform));
+  };
 
   return (
     <section aria-labelledby="social-offers-title">
@@ -82,7 +112,7 @@ export function SocialOffersSection() {
             </h2>
           </div>
           <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-            افتح قنوات المتاجر الرسمية على منصات التواصل وشوف أقوى عروضها اللحظية
+            ترتيب ذكي حسب قوة المتجر وتفاعله على المنصة واهتماماتك
           </p>
         </div>
       </div>
@@ -106,7 +136,7 @@ export function SocialOffersSection() {
         ))}
       </div>
 
-      <div className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2 mb-4">
+      <div className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2 mb-3">
         <Search className="w-4 h-4 text-primary shrink-0" />
         <input
           value={q}
@@ -117,22 +147,66 @@ export function SocialOffersSection() {
         />
       </div>
 
+      <div className="flex flex-wrap items-center gap-2 mb-4">
+        <button
+          type="button"
+          onClick={() => setPersonalized((v) => !v)}
+          aria-pressed={personalized}
+          className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition inline-flex items-center gap-1.5 ${
+            personalized
+              ? "bg-gradient-gold text-secondary border-primary shadow-glow"
+              : "bg-card text-muted-foreground border-border/60 hover:border-primary/60"
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          ترتيب ذكي مخصص لي
+        </button>
+        {categories.map((c) => {
+          const on = prefs.favoriteCategories.includes(c);
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setPrefs((prev) => toggleFavoriteCategory(prev, c))}
+              aria-pressed={on}
+              className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition inline-flex items-center gap-1 ${
+                on
+                  ? "bg-primary/15 text-primary border-primary/70"
+                  : "bg-card text-muted-foreground border-border/60 hover:border-primary/50"
+              }`}
+            >
+              <Star className={`w-3 h-3 ${on ? "fill-current" : ""}`} />
+              {c}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
-        {stores.map((s) => (
+        {ranked.map(({ store: s, score, reasons }, i) => (
           <a
             key={s.id}
             href={active.build(s.name)}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="group flex items-center gap-3 p-3 rounded-2xl bg-card border border-border/60 hover:border-primary/70 hover:shadow-glow transition"
+            onClick={() => handleOpen(s.id)}
+            className="group relative flex items-center gap-3 p-3 rounded-2xl bg-card border border-border/60 hover:border-primary/70 hover:shadow-glow transition"
           >
+            {i < 3 && !q.trim() && (
+              <span className="absolute -top-2 -start-2 text-[10px] font-black px-2 py-0.5 rounded-full bg-gradient-gold text-secondary shadow-glow">
+                #{i + 1}
+              </span>
+            )}
             <div className="w-10 h-10 rounded-xl bg-secondary text-primary font-black flex items-center justify-center ring-1 ring-primary/30 shrink-0">
               {s.name.trim().charAt(0)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold text-sm truncate leading-normal">{s.name}</div>
               <div className="text-[11px] text-muted-foreground truncate leading-normal">
-                {active.label} · {s.category}
+                {reasons[0] ?? `${active.label} · ${s.category}`}
+              </div>
+              <div className="text-[10px] text-primary/80 mt-0.5" aria-label={`درجة القوة ${score} من 100`}>
+                قوة العرض {Math.round(score)}٪
               </div>
             </div>
             <ExternalLink className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
@@ -140,12 +214,12 @@ export function SocialOffersSection() {
         ))}
       </div>
 
-      {stores.length === 0 && (
+      {ranked.length === 0 && (
         <p className="text-sm text-muted-foreground py-6 text-center">لا يوجد متجر مطابق لبحثك.</p>
       )}
 
       <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
-        الروابط تفتح البحث الرسمي داخل كل منصة عن حسابات المتجر — لا نعرض أي عرض أو كوبون غير موثّق.
+        الترتيب يعتمد على قوة المتجر (40٪) وتفاعله على المنصة (30٪) وتفضيلاتك المحفوظة على جهازك (30٪) — لا نعرض أي عرض أو كوبون غير موثّق.
       </p>
     </section>
   );
