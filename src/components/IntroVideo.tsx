@@ -16,6 +16,8 @@ export function IntroVideo() {
   const [nearby, setNearby] = useState(false);
   // اكتمل التحميل المسبق فيفتح الفيديو فورًا
   const [prefetched, setPrefetched] = useState(false);
+  // حالة فشل تحميل الفيديو لعرض بديل لطيف
+  const [failed, setFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const sectionRef = useRef<HTMLElement | null>(null);
 
@@ -147,6 +149,7 @@ export function IntroVideo() {
           tabIndex={-1}
           className="hidden"
           onCanPlayThrough={() => setPrefetched(true)}
+          onError={() => setPrefetched(false)}
         />
       )}
 
@@ -155,7 +158,7 @@ export function IntroVideo() {
           <DialogTitle className="sr-only">الفيديو التعريفي لحكيم AI</DialogTitle>
           <DialogDescription className="sr-only">فيديو قصير يشرح فكرة حكيم AI</DialogDescription>
           <div className="relative bg-black">
-            {loading && !prefetched && (
+            {loading && !prefetched && !failed && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <Loader2 className="w-7 h-7 text-primary animate-spin" />
               </div>
@@ -169,33 +172,62 @@ export function IntroVideo() {
               loop
               muted={muted}
               preload="auto"
-              onLoadedData={() => setLoading(false)}
+              onLoadedData={() => { setLoading(false); setFailed(false); }}
+              onError={() => { setLoading(false); setFailed(true); }}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               className="w-full max-h-[70vh] bg-black"
             />
+            {failed && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-secondary/95 p-6 text-center">
+                <img
+                  src={introPoster.url}
+                  alt="غلاف الفيديو التعريفي"
+                  className="w-full max-w-md rounded-2xl border border-primary/25 shadow-glow opacity-90"
+                />
+                <p className="text-sm md:text-base text-muted-foreground max-w-sm">
+                  الفيديو ما تحمّل للتو… لكن الفكرة كاملة بين إيديك من صفحات التطبيق.
+                </p>
+                <button
+                  onClick={() => { setFailed(false); setLoading(true); if (videoRef.current) { videoRef.current.load(); void videoRef.current.play().catch(() => undefined); } }}
+                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-gold text-secondary font-bold px-5 py-2.5 text-sm hover-lift press-ripple"
+                  aria-label="إعادة محاولة تشغيل الفيديو"
+                >
+                  <Play className="w-4 h-4" />
+                  جرّب مرة ثانية
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2 p-3 bg-secondary">
-            <button
-              onClick={togglePlay}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
-              aria-label={playing ? "إيقاف مؤقت" : "تشغيل"}
-            >
-              {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-              {playing ? "إيقاف" : "تشغيل"}
-            </button>
-            <button
-              onClick={() => setMuted((m) => !m)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
-              aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
-            >
-              {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              {muted ? "صوت" : "كتم"}
-            </button>
-            <span className="ms-auto text-[11px] text-primary-foreground/60">
-              يتم حفظ إعداد الصوت لزيارتك القادمة
-            </span>
+            {!failed ? (
+              <>
+                <button
+                  onClick={togglePlay}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+                  aria-label={playing ? "إيقاف مؤقت" : "تشغيل"}
+                >
+                  {playing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  {playing ? "إيقاف" : "تشغيل"}
+                </button>
+                <button
+                  onClick={() => setMuted((m) => !m)}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-primary/15 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
+                  aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
+                >
+                  {muted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                  {muted ? "صوت" : "كتم"}
+                </button>
+                <span className="ms-auto text-[11px] text-primary-foreground/60">
+                  يتم حفظ إعداد الصوت لزيارتك القادمة
+                </span>
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground">
+                التشغيل غير متاح حاليًا، جرّب إعادة المحاولة أو تصفّح التطبيق.
+              </span>
+            )}
           </div>
         </DialogContent>
       </Dialog>
