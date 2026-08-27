@@ -8,12 +8,13 @@ const catalogFn = vi.fn();
 vi.mock("@tanstack/react-start", () => ({ useServerFn: (fn: unknown) => fn }));
 vi.mock("@/lib/hkeeem-catalog.functions", () => ({
   getHkeeemCatalog: (args: unknown) => catalogFn(args),
+  __esModule: true,
 }));
 
 import { HkeeemCatalogSection } from "./HkeeemCatalogSection";
 
 function renderSection() {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0, refetchOnWindowFocus: false } } });
   return render(
     <QueryClientProvider client={client}>
       <HkeeemCatalogSection />
