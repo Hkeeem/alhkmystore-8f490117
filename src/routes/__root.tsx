@@ -15,6 +15,8 @@ import { TopBar, BottomBar } from "@/components/Nav";
 import { InstallHandler } from "@/components/InstallHandler";
 import { ScrollMemory } from "@/components/ScrollMemory";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
+import { NotificationPrompt } from "@/components/NotificationPrompt";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -157,6 +159,8 @@ function RootComponent() {
         <Footer />
         <BottomBar />
         <InstallHandler />
+        <Toaster position="top-center" richColors closeButton dir="rtl" />
+        <NotificationPrompt />
       </div>
     </QueryClientProvider>
   );
