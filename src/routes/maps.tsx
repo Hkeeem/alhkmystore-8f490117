@@ -207,20 +207,18 @@ function MapsPage() {
 
 
 
+  /** إنشاء الخريطة مرة واحدة فقط — لا تُدمَّر عند تغيير الفلاتر */
   useEffect(() => {
-    if (!userLocation || !mapRef.current || mapped.length === 0) return;
-
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
-    markersRef.current = {};
+    if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
 
     const map = L.map(mapRef.current, {
       center: [userLocation.lat, userLocation.lng],
       zoom: 12,
       zoomControl: true,
       attributionControl: false,
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 120,
     });
     mapInstanceRef.current = map;
 
@@ -242,6 +240,29 @@ function MapsPage() {
       weight: 1,
       opacity: 0.3,
     }).addTo(map);
+
+    // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
+    setTimeout(() => map.invalidateSize(), 100);
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+      markersRef.current = {};
+    };
+  }, [userLocation]);
+
+  /** تحديث دبابيس العروض فقط عند تغيير الفلاتر — بدون إعادة بناء الخريطة */
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !userLocation) return;
+
+    // تنظيف الدبابيس السابقة
+    Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
+    markersRef.current = {};
+
+    if (mapped.length === 0) return;
 
     // تجميع العروض حسب الفرع: كل فرع دبوس واحد يعرض كل عروضه
     const byBranch = new Map<string, { branch: Branch; items: typeof mapped }>();
