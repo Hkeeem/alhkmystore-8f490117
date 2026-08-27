@@ -157,7 +157,11 @@ function CouponsPage() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center text-muted-foreground py-16">لا توجد كوبونات مطابقة.</div>
+        <div className="text-center text-muted-foreground py-16 leading-8">
+          لا توجد كوبونات حقيقية متاحة حالياً.
+          <br />
+          نعرض فقط الأكواد الموثّقة من المتاجر الرسمية والتجّار المعتمدين.
+        </div>
       )}
 
       <ShareSheet

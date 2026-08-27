@@ -1,4 +1,5 @@
 import { stores } from "./deals";
+import { SHOW_DEMO_DATA } from "@/lib/data-policy";
 
 export type Coupon = {
   id: string;
@@ -12,7 +13,7 @@ export type Coupon = {
   category?: "أول طلب" | "شحن مجاني" | "خصم عام" | "حصري";
 };
 
-export const coupons: Coupon[] = [
+const demoCoupons: Coupon[] = [
   { id: "c1", storeId: "hunger", code: "HS30", title: "خصم 30% على أول طلب", description: "صالح على جميع المطاعم عبر تطبيق هنقرستيشن", discount: "30%", minOrder: 40, expiresIn: "5 أيام", category: "أول طلب" },
   { id: "c2", storeId: "jahez", code: "JAHEZ25", title: "خصم 25 ر.س", description: "على الطلبات فوق 60 ر.س من المطاعم المشاركة", discount: "25 ر.س", minOrder: 60, expiresIn: "أسبوع", category: "خصم عام" },
   { id: "c3", storeId: "toshel", code: "FREESHIP", title: "شحن مجاني", description: "توصيل مجاني لجميع الطلبات هذا الأسبوع", discount: "شحن مجاني", expiresIn: "3 أيام", category: "شحن مجاني" },
@@ -32,3 +33,5 @@ export const coupons: Coupon[] = [
 export function storeById(id: string) {
   return stores.find((s) => s.id === id);
 }
+
+export const coupons: Coupon[] = SHOW_DEMO_DATA ? demoCoupons : [];

@@ -168,7 +168,8 @@ function Home() {
         <OffersSection />
       </LazySection>
 
-      {/* Best deals */}
+      {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
+      {top.length > 0 && (
       <LazySection minHeight={520}>
       <section>
         <SectionHeader
@@ -184,7 +185,9 @@ function Home() {
         </div>
       </section>
       </LazySection>
+      )}
 
+      {groups.length > 0 && (
       <LazySection minHeight={620} id="compare-wrap">
       <section id="compare">
         <SectionHeader title="مقارنة الأسعار" subtitle="نفس المنتج، أرخص متجر أوّلاً" icon={<TrendingDown className="w-5 h-5" />} />
@@ -233,6 +236,7 @@ function Home() {
         </div>
       </section>
       </LazySection>
+      )}
 
       <LazySection minHeight={220}>
       <section className="grid md:grid-cols-3 gap-4">

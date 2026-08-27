@@ -62,18 +62,9 @@ function DealsPage() {
     setQuickFilter(nextCategory as DealFilter);
   };
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
-  const [showDemoData, setShowDemoData] = useState(true);
+  // العروض غير الحقيقية ممنوعة نهائياً — تُعرض فقط عروض التجّار الموثّقين
+  const showDemoData = false;
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    const saved = localStorage.getItem("hkeeem-show-demo-data");
-    if (saved !== null) setShowDemoData(saved === "true");
-  }, []);
-
-  const handleShowDemoDataChange = (next: boolean) => {
-    setShowDemoData(next);
-    localStorage.setItem("hkeeem-show-demo-data", String(next));
-  };
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
@@ -156,11 +147,7 @@ function DealsPage() {
         ))}
       </div>
 
-      <DemoDataBanner
-        showDemoData={showDemoData}
-        onShowDemoDataChange={handleShowDemoDataChange}
-        onRefresh={handleRefresh}
-      />
+      <DemoDataBanner showDemoData={false} onRefresh={handleRefresh} />
 
 
 
@@ -189,9 +176,7 @@ function DealsPage() {
 
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
-          {showDemoData
-            ? "لا توجد عروض مطابقة."
-            : "تم إخفاء البيانات التجريبية — تظهر هنا عروض التجّار الموثّقين فقط."}
+          لا توجد عروض حقيقية مطابقة حالياً — نعرض فقط عروض التجّار الموثّقين.
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">

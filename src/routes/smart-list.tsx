@@ -133,7 +133,7 @@ function SmartList() {
         icon="🛒"
         title="رابط القائمة تالف"
         message="الرابط اللي فتحته يحتوي على بيانات قائمة غير صالحة أو منتهية. نحوّلك لأقرب صفحة متاحة."
-        suggestion={{ to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image }}
+        suggestion={top ? { to: `/deals/${top.id}`, label: top.title, hint: `خصم ${discountPercent(top)}٪`, emoji: top.image } : undefined}
         backTo={{ to: "/smart-list", label: "قائمة جديدة" }}
       />
     );
