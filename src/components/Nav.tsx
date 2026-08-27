@@ -158,6 +158,7 @@ export function TopBar() {
   const isStaff = useIsStaff(user?.id);
   
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarWide, setSidebarWide] = useState(false);
 
