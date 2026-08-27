@@ -48,6 +48,10 @@ export function HkeeemOffersSection() {
     status?.lastSuccessAt && !Number.isNaN(new Date(status.lastSuccessAt).getTime())
       ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" })
       : "لا يوجد";
+  const statusAnnouncement = `حالة مزامنة عروض HkeeemAI: ${isAvailable ? "متاح" : "غير متاح"}. آخر مزامنة ناجحة: ${
+    statusQuery.isPending ? "جارٍ التحقق" : lastSuccessLabel
+  }`;
+
 
   const categories = useMemo(
     () => Array.from(new Set(offers.map((o) => o.category).filter(Boolean))) as string[],
@@ -76,25 +80,32 @@ export function HkeeemOffersSection() {
         </button>
       </div>
 
+      {/* إعلان مباشر لقارئات الشاشة فقط (بدون تشتت بصري) */}
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {statusAnnouncement}
+      </p>
+
       {/* شارة حالة المزامنة */}
       <div
-        className={`flex items-center gap-2 flex-wrap rounded-2xl border px-3 py-2 text-[11px] font-bold ${
+        tabIndex={0}
+        role="group"
+        aria-label={statusAnnouncement}
+        title={statusAnnouncement}
+        className={`flex items-center gap-2 flex-wrap rounded-2xl border px-3 py-2 text-[11px] font-bold outline-none transition-colors motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
           isAvailable ? "border-primary/30 bg-primary/5" : "border-destructive/30 bg-destructive/5"
         }`}
-        role="status"
-        aria-live="polite"
-        aria-label="حالة مزامنة عروض HkeeemAI"
       >
         {isAvailable ? (
           <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" />
         ) : (
           <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" />
         )}
-        <span>{isAvailable ? "متاح" : "غير متاح"}</span>
-        <span className="text-muted-foreground font-medium">
+        <span aria-hidden="true">{isAvailable ? "متاح" : "غير متاح"}</span>
+        <span className="text-muted-foreground font-medium" aria-hidden="true">
           · آخر مزامنة ناجحة: {statusQuery.isPending ? "…" : lastSuccessLabel}
         </span>
       </div>
+
 
       {/* الفلاتر */}
       <div className="space-y-2">
