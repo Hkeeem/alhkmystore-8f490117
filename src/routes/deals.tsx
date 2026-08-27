@@ -11,6 +11,9 @@ import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
 import { HkeeemOffersSection } from "@/components/HkeeemOffersSection";
+import { HkeeemCatalogSection } from "@/components/HkeeemCatalogSection";
+import { DealsFilter, InterestToggle, type DealFilter, type Interest } from "@/components/DealsFilter";
+import { MapButton } from "@/components/MapButton";
 import { z } from "zod";
 
 
@@ -41,6 +44,23 @@ function DealsPage() {
   const [category, setCategory] = useState<string | undefined>(cat);
   const [storeId, setStoreId] = useState<string | undefined>(store);
   const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
+  const [quickFilter, setQuickFilter] = useState<DealFilter>("الكل");
+  const [interest, setInterest] = useState<Interest>("electronics");
+
+  const applyQuickFilter = (f: DealFilter) => {
+    setQuickFilter(f);
+    if (f === "الكل") { setCategory(undefined); return; }
+    if (f === "أرخص اليوم") { setSort("price"); return; }
+    if (f === "أكبر توفير") { setSort("discount"); return; }
+    setCategory(f);
+  };
+
+  const applyInterest = (i: Interest) => {
+    setInterest(i);
+    const nextCategory = i === "electronics" ? "إلكترونيات" : "سوبرماركت";
+    setCategory(nextCategory);
+    setQuickFilter(nextCategory as DealFilter);
+  };
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
   const [showDemoData, setShowDemoData] = useState(true);
   const queryClient = useQueryClient();
@@ -99,6 +119,8 @@ function DealsPage() {
 
       <MerchantDealsSection />
 
+      <HkeeemCatalogSection />
+
       <HkeeemOffersSection />
 
       <div className="relative">
@@ -110,6 +132,11 @@ function DealsPage() {
           placeholder="ابحث عن منتج..."
           className="w-full bg-card border border-border rounded-2xl pr-11 pl-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
         />
+      </div>
+
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <DealsFilter activeFilter={quickFilter} onChange={applyQuickFilter} />
+        <InterestToggle interest={interest} onChange={applyInterest} />
       </div>
 
       <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1">
@@ -180,6 +207,7 @@ function DealsPage() {
         </div>
       )}
 
+      <MapButton />
     </main>
   );
 }
