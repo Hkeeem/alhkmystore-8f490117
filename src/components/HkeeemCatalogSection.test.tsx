@@ -60,7 +60,7 @@ describe("قسم عروض HkeeemAI المعتمدة", () => {
   });
 
   it("يعرض رسالة عامة وزر إعادة المحاولة عند الفشل", async () => {
-    catalogFn.mockRejectedValue(new Error("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا."));
+    catalogFn.mockImplementation(() => Promise.reject(new Error("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.")));
     renderSection();
     expect(await screen.findByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
     expect(screen.getByRole("button", { name: "إعادة المحاولة" })).toBeInTheDocument();
