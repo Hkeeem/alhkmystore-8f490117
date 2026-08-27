@@ -72,7 +72,7 @@ function Home() {
           <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
             تسوّق ذكي…
             <br />
-            <span className="text-primary-foreground drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">توفير أكثر</span>
+            <span className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">توفير أكثر</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base md:text-lg font-medium text-primary-foreground/95 leading-loose">
