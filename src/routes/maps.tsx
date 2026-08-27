@@ -356,12 +356,13 @@ function MapsPage() {
       map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapped, focusDealId]);
+  }, [mapReady, mapped, focusDealId]);
 
   /** طبقة العروض الحقيقية الحية من التجار — تُثبَّت حول مركز مدينة التاجر */
   useEffect(() => {
+    const L = LRef.current;
     const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!L || !map) return;
 
     liveMarkersRef.current.forEach((m) => map.removeLayer(m));
     liveMarkersRef.current = [];
