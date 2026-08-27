@@ -328,13 +328,13 @@ function DealNotFound() {
     <InvalidLinkFallback
       icon="🔍"
       title="ما لقينا هذا العرض"
-      message="يمكن العرض انتهى أو الرابط قديم. جهّزنا لك أقوى عرض متاح الحين."
-      suggestion={{
+      message="يمكن العرض انتهى أو الرابط قديم. تصفّح العروض الحقيقية المتاحة الحين."
+      suggestion={nearest ? {
         to: `/deals/${nearest.id}`,
         label: nearest.title,
         hint: `خصم ${discountPercent(nearest)}٪ · ${nearest.price} ر.س`,
         emoji: nearest.image,
-      }}
+      } : undefined}
       backTo={{ to: "/deals", label: "كل العروض" }}
     />
   );

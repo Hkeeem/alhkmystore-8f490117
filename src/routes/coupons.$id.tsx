@@ -40,12 +40,12 @@ function CouponNotFound() {
       icon="🎟️"
       title="الكوبون غير متوفر"
       message="يمكن الكوبون انتهى أو تغيّر الكود. جربّ هذا الكوبون المتاح حالياً."
-      suggestion={{
+      suggestion={nearest ? {
         to: `/coupons/${nearest.id}`,
         label: `${nearest.title} — ${s?.name ?? ""}`,
         hint: `الكود: ${nearest.code} · ${nearest.discount}`,
         emoji: s?.logo ?? "🎟️",
-      }}
+      } : undefined}
       backTo={{ to: "/coupons", label: "كل الكوبونات" }}
     />
   );
