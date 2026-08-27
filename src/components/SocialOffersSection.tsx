@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { ExternalLink, Megaphone, Search, Sparkles, Star } from "lucide-react";
+import { Clock, ExternalLink, MapPin, Megaphone, Search, Sparkles, Star, Tag } from "lucide-react";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 import {
   loadSocialPrefs,
   rankSocialStores,
   recordSocialClick,
   toggleFavoriteCategory,
+  peakLabel,
+  TIMING_OPTIONS,
   type SocialPrefs,
+  type TimingFilter,
 } from "@/lib/social-rank";
 
 type Platform = {
@@ -314,7 +317,9 @@ export function SocialOffersSection() {
       </div>
 
       {ranked.length === 0 && (
-        <p className="text-sm text-muted-foreground py-6 text-center">لا يوجد متجر مطابق لبحثك.</p>
+        <p className="text-sm text-muted-foreground py-6 text-center">
+          لا يوجد متجر مطابق للموقع أو الفئة أو التوقيت المختار — جرّب توسيع الفلاتر.
+        </p>
       )}
 
       <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
