@@ -394,8 +394,9 @@ html.theme-switching *:active {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: var(--vision-size, 4.5rem);
+  width: var(--vision-size, 6rem);
   height: auto;
+  aspect-ratio: 640 / 428;
   pointer-events: none;
   user-select: none;
   z-index: 0;
