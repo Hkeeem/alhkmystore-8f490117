@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 function mockRoutes(handler: (url: string) => { ok: boolean; status?: number; body?: unknown }) {
-  const spy = vi.fn(async (input: unknown) => {
+  const spy = vi.fn(async (input: unknown, _init?: RequestInit) => {
     const url = String(input);
     const r = handler(url);
     return {
@@ -33,7 +33,7 @@ describe("كتالوج HkeeemAI الخادمي", () => {
     expect(catalog.offers[0]?.title).toBe("عرض");
     expect(catalog.stores[0]?.name).toBe("نون");
     expect(catalog.stale).toBe(false);
-    const init = spy.mock.calls[0][1] as RequestInit;
+    const init = (spy.mock.calls[0] as unknown as [unknown, RequestInit])[1];
     expect((init.headers as Record<string, string>)["X-Hkeeem-Integration-Key"]).toBe(KEY);
   });
 
