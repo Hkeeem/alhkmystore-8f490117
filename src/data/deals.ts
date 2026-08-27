@@ -1,3 +1,5 @@
+import { SHOW_DEMO_DATA } from "@/lib/data-policy";
+
 export type Category =
   | "سوبرماركت"
   | "مطاعم"
@@ -110,7 +112,7 @@ export type Deal = {
   usageCount?: number;
 };
 
-export const deals: Deal[] = [
+const demoDeals: Deal[] = [
   // Groceries - with real product images
   { id: "d1", title: "أرز بسمتي أبو كاس", brand: "أبو كاس", storeId: "othaim", category: "سوبرماركت", originalPrice: 89, price: 45, unit: "10 كجم", image: "https://images.unsplash.com/photo-1586080876-f8f93a4e2f5e?w=300&q=80", tags: ["الأكثر مبيعاً"], expiresIn: "3 أيام", productKey: "basmati_10kg" },
   { id: "d2", title: "أرز بسمتي أبو كاس", brand: "أبو كاس", storeId: "panda", category: "سوبرماركت", originalPrice: 89, price: 52, unit: "10 كجم", image: "https://images.unsplash.com/photo-1586080876-f8f93a4e2f5e?w=300&q=80", expiresIn: "5 أيام", productKey: "basmati_10kg" },
@@ -144,6 +146,8 @@ export const deals: Deal[] = [
   { id: "p3", title: "كريم نيفيا للجسم", storeId: "nahdi", category: "صيدلية", originalPrice: 45, price: 25, unit: "400 مل", image: "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=300&q=80", expiresIn: "أسبوعان", productKey: "nivea_400" },
   { id: "p4", title: "معجون سنسوداين", storeId: "dawaa", category: "صيدلية", originalPrice: 32, price: 18, unit: "75 مل", image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=300&q=80", expiresIn: "أسبوع" },
 ];
+
+export const deals: Deal[] = SHOW_DEMO_DATA ? demoDeals : [];
 
 export function discountPercent(d: Deal) {
   return Math.round(((d.originalPrice - d.price) / d.originalPrice) * 100);
