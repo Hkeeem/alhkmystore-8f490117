@@ -50,9 +50,11 @@ function MapsPage() {
   const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
   const [sortBy, setSortBy] = useState<"distance" | "distance-desc" | "discount">("distance");
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<Record<string, L.Marker>>({});
-  const liveMarkersRef = useRef<L.Marker[]>([]);
+  const mapInstanceRef = useRef<Leaflet.Map | null>(null);
+  const markersRef = useRef<Record<string, Leaflet.Marker>>({});
+  const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
+  const LRef = useRef<L | null>(null);
+  const [mapReady, setMapReady] = useState(false);
   const { data: liveDeals } = useLiveDeals(100);
 
   const focusNearestRef = useRef(false);
