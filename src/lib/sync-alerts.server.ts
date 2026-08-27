@@ -17,7 +17,12 @@ const CODE_LABELS: Record<string, string> = {
   empty_result: "لم تُرجع الدورة أي عروض",
 };
 
-const SOURCE_LABELS: Record<string, string> = { amazon: "أمازون", noon: "نون" };
+const SOURCE_LABELS: Record<string, string> = {
+  amazon: "أمازون",
+  noon: "نون",
+  hkeeem_catalog: "منصة حكيم (API)",
+};
+
 
 /**
  * إرسال التنبيه عبر قنوات خارجية: البريد الإلكتروني (Resend) وSlack.
