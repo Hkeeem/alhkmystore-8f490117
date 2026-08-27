@@ -65,11 +65,28 @@ const TOP_SOCIAL_STORE_IDS = [
 
 const EMPTY_PREFS: SocialPrefs = { storeClicks: {}, platformClicks: {}, favoriteCategories: [] };
 
+const REGIONS = ["الكل", "السعودية", "الخليج", "عالمي"] as const;
+
+/** تطبيع النص العربي للبحث: إزالة التشكيل وتوحيد الألف/الياء/التاء المربوطة */
+function normalizeAr(text: string): string {
+  return text
+    .replace(/[\u064B-\u0652\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
 export function SocialOffersSection() {
   const [platform, setPlatform] = useState<string>("snapchat");
   const [q, setQ] = useState("");
   const [prefs, setPrefs] = useState<SocialPrefs>(EMPTY_PREFS);
   const [personalized, setPersonalized] = useState(true);
+  const [region, setRegion] = useState<string>("الكل");
+  const [category, setCategory] = useState<string>("الكل");
+  const [timing, setTiming] = useState<TimingFilter>("all");
 
   useEffect(() => {
     const stored = loadSocialPrefs();
@@ -80,26 +97,47 @@ export function SocialOffersSection() {
 
   const active = PLATFORMS.find((p) => p.id === platform)!;
 
-  const categories = useMemo(() => {
-    const pool = TOP_SOCIAL_STORE_IDS
-      .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
-      .filter(Boolean) as typeof STORES_DIRECTORY;
-    return Array.from(new Set(pool.map((s) => s.category)));
-  }, []);
+  const basePool = useMemo(
+    () =>
+      TOP_SOCIAL_STORE_IDS
+        .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
+        .filter(Boolean) as typeof STORES_DIRECTORY,
+    [],
+  );
+
+  const categories = useMemo(
+    () => ["الكل", ...Array.from(new Set(basePool.map((s) => s.category)))],
+    [basePool],
+  );
 
   const ranked = useMemo(() => {
-    const text = q.trim();
-    const pool = text
-      ? STORES_DIRECTORY.filter((s) => s.name.includes(text) || s.category.includes(text))
-      : (TOP_SOCIAL_STORE_IDS
-          .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
-          .filter(Boolean) as typeof STORES_DIRECTORY);
-    return rankSocialStores(pool, platform, personalized ? prefs : EMPTY_PREFS);
-  }, [q, platform, prefs, personalized]);
+    const text = normalizeAr(q);
+    const words = text ? text.split(" ") : [];
+    let pool = text ? STORES_DIRECTORY : basePool;
+
+    if (words.length) {
+      pool = pool.filter((s) => {
+        const haystack = normalizeAr(`${s.name} ${s.category} ${s.region}`);
+        return words.every((w) => haystack.includes(w));
+      });
+    }
+    if (region !== "الكل") pool = pool.filter((s) => s.region === region);
+    if (category !== "الكل") pool = pool.filter((s) => s.category === category);
+
+    return rankSocialStores(pool, platform, personalized ? prefs : EMPTY_PREFS, timing);
+  }, [q, platform, prefs, personalized, region, category, timing, basePool]);
 
   const handleOpen = (storeId: string) => {
     setPrefs((prev) => recordSocialClick(prev, storeId, platform));
   };
+
+  const resetFilters = () => {
+    setQ("");
+    setRegion("الكل");
+    setCategory("الكل");
+    setTiming("all");
+  };
+
 
   return (
     <section aria-labelledby="social-offers-title">
