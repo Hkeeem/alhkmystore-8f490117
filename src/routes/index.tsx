@@ -115,66 +115,10 @@ function Home() {
         </div>
       </section>
 
-      <LazySection minHeight={340}>
-        <IntroVideo />
-      </LazySection>
-
-      <LazySection minHeight={420}>
-        <section>
-          <SectionHeader title="قدرات الذكاء الاقتصادي" subtitle="مقارنة، تحليل، توليد محتوى، وسوق موحد" icon={<Zap className="w-5 h-5" />} />
-          <div className="grid sm:grid-cols-2 gap-4">
-            {[
-              { to: "/compare", tag: "محدث لحظياً", title: "محرك مقارنة الأسعار والعروض", desc: "مقارنة لحظية لأسعار الأجهزة والإلكترونيات والمنتجات الوطنية بين نون وأمازون وجرير وإكسترا ومتجر حكيم المباشر مع كود خصم إضافي.", cta: "قارن الآن" },
-              { to: "/analysis", tag: "تحليل عميق", title: "تحليل المتاجر والمنافسين بالذكاء الاصطناعي", desc: "تحليل SWOT متكامل: تموضع الأسعار، نقاط القوة والضعف، حساب هامش الربح، واستراتيجيات النمو وتخفيض تكلفة الشحن.", cta: "ابدأ التحليل" },
-              { to: "/ads", tag: "توليد فوري", title: "مولد محتوى الإعلانات والوصف التسويقي", desc: "نصوص إعلانية بلهجة سعودية لسناب شات وتيك توك وإنستغرام، مع تحسين الكلمات المفتاحية SEO.", cta: "ولّد إعلانك" },
-              { to: "/market", tag: "عقارات وتجارة", title: "سوق حكيم التجاري والعقاري الموحد", desc: "منتجات وعقارات في الرياض وجدة والخبر مع حاسبة العائد الإيجاري، مدى و STC Pay، وشحن سبل وسمسا خلال 24-48 ساعة.", cta: "تصفح السوق والحاسبة" },
-            ].map((c) => (
-              <Link key={c.to} to={c.to} className="bg-card rounded-3xl border border-border/60 shadow-card p-5 hover-lift flex flex-col">
-                <span className="self-start text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 leading-normal">{c.tag}</span>
-                <h3 className="font-bold text-lg mt-3 leading-snug">{c.title}</h3>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed flex-1">{c.desc}</p>
-                <span className="mt-4 self-start text-sm font-bold text-primary leading-normal">{c.cta} ←</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      </LazySection>
-
-      <section>
-        <SectionHeader title="استكشف HkeeemAI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {pillars.map((p) => {
-            const Icon = p.icon;
-            return (
-              <Link
-                key={p.label}
-                to={p.to}
-                className="group relative overflow-hidden p-4 md:p-5 rounded-3xl bg-card border border-border/60 hover:border-primary/70 hover:shadow-glow transition-all"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${p.tone} opacity-60 group-hover:opacity-100 transition`} />
-                <div className="relative">
-                  <div className="w-11 h-11 rounded-2xl bg-secondary text-primary flex items-center justify-center mb-3 ring-1 ring-primary/30 group-hover:scale-105 transition">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="font-black text-sm md:text-base leading-normal">{p.label}</div>
-                  <div className="text-[11px] text-muted-foreground mt-1 leading-normal">{p.note}</div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* عروض حية من قاعدة البيانات */}
+      {/* عروض حية من قاعدة البيانات — أول شيء يشوفه المستهلك */}
       <LazySection minHeight={300}>
         <OffersSection />
       </LazySection>
-
-      {/* عروض السوشال ميديا الأقوى */}
-      <LazySection minHeight={420}>
-        <SocialOffersSection />
-      </LazySection>
-
 
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
