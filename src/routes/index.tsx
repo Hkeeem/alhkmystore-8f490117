@@ -45,7 +45,7 @@ function Home() {
     { to: "/deals", label: "أفضل العروض", icon: Flame, tone: "from-primary/25 to-primary/5", note: "مرتّبة بالذكاء الاصطناعي" },
     { to: "/", label: "مقارنة الأسعار", icon: TrendingDown, tone: "from-accent/25 to-accent/5", note: "نفس المنتج، أرخص متجر", hash: "compare" },
     { to: "/coupons", label: "الكوبونات", icon: Ticket, tone: "from-primary/25 to-primary/5", note: "أحدث الأكواد الفعّالة" },
-    { to: "/stores", label: "المتاجر", icon: StoreIcon, tone: "from-accent/25 to-accent/5", note: "+14 متجرًا شريكًا" },
+    { to: "/stores", label: "المتاجر", icon: StoreIcon, tone: "from-accent/25 to-accent/5", note: "+65 متجرًا موثّقًا" },
     { to: "/real-estate", label: "العقارات", icon: HomeIcon, tone: "from-primary/25 to-primary/5", note: "ذكاء عقاري — قريباً" },
     { to: "/cars", label: "السيارات", icon: Car, tone: "from-accent/25 to-accent/5", note: "مقارنة وكالات — قريباً" },
     { to: "/maps", label: "الخرائط", icon: MapPin, tone: "from-primary/25 to-primary/5", note: "أقرب العروض — قريباً" },
@@ -108,7 +108,7 @@ function Home() {
           </form>
 
           <div className="mt-8 grid grid-cols-3 gap-3 max-w-md">
-            <Stat n="14+" l="متجر" />
+            <Stat n="65+" l="متجر" />
             <Stat n="60٪" l="متوسط التوفير" />
             <Stat n="24/7" l="مساعد ذكي" />
           </div>
