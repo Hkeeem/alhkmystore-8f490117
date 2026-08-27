@@ -24,14 +24,14 @@
 
   <text
     x="50%"
-    y="56%"
+    y="54%"
     text-anchor="middle"
     dominant-baseline="middle"
     font-family="Cairo, Tajawal, Arial, sans-serif"
-    font-size="285"
+    font-size="260"
     font-weight="900"
     fill="url(#gold)"
     filter="url(#shadow)">
-    ح
+    H
   </text>
 </svg>
