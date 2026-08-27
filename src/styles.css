@@ -499,8 +499,8 @@ html.theme-switching *:active {
 
 }
 
+@utility bg-gradient-hero {
 
-}@utility bg-gradient-hero {
 
   background-image: var(--gradient-hero);
 
