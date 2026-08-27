@@ -439,10 +439,45 @@ html.theme-switching *:active {
 
     font-family: var(--font-sans);
 
-    font-feature-settings: "ss01", "kern";
+    /* وضوح أعلى للنص العربي: وزن متوسط، تباعد أسطر مريح، وتحسين الحواف */
+    font-weight: 500;
+
+    font-size: 1.0625rem;
+
+    line-height: 1.85;
+
+    letter-spacing: 0;
+
+    font-feature-settings: "kern";
+
+    text-rendering: optimizeLegibility;
 
     -webkit-font-smoothing: antialiased;
 
+    -moz-osx-font-smoothing: grayscale;
+
+  }
+
+  /* لا نصغّر النص عن الحد المقروء في أي مكان */
+  .text-\[10px\],
+  .text-\[11px\],
+  .text-\[12px\] {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  p,
+  li,
+  label,
+  span,
+  button,
+  a {
+    letter-spacing: 0;
+  }
+
+  small,
+  .text-xs {
+    font-weight: 600;
   }
 
   h1,
@@ -454,9 +489,16 @@ html.theme-switching *:active {
 
     font-weight: 900;
 
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
+
+    line-height: 1.5;
+
+    text-wrap: balance;
 
   }
+
+}
+
 
 }@utility bg-gradient-hero {
 
