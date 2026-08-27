@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
+import { useLiveDeals } from "@/hooks/use-live-deals";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
