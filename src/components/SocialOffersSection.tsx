@@ -179,10 +179,70 @@ export function SocialOffersSection() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="ابحث عن متجر أو فئة… مثلاً: بقالة، نون، تجميل"
+          placeholder="ابحث باسم المتجر أو الفئة أو الموقع… مثلاً: تجميل السعودية"
           aria-label="بحث في متاجر السوشال ميديا"
           className="flex-1 bg-transparent outline-none text-sm py-1"
         />
+        {(q || region !== "الكل" || category !== "الكل" || timing !== "all") && (
+          <button type="button" onClick={resetFilters} className="text-[11px] font-bold text-primary shrink-0">
+            مسح الفلاتر
+          </button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
+        <label className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
+          <MapPin className="w-4 h-4 text-primary shrink-0" />
+          <span className="sr-only">الموقع</span>
+          <select
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+            aria-label="تصفية حسب الموقع"
+            className="flex-1 bg-transparent outline-none text-[13px] font-bold"
+          >
+            {REGIONS.map((r) => (
+              <option key={r} value={r} className="bg-card text-foreground">{r}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
+          <Tag className="w-4 h-4 text-primary shrink-0" />
+          <span className="sr-only">الفئة</span>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            aria-label="تصفية حسب الفئة"
+            className="flex-1 bg-transparent outline-none text-[13px] font-bold"
+          >
+            {categories.map((c) => (
+              <option key={c} value={c} className="bg-card text-foreground">{c}</option>
+            ))}
+          </select>
+        </label>
+
+        <div className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2 col-span-2 md:col-span-1">
+          <Clock className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-[11px] text-muted-foreground truncate">{peakLabel(platform)}</span>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-3" role="group" aria-label="تصفية حسب التوقيت">
+        {TIMING_OPTIONS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTiming(t.id)}
+            aria-pressed={timing === t.id}
+            className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition ${
+              timing === t.id
+                ? "bg-primary/15 text-primary border-primary/70"
+                : "bg-card text-muted-foreground border-border/60 hover:border-primary/50"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -199,7 +259,7 @@ export function SocialOffersSection() {
           <Sparkles className="w-3.5 h-3.5" />
           ترتيب ذكي مخصص لي
         </button>
-        {categories.map((c) => {
+        {categories.filter((c) => c !== "الكل").map((c) => {
           const on = prefs.favoriteCategories.includes(c);
           return (
             <button
@@ -219,6 +279,7 @@ export function SocialOffersSection() {
           );
         })}
       </div>
+
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {ranked.map(({ store: s, score, reasons }, i) => (
