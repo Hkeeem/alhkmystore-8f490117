@@ -111,9 +111,19 @@ export function normalizeStore(raw: unknown): CatalogStore | null {
   };
 }
 
+class UpstreamError extends Error {
+  constructor(
+    public path: string,
+    public status: number | null,
+    message: string,
+  ) {
+    super(message);
+  }
+}
+
 async function call(path: string): Promise<unknown> {
   const key = process.env["HKEEEM_INTEGRATION_KEY"];
-  if (!key) throw new Error("hkeeem-not-configured");
+  if (!key) throw new UpstreamError(path, null, "hkeeem-not-configured");
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -125,9 +135,12 @@ async function call(path: string): Promise<unknown> {
     if (!res.ok) {
       // سجل خادمي فقط، دون أي جزء من المفتاح
       console.error("[hkeeem] upstream error", { path, status: res.status });
-      throw new Error("hkeeem-upstream-error");
+      throw new UpstreamError(path, res.status, "hkeeem-upstream-error");
     }
     return await res.json();
+  } catch (err) {
+    if (err instanceof UpstreamError) throw err;
+    throw new UpstreamError(path, null, "hkeeem-network-error");
   } finally {
     clearTimeout(timer);
   }
@@ -154,11 +167,18 @@ export async function fetchHkeeemCatalog(limit = 24): Promise<Catalog> {
       lastUpdatedAt: new Date(now).toISOString(),
     };
     cache = { at: now, value };
+    const { recordHkeeemSuccess } = await import("@/lib/hkeeem-alerts.server");
+    void recordHkeeemSuccess(value.offers.length);
     return { ...value, stale: false };
   } catch (err) {
-    console.error("[hkeeem] catalog fetch failed", {
-      reason: err instanceof Error ? err.message : "unknown",
-    });
+    const reason = err instanceof Error ? err.message : "unknown";
+    const status = err instanceof UpstreamError ? err.status : null;
+    const path = err instanceof UpstreamError ? err.path : "/offers";
+    console.error("[hkeeem] catalog fetch failed", { reason, status });
+
+    const { recordHkeeemFailure } = await import("@/lib/hkeeem-alerts.server");
+    void recordHkeeemFailure({ path, status, reason });
+
     if (cache && now - cache.at < STALE_IF_ERROR_MS) {
       return { ...cache.value, stale: true };
     }
@@ -166,6 +186,7 @@ export async function fetchHkeeemCatalog(limit = 24): Promise<Catalog> {
     throw new Error("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
   }
 }
+
 
 /** لأغراض الاختبار فقط */
 export function __resetCatalogCache() {
