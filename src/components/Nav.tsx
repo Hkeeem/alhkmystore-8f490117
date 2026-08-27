@@ -1,10 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { VisionBadge } from "@/components/VisionBadge";
 import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
+import { useAppearance } from "@/hooks/use-appearance";
 
 
 import { toast } from "sonner";
@@ -55,6 +56,7 @@ const groups: Group[] = [
       { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
       { to: "/affiliate-setup", label: "ربط أمازون ونون", icon: Link2, badge: "دليل" },
       { to: "/agents", label: "وكلاء حكيم", icon: ShieldCheck, badge: "جديد" },
+      { to: "/settings", label: "تخصيص المظهر", icon: Palette, badge: "جديد" },
     ],
   },
 ];
@@ -152,6 +154,7 @@ function SidebarGroup({
 
 export function TopBar() {
   const { user, signOut } = useAuth();
+  useAppearance();
   const isStaff = useIsStaff(user?.id);
   
   const pathname = useRouterState({ select: (s) => s.location.pathname });
