@@ -11,6 +11,9 @@ import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
 import { HkeeemOffersSection } from "@/components/HkeeemOffersSection";
+import { HkeeemCatalogSection } from "@/components/HkeeemCatalogSection";
+import { DealsFilter, InterestToggle, type DealFilter, type Interest } from "@/components/DealsFilter";
+import { MapButton } from "@/components/MapButton";
 import { z } from "zod";
 
 
@@ -98,6 +101,8 @@ function DealsPage() {
 
 
       <MerchantDealsSection />
+
+      <HkeeemCatalogSection />
 
       <HkeeemOffersSection />
 
