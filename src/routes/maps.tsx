@@ -215,46 +215,59 @@ function MapsPage() {
   /** إنشاء الخريطة مرة واحدة فقط — لا تُدمَّر عند تغيير الفلاتر */
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
+    let cancelled = false;
 
-    const map = L.map(mapRef.current, {
-      center: [userLocation.lat, userLocation.lng],
-      zoom: 12,
-      zoomControl: true,
-      attributionControl: false,
-      zoomSnap: 0.25,
-      zoomDelta: 0.5,
-      wheelPxPerZoomLevel: 120,
-    });
-    mapInstanceRef.current = map;
+    // تحميل كسول لمكتبة الخرائط — تمنع كسر العرض من الخادم (SSR)
+    (async () => {
+      const L = (await import("leaflet")).default;
+      // @ts-expect-error استيراد CSS جانبي مطلوب للخريطة
+      await import("leaflet/dist/leaflet.css");
+      if (cancelled || !mapRef.current || mapInstanceRef.current) return;
+      LRef.current = L;
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+      const map = L.map(mapRef.current, {
+        center: [userLocation.lat, userLocation.lng],
+        zoom: 12,
+        zoomControl: true,
+        attributionControl: false,
+        zoomSnap: 0.25,
+        zoomDelta: 0.5,
+        wheelPxPerZoomLevel: 120,
+      });
+      mapInstanceRef.current = map;
 
-    const userIcon = L.divIcon({
-      className: "",
-      html: `<div style="width:20px;height:20px;background:#D4AF37;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(212,175,55,0.3);"></div>`,
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
-    });
-    L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(map).bindPopup("<b>موقعك الحالي</b>");
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
 
-    L.circle([userLocation.lat, userLocation.lng], {
-      radius: 3000,
-      color: "#D4AF37",
-      fillColor: "#D4AF37",
-      fillOpacity: 0.06,
-      weight: 1,
-      opacity: 0.3,
-    }).addTo(map);
+      const userIcon = L.divIcon({
+        className: "",
+        html: `<div style="width:20px;height:20px;background:#D4AF37;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(212,175,55,0.3);"></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+      });
+      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(map).bindPopup("<b>موقعك الحالي</b>");
 
-    // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
-    setTimeout(() => map.invalidateSize(), 100);
+      L.circle([userLocation.lat, userLocation.lng], {
+        radius: 3000,
+        color: "#D4AF37",
+        fillColor: "#D4AF37",
+        fillOpacity: 0.06,
+        weight: 1,
+        opacity: 0.3,
+      }).addTo(map);
+
+      // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
+      setTimeout(() => map.invalidateSize(), 100);
+      setMapReady(true);
+    })();
 
     return () => {
+      cancelled = true;
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
       markersRef.current = {};
+      setMapReady(false);
     };
   }, [userLocation]);
 
