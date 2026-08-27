@@ -26,6 +26,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -132,6 +133,11 @@ const AuthRoute = AuthRouteImport.update({
 const AnalysisRoute = AnalysisRouteImport.update({
   id: '/analysis',
   path: '/analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
+  '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -295,6 +302,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
+  '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
+  '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
   '/cars': typeof CarsRoute
@@ -379,6 +388,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ads'
     | '/affiliate-setup'
+    | '/agents'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -419,6 +429,7 @@ export interface FileRouteTypes {
     | '/'
     | '/ads'
     | '/affiliate-setup'
+    | '/agents'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/ads'
     | '/affiliate-setup'
+    | '/agents'
     | '/analysis'
     | '/auth'
     | '/cars'
@@ -502,6 +514,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AdsRoute: typeof AdsRoute
   AffiliateSetupRoute: typeof AffiliateSetupRoute
+  AgentsRoute: typeof AgentsRoute
   AnalysisRoute: typeof AnalysisRoute
   AuthRoute: typeof AuthRoute
   CarsRoute: typeof CarsRoute
@@ -648,6 +661,13 @@ declare module '@tanstack/react-router' {
       path: '/analysis'
       fullPath: '/analysis'
       preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/affiliate-setup': {
@@ -867,6 +887,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AdsRoute: AdsRoute,
   AffiliateSetupRoute: AffiliateSetupRoute,
+  AgentsRoute: AgentsRoute,
   AnalysisRoute: AnalysisRoute,
   AuthRoute: AuthRoute,
   CarsRoute: CarsRoute,
