@@ -499,6 +499,31 @@ html.theme-switching *:active {
 
 }
 
+/* وضوح النص فوق الخلفيات الذهبية المتدرجة */
+.bg-gradient-hero,
+.bg-gradient-gold,
+.bg-gradient-hot {
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.35);
+}
+
+.bg-gradient-hero .text-muted-foreground,
+.bg-gradient-gold .text-muted-foreground {
+  color: color-mix(in oklab, var(--color-foreground) 88%, transparent);
+}
+
+/* لا نسمح بشفافية تُضعف قراءة النص */
+.bg-gradient-hero [class*="/60"],
+.bg-gradient-hero [class*="/70"],
+.bg-gradient-gold [class*="/60"],
+.bg-gradient-gold [class*="/70"] {
+  opacity: 1;
+}
+
+::placeholder {
+  color: color-mix(in oklab, var(--color-foreground) 65%, transparent);
+  font-weight: 500;
+}
+
 @utility bg-gradient-hero {
 
 
