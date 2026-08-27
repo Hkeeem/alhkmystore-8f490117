@@ -629,6 +629,48 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          failure_count: number
+          id: string
+          last_success_at: string | null
+          p256dh: string
+          topics: string[]
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          failure_count?: number
+          id?: string
+          last_success_at?: string | null
+          p256dh: string
+          topics?: string[]
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          failure_count?: number
+          id?: string
+          last_success_at?: string | null
+          p256dh?: string
+          topics?: string[]
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       report_recipients: {
         Row: {
           active: boolean

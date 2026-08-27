@@ -24,6 +24,8 @@ export default defineConfig({
           // Never precache HTML: the app is server-rendered and stale HTML would
           // point at asset hashes that no longer exist (page renders unstyled).
           globPatterns: ["**/*.{js,css,svg,png,ico,woff2}"],
+          // Web Push handlers live in their own file and are pulled into the generated SW.
+          importScripts: ["/push-sw.js"],
           cleanupOutdatedCaches: true,
           skipWaiting: true,
           clientsClaim: true,
