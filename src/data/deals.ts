@@ -104,6 +104,10 @@ export type Deal = {
   tags?: string[];
   expiresIn: string;
   productKey?: string; // for cross-store comparison
+  couponCode?: string;
+  rating?: number;
+  ratingCount?: number;
+  usageCount?: number;
 };
 
 export const deals: Deal[] = [
