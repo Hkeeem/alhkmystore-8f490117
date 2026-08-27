@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -61,13 +61,15 @@ describe("قسم عروض HkeeemAI المعتمدة", () => {
   });
 
   it("يعرض رسالة عامة وزر إعادة المحاولة عند الفشل", async () => {
-    const failure = Promise.reject(new Error("upstream"));
-    failure.catch(() => {}); // نمنع تحذير الرفض غير المعالج داخل بيئة الاختبار
-    catalogFn.mockImplementation(() => failure);
-    renderSection();
+    catalogFn.mockRejectedValue(new Error("upstream"));
+    const { container } = renderSection();
     const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
     expect(screen.getByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
-    expect(retry).toBeInTheDocument();
+    expect(container.innerHTML).not.toContain("HKEEEM_INTEGRATION_KEY");
+
+    catalogFn.mockResolvedValue(catalog);
+    await userEvent.click(retry);
+    await waitFor(() => expect(screen.getByText("سماعة")).toBeInTheDocument());
   });
 
   it("يعرض شارة النسخة المحفوظة عند stale", async () => {
