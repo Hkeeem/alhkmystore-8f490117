@@ -73,15 +73,16 @@ export function HkeeemCatalogSection() {
           ))}
         </div>
       ) : query.isError || catalog?.unavailable ? (
-        <div role="alert" className="rounded-3xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3">
-          <p className="text-sm font-bold text-destructive">{GENERIC_ERROR}</p>
+        <div className="rounded-3xl border border-border bg-card p-6 text-center space-y-3">
+          <p className="text-sm font-bold text-muted-foreground">{GENERIC_ERROR}</p>
           <button
             onClick={() => query.refetch()}
-            className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-xs font-black press-ripple"
+            className="px-4 py-2 rounded-full bg-secondary text-secondary-foreground text-xs font-black press-ripple"
           >
             إعادة المحاولة
           </button>
         </div>
+
       ) : offers.length === 0 ? (
         <div className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
           لا توجد عروض معتمدة متاحة حاليًا.
