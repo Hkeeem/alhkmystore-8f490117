@@ -555,10 +555,18 @@ export function TopBar() {
           </Sheet>
 
           <Link to="/" className="relative flex items-center gap-2.5 group isolate">
-          <div className="relative z-10 w-10 h-10 rounded-2xl bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden">
+          <span
+            role="link"
+            aria-label="مساعد حكيم AI"
+            title="مساعد حكيم AI"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat" }); }}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat" }); } }}
+            tabIndex={0}
+            className="relative z-10 w-10 h-10 rounded-full bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden cursor-pointer transition-transform hover:scale-105 active:scale-95"
+          >
             <div className="absolute inset-0 bg-gradient-gold opacity-25" />
-            <Sparkles className="relative w-5 h-5 text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]" />
-          </div>
+            <span className="relative font-display font-black text-xl text-primary drop-shadow-[0_0_8px_oklch(0.77_0.13_85_/_0.9)]">H</span>
+          </span>
           <div className="relative flex flex-col leading-tight">
             <VisionBadge />
             <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine">HkeeemAI</span>
