@@ -58,7 +58,58 @@ export function InvalidLinkFallback({
         </div>
 
         {suggestion && (
+          <div className="rounded-3xl border border-border/60 bg-card p-5 text-right space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold text-primary">
+              <Sparkles className="w-4 h-4" /> اقتراح أقرب متاح
+            </div>
+            <a
+              href={suggestion.to}
+              className="flex items-center gap-3 rounded-2xl bg-secondary/60 hover:bg-secondary p-3 transition"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-gradient-hero flex items-center justify-center text-2xl shadow-glow">
+                {suggestion.emoji ?? "✨"}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-black text-sm truncate">{suggestion.label}</div>
+                {suggestion.hint && (
+                  <div className="text-[11px] text-muted-foreground truncate">{suggestion.hint}</div>
+                )}
+              </div>
+              <ArrowRight className="w-4 h-4 text-muted-foreground rotate-180" />
+            </a>
 
+            <div className="pt-1">
+              <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                <div
+                  className="h-full bg-gradient-hero transition-[width] duration-1000 ease-linear"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
+                <span>
+                  {paused ? "تم إيقاف التحويل" : `تحويل تلقائي خلال ${remaining} ث`}
+                </span>
+                {!paused ? (
+                  <button
+                    onClick={() => setPaused(true)}
+                    className="inline-flex items-center gap-1 font-bold hover:text-foreground"
+                  >
+                    <X className="w-3 h-3" /> إلغاء
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setRemaining(autoSeconds);
+                      setPaused(false);
+                    }}
+                    className="font-bold hover:text-foreground"
+                  >
+                    استئناف
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         )}
 
         <div className="flex items-center justify-center gap-2">
