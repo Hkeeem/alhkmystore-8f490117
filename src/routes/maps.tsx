@@ -872,8 +872,8 @@ function MapsPage() {
       {userLocation && (
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
-            <div className="text-2xl font-black text-primary">{deals.length}</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">عرض مربوط بفرع</div>
+            <div className="text-2xl font-black text-primary">{mapped.length + (liveDeals?.length ?? 0)}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">عرض على الخريطة</div>
           </div>
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
             <div className="text-2xl font-black text-primary">{stores.length}</div>
