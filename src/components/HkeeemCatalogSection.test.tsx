@@ -61,7 +61,9 @@ describe("قسم عروض HkeeemAI المعتمدة", () => {
   });
 
   it("يعرض رسالة عامة وزر إعادة المحاولة عند الفشل", async () => {
-    catalogFn.mockRejectedValue(new Error("upstream"));
+    const failure = Promise.reject(new Error("upstream"));
+    failure.catch(() => {}); // نمنع تحذير الرفض غير المعالج داخل بيئة الاختبار
+    catalogFn.mockImplementation(() => failure);
     renderSection();
     const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
     expect(screen.getByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
