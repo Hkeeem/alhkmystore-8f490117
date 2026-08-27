@@ -389,7 +389,7 @@ html.theme-switching *:active {
 
 
 
-/* ===== خلفية شفافة خلف الشعار مكتوب عليها 2030 ===== */
+/* ===== خلفية شفافة خلف شعار HkeeemAI مكتوب عليها 2030 ===== */
 .vision-2030-bg {
   position: absolute;
   top: 50%;
@@ -405,6 +405,7 @@ html.theme-switching *:active {
   background-image: var(--gradient-gold);
   background-clip: text;
   color: transparent;
+  white-space: nowrap;
 }
 
 /* الأحجام */

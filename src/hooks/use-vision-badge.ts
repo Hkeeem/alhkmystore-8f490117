@@ -17,14 +17,14 @@ export interface VisionBadgeSettings {
 export const DEFAULT_BADGE: VisionBadgeSettings = {
   visible: true,
   opacity: 16,
-  position: "start",
+  position: "center",
   size: "md",
 };
 
 export const BADGE_POSITIONS: { id: BadgePosition; label: string }[] = [
-  { id: "start", label: "خلف الشعار" },
-  { id: "center", label: "وسط الترويسة" },
-  { id: "end", label: "طرف الترويسة" },
+  { id: "start", label: "بداية الشعار" },
+  { id: "center", label: "وسط الشعار" },
+  { id: "end", label: "نهاية الشعار" },
 ];
 
 export const BADGE_SIZES: { id: BadgeSize; label: string }[] = [
