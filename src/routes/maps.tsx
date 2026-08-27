@@ -273,8 +273,9 @@ function MapsPage() {
 
   /** تحديث دبابيس العروض فقط عند تغيير الفلاتر — بدون إعادة بناء الخريطة */
   useEffect(() => {
+    const L = LRef.current;
     const map = mapInstanceRef.current;
-    if (!map || !userLocation) return;
+    if (!L || !map || !userLocation) return;
 
     // تنظيف الدبابيس السابقة
     Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
