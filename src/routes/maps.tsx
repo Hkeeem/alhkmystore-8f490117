@@ -328,23 +328,16 @@ function MapsPage() {
       marker.on("click", () => setSelectedDeal(items[0].deal.id));
     });
 
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
-
     // فتح العرض القادم من رابط عميق
     if (focusDealId && markersRef.current[focusDealId]) {
       const m = markersRef.current[focusDealId];
       map.setView(m.getLatLng(), 14, { animate: true });
       m.openPopup();
+    } else if (bounds.length > 1) {
+      map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
     }
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-      markersRef.current = {};
-    };
-  }, [userLocation, mapped, focusDealId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapped, focusDealId]);
 
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
