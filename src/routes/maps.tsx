@@ -3,8 +3,9 @@ import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
 import { stores, deals, getStore } from "@/data/deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import { useLiveDeals } from "@/hooks/use-live-deals";
+import type * as Leaflet from "leaflet";
+type L = typeof Leaflet;
 
 export const Route = createFileRoute("/maps")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -49,8 +50,12 @@ function MapsPage() {
   const [radiusKm, setRadiusKm] = useState<number | "الكل">("الكل");
   const [sortBy, setSortBy] = useState<"distance" | "distance-desc" | "discount">("distance");
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<Record<string, L.Marker>>({});
+  const mapInstanceRef = useRef<Leaflet.Map | null>(null);
+  const markersRef = useRef<Record<string, Leaflet.Marker>>({});
+  const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
+  const LRef = useRef<L | null>(null);
+  const [mapReady, setMapReady] = useState(false);
+  const { data: liveDeals } = useLiveDeals(100);
 
   const focusNearestRef = useRef(false);
 
@@ -207,41 +212,75 @@ function MapsPage() {
 
 
 
+  /** إنشاء الخريطة مرة واحدة فقط — لا تُدمَّر عند تغيير الفلاتر */
   useEffect(() => {
-    if (!userLocation || !mapRef.current || mapped.length === 0) return;
+    if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
+    let cancelled = false;
 
-    if (mapInstanceRef.current) {
-      mapInstanceRef.current.remove();
-      mapInstanceRef.current = null;
-    }
+    // تحميل كسول لمكتبة الخرائط — تمنع كسر العرض من الخادم (SSR)
+    (async () => {
+      const L = (await import("leaflet")).default;
+      await import("leaflet/dist/leaflet.css");
+      if (cancelled || !mapRef.current || mapInstanceRef.current) return;
+      LRef.current = L;
+
+      const map = L.map(mapRef.current, {
+        center: [userLocation.lat, userLocation.lng],
+        zoom: 12,
+        zoomControl: true,
+        attributionControl: false,
+        zoomSnap: 0.25,
+        zoomDelta: 0.5,
+        wheelPxPerZoomLevel: 120,
+      });
+      mapInstanceRef.current = map;
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+
+      const userIcon = L.divIcon({
+        className: "",
+        html: `<div style="width:20px;height:20px;background:#D4AF37;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(212,175,55,0.3);"></div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+      });
+      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(map).bindPopup("<b>موقعك الحالي</b>");
+
+      L.circle([userLocation.lat, userLocation.lng], {
+        radius: 3000,
+        color: "#D4AF37",
+        fillColor: "#D4AF37",
+        fillOpacity: 0.06,
+        weight: 1,
+        opacity: 0.3,
+      }).addTo(map);
+
+      // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
+      setTimeout(() => map.invalidateSize(), 100);
+      setMapReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+      markersRef.current = {};
+      setMapReady(false);
+    };
+  }, [userLocation]);
+
+  /** تحديث دبابيس العروض فقط عند تغيير الفلاتر — بدون إعادة بناء الخريطة */
+  useEffect(() => {
+    const L = LRef.current;
+    const map = mapInstanceRef.current;
+    if (!L || !map || !userLocation) return;
+
+    // تنظيف الدبابيس السابقة
+    Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
     markersRef.current = {};
 
-    const map = L.map(mapRef.current, {
-      center: [userLocation.lat, userLocation.lng],
-      zoom: 12,
-      zoomControl: true,
-      attributionControl: false,
-    });
-    mapInstanceRef.current = map;
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
-
-    const userIcon = L.divIcon({
-      className: "",
-      html: `<div style="width:20px;height:20px;background:#D4AF37;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(212,175,55,0.3);"></div>`,
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
-    });
-    L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(map).bindPopup("<b>موقعك الحالي</b>");
-
-    L.circle([userLocation.lat, userLocation.lng], {
-      radius: 3000,
-      color: "#D4AF37",
-      fillColor: "#D4AF37",
-      fillOpacity: 0.06,
-      weight: 1,
-      opacity: 0.3,
-    }).addTo(map);
+    if (mapped.length === 0) return;
 
     // تجميع العروض حسب الفرع: كل فرع دبوس واحد يعرض كل عروضه
     const byBranch = new Map<string, { branch: Branch; items: typeof mapped }>();
@@ -307,23 +346,78 @@ function MapsPage() {
       marker.on("click", () => setSelectedDeal(items[0].deal.id));
     });
 
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 13 });
-
     // فتح العرض القادم من رابط عميق
     if (focusDealId && markersRef.current[focusDealId]) {
       const m = markersRef.current[focusDealId];
       map.setView(m.getLatLng(), 14, { animate: true });
       m.openPopup();
+    } else if (bounds.length > 1) {
+      map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapReady, mapped, focusDealId]);
 
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-      }
-      markersRef.current = {};
-    };
-  }, [userLocation, mapped, focusDealId]);
+  /** طبقة العروض الحقيقية الحية من التجار — تُثبَّت حول مركز مدينة التاجر */
+  useEffect(() => {
+    const L = LRef.current;
+    const map = mapInstanceRef.current;
+    if (!L || !map) return;
+
+    liveMarkersRef.current.forEach((m) => map.removeLayer(m));
+    liveMarkersRef.current = [];
+    if (!liveDeals || liveDeals.length === 0) return;
+
+    const visible = liveDeals.filter((d) => {
+      const city = d.merchants?.city;
+      if (cityFilter !== "الكل" && city !== cityFilter) return false;
+      if (categoryFilter !== "الكل" && d.category !== categoryFilter) return false;
+      return CITIES.some((c) => c.name === city);
+    });
+
+    for (const d of visible) {
+      const city = CITIES.find((c) => c.name === d.merchants.city)!;
+      // إزاحة ثابتة حول مركز المدينة حتى لا تتكدس الدبابيس فوق بعضها
+      const h = [...d.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+      const angle = (h % 360) * (Math.PI / 180);
+      const r = 0.008 + (h % 7) * 0.004;
+      const lat = city.lat + Math.sin(angle) * r;
+      const lng = city.lng + Math.cos(angle) * r;
+
+      const off = d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100);
+      const icon = L.divIcon({
+        className: "",
+        html: `
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="background:#111;color:#D4AF37;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #D4AF37;box-shadow:0 2px 10px rgba(0,0,0,0.45);white-space:nowrap;">
+              ${d.merchants.name} · خصم ${off}%
+            </div>
+            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #111;margin-top:-1px;"></div>
+          </div>`,
+        iconSize: [90, 30],
+        iconAnchor: [45, 30],
+        popupAnchor: [0, -32],
+      });
+
+      const marker = L.marker([lat, lng], { icon }).addTo(map);
+      const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+      const buyBtn = d.product_url
+        ? `<a href="${d.product_url}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#111;color:#D4AF37;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🛒 صفحة العرض لدى التاجر</a>`
+        : "";
+      marker.bindPopup(`
+        <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:210px;max-width:250px;">
+          <div style="font-size:10px;font-weight:900;color:#B8860B;margin-bottom:2px;">⚡ عرض حقيقي من التاجر — ${d.merchants.city}</div>
+          <div style="font-size:13px;font-weight:900;">${d.title}</div>
+          <div style="font-size:11px;color:#888;margin:4px 0 6px;">${d.merchants.name}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:13px;font-weight:900;color:#B8860B;">${d.price} ر.س</span>
+            <span style="font-size:11px;color:#999;text-decoration:line-through;">${d.original_price} ر.س</span>
+          </div>
+          ${buyBtn}
+          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#D4AF37;color:#111;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 توجيه إلى ${d.merchants.city}</a>
+        </div>`);
+      liveMarkersRef.current.push(marker);
+    }
+  }, [mapReady, liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
 
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
@@ -772,17 +866,30 @@ function MapsPage() {
 
 
 
-      <div
-        ref={mapRef}
-        className="w-full h-[55vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
-        style={{ background: "#e8e0d5" }}
-      />
+      <div className="relative">
+        <div
+          ref={mapRef}
+          className="w-full h-[58vh] md:h-[65vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
+          style={{ background: "#e8e0d5" }}
+          role="application"
+          aria-label="خريطة العروض والفروع القريبة"
+        />
+        {userLocation && mapped.length === 0 && (
+          <div className="absolute inset-0 z-[500] rounded-3xl bg-background/70 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-center space-y-1 px-6">
+              <MapPin className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
+              <p className="font-black text-sm">لا توجد عروض ضمن هذه التصفية</p>
+              <p className="text-xs text-muted-foreground">وسّع نطاق المسافة أو امسح الفلاتر لعرض كل العروض</p>
+            </div>
+          </div>
+        )}
+      </div>
 
       {userLocation && (
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
-            <div className="text-2xl font-black text-primary">{deals.length}</div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">عرض مربوط بفرع</div>
+            <div className="text-2xl font-black text-primary">{mapped.length + (liveDeals?.length ?? 0)}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">عرض على الخريطة</div>
           </div>
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
             <div className="text-2xl font-black text-primary">{stores.length}</div>

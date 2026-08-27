@@ -897,3 +897,25 @@ html {
     display: none;
   }
 }
+
+/* تحسين نوافذ الخريطة المنبثقة بهوية حكيم الذهبية */
+.leaflet-popup-content-wrapper {
+  border-radius: 16px !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+.leaflet-popup-tip {
+  border-top: 1px solid rgba(212, 175, 55, 0.45) !important;
+}
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.6 !important;
+}
+.leaflet-popup-close-button {
+  font-size: 18px !important;
+  padding: 6px 8px 0 0 !important;
+}
+.leaflet-container {
+  font-family: inherit !important;
+  background: #e8e0d5;
+}
