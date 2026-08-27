@@ -60,10 +60,11 @@ describe("قسم عروض HkeeemAI المعتمدة", () => {
   });
 
   it("يعرض رسالة عامة وزر إعادة المحاولة عند الفشل", async () => {
-    catalogFn.mockImplementation(() => Promise.reject(new Error("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.")));
+    catalogFn.mockRejectedValue(new Error("upstream"));
     renderSection();
-    expect(await screen.findByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
-    expect(screen.getByRole("button", { name: "إعادة المحاولة" })).toBeInTheDocument();
+    const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
+    expect(screen.getByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
+    expect(retry).toBeInTheDocument();
   });
 
   it("يعرض شارة النسخة المحفوظة عند stale", async () => {
