@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon } from "lucide-react";
-import { getHkeeemOffers, getHkeeemStores } from "@/lib/hkeeem-offers.functions";
+import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon, CheckCircle2, XCircle } from "lucide-react";
+import { getHkeeemOffers, getHkeeemStores, getHkeeemIntegrationStatus } from "@/lib/hkeeem-offers.functions";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 import { HkeeemStatusPanel } from "@/components/HkeeemStatusPanel";
 
