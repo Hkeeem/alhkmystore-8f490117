@@ -149,6 +149,7 @@ export function IntroVideo() {
           tabIndex={-1}
           className="hidden"
           onCanPlayThrough={() => setPrefetched(true)}
+          onError={() => setPrefetched(false)}
         />
       )}
 
