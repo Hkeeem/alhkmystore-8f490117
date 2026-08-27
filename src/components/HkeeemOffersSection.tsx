@@ -76,6 +76,26 @@ export function HkeeemOffersSection() {
         </button>
       </div>
 
+      {/* شارة حالة المزامنة */}
+      <div
+        className={`flex items-center gap-2 flex-wrap rounded-2xl border px-3 py-2 text-[11px] font-bold ${
+          isAvailable ? "border-primary/30 bg-primary/5" : "border-destructive/30 bg-destructive/5"
+        }`}
+        role="status"
+        aria-live="polite"
+        aria-label="حالة مزامنة عروض HkeeemAI"
+      >
+        {isAvailable ? (
+          <CheckCircle2 className="w-4 h-4 text-primary" aria-hidden="true" />
+        ) : (
+          <XCircle className="w-4 h-4 text-destructive" aria-hidden="true" />
+        )}
+        <span>{isAvailable ? "متاح" : "غير متاح"}</span>
+        <span className="text-muted-foreground font-medium">
+          · آخر مزامنة ناجحة: {statusQuery.isPending ? "…" : lastSuccessLabel}
+        </span>
+      </div>
+
       {/* الفلاتر */}
       <div className="space-y-2">
         {categories.length > 0 && (
