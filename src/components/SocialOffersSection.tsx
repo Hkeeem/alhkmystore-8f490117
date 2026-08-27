@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { ExternalLink, Megaphone, Search, Sparkles, Star } from "lucide-react";
+import { Clock, ExternalLink, MapPin, Megaphone, Search, Sparkles, Star, Tag } from "lucide-react";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 import {
   loadSocialPrefs,
   rankSocialStores,
   recordSocialClick,
   toggleFavoriteCategory,
+  peakLabel,
+  TIMING_OPTIONS,
   type SocialPrefs,
+  type TimingFilter,
 } from "@/lib/social-rank";
 
 type Platform = {
@@ -65,11 +68,28 @@ const TOP_SOCIAL_STORE_IDS = [
 
 const EMPTY_PREFS: SocialPrefs = { storeClicks: {}, platformClicks: {}, favoriteCategories: [] };
 
+const REGIONS = ["الكل", "السعودية", "الخليج", "عالمي"] as const;
+
+/** تطبيع النص العربي للبحث: إزالة التشكيل وتوحيد الألف/الياء/التاء المربوطة */
+function normalizeAr(text: string): string {
+  return text
+    .replace(/[\u064B-\u0652\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
 export function SocialOffersSection() {
   const [platform, setPlatform] = useState<string>("snapchat");
   const [q, setQ] = useState("");
   const [prefs, setPrefs] = useState<SocialPrefs>(EMPTY_PREFS);
   const [personalized, setPersonalized] = useState(true);
+  const [region, setRegion] = useState<string>("الكل");
+  const [category, setCategory] = useState<string>("الكل");
+  const [timing, setTiming] = useState<TimingFilter>("all");
 
   useEffect(() => {
     const stored = loadSocialPrefs();
@@ -80,26 +100,47 @@ export function SocialOffersSection() {
 
   const active = PLATFORMS.find((p) => p.id === platform)!;
 
-  const categories = useMemo(() => {
-    const pool = TOP_SOCIAL_STORE_IDS
-      .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
-      .filter(Boolean) as typeof STORES_DIRECTORY;
-    return Array.from(new Set(pool.map((s) => s.category)));
-  }, []);
+  const basePool = useMemo(
+    () =>
+      TOP_SOCIAL_STORE_IDS
+        .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
+        .filter(Boolean) as typeof STORES_DIRECTORY,
+    [],
+  );
+
+  const categories = useMemo(
+    () => ["الكل", ...Array.from(new Set(basePool.map((s) => s.category)))],
+    [basePool],
+  );
 
   const ranked = useMemo(() => {
-    const text = q.trim();
-    const pool = text
-      ? STORES_DIRECTORY.filter((s) => s.name.includes(text) || s.category.includes(text))
-      : (TOP_SOCIAL_STORE_IDS
-          .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
-          .filter(Boolean) as typeof STORES_DIRECTORY);
-    return rankSocialStores(pool, platform, personalized ? prefs : EMPTY_PREFS);
-  }, [q, platform, prefs, personalized]);
+    const text = normalizeAr(q);
+    const words = text ? text.split(" ") : [];
+    let pool = text ? STORES_DIRECTORY : basePool;
+
+    if (words.length) {
+      pool = pool.filter((s) => {
+        const haystack = normalizeAr(`${s.name} ${s.category} ${s.region}`);
+        return words.every((w) => haystack.includes(w));
+      });
+    }
+    if (region !== "الكل") pool = pool.filter((s) => s.region === region);
+    if (category !== "الكل") pool = pool.filter((s) => s.category === category);
+
+    return rankSocialStores(pool, platform, personalized ? prefs : EMPTY_PREFS, timing);
+  }, [q, platform, prefs, personalized, region, category, timing, basePool]);
 
   const handleOpen = (storeId: string) => {
     setPrefs((prev) => recordSocialClick(prev, storeId, platform));
   };
+
+  const resetFilters = () => {
+    setQ("");
+    setRegion("الكل");
+    setCategory("الكل");
+    setTiming("all");
+  };
+
 
   return (
     <section aria-labelledby="social-offers-title">
@@ -141,10 +182,70 @@ export function SocialOffersSection() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="ابحث عن متجر أو فئة… مثلاً: بقالة، نون، تجميل"
+          placeholder="ابحث باسم المتجر أو الفئة أو الموقع… مثلاً: تجميل السعودية"
           aria-label="بحث في متاجر السوشال ميديا"
           className="flex-1 bg-transparent outline-none text-sm py-1"
         />
+        {(q || region !== "الكل" || category !== "الكل" || timing !== "all") && (
+          <button type="button" onClick={resetFilters} className="text-[11px] font-bold text-primary shrink-0">
+            مسح الفلاتر
+          </button>
+        )}
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-3">
+        <label className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
+          <MapPin className="w-4 h-4 text-primary shrink-0" />
+          <span className="sr-only">الموقع</span>
+          <select
+            value={region}
+            onChange={(e) => setRegion(e.target.value)}
+            aria-label="تصفية حسب الموقع"
+            className="flex-1 bg-transparent outline-none text-[13px] font-bold"
+          >
+            {REGIONS.map((r) => (
+              <option key={r} value={r} className="bg-card text-foreground">{r}</option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2">
+          <Tag className="w-4 h-4 text-primary shrink-0" />
+          <span className="sr-only">الفئة</span>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            aria-label="تصفية حسب الفئة"
+            className="flex-1 bg-transparent outline-none text-[13px] font-bold"
+          >
+            {categories.map((c) => (
+              <option key={c} value={c} className="bg-card text-foreground">{c}</option>
+            ))}
+          </select>
+        </label>
+
+        <div className="flex items-center gap-2 bg-card border border-border/60 rounded-2xl px-3 py-2 col-span-2 md:col-span-1">
+          <Clock className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-[11px] text-muted-foreground truncate">{peakLabel(platform)}</span>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-3" role="group" aria-label="تصفية حسب التوقيت">
+        {TIMING_OPTIONS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            onClick={() => setTiming(t.id)}
+            aria-pressed={timing === t.id}
+            className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition ${
+              timing === t.id
+                ? "bg-primary/15 text-primary border-primary/70"
+                : "bg-card text-muted-foreground border-border/60 hover:border-primary/50"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -161,7 +262,7 @@ export function SocialOffersSection() {
           <Sparkles className="w-3.5 h-3.5" />
           ترتيب ذكي مخصص لي
         </button>
-        {categories.map((c) => {
+        {categories.filter((c) => c !== "الكل").map((c) => {
           const on = prefs.favoriteCategories.includes(c);
           return (
             <button
@@ -181,6 +282,7 @@ export function SocialOffersSection() {
           );
         })}
       </div>
+
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {ranked.map(({ store: s, score, reasons }, i) => (
@@ -215,7 +317,9 @@ export function SocialOffersSection() {
       </div>
 
       {ranked.length === 0 && (
-        <p className="text-sm text-muted-foreground py-6 text-center">لا يوجد متجر مطابق لبحثك.</p>
+        <p className="text-sm text-muted-foreground py-6 text-center">
+          لا يوجد متجر مطابق للموقع أو الفئة أو التوقيت المختار — جرّب توسيع الفلاتر.
+        </p>
       )}
 
       <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
