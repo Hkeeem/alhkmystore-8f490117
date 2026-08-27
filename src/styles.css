@@ -608,6 +608,25 @@ html.theme-switching *:active {
     0 0 40px -10px color-mix(in oklab, var(--primary) 30%, transparent);
 }
 
+/* شكل سداسي صغير للأيقونات والشعارات */
+@utility hex-shape {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+
+@utility hex-tile {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--primary) 26%, transparent),
+    color-mix(in oklab, var(--primary) 8%, transparent)
+  );
+  border: 0;
+  display: grid;
+  place-items: center;
+}
+
+
+
 
 /* بطاقة زجاجية للوضع الليلي */
 @utility glass-dark {
