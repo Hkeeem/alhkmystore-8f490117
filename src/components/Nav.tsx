@@ -560,8 +560,8 @@ export function TopBar() {
             role="link"
             aria-label="مساعد حكيم AI"
             title="مساعد حكيم AI"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: {} }); }}
-            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: {} }); } }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); }}
+            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); } }}
             tabIndex={0}
             className="relative z-10 w-10 h-10 rounded-full bg-secondary glow-gold flex items-center justify-center ring-1 ring-primary/50 overflow-hidden cursor-pointer transition-transform hover:scale-105 active:scale-95"
           >
