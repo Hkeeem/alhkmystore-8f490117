@@ -31,7 +31,23 @@ export function HkeeemOffersSection() {
     refetchInterval: 15 * 60_000,
   });
 
+  const fetchStatus = useServerFn(getHkeeemIntegrationStatus);
+  const statusQuery = useQuery({
+    queryKey: ["hkeeem-status"],
+    queryFn: () => fetchStatus({}),
+    refetchInterval: 60_000,
+  });
+
   const offers = offersQuery.data ?? [];
+  const status = statusQuery.data;
+  const lastSuccess = status?.lastSuccessAt ? new Date(status.lastSuccessAt).getTime() : null;
+  const lastFailure = status?.lastFailureAt ? new Date(status.lastFailureAt).getTime() : null;
+  const isAvailable =
+    !offersQuery.isError && (offers.length > 0 || (lastSuccess !== null && (lastFailure === null || lastSuccess >= lastFailure)));
+  const lastSuccessLabel =
+    status?.lastSuccessAt && !Number.isNaN(new Date(status.lastSuccessAt).getTime())
+      ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" })
+      : "لا يوجد";
 
   const categories = useMemo(
     () => Array.from(new Set(offers.map((o) => o.category).filter(Boolean))) as string[],
