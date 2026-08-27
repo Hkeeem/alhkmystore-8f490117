@@ -69,7 +69,7 @@ function Home() {
           />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur text-sm font-bold mb-5 border border-primary/50">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="font-bold text-primary-foreground">HkeeemAI — الذكاء الاقتصادي</span>
+            <span className="font-bold text-primary-foreground">HkeeemAI — وفّر أكثر… لا تدفع أكثر</span>
           </div>
           <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
             تسوّق ذكي…
@@ -78,7 +78,7 @@ function Home() {
           </h1>
 
           <p className="mt-5 max-w-xl text-base md:text-lg font-medium text-primary-foreground/95 leading-loose">
-            عروض، كوبونات، مقارنة أسعار، عقارات، سيارات، وخرائط ذكية — مدعومة بالذكاء الاصطناعي لقرارات شراء أفضل بأقل وقت.
+            نجمع كل العروض ونقارن الأسعار بين المتاجر لحظيًا — حتى تشتري نفس المنتج بأرخص سعر. مصلحتك أنت أولاً، لا المتجر.
           </p>
 
           <form onSubmit={submitSearch} className="mt-7 max-w-2xl">
