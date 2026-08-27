@@ -919,3 +919,46 @@ html {
   font-family: inherit !important;
   background: #e8e0d5;
 }
+
+/* ===== تخصيص شكل البطاقات من صفحة الإعدادات ===== */
+:root {
+  --hk-card-radius: 20px;
+}
+
+@utility hk-card {
+  border-radius: var(--hk-card-radius);
+  background-color: oklch(1 0 0);
+  border: 1px solid oklch(0.92 0.004 260);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.06);
+  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.hk-card:hover {
+  box-shadow: 0 14px 40px rgb(0 0 0 / 0.12);
+}
+
+[data-card-style="flat"] .hk-card {
+  box-shadow: none;
+  background-color: color-mix(in oklab, var(--primary) 4%, oklch(1 0 0));
+  border-color: transparent;
+}
+
+[data-card-style="flat"] .hk-card:hover {
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
+}
+
+[data-card-style="outline"] .hk-card {
+  box-shadow: none;
+  border: 1.5px solid color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+[data-card-style="outline"] .hk-card:hover {
+  border-color: var(--primary);
+}
+
+[data-card-style="glass"] .hk-card {
+  background-color: oklch(1 0 0 / 0.68);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--primary) 24%, transparent);
+  box-shadow: 0 10px 34px rgb(0 0 0 / 0.10);
+}

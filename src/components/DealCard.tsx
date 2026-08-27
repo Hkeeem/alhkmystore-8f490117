@@ -55,7 +55,7 @@ export function DealCard({
     <Link
       to="/deals/$id"
       params={{ id: deal.id }}
-      className="group flex flex-col h-full relative rounded-[20px] bg-white border border-zinc-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:shadow-xl transition overflow-hidden"
+      className="hk-card group flex flex-col h-full relative overflow-hidden"
     >
       <div className="relative aspect-[4/3] bg-zinc-50">
         {hasRealImage ? (

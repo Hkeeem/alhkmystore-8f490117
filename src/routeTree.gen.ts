@@ -13,6 +13,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -68,6 +69,11 @@ const SmartListRoute = SmartListRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsRoute = RewardsRouteImport.update({
@@ -275,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
@@ -359,6 +367,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
+  '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/stores': typeof StoresRoute
@@ -402,6 +411,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
@@ -443,6 +453,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
@@ -485,6 +496,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/real-estate'
     | '/rewards'
+    | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
     | '/stores'
@@ -528,6 +540,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
+  SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SmartListRoute: typeof SmartListRoute
   StoresRoute: typeof StoresRoute
@@ -570,6 +583,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards': {
@@ -901,6 +921,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
+  SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SmartListRoute: SmartListRoute,
   StoresRoute: StoresRoute,
