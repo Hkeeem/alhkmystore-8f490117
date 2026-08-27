@@ -567,7 +567,7 @@ export function TopBar() {
           >
             <span className="relative font-display font-black text-2xl text-primary-foreground drop-shadow-md select-none">H</span>
           </span>
-          <div className="relative flex flex-col leading-tight px-2 py-0.5 rounded-xl">
+          <div className="relative flex flex-col leading-tight px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
             <VisionBadge />
             <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
             <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">تسوّق أذكى… وفّر أكثر</span>
