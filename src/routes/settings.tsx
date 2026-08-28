@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Check, Palette, RotateCcw, Square, Sparkles } from "lucide-react";
+import { Bell, Check, MessageSquareHeart, Palette, RotateCcw, Square, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
 import {
@@ -44,13 +44,23 @@ function SettingsPage() {
         <p className="text-muted-foreground text-sm">
           اختر لون التمييز وشكل البطاقات وانحناء الزوايا — التغيير يظهر فورًا ويُحفظ على جهازك.
         </p>
-        <Link
-          to="/notifications"
-          className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm font-bold transition-colors hover:bg-muted hover:text-primary"
-        >
-          <Bell className="w-4 h-4 text-primary" />
-          إعدادات الإشعارات
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            to="/notifications"
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm font-bold transition-colors hover:bg-muted hover:text-primary"
+          >
+            <Bell className="w-4 h-4 text-primary" />
+            إعدادات الإشعارات
+          </Link>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("hk:open-survey"))}
+            className="inline-flex items-center gap-2 rounded-xl border border-border bg-muted/40 px-4 py-2 text-sm font-bold transition-colors hover:bg-muted hover:text-primary"
+          >
+            <MessageSquareHeart className="w-4 h-4 text-primary" />
+            قيّم تجربتك
+          </button>
+        </div>
       </header>
 
       {/* نمط الثيم المعدني */}

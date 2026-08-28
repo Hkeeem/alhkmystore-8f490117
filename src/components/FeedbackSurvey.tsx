@@ -44,21 +44,40 @@ export function FeedbackSurvey() {
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastActive = useRef<HTMLElement | null>(null);
 
-  // لا يظهر الزر فوراً — بعد أن يتصفح الزائر قليلاً (10 ثوانٍ أو تمرير للأسفل)
+  // بعد أن يتصفح الزائر قليلاً (10 ثوانٍ أو تمرير للأسفل):
+  // - يُفتح الاستبيان تلقائياً مرة واحدة فقط لكل زائر
+  // - ويبقى الزر العائم متاحاً لإعادة الفتح من داخل التطبيق
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const show = () => setVisible(true);
+    const AUTO_KEY = "hk_survey_auto_shown";
+    const openManually = () => setOpen(true);
+    window.addEventListener("hk:open-survey", openManually);
+
+    const show = () => {
+      setVisible(true);
+      // فتح تلقائي مرة واحدة فقط إذا لم يقيّم الزائر من قبل
+      try {
+        if (!localStorage.getItem(AUTO_KEY) && !localStorage.getItem(DISMISSED_KEY)) {
+          localStorage.setItem(AUTO_KEY, String(Date.now()));
+          setOpen(true);
+        }
+      } catch {
+        /* تخزين محلي غير متاح */
+      }
+    };
     const t = window.setTimeout(show, 10_000);
     const onScroll = () => {
       if (window.scrollY > 400) {
         show();
         window.removeEventListener("scroll", onScroll);
+        window.clearTimeout(t);
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.clearTimeout(t);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("hk:open-survey", openManually);
     };
   }, []);
 
