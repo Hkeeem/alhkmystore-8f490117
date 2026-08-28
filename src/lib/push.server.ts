@@ -49,7 +49,10 @@ export async function sendPush(
     vapid,
   );
 
-  const res = await fetch(sub.endpoint, payload);
+  const res = await fetch(sub.endpoint, {
+    ...payload,
+    body: payload.body as unknown as BodyInit,
+  });
   return { ok: res.ok, status: res.status, gone: res.status === 404 || res.status === 410 };
 }
 
