@@ -17,6 +17,7 @@ import { ScrollMemory } from "@/components/ScrollMemory";
 import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { NotificationPrompt } from "@/components/NotificationPrompt";
+import { FeedbackSurvey } from "@/components/FeedbackSurvey";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -161,6 +162,7 @@ function RootComponent() {
         <InstallHandler />
         <Toaster position="top-center" richColors closeButton dir="rtl" />
         <NotificationPrompt />
+        <FeedbackSurvey />
       </div>
     </QueryClientProvider>
   );
