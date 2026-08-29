@@ -960,3 +960,27 @@ html {
   border: 1px solid color-mix(in oklab, var(--primary) 24%, transparent);
   box-shadow: 0 10px 34px rgb(0 0 0 / 0.10);
 }
+
+/* ===== قاعدة التباين العامة في كل الثيمات والصفحات =====
+   الخلفية الداكنة → نص فاتح دائماً، والخلفية الفاتحة → نص غامق دائماً.
+   (قواعد غير مُدرجة في layer لتتغلّب على أدوات Tailwind على نفس العنصر) */
+
+/* تدرّج الـHero داكن في جميع الثيمات (ذهبي/فضي/برونزي/تلقائي) → نص فاتح */
+.bg-gradient-hero {
+  color: oklch(0.97 0.012 85);
+  color-scheme: dark;
+}
+
+/* التدرّج الذهبي فاتح لامع → نص غامق */
+.bg-gradient-gold {
+  color: oklch(0.16 0.02 60);
+}
+
+/* ضمان مقروئية النصوص فوق الصور والتدرجات الداكنة */
+.text-on-dark {
+  color: oklch(0.97 0.012 85);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+}
+.text-on-light {
+  color: oklch(0.16 0.01 60);
+}
