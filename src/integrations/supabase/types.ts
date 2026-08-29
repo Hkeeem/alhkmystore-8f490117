@@ -171,6 +171,33 @@ export type Database = {
           },
         ]
       }
+      analytics_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          path: string | null
+          payload: Json
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          path?: string | null
+          payload?: Json
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          path?: string | null
+          payload?: Json
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
