@@ -55,7 +55,7 @@ function Home() {
   return (
     <main className="max-w-6xl mx-auto px-4 pt-6 space-y-14">
       {/* HERO */}
-      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-hero p-6 md:p-12 text-primary-foreground shadow-glow">
+      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-hero p-6 md:p-12 shadow-glow">
         <div className="absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full bg-primary/25 blur-3xl" />
         <div className="absolute -bottom-28 -right-16 w-96 h-96 rounded-full bg-accent/30 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
@@ -69,7 +69,7 @@ function Home() {
           />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur text-sm font-bold mb-5 border border-primary/50">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="font-bold text-primary-foreground">HkeeemAI — وفّر أكثر… لا تدفع أكثر</span>
+            <span className="font-bold">HkeeemAI — وفّر أكثر… لا تدفع أكثر</span>
           </div>
           <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
             تسوّق ذكي…
@@ -77,12 +77,12 @@ function Home() {
             <span className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">توفير أكثر</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-base md:text-lg font-medium text-primary-foreground/95 leading-loose">
+          <p className="mt-5 max-w-xl text-base md:text-lg font-medium opacity-95 leading-loose">
             نجمع كل العروض ونقارن الأسعار بين المتاجر لحظيًا — حتى تشتري نفس المنتج بأرخص سعر. مصلحتك أنت أولاً، لا المتجر.
           </p>
 
           <form onSubmit={submitSearch} className="mt-7 max-w-2xl">
-            <div className="flex items-center gap-2 bg-white/95 rounded-2xl p-2 shadow-glow border border-primary/20">
+            <div className="flex items-center gap-2 bg-card text-card-foreground rounded-2xl p-2 shadow-glow border border-primary/20">
               <div className="pl-3 text-primary">
                 <Sparkles className="w-5 h-5" />
               </div>
@@ -90,10 +90,10 @@ function Home() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="اسأل حكيم: مثلاً «أرخص أرز بسمتي؟» أو «أفضل عرض جوال»"
-                className="flex-1 bg-transparent outline-none text-secondary placeholder:text-secondary/70 py-2 text-sm md:text-base"
+                className="flex-1 bg-transparent outline-none text-card-foreground placeholder:text-muted-foreground py-2 text-sm md:text-base"
                 aria-label="بحث ذكي"
               />
-              <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold text-secondary font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
+              <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
                 <Search className="w-4 h-4" />
                 <span className="hidden md:inline leading-normal">ابحث</span>
               </button>

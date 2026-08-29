@@ -925,8 +925,9 @@ html {
 
 @utility hk-card {
   border-radius: var(--hk-card-radius);
-  background-color: oklch(1 0 0);
-  border: 1px solid oklch(0.92 0.004 260);
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
   box-shadow: 0 8px 30px rgb(0 0 0 / 0.06);
   transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
@@ -959,4 +960,70 @@ html {
   backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid color-mix(in oklab, var(--primary) 24%, transparent);
   box-shadow: 0 10px 34px rgb(0 0 0 / 0.10);
+}
+
+/* ===== قاعدة التباين العامة في كل الثيمات والصفحات =====
+   الخلفية الداكنة → نص فاتح دائماً، والخلفية الفاتحة → نص غامق دائماً.
+   (قواعد غير مُدرجة في layer لتتغلّب على أدوات Tailwind على نفس العنصر) */
+
+/* تدرّج الـHero داكن في جميع الثيمات (ذهبي/فضي/برونزي/تلقائي) → نص فاتح */
+.bg-gradient-hero {
+  color: oklch(0.97 0.012 85);
+  color-scheme: dark;
+}
+
+/* التدرّج الذهبي فاتح لامع → نص غامق */
+.bg-gradient-gold {
+  color: oklch(0.16 0.02 60);
+}
+
+/* ضمان مقروئية النصوص فوق الصور والتدرجات الداكنة */
+.text-on-dark {
+  color: oklch(0.97 0.012 85);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+}
+.text-on-light {
+  color: oklch(0.16 0.01 60);
+}
+
+/* ===== هوية حكيم برو — بلاتيني معدني فاخر ===== */
+.bg-gradient-platinum {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.24 0.012 250) 0%,
+    oklch(0.46 0.014 250) 42%,
+    oklch(0.78 0.018 250) 100%
+  );
+  /* التدرج البلاتيني داكن في أغلب مساحته → نص فاتح دائماً */
+  color: oklch(0.97 0.005 250);
+  color-scheme: dark;
+}
+
+.bg-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.002 250) 0%,
+    oklch(0.86 0.008 250) 40%,
+    oklch(0.70 0.014 250) 100%
+  );
+  /* سطح فاتح → نص غامق */
+  color: oklch(0.18 0.01 250);
+}
+
+.text-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.003 250) 0%,
+    oklch(0.85 0.012 250) 45%,
+    oklch(0.70 0.02 250) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shadow-platinum {
+  box-shadow:
+    0 8px 40px -8px oklch(0.75 0.02 250 / 0.55),
+    0 0 0 1px oklch(0.75 0.02 250 / 0.25);
 }

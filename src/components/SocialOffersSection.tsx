@@ -286,33 +286,51 @@ export function SocialOffersSection() {
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {ranked.map(({ store: s, score, reasons }, i) => (
-          <a
+          <div
             key={s.id}
-            href={active.build(s.name)}
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            onClick={() => handleOpen(s.id)}
             className="group relative flex items-center gap-3 p-3 rounded-2xl bg-card border border-border/60 hover:border-primary/70 hover:shadow-glow transition"
           >
             {i < 3 && !q.trim() && (
-              <span className="absolute -top-2 -start-2 text-[10px] font-black px-2 py-0.5 rounded-full bg-gradient-gold text-secondary shadow-glow">
+              <span className="absolute -top-2 -start-2 text-[10px] font-black px-2 py-0.5 rounded-full bg-gradient-gold shadow-glow">
                 #{i + 1}
               </span>
             )}
-            <div className="w-10 h-10 rounded-xl bg-secondary text-primary font-black flex items-center justify-center ring-1 ring-primary/30 shrink-0">
-              {s.name.trim().charAt(0)}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-bold text-sm truncate leading-normal">{s.name}</div>
-              <div className="text-[11px] text-muted-foreground truncate leading-normal">
-                {reasons[0] ?? `${active.label} · ${s.category}`}
+            {/* البطاقة تفتح صفحة العروض الرسمية للمتجر */}
+            <a
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              onClick={() => handleOpen(s.id)}
+              className="flex items-center gap-3 flex-1 min-w-0"
+              aria-label={`فتح العروض الرسمية لمتجر ${s.name}`}
+            >
+              <div className="w-10 h-10 rounded-xl bg-secondary text-primary font-black flex items-center justify-center ring-1 ring-primary/30 shrink-0">
+                {s.name.trim().charAt(0)}
               </div>
-              <div className="text-[10px] text-primary/80 mt-0.5" aria-label={`درجة القوة ${score} من 100`}>
-                قوة العرض {Math.round(score)}٪
+              <div className="flex-1 min-w-0">
+                <div className="font-bold text-sm truncate leading-normal">{s.name}</div>
+                <div className="text-[11px] text-muted-foreground truncate leading-normal">
+                  {reasons[0] ?? `عروض ${s.name} الرسمية`}
+                </div>
+                <div className="text-[10px] text-primary/80 mt-0.5" aria-label={`درجة القوة ${score} من 100`}>
+                  قوة العرض {Math.round(score)}٪
+                </div>
               </div>
-            </div>
-            <ExternalLink className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
-          </a>
+              <ExternalLink className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
+            </a>
+            {/* زر ثانوي: البحث عن عروض المتجر داخل المنصة الاجتماعية المختارة */}
+            <a
+              href={active.build(s.name)}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              onClick={() => handleOpen(s.id)}
+              aria-label={`البحث عن عروض ${s.name} في ${active.label}`}
+              title={`عروض ${s.name} على ${active.label}`}
+              className="shrink-0 p-1.5 rounded-full border border-border/60 hover:border-primary/60 hover:bg-primary/10 transition"
+            >
+              <Megaphone className="w-3.5 h-3.5 text-primary" />
+            </a>
+          </div>
         ))}
       </div>
 
