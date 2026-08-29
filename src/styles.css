@@ -985,3 +985,45 @@ html {
 .text-on-light {
   color: oklch(0.16 0.01 60);
 }
+
+/* ===== هوية حكيم برو — بلاتيني معدني فاخر ===== */
+.bg-gradient-platinum {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.24 0.012 250) 0%,
+    oklch(0.46 0.014 250) 42%,
+    oklch(0.78 0.018 250) 100%
+  );
+  /* التدرج البلاتيني داكن في أغلب مساحته → نص فاتح دائماً */
+  color: oklch(0.97 0.005 250);
+  color-scheme: dark;
+}
+
+.bg-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.002 250) 0%,
+    oklch(0.86 0.008 250) 40%,
+    oklch(0.70 0.014 250) 100%
+  );
+  /* سطح فاتح → نص غامق */
+  color: oklch(0.18 0.01 250);
+}
+
+.text-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.003 250) 0%,
+    oklch(0.85 0.012 250) 45%,
+    oklch(0.70 0.02 250) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shadow-platinum {
+  box-shadow:
+    0 8px 40px -8px oklch(0.75 0.02 250 / 0.55),
+    0 0 0 1px oklch(0.75 0.02 250 / 0.25);
+}
