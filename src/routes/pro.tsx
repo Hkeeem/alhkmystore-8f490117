@@ -49,15 +49,15 @@ function ProPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-10 space-y-10">
       {/* Hero */}
-      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-hero p-8 md:p-14 text-center shadow-glow">
-        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-primary/25 blur-3xl" />
-        <div className="absolute -bottom-24 -right-16 w-72 h-72 rounded-full bg-accent/30 blur-3xl" />
+      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-platinum p-8 md:p-14 text-center shadow-platinum">
+        <div className="absolute -top-24 -left-20 w-80 h-80 rounded-full bg-white/15 blur-3xl" />
+        <div className="absolute -bottom-24 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl" />
         <div className="relative space-y-5">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/35 backdrop-blur border border-primary/50 text-sm font-bold">
-            <Crown className="w-4 h-4 text-primary" />
+          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/35 backdrop-blur border border-white/40 text-sm font-bold">
+            <Crown className="w-4 h-4 text-platinum-shine" />
             قريباً
           </span>
-          <h1 className="font-thuluth text-4xl md:text-6xl leading-[1.6] drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
+          <h1 className="font-thuluth text-4xl md:text-6xl leading-[1.6] text-platinum-shine drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">
             حكيم برو
           </h1>
           <p className="max-w-xl mx-auto text-base md:text-lg opacity-95 leading-loose">
@@ -67,14 +67,14 @@ function ProPage() {
             <button
               type="button"
               onClick={notify}
-              className="inline-flex items-center gap-2 bg-gradient-gold font-black px-8 py-3.5 rounded-2xl shadow-glow hover:opacity-95 transition"
+              className="inline-flex items-center gap-2 bg-platinum-shine font-black px-8 py-3.5 rounded-2xl shadow-platinum hover:opacity-95 transition"
             >
               <Sparkles className="w-5 h-5" />
               <span className="leading-normal">أعلمني عند الإطلاق</span>
             </button>
             <Link
               to="/deals"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-white/25 bg-black/30 backdrop-blur font-bold hover:bg-black/45 transition"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl border border-white/30 bg-black/30 backdrop-blur font-bold hover:bg-black/45 transition"
             >
               تصفح العروض المجانية
             </Link>
