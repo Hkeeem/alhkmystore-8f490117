@@ -55,7 +55,7 @@ function Home() {
   return (
     <main className="max-w-6xl mx-auto px-4 pt-6 space-y-14">
       {/* HERO */}
-      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-hero p-6 md:p-12 text-primary-foreground shadow-glow">
+      <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-hero p-6 md:p-12 shadow-glow">
         <div className="absolute -top-32 -left-24 w-[28rem] h-[28rem] rounded-full bg-primary/25 blur-3xl" />
         <div className="absolute -bottom-28 -right-16 w-96 h-96 rounded-full bg-accent/30 blur-3xl" />
         <div className="absolute inset-0 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />

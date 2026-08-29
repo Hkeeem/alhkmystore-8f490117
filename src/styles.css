@@ -925,8 +925,9 @@ html {
 
 @utility hk-card {
   border-radius: var(--hk-card-radius);
-  background-color: oklch(1 0 0);
-  border: 1px solid oklch(0.92 0.004 260);
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
   box-shadow: 0 8px 30px rgb(0 0 0 / 0.06);
   transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
 }
