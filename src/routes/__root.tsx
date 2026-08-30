@@ -21,6 +21,7 @@ import { FeedbackSurvey } from "@/components/FeedbackSurvey";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
+import { initGoogleAnalytics, trackPageView } from "@/lib/ga4";
 
 function NotFoundComponent() {
   const path = typeof window !== "undefined" ? window.location.pathname : "";
@@ -148,6 +149,12 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    initGoogleAnalytics();
+    trackPageView(pathname);
+  }, [pathname]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen pb-20 md:pb-0">

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 
 /**
  * تسجيل أحداث تحسين التجربة داخل التطبيق (فتح الاستبيان، إتمامه، سبب الإغلاق…).
@@ -9,7 +10,7 @@ export function trackEvent(event: string, payload: Record<string, unknown> = {})
   try {
     const row = {
       event,
-      payload,
+      payload: payload as Json,
       path: typeof window !== "undefined" ? window.location.pathname : null,
     };
     void Promise.resolve(
