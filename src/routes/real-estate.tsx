@@ -31,7 +31,7 @@ import {
   scoreTone,
   toggleSelection,
 } from "@/lib/reverse-property-matchmaking";
-import { matchBuyersForProperty, submitBuyerRequest } from "@/lib/reverse-property-matchmaking.functions";
+import { createPropertyListingAndMatchBuyers, submitBuyerRequest } from "@/lib/reverse-property-matchmaking.functions";
 
 export const Route = createFileRoute("/real-estate")({
   head: () => ({
@@ -369,11 +369,11 @@ function BuyerMatchCard({ match, property }: { match: BuyerMatch; property: Prop
 
 function AdvertiserPanel() {
   const { user } = useAuth();
-  const matchBuyers = useServerFn(matchBuyersForProperty);
+  const createListingAndMatch = useServerFn(createPropertyListingAndMatchBuyers);
   const [property, setProperty] = useState<PropertyForm>(EMPTY_PROPERTY);
   const [matches, setMatches] = useState<BuyerMatch[]>([]);
   const matchMutation = useMutation({
-    mutationFn: () => matchBuyers({
+    mutationFn: () => createListingAndMatch({
       data: {
         purpose: property.purpose,
         city: property.city,

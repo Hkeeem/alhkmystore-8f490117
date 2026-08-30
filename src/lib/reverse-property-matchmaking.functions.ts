@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 const purposeSchema = z.enum(["شراء", "إيجار"]);
-const requestSchema = z.object({
+export const buyerRequestInputSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
   phone: z.string().trim().regex(/^(?:\+?966|0)5\d{8}$/, "رقم الجوال غير صالح."),
   purpose: purposeSchema,
@@ -17,7 +17,7 @@ const requestSchema = z.object({
   contactConsent: z.literal(true),
 });
 
-const propertySchema = z.object({
+export const propertyListingInputSchema = z.object({
   purpose: purposeSchema,
   city: z.string().trim().min(2).max(120),
   district: z.string().trim().min(2).max(160),
@@ -30,7 +30,7 @@ const propertySchema = z.object({
 
 export const submitBuyerRequest = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => requestSchema.parse(data))
+  .inputValidator((data: unknown) => buyerRequestInputSchema.parse(data))
   .handler(async ({ context, data }) => {
     const db = context.supabase as any;
     const { data: saved, error } = await db
@@ -55,21 +55,31 @@ export const submitBuyerRequest = createServerFn({ method: "POST" })
     return saved;
   });
 
-export const matchBuyersForProperty = createServerFn({ method: "POST" })
+export const createPropertyListingAndMatchBuyers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => propertySchema.parse(data))
+  .inputValidator((data: unknown) => propertyListingInputSchema.parse(data))
   .handler(async ({ context, data }) => {
     const db = context.supabase as any;
-    const { data: matches, error } = await db.rpc("match_buyers_for_property", {
-      p_city: data.city,
-      p_district: data.district,
-      p_property_type: data.propertyType,
-      p_price: data.price,
-      p_bedrooms: data.bedrooms,
-      p_features: data.features,
-      p_required_services: data.requiredServices,
-      p_purpose: data.purpose,
-    });
+    const { data: listing, error: insertError } = await db
+      .from("property_listings")
+      .insert({
+        owner_id: context.userId,
+        title: `${data.propertyType} في ${data.district}، ${data.city}`,
+        purpose: data.purpose,
+        city: data.city,
+        district: data.district,
+        property_type: data.propertyType,
+        price: data.price,
+        bedrooms: data.bedrooms,
+        features: data.features,
+        required_services: data.requiredServices,
+        status: "active",
+      })
+      .select("id")
+      .single();
+    if (insertError) throw new Error(insertError.message);
+
+    const { data: matches, error } = await db.rpc("match_buyers_for_property", { p_listing_id: listing.id });
     if (error) throw new Error(error.message);
     return matches ?? [];
   });

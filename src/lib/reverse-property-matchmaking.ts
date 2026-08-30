@@ -1,7 +1,7 @@
 export type BuyerMatch = {
   id: string;
   full_name: string;
-  phone: string;
+  phone: string | null;
   city: string;
   district: string;
   property_type: string;
@@ -56,6 +56,7 @@ export function normalizeSaudiPhone(phone: string): string | null {
 
 export function createWhatsAppMatchLink(match: BuyerMatch, property: { city: string; district: string; propertyType: string; price: number; bedrooms: number }): string | null {
   if (match.is_demo) return null;
+  if (!match.phone) return null;
   const phone = normalizeSaudiPhone(match.phone);
   if (!phone) return null;
   const message = [

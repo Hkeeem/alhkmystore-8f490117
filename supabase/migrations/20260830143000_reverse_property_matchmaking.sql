@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS public.buyer_requests (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT NOT NULL CHECK (char_length(trim(full_name)) BETWEEN 2 AND 120),
-  phone TEXT NOT NULL CHECK (phone ~ '^(?:\+?966|0)5[0-9]{8}$'),
+  phone TEXT CHECK (phone ~ '^(?:\+?966|0)5[0-9]{8}$'),
   purpose TEXT NOT NULL DEFAULT 'شراء' CHECK (purpose IN ('شراء', 'إيجار')),
   city TEXT NOT NULL CHECK (char_length(trim(city)) BETWEEN 2 AND 120),
   district TEXT NOT NULL CHECK (char_length(trim(district)) BETWEEN 2 AND 160),
@@ -162,7 +162,7 @@ INSERT INTO public.buyer_requests (
   user_id, full_name, phone, purpose, city, district, property_type,
   max_price, min_bedrooms, features, required_services, contact_consent, is_demo
 )
-SELECT NULL, seed.full_name, '0500000000', seed.purpose, seed.city, seed.district, seed.property_type,
+SELECT NULL, seed.full_name, NULL, seed.purpose, seed.city, seed.district, seed.property_type,
   seed.max_price, seed.min_bedrooms, seed.features, seed.required_services, FALSE, TRUE
 FROM (
   VALUES

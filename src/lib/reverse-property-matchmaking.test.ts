@@ -48,6 +48,7 @@ describe("reverse property matchmaking helpers", () => {
     expect(link).toContain("https://wa.me/966551234567");
     expect(link).toContain(encodeURIComponent("نسبة 92%"));
     expect(createWhatsAppMatchLink(buyer({ is_demo: true }), property)).toBeNull();
+    expect(createWhatsAppMatchLink(buyer({ phone: null }), property)).toBeNull();
   });
 
   it("toggles requested features without duplicates", () => {
