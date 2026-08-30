@@ -1,509 +1,485 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useMemo, useState } from "react";
 import {
-  Home, Search, SlidersHorizontal, MapPin, Sparkles,
-  CheckCircle2, XCircle, ChevronDown, ChevronUp,
-  Phone, MessageCircle, Star, Building2, ArrowRight,
-  BedDouble, Bath, Maximize2, Calendar, Wrench
+  BadgeCheck,
+  BedDouble,
+  Building2,
+  CheckCircle2,
+  ChevronLeft,
+  Home,
+  Loader2,
+  MapPin,
+  MessageCircle,
+  Search,
+  ShieldCheck,
+  Sparkles,
+  UsersRound,
+  WalletCards,
 } from "lucide-react";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/use-auth";
+import { getSaudiCities, getSaudiDistricts, SAUDI_REGIONS } from "@/data/saudi-locations";
 import {
-  findMatches, DISTRICTS_JEDDAH, SERVICES_LIST, FEATURES_LIST,
-  type PropertyRequest, type MatchResult, type PropertyType, type FinishType,
-} from "@/data/real-estate-listings";
-import { RealEstatePageSkeleton } from "@/components/Skeletons";
+  FEATURES,
+  PROPERTY_TYPES,
+  PURPOSES,
+  SERVICES,
+  type BuyerMatch,
+  createWhatsAppMatchLink,
+  scoreTone,
+  toggleSelection,
+} from "@/lib/reverse-property-matchmaking";
+import { matchBuyersForProperty, submitBuyerRequest } from "@/lib/reverse-property-matchmaking.functions";
 
 export const Route = createFileRoute("/real-estate")({
   head: () => ({
     meta: [
       { title: "البحث العقاري الذكي — HkeeemAI" },
-      { name: "description", content: "ابحث عن عقارك المثالي بالذكاء الاصطناعي — نطابق طلبك مع أفضل العروض بنسب دقيقة." },
+      { name: "description", content: "مطابقة عقارية ذكية تجمع الباحثين والمعلنين وفق الموقع والميزانية والمميزات." },
     ],
   }),
-  pendingComponent: RealEstatePageSkeleton,
-  pendingMs: 0,
-  pendingMinMs: 300,
   component: RealEstate,
 });
 
-const PROPERTY_TYPES: PropertyType[] = ["شقة", "فيلا", "دوبلكس", "أرض", "استوديو", "مكتب"];
-const FINISH_TYPES: FinishType[] = ["سوبر لوكس", "لوكس", "عادي", "نظام"];
+type PortalMode = "seeker" | "advertiser";
+type Purpose = (typeof PURPOSES)[number];
 
-function ScoreRing({ score }: { score: number }) {
-  const color = score >= 90 ? "#22c55e" : score >= 75 ? "#f59e0b" : "#ef4444";
-  const r = 28;
-  const circ = 2 * Math.PI * r;
-  const dash = (score / 100) * circ;
+type LocationValue = {
+  region: string;
+  city: string;
+  district: string;
+};
+
+type PropertyForm = LocationValue & {
+  purpose: Purpose;
+  propertyType: string;
+  price: string;
+  bedrooms: string;
+  features: string[];
+  services: string[];
+};
+
+const EMPTY_LOCATION: LocationValue = { region: "", city: "", district: "" };
+
+const EMPTY_PROPERTY: PropertyForm = {
+  ...EMPTY_LOCATION,
+  purpose: "شراء",
+  propertyType: "شقة",
+  price: "",
+  bedrooms: "2",
+  features: [],
+  services: [],
+};
+
+function FieldLabel({ children, icon }: { children: string; icon?: React.ReactNode }) {
   return (
-    <div className="relative w-16 h-16 shrink-0">
-      <svg className="w-full h-full -rotate-90" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r={r} fill="none" stroke="hsl(var(--border))" strokeWidth="6" />
-        <circle
-          cx="36" cy="36" r={r} fill="none"
-          stroke={color} strokeWidth="6"
-          strokeDasharray={`${dash} ${circ}`}
-          strokeLinecap="round"
-          style={{ transition: "stroke-dasharray 0.8s ease" }}
-        />
-      </svg>
-      <span className="absolute inset-0 flex items-center justify-center font-black text-sm" style={{ color }}>
-        {score}%
-      </span>
-    </div>
+    <label className="mb-2 flex items-center gap-2 text-sm font-black text-foreground">
+      {icon}
+      {children}
+    </label>
   );
 }
 
-function MatchCard({ result, rank }: { result: MatchResult; rank: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const { listing, score, breakdown } = result;
-  const isTop = score >= 90;
+function ChoiceChips({
+  items,
+  selected,
+  onToggle,
+  label,
+}: {
+  items: readonly string[];
+  selected: string[];
+  onToggle: (value: string) => void;
+  label: string;
+}) {
+  return (
+    <fieldset className="rounded-3xl border border-border/60 bg-card p-4 shadow-card">
+      <legend className="sr-only">{label}</legend>
+      <FieldLabel>{label}</FieldLabel>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item) => {
+          const active = selected.includes(item);
+          return (
+            <button
+              key={item}
+              type="button"
+              aria-pressed={active}
+              onClick={() => onToggle(item)}
+              className={`rounded-2xl px-3 py-2 text-xs font-bold transition-colors ${
+                active
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "bg-secondary text-secondary-foreground hover:bg-primary/10"
+              }`}
+            >
+              {item}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+function LocationFields({
+  value,
+  onChange,
+}: {
+  value: LocationValue;
+  onChange: (value: LocationValue) => void;
+}) {
+  const cities = useMemo(() => getSaudiCities(value.region), [value.region]);
+  const districts = useMemo(() => getSaudiDistricts(value.region, value.city), [value.region, value.city]);
 
   return (
-    <article className={`rounded-3xl border overflow-hidden shadow-card transition-all ${isTop ? "border-green-500/40 bg-green-500/5" : "border-border/60 bg-card"}`}>
-      {/* صورة العقار */}
-      <div className="relative h-44 overflow-hidden">
-        <img
-          src={listing.image}
-          alt={listing.title}
-          loading="lazy"
-          decoding="async"
-          className="w-full h-full object-cover"
-          onError={e => { (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800"; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        {/* الترتيب */}
-        <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/60 backdrop-blur flex items-center justify-center text-white font-black text-sm">
-          {rank}
-        </div>
-        {/* شارة التطابق العالي */}
-        {isTop && (
-          <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 rounded-full bg-green-500 text-white text-xs font-bold">
-            <Star className="w-3 h-3 fill-white" /> تطابق ممتاز
-          </div>
-        )}
-        {/* الغرض */}
-        <div className={`absolute bottom-3 right-3 px-2 py-1 rounded-full text-xs font-bold ${listing.purpose === "بيع" ? "bg-primary text-primary-foreground" : "bg-blue-600 text-white"}`}>
-          {listing.purpose}
-        </div>
-        <div className="absolute bottom-3 left-3 text-white font-black text-lg">
-          {listing.price.toLocaleString("ar-SA")} ر.س
-          {listing.purpose === "إيجار" && <span className="text-xs font-normal">/سنة</span>}
-        </div>
-      </div>
-
-      <div className="p-4 space-y-3">
-        {/* العنوان والنسبة */}
-        <div className="flex items-start gap-3">
-          <ScoreRing score={score} />
-          <div className="flex-1 min-w-0">
-            <h3 className="font-black text-base leading-tight">{listing.title}</h3>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-              <MapPin className="w-3 h-3" />
-              <span>حي {listing.district}، {listing.city}</span>
-            </div>
-            <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-              {listing.rooms > 0 && <span className="flex items-center gap-1"><BedDouble className="w-3 h-3" />{listing.rooms} غرف</span>}
-              {listing.bathrooms > 0 && <span className="flex items-center gap-1"><Bath className="w-3 h-3" />{listing.bathrooms} حمام</span>}
-              <span className="flex items-center gap-1"><Maximize2 className="w-3 h-3" />{listing.area} م²</span>
-              <span className="flex items-center gap-1"><Wrench className="w-3 h-3" />{listing.finish}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* شريط التطابق */}
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">نسبة التطابق</span>
-            <span className={`font-bold ${score >= 90 ? "text-green-500" : score >= 75 ? "text-amber-500" : "text-red-500"}`}>{score}%</span>
-          </div>
-          <div className="h-2 rounded-full bg-border overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-700 ${score >= 90 ? "bg-green-500" : score >= 75 ? "bg-amber-500" : "bg-red-500"}`}
-              style={{ width: `${score}%` }}
-            />
-          </div>
-        </div>
-
-        {/* تفاصيل التطابق */}
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-between text-xs text-primary font-bold py-1"
+    <section className="rounded-3xl border border-border/60 bg-card p-4 shadow-card">
+      <FieldLabel icon={<MapPin className="h-4 w-4 text-primary" />}>الموقع في المملكة</FieldLabel>
+      <div className="grid gap-3 sm:grid-cols-3">
+        <select
+          aria-label="المنطقة"
+          value={value.region}
+          onChange={(event) => onChange({ region: event.target.value, city: "", district: "" })}
+          className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold text-foreground outline-none focus:border-primary"
         >
-          <span>تفاصيل التطابق</span>
-          {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
+          <option value="">اختر المنطقة</option>
+          {SAUDI_REGIONS.map((region) => (
+            <option key={region} value={region}>{region}</option>
+          ))}
+        </select>
+        <select
+          aria-label="المدينة"
+          value={value.city}
+          disabled={!value.region}
+          onChange={(event) => onChange({ ...value, city: event.target.value, district: "" })}
+          className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold text-foreground outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="">اختر المدينة</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>{city}</option>
+          ))}
+        </select>
+        <select
+          aria-label="الحي"
+          value={value.district}
+          disabled={!value.city}
+          onChange={(event) => onChange({ ...value, district: event.target.value })}
+          className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold text-foreground outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <option value="">اختر الحي</option>
+          {districts.map((district) => (
+            <option key={district} value={district}>{district}</option>
+          ))}
+        </select>
+      </div>
+      {value.city && districts.length === 0 && (
+        <p className="mt-3 rounded-2xl bg-amber-500/10 px-3 py-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
+          لا تتوفر أحياء موثقة لهذه المدينة في المصدر الحالي؛ اكتب الحي عند استكمال بيانات الموقع.
+        </p>
+      )}
+    </section>
+  );
+}
 
-        {expanded && (
-          <div className="space-y-2 border-t border-border/40 pt-2">
-            {breakdown.map(item => (
-              <div key={item.label} className="flex items-center gap-2 text-xs">
-                {item.score >= 80
-                  ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0" />
-                  : <XCircle className="w-3.5 h-3.5 text-red-400 shrink-0" />
-                }
-                <span className="font-bold w-16 shrink-0">{item.label}</span>
-                <span className="text-muted-foreground flex-1">{item.detail}</span>
-                <span className={`font-black shrink-0 ${item.score >= 80 ? "text-green-500" : "text-red-400"}`}>{item.score}%</span>
-              </div>
-            ))}
-          </div>
-        )}
+function PurposeAndTypeFields({
+  purpose,
+  propertyType,
+  onPurposeChange,
+  onTypeChange,
+}: {
+  purpose: Purpose;
+  propertyType: string;
+  onPurposeChange: (value: Purpose) => void;
+  onTypeChange: (value: string) => void;
+}) {
+  return (
+    <section className="rounded-3xl border border-border/60 bg-card p-4 shadow-card">
+      <FieldLabel icon={<Home className="h-4 w-4 text-primary" />}>نوع الطلب والعقار</FieldLabel>
+      <div className="mb-4 grid grid-cols-2 gap-2">
+        {PURPOSES.map((item) => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onPurposeChange(item)}
+            className={`h-11 rounded-2xl text-sm font-black transition-colors ${purpose === item ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+          >
+            {item === "شراء" ? "شراء" : "إيجار"}
+          </button>
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {PROPERTY_TYPES.map((type) => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => onTypeChange(type)}
+            className={`rounded-2xl px-3 py-2 text-sm font-bold transition-colors ${propertyType === type ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground hover:bg-primary/10"}`}
+          >
+            {type}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        {/* أزرار التواصل */}
-        <div className="flex gap-2 pt-1">
-          <a
-            href={`tel:${listing.phone}`}
-            className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-2xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90"
-          >
-            <Phone className="w-4 h-4" />
-            اتصال
-          </a>
-          <a
-            href={`https://wa.me/966${listing.phone.slice(1)}?text=${encodeURIComponent(`السلام عليكم، رأيت عرض "${listing.title}" في تطبيق HkeeemAI وأريد الاستفسار عنه.`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 h-10 rounded-2xl bg-green-600 text-white text-sm font-bold hover:bg-green-700"
-          >
-            <MessageCircle className="w-4 h-4" />
-            واتساب
-          </a>
+function BuyerRequestPanel() {
+  const { user } = useAuth();
+  const submitRequest = useServerFn(submitBuyerRequest);
+  const [form, setForm] = useState({
+    fullName: "",
+    phone: "",
+    ...EMPTY_PROPERTY,
+    contactConsent: false,
+  });
+  const saveMutation = useMutation({
+    mutationFn: () => submitRequest({
+      data: {
+        fullName: form.fullName,
+        phone: form.phone,
+        purpose: form.purpose,
+        city: form.city,
+        district: form.district,
+        propertyType: form.propertyType,
+        maxPrice: Number(form.price),
+        minBedrooms: Number(form.bedrooms),
+        features: form.features,
+        requiredServices: form.services,
+        contactConsent: true,
+      },
+    }),
+    onSuccess: () => toast.success("تم تسجيل طلبك. سنطابقه مع العقارات المناسبة."),
+    onError: (error) => toast.error(error instanceof Error ? error.message : "تعذر حفظ طلب البحث."),
+  });
+
+  const updateLocation = (location: LocationValue) => setForm((current) => ({ ...current, ...location }));
+
+  const handleSubmit = () => {
+    if (!user) {
+      toast.error("سجّل الدخول أولاً لحفظ طلبك وحماية بيانات التواصل.");
+      return;
+    }
+    if (!form.fullName.trim() || !form.phone.trim() || !form.region || !form.city || !form.district || !Number(form.price) || !form.contactConsent) {
+      toast.error("أكمل بيانات التواصل والموقع والميزانية ووافق على التواصل للمتابعة.");
+      return;
+    }
+    saveMutation.mutate();
+  };
+
+  return (
+    <section aria-labelledby="seeker-form-title" className="space-y-4">
+      <div className="rounded-3xl border border-primary/20 bg-primary/5 p-4">
+        <h2 id="seeker-form-title" className="flex items-center gap-2 text-lg font-black text-foreground"><Search className="h-5 w-5 text-primary" /> سجّل طلبك العقاري</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">حدّد ما تبحث عنه، وسنستخدم المعايير نفسها لمطابقة المعلنين بعقارك عند وصوله.</p>
+      </div>
+
+      {!user && (
+        <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200">
+          تحتاج إلى حساب لحفظ الطلب وإدارة بيانات التواصل. <Link to="/auth" className="font-black underline">تسجيل الدخول</Link>
+        </div>
+      )}
+
+      <div className="grid gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-card sm:grid-cols-2">
+        <div>
+          <FieldLabel>الاسم الكامل</FieldLabel>
+          <input value={form.fullName} onChange={(event) => setForm((current) => ({ ...current, fullName: event.target.value }))} placeholder="اسم الباحث" className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold outline-none focus:border-primary" />
+        </div>
+        <div>
+          <FieldLabel>رقم الجوال</FieldLabel>
+          <input inputMode="tel" dir="ltr" value={form.phone} onChange={(event) => setForm((current) => ({ ...current, phone: event.target.value }))} placeholder="05XXXXXXXX" className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-right text-sm font-bold outline-none focus:border-primary" />
         </div>
       </div>
+
+      <PurposeAndTypeFields purpose={form.purpose} propertyType={form.propertyType} onPurposeChange={(purpose) => setForm((current) => ({ ...current, purpose }))} onTypeChange={(propertyType) => setForm((current) => ({ ...current, propertyType }))} />
+      <LocationFields value={form} onChange={updateLocation} />
+
+      <div className="grid gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-card sm:grid-cols-2">
+        <div>
+          <FieldLabel icon={<WalletCards className="h-4 w-4 text-primary" />}>الميزانية القصوى (ر.س)</FieldLabel>
+          <input type="number" min="1" value={form.price} onChange={(event) => setForm((current) => ({ ...current, price: event.target.value }))} placeholder="مثال: 900000" className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold outline-none focus:border-primary" />
+        </div>
+        <div>
+          <FieldLabel icon={<BedDouble className="h-4 w-4 text-primary" />}>الحد الأدنى للغرف</FieldLabel>
+          <input type="number" min="0" max="20" value={form.bedrooms} onChange={(event) => setForm((current) => ({ ...current, bedrooms: event.target.value }))} className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold outline-none focus:border-primary" />
+        </div>
+      </div>
+
+      <ChoiceChips label="المميزات المطلوبة" items={FEATURES} selected={form.features} onToggle={(value) => setForm((current) => ({ ...current, features: toggleSelection(current.features, value) }))} />
+      <ChoiceChips label="الخدمات المطلوبة" items={SERVICES} selected={form.services} onToggle={(value) => setForm((current) => ({ ...current, services: toggleSelection(current.services, value) }))} />
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-3xl border border-border/60 bg-card p-4 text-sm leading-6 text-muted-foreground shadow-card">
+        <input type="checkbox" checked={form.contactConsent} onChange={(event) => setForm((current) => ({ ...current, contactConsent: event.target.checked }))} className="mt-1 h-4 w-4 accent-primary" />
+        <span><strong className="text-foreground">أوافق على التواصل بشأن طلب البحث.</strong> لن يُعرض رقمي إلا لمعلنين لديهم عقار متوافق ومن خلال نتيجة المطابقة.</span>
+      </label>
+
+      <button type="button" disabled={saveMutation.isPending} onClick={handleSubmit} className="flex h-14 w-full items-center justify-center gap-2 rounded-3xl bg-primary text-base font-black text-primary-foreground shadow-glow transition-transform active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60">
+        {saveMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Search className="h-5 w-5" />}
+        تأكيد طلب البحث
+      </button>
+    </section>
+  );
+}
+
+function MatchBadge({ score }: { score: number }) {
+  const tone = scoreTone(score);
+  const className = tone === "success" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : tone === "warning" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-secondary text-secondary-foreground";
+  return <span className={`inline-flex rounded-full px-3 py-1 text-sm font-black ${className}`}>{score}% تطابق</span>;
+}
+
+function BuyerMatchCard({ match, property }: { match: BuyerMatch; property: PropertyForm }) {
+  const whatsappLink = createWhatsAppMatchLink(match, {
+    city: property.city,
+    district: property.district,
+    propertyType: property.propertyType,
+    price: Number(property.price),
+    bedrooms: Number(property.bedrooms),
+  });
+
+  return (
+    <article className="rounded-3xl border border-border/60 bg-card p-4 shadow-card">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <h3 className="font-black text-foreground">{match.full_name}</h3>
+            {match.is_demo && <span className="rounded-full bg-sky-500/10 px-2 py-1 text-[11px] font-black text-sky-700 dark:text-sky-300">بيانات تجريبية</span>}
+          </div>
+          <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5" /> {match.district}، {match.city}</p>
+        </div>
+        <MatchBadge score={match.match_score} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+        <div className="rounded-2xl bg-secondary p-3"><span className="block text-xs text-muted-foreground">الميزانية القصوى</span><strong>{Number(match.max_price).toLocaleString("ar-SA")} ر.س</strong></div>
+        <div className="rounded-2xl bg-secondary p-3"><span className="block text-xs text-muted-foreground">العقار المطلوب</span><strong>{match.property_type} · {match.min_bedrooms}+ غرف</strong></div>
+      </div>
+
+      {(match.features.length > 0 || match.required_services.length > 0) && (
+        <p className="mt-3 text-xs leading-5 text-muted-foreground">المميزات والخدمات: {[...match.features, ...match.required_services].slice(0, 4).join("، ")}</p>
+      )}
+
+      {whatsappLink ? (
+        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-emerald-600 text-sm font-black text-white transition-colors hover:bg-emerald-700">
+          <MessageCircle className="h-4 w-4" /> تواصل عبر واتساب
+        </a>
+      ) : (
+        <div className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-secondary text-sm font-bold text-muted-foreground"><ShieldCheck className="h-4 w-4" /> التواصل متاح للطلبات الفعلية فقط</div>
+      )}
     </article>
   );
 }
 
-function RealEstate() {
-  const [step, setStep] = useState<"form" | "results">("form");
-  const [results, setResults] = useState<MatchResult[]>([]);
-  const [loading, setLoading] = useState(false);
+function AdvertiserPanel() {
+  const { user } = useAuth();
+  const matchBuyers = useServerFn(matchBuyersForProperty);
+  const [property, setProperty] = useState<PropertyForm>(EMPTY_PROPERTY);
+  const [matches, setMatches] = useState<BuyerMatch[]>([]);
+  const matchMutation = useMutation({
+    mutationFn: () => matchBuyers({
+      data: {
+        purpose: property.purpose,
+        city: property.city,
+        district: property.district,
+        propertyType: property.propertyType,
+        price: Number(property.price),
+        bedrooms: Number(property.bedrooms),
+        features: property.features,
+        requiredServices: property.services,
+      },
+    }),
+    onSuccess: (data) => {
+      const resolvedMatches = (Array.isArray(data) ? data : []) as BuyerMatch[];
+      setMatches(resolvedMatches);
+      toast.success(resolvedMatches.length ? `وجدنا ${resolvedMatches.length} مشتريًا متوافقًا.` : "لا توجد طلبات متوافقة حاليًا.");
+    },
+    onError: (error) => toast.error(error instanceof Error ? error.message : "تعذر تنفيذ المطابقة."),
+  });
 
-  // حقول النموذج
-  const [purpose, setPurpose] = useState<"بيع" | "إيجار">("بيع");
-  const [propertyType, setPropertyType] = useState<PropertyType | "">("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [minArea, setMinArea] = useState("");
-  const [maxArea, setMaxArea] = useState("");
-  const [rooms, setRooms] = useState("2");
-  const [district, setDistrict] = useState("");
-  const [finish, setFinish] = useState<FinishType | "">("");
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
-
-  const toggleService = (s: string) =>
-    setSelectedServices(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-
-  const toggleFeature = (f: string) =>
-    setSelectedFeatures(prev => prev.includes(f) ? prev.filter(x => x !== f) : [...prev, f]);
-
-  const handleSearch = () => {
-    setLoading(true);
-    const request: PropertyRequest = {
-      purpose,
-      type: propertyType || undefined,
-      minPrice: Number(minPrice) || 0,
-      maxPrice: Number(maxPrice) || 99_999_999,
-      minArea: Number(minArea) || 0,
-      maxArea: Number(maxArea) || 99_999,
-      rooms: Number(rooms) || 1,
-      district: district || undefined,
-      city: "جدة",
-      finish: finish || undefined,
-      requiredServices: selectedServices,
-      requiredFeatures: selectedFeatures,
-    };
-    setTimeout(() => {
-      const matches = findMatches(request);
-      setResults(matches);
-      setStep("results");
-      setLoading(false);
-    }, 800);
+  const updateLocation = (location: LocationValue) => setProperty((current) => ({ ...current, ...location }));
+  const handleMatch = () => {
+    if (!user) {
+      toast.error("سجّل الدخول أولاً لعرض بيانات التواصل للطلبات المتوافقة.");
+      return;
+    }
+    if (!property.region || !property.city || !property.district || !Number(property.price)) {
+      toast.error("أكمل الموقع والسعر وعدد الغرف قبل تنفيذ المطابقة.");
+      return;
+    }
+    matchMutation.mutate();
   };
 
   return (
-    <main className="max-w-2xl mx-auto px-4 pt-6 pb-20 space-y-6">
-      {/* هيدر */}
-      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-hero p-6 text-primary-foreground shadow-glow">
-        <div className="absolute -top-16 -left-10 w-48 h-48 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center shrink-0">
-            <Building2 className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/15 text-xs font-bold mb-2">
-              <Sparkles className="w-3 h-3" /> ذكاء اصطناعي
+    <section aria-labelledby="advertiser-form-title" className="space-y-4">
+      <div className="rounded-3xl border border-primary/20 bg-primary/5 p-4">
+        <h2 id="advertiser-form-title" className="flex items-center gap-2 text-lg font-black text-foreground"><Building2 className="h-5 w-5 text-primary" /> إضافة عقار للمطابقة</h2>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">أدخل تفاصيل العقار، ثم اعرض الباحثين المتوافقين بترتيب نسبة التطابق.</p>
+      </div>
+
+      {!user && <div className="rounded-3xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200">تحتاج إلى حساب لاستخدام ميزة المطابقة. <Link to="/auth" className="font-black underline">تسجيل الدخول</Link></div>}
+
+      <PurposeAndTypeFields purpose={property.purpose} propertyType={property.propertyType} onPurposeChange={(purpose) => setProperty((current) => ({ ...current, purpose }))} onTypeChange={(propertyType) => setProperty((current) => ({ ...current, propertyType }))} />
+      <LocationFields value={property} onChange={updateLocation} />
+
+      <div className="grid gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-card sm:grid-cols-2">
+        <div>
+          <FieldLabel icon={<WalletCards className="h-4 w-4 text-primary" />}>سعر العقار (ر.س)</FieldLabel>
+          <input type="number" min="1" value={property.price} onChange={(event) => setProperty((current) => ({ ...current, price: event.target.value }))} placeholder="مثال: 850000" className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold outline-none focus:border-primary" />
+        </div>
+        <div>
+          <FieldLabel icon={<BedDouble className="h-4 w-4 text-primary" />}>عدد الغرف</FieldLabel>
+          <input type="number" min="0" max="20" value={property.bedrooms} onChange={(event) => setProperty((current) => ({ ...current, bedrooms: event.target.value }))} className="h-12 w-full rounded-2xl border border-border bg-secondary px-3 text-sm font-bold outline-none focus:border-primary" />
+        </div>
+      </div>
+
+      <ChoiceChips label="مميزات العقار" items={FEATURES} selected={property.features} onToggle={(value) => setProperty((current) => ({ ...current, features: toggleSelection(current.features, value) }))} />
+      <ChoiceChips label="الخدمات القريبة والمتاحة" items={SERVICES} selected={property.services} onToggle={(value) => setProperty((current) => ({ ...current, services: toggleSelection(current.services, value) }))} />
+
+      <button type="button" disabled={matchMutation.isPending} onClick={handleMatch} className="flex h-14 w-full items-center justify-center gap-2 rounded-3xl bg-primary text-base font-black text-primary-foreground shadow-glow transition-transform active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60">
+        {matchMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <UsersRound className="h-5 w-5" />}
+        مطابقة الباحثين
+      </button>
+
+      {(matches.length > 0 || matchMutation.isSuccess) && (
+        <section aria-live="polite" className="space-y-3 rounded-[2rem] border border-emerald-500/25 bg-emerald-500/[0.04] p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500 text-white"><UsersRound className="h-5 w-5" /></div>
+            <div>
+              <h2 className="font-black text-foreground">المشترون المهتمون بعقارك ذكياً</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{matches.length ? "رتّبنا الطلبات وفق الموقع والميزانية والغرف والمميزات والخدمات." : "لا توجد طلبات تتجاوز حد المطابقة الحالي. جرّب تعديل التفاصيل لاحقًا."}</p>
             </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {matches.map((match) => <BuyerMatchCard key={match.id} match={match} property={property} />)}
+          </div>
+        </section>
+      )}
+    </section>
+  );
+}
+
+function RealEstate() {
+  const [mode, setMode] = useState<PortalMode>("seeker");
+  return (
+    <main dir="rtl" className="mx-auto max-w-3xl space-y-6 px-4 pb-20 pt-6">
+      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-hero p-6 text-primary-foreground shadow-glow">
+        <div className="absolute -left-10 -top-16 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
+        <div className="relative flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"><Building2 className="h-6 w-6" /></div>
+          <div>
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-bold"><Sparkles className="h-3 w-3" /> ذكاء اصطناعي</div>
             <h1 className="font-display text-2xl font-black">البحث العقاري الذكي</h1>
-            <p className="text-white/75 text-sm mt-1">أدخل متطلباتك ونطابقها مع أفضل العروض بنسب دقيقة</p>
+            <p className="mt-1 text-sm text-white/75">نطابق طلبات الباحثين مع عقارات المعلنين وفق معايير واضحة وقابلة للتخصيص.</p>
           </div>
         </div>
       </section>
 
-      {step === "form" ? (
-        <div className="space-y-5">
-          {/* الغرض */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><Home className="w-4 h-4 text-primary" /> الغرض من العقار</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {(["بيع", "إيجار"] as const).map(p => (
-                <button
-                  key={p}
-                  onClick={() => setPurpose(p)}
-                  className={`h-12 rounded-2xl font-bold text-sm transition-all ${purpose === p ? "bg-primary text-primary-foreground shadow-glow" : "bg-secondary text-foreground"}`}
-                >
-                  {p === "بيع" ? "🏠 شراء" : "🔑 إيجار"}
-                </button>
-              ))}
-            </div>
-          </div>
+      <nav aria-label="نوع الخدمة العقارية" className="grid grid-cols-2 gap-2 rounded-3xl border border-border/60 bg-card p-2 shadow-card">
+        <button type="button" onClick={() => setMode("seeker")} className={`flex h-12 items-center justify-center gap-2 rounded-2xl text-sm font-black transition-colors ${mode === "seeker" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}><Search className="h-4 w-4" /> أنا أبحث عن عقار</button>
+        <button type="button" onClick={() => setMode("advertiser")} className={`flex h-12 items-center justify-center gap-2 rounded-2xl text-sm font-black transition-colors ${mode === "advertiser" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary"}`}><Building2 className="h-4 w-4" /> أنا أعرض عقار</button>
+      </nav>
 
-          {/* نوع العقار */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><Building2 className="w-4 h-4 text-primary" /> نوع العقار</h2>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setPropertyType("")}
-                className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${!propertyType ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-              >
-                الكل
-              </button>
-              {PROPERTY_TYPES.map(t => (
-                <button
-                  key={t}
-                  onClick={() => setPropertyType(t)}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${propertyType === t ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
+      {mode === "seeker" ? <BuyerRequestPanel /> : <AdvertiserPanel />}
 
-          {/* الميزانية */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2">
-              💰 الميزانية (ر.س)
-              {purpose === "إيجار" && <span className="text-xs text-muted-foreground font-normal">سنوياً</span>}
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">الحد الأدنى</label>
-                <input
-                  type="number"
-                  value={minPrice}
-                  onChange={e => setMinPrice(e.target.value)}
-                  placeholder={purpose === "بيع" ? "500,000" : "20,000"}
-                  className="w-full h-11 px-3 rounded-2xl bg-secondary border border-border/60 text-sm font-bold text-right"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">الحد الأقصى</label>
-                <input
-                  type="number"
-                  value={maxPrice}
-                  onChange={e => setMaxPrice(e.target.value)}
-                  placeholder={purpose === "بيع" ? "2,000,000" : "80,000"}
-                  className="w-full h-11 px-3 rounded-2xl bg-secondary border border-border/60 text-sm font-bold text-right"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* المساحة والغرف */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><Maximize2 className="w-4 h-4 text-primary" /> المساحة والغرف</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">المساحة من (م²)</label>
-                <input
-                  type="number"
-                  value={minArea}
-                  onChange={e => setMinArea(e.target.value)}
-                  placeholder="100"
-                  className="w-full h-11 px-3 rounded-2xl bg-secondary border border-border/60 text-sm font-bold text-right"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">المساحة إلى (م²)</label>
-                <input
-                  type="number"
-                  value={maxArea}
-                  onChange={e => setMaxArea(e.target.value)}
-                  placeholder="500"
-                  className="w-full h-11 px-3 rounded-2xl bg-secondary border border-border/60 text-sm font-bold text-right"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-2 block">عدد الغرف (الحد الأدنى)</label>
-              <div className="flex gap-2 flex-wrap">
-                {["1", "2", "3", "4", "5", "6+"].map(r => (
-                  <button
-                    key={r}
-                    onClick={() => setRooms(r === "6+" ? "6" : r)}
-                    className={`w-11 h-11 rounded-2xl font-bold text-sm transition-all ${rooms === (r === "6+" ? "6" : r) ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* الموقع */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><MapPin className="w-4 h-4 text-primary" /> الموقع المفضل</h2>
-            <select
-              value={district}
-              onChange={e => setDistrict(e.target.value)}
-              className="w-full h-11 px-3 rounded-2xl bg-secondary border border-border/60 text-sm font-bold text-right"
-            >
-              <option value="">أي حي في جدة</option>
-              {DISTRICTS_JEDDAH.map(d => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* التشطيب */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><Wrench className="w-4 h-4 text-primary" /> مستوى التشطيب</h2>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setFinish("")}
-                className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${!finish ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-              >
-                أي تشطيب
-              </button>
-              {FINISH_TYPES.map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFinish(f)}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${finish === f ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* الخدمات المطلوبة */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2"><SlidersHorizontal className="w-4 h-4 text-primary" /> الخدمات المطلوبة</h2>
-            <div className="flex flex-wrap gap-2">
-              {SERVICES_LIST.map(s => (
-                <button
-                  key={s}
-                  onClick={() => toggleService(s)}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${selectedServices.includes(s) ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* المميزات المطلوبة */}
-          <div className="p-5 rounded-3xl bg-card border border-border/60 shadow-card space-y-3">
-            <h2 className="font-black text-base flex items-center gap-2">✨ المميزات المطلوبة</h2>
-            <div className="flex flex-wrap gap-2">
-              {FEATURES_LIST.map(f => (
-                <button
-                  key={f}
-                  onClick={() => toggleFeature(f)}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-bold transition-all ${selectedFeatures.includes(f) ? "bg-primary text-primary-foreground" : "bg-secondary"}`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* زر البحث */}
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="w-full h-14 rounded-3xl bg-gradient-gold text-secondary-foreground font-black text-lg shadow-glow flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-60"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                جاري التحليل...
-              </>
-            ) : (
-              <>
-                <Search className="w-5 h-5" />
-                ابحث عن أفضل تطابق
-              </>
-            )}
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* رأس النتائج */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-black text-xl">نتائج البحث</h2>
-              <p className="text-sm text-muted-foreground">
-                {results.length > 0
-                  ? `${results.length} عرض متطابق — أعلى نسبة: ${results[0]?.score}%`
-                  : "لم يُعثر على عروض مطابقة"}
-              </p>
-            </div>
-            <button
-              onClick={() => setStep("form")}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-secondary text-sm font-bold"
-            >
-              <ArrowRight className="w-4 h-4" />
-              تعديل البحث
-            </button>
-          </div>
-
-          {results.length === 0 ? (
-            <div className="text-center py-16 space-y-3">
-              <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mx-auto">
-                <Search className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <p className="font-bold text-muted-foreground">لا توجد عروض تطابق معاييرك حالياً</p>
-              <p className="text-sm text-muted-foreground">جرّب توسيع نطاق السعر أو المساحة</p>
-            </div>
-          ) : (
-            <>
-              {/* ملخص سريع */}
-              {results[0]?.score >= 90 && (
-                <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/30 flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
-                  <p className="text-sm font-bold text-green-700 dark:text-green-400">
-                    وجدنا {results.filter(r => r.score >= 90).length} عرض بتطابق ممتاز 90%+ مع طلبك!
-                  </p>
-                </div>
-              )}
-
-              {/* بطاقات النتائج */}
-              <div className="space-y-4">
-                {results.map((result, i) => (
-                  <MatchCard key={result.listing.id} result={result} rank={i + 1} />
-                ))}
-              </div>
-
-              {/* تواصل مع المكتب */}
-              <div className="p-5 rounded-3xl bg-gradient-hero text-primary-foreground shadow-glow space-y-3">
-                <h3 className="font-black text-base">هل تريد مساعدة متخصصة؟</h3>
-                <p className="text-white/75 text-sm">فريق مؤسسة محسن لخدمات الأعمال جاهز لمساعدتك في إيجاد عقارك المثالي</p>
-                <a
-                  href="https://wa.me/966500000000"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 h-11 rounded-2xl bg-white/15 backdrop-blur font-bold text-sm hover:bg-white/25 transition-all"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  تواصل مع المكتب العقاري
-                </a>
-              </div>
-            </>
-          )}
-        </div>
-      )}
+      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground"><BadgeCheck className="h-4 w-4 text-emerald-600" /> لا تظهر بيانات التواصل إلا ضمن طلبات متطابقة ومصرّح بالتواصل معها.</div>
+      <Link to="/" className="mx-auto flex w-fit items-center gap-1 text-sm font-bold text-primary"><ChevronLeft className="h-4 w-4" /> العودة للرئيسية</Link>
     </main>
   );
 }
