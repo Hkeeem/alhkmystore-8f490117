@@ -6,6 +6,8 @@ import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { VisionBadge } from "@/components/VisionBadge";
 import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
 import { useAppearance } from "@/hooks/use-appearance";
+import { useI18n, type TKey } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 
 import { toast } from "sonner";
@@ -13,50 +15,50 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const items = [
-  { to: "/", label: "الرئيسية", icon: Home },
-  { to: "/deals", label: "العروض", icon: Tag },
-  { to: "/coupons", label: "كوبونات", icon: Ticket },
-  { to: "/maps", label: "خريطتي", icon: Map },
-  { to: "/smart-list", label: "قائمة", icon: ListChecks },
-  { to: "/rewards", label: "جوائز", icon: Trophy },
-  { to: "/chat", label: "مساعد", icon: MessageCircle },
+  { to: "/", key: "nav.home", icon: Home },
+  { to: "/deals", key: "nav.deals", icon: Tag },
+  { to: "/coupons", key: "nav.coupons", icon: Ticket },
+  { to: "/maps", key: "nav.maps", icon: Map },
+  { to: "/smart-list", key: "nav.list", icon: ListChecks },
+  { to: "/rewards", key: "nav.rewards", icon: Trophy },
+  { to: "/chat", key: "nav.assistant", icon: MessageCircle },
 ] as const;
 
-type SubItem = { to: string; label: string; icon: typeof Home; badge?: string };
-type Group = { label: string; icon: typeof Home; items: SubItem[] };
+type SubItem = { to: string; key: TKey; icon: typeof Home; badgeKey?: TKey };
+type Group = { key: TKey; icon: typeof Home; items: SubItem[] };
 
 const groups: Group[] = [
   {
-    label: "متجر حكيم AI",
+    key: "group.store",
     icon: Store,
     items: [
-      { to: "/stores", label: "المتاجر", icon: Store },
-      { to: "/deals", label: "العروض", icon: Tag },
-      { to: "/coupons", label: "الكوبونات", icon: Ticket },
-      { to: "/merchant", label: "بوابة التاجر", icon: Store, badge: "جديد" },
+      { to: "/stores", key: "item.stores", icon: Store },
+      { to: "/deals", key: "item.deals", icon: Tag },
+      { to: "/coupons", key: "item.coupons", icon: Ticket },
+      { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
     ],
   },
   {
-    label: "معرض حكيم AI",
+    key: "group.showroom",
     icon: Car,
-    items: [{ to: "/cars", label: "السيارات", icon: Car, badge: "AI" }],
+    items: [{ to: "/cars", key: "item.cars", icon: Car }],
   },
   {
-    label: "مكتب حكيم AI",
+    key: "group.office",
     icon: Building2,
-    items: [{ to: "/real-estate", label: "البحث العقاري", icon: Building2, badge: "AI" }],
+    items: [{ to: "/real-estate", key: "item.realEstate", icon: Building2 }],
   },
   {
-    label: "ذكاء حكيم AI",
+    key: "group.intelligence",
     icon: Sparkles,
     items: [
-      { to: "/compare", label: "مقارنة الأسعار", icon: Scale },
-      { to: "/analysis", label: "تحليل المتاجر", icon: BarChart3, badge: "AI" },
-      { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
-      { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
-      { to: "/affiliate-setup", label: "ربط أمازون ونون", icon: Link2, badge: "دليل" },
-      { to: "/agents", label: "وكلاء حكيم", icon: ShieldCheck, badge: "جديد" },
-      { to: "/settings", label: "تخصيص المظهر", icon: Palette, badge: "جديد" },
+      { to: "/compare", key: "item.compare", icon: Scale },
+      { to: "/analysis", key: "item.analysis", icon: BarChart3 },
+      { to: "/ads", key: "item.ads", icon: Megaphone },
+      { to: "/market", key: "item.market", icon: ShoppingBag },
+      { to: "/affiliate-setup", key: "item.affiliate", icon: Link2, badgeKey: "nav.guide" },
+      { to: "/agents", key: "item.agents", icon: ShieldCheck, badgeKey: "nav.new" },
+      { to: "/settings", key: "item.settings", icon: Palette, badgeKey: "nav.new" },
     ],
   },
 ];
