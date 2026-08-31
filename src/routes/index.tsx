@@ -160,7 +160,7 @@ function Home() {
                   </div>
                   <div className="text-left shrink-0">
                     <div className="text-[10px] text-muted-foreground">{t("home.cheapest")}</div>
-                    <div className="font-display font-black text-lg text-gold-shine">{g[0].price} ر.س</div>
+                    <div className="font-display font-black text-lg text-gold-shine">{g[0].price} {t("home.currency")}</div>
                   </div>
                 </div>
                 <div className="divide-y divide-border/50">
@@ -177,9 +177,9 @@ function Home() {
                         {i === 0? (
                           <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">{t("home.best")}</span>
                         ) : (
-                          <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
+                          <span className="text-xs text-hot font-bold">+{diff} {t("home.currency")}</span>
                         )}
-                        <span className="font-display font-black w-16 text-left">{d.price} ر.س</span>
+                        <span className="font-display font-black w-16 text-left">{d.price} {t("home.currency")}</span>
                       </div>
                     );
                   })}
