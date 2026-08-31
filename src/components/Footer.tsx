@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useI18n } from "@/lib/i18n";
 import { Sparkles, ShieldCheck, FileText, UserMinus, Mail } from "lucide-react";
 
 export const SUPPORT_EMAIL = "support@alhkmy.store";
@@ -53,6 +54,7 @@ const SOCIAL_LINKS = [
 ];
 
 export function Footer() {
+  const { t, lang } = useI18n();
   const year = new Date().getFullYear();
   return (
     <footer className="mt-16 border-t border-primary/15 bg-card/60">
@@ -63,7 +65,7 @@ export function Footer() {
           </div>
           <div className="min-w-0">
             <div className="font-display font-black text-lg text-gold-shine">HkeeemAI</div>
-            <p className="text-xs text-muted-foreground">تسوّق أذكى… وفّر أكثر</p>
+            <p className="text-xs text-muted-foreground">{t("nav.tagline")}</p>
           </div>
         </div>
 
@@ -72,28 +74,28 @@ export function Footer() {
             to="/privacy"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-primary" /> سياسة الخصوصية
+            <ShieldCheck className="w-3.5 h-3.5 text-primary" /> {t("footer.privacy")}
           </Link>
           <Link
             to="/terms"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
           >
-            <FileText className="w-3.5 h-3.5 text-primary" /> الشروط والأحكام
+            <FileText className="w-3.5 h-3.5 text-primary" /> {t("footer.terms")}
           </Link>
           <Link
             to="/delete-account"
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
           >
-            <UserMinus className="w-3.5 h-3.5 text-primary" /> حذف الحساب
+            <UserMinus className="w-3.5 h-3.5 text-primary" /> {t("footer.deleteAccount")}
           </Link>
         </nav>
       </div>
       <div className="border-t border-border/60">
         <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <p className="text-[11px] text-muted-foreground">
-            © {year} HkeeemAI — جميع الحقوق محفوظة.
+            © {year} HkeeemAI — {lang === "ar" ? "جميع الحقوق محفوظة." : "All rights reserved."}
           </p>
-          <div className="flex items-center gap-2" aria-label="وسائل التواصل">
+          <div className="flex items-center gap-2" aria-label={t("footer.contact")}>
             {SOCIAL_LINKS.map((link) => (
               <a
                 key={link.id}
