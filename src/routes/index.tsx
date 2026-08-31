@@ -8,6 +8,7 @@ import { OffersSection } from "@/components/OffersSection";
 import { SocialOffersSection } from "@/components/SocialOffersSection";
 
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
+import { useI18n } from "@/lib/i18n";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
   Home as HomeIcon, Car, MapPin, Bot, ShieldCheck, Zap, Award,
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { t } = useI18n();
   const top = bestDeals(6);
   const groups = comparableGroups().slice(0, 3);
   const navigate = useNavigate();
@@ -42,14 +44,14 @@ function Home() {
   };
 
   const pillars = [
-    { to: "/deals", label: "أفضل العروض", icon: Flame, tone: "from-primary/25 to-primary/5", note: "مرتّبة بالذكاء الاصطناعي" },
-    { to: "/", label: "مقارنة الأسعار", icon: TrendingDown, tone: "from-accent/25 to-accent/5", note: "نفس المنتج، أرخص متجر", hash: "compare" },
-    { to: "/coupons", label: "الكوبونات", icon: Ticket, tone: "from-primary/25 to-primary/5", note: "أحدث الأكواد الفعّالة" },
-    { to: "/stores", label: "المتاجر", icon: StoreIcon, tone: "from-accent/25 to-accent/5", note: "+65 متجرًا موثّقًا" },
-    { to: "/real-estate", label: "العقارات", icon: HomeIcon, tone: "from-primary/25 to-primary/5", note: "ذكاء عقاري — قريباً" },
-    { to: "/cars", label: "السيارات", icon: Car, tone: "from-accent/25 to-accent/5", note: "مقارنة وكالات — قريباً" },
-    { to: "/maps", label: "الخرائط", icon: MapPin, tone: "from-primary/25 to-primary/5", note: "أقرب العروض — قريباً" },
-    { to: "/chat", label: "مساعد حكيم AI", icon: Bot, tone: "from-accent/25 to-accent/5", note: "اسأله بالعربي" },
+    { to: "/deals", label: t("pillar.deals"), icon: Flame, tone: "from-primary/25 to-primary/5", note: t("pillar.dealsNote") },
+    { to: "/", label: t("home.compareTitle"), icon: TrendingDown, tone: "from-accent/25 to-accent/5", note: t("pillar.compareNote"), hash: "compare" },
+    { to: "/coupons", label: t("item.coupons"), icon: Ticket, tone: "from-primary/25 to-primary/5", note: t("pillar.couponsNote") },
+    { to: "/stores", label: t("item.stores"), icon: StoreIcon, tone: "from-accent/25 to-accent/5", note: t("pillar.storesNote") },
+    { to: "/real-estate", label: t("pillar.realEstate"), icon: HomeIcon, tone: "from-primary/25 to-primary/5", note: t("pillar.realEstateNote") },
+    { to: "/cars", label: t("pillar.cars"), icon: Car, tone: "from-accent/25 to-accent/5", note: t("pillar.carsNote") },
+    { to: "/maps", label: t("pillar.maps"), icon: MapPin, tone: "from-primary/25 to-primary/5", note: t("pillar.mapsNote") },
+    { to: "/chat", label: t("pillar.assistant"), icon: Bot, tone: "from-accent/25 to-accent/5", note: t("pillar.assistantNote") },
   ] as const;
 
   return (
@@ -69,16 +71,16 @@ function Home() {
           />
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/35 backdrop-blur text-sm font-bold mb-5 border border-primary/50">
             <Sparkles className="w-3.5 h-3.5 text-primary" />
-            <span className="font-bold">HkeeemAI — وفّر أكثر… لا تدفع أكثر</span>
+            <span className="font-bold">{t("home.badge")}</span>
           </div>
           <h1 className="font-thuluth text-4xl md:text-7xl leading-[1.6] tracking-normal">
-            تسوّق ذكي…
+            {t("home.title1")}
             <br />
-            <span className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">توفير أكثر</span>
+            <span className="drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)]">{t("home.title2")}</span>
           </h1>
 
           <p className="mt-5 max-w-xl text-base md:text-lg font-medium opacity-95 leading-loose">
-            نجمع كل العروض ونقارن الأسعار بين المتاجر لحظيًا — حتى تشتري نفس المنتج بأرخص سعر. مصلحتك أنت أولاً، لا المتجر.
+            {t("home.subtitle")}
           </p>
 
           <form onSubmit={submitSearch} className="mt-7 max-w-2xl">
@@ -89,13 +91,13 @@ function Home() {
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="اسأل حكيم: مثلاً «أرخص أرز بسمتي؟» أو «أفضل عرض جوال»"
+                placeholder={t("home.searchPlaceholder")}
                 className="flex-1 bg-transparent outline-none text-card-foreground placeholder:text-muted-foreground py-2 text-sm md:text-base"
-                aria-label="بحث ذكي"
+                aria-label={t("home.searchLabel")}
               />
               <button type="submit" className="inline-flex items-center gap-1.5 bg-gradient-gold font-bold px-4 md:px-5 py-2.5 rounded-xl hover:opacity-95 transition">
                 <Search className="w-4 h-4" />
-                <span className="hidden md:inline leading-normal">ابحث</span>
+                <span className="hidden md:inline leading-normal">{t("home.search")}</span>
               </button>
             </div>
             <div className="flex flex-wrap gap-2 mt-3">
@@ -108,9 +110,9 @@ function Home() {
           </form>
 
           <div className="mt-8 grid grid-cols-3 gap-3 max-w-md">
-            <Stat n="65+" l="متجر" />
-            <Stat n="60٪" l="متوسط التوفير" />
-            <Stat n="24/7" l="مساعد ذكي" />
+            <Stat n="65+" l={t("home.statStores")} />
+            <Stat n="60%" l={t("home.statSaving")} />
+            <Stat n="24/7" l={t("home.statAssistant")} />
           </div>
         </div>
       </section>
@@ -125,8 +127,8 @@ function Home() {
       <LazySection minHeight={520}>
       <section>
         <SectionHeader
-          title="أفضل العروض الآن"
-          subtitle="مرتّبة تلقائياً حسب نسبة التوفير"
+          title={t("home.bestTitle")}
+          subtitle={t("home.bestSubtitle")}
           icon={<Flame className="w-5 h-5" />}
           href="/deals"
         />
@@ -142,7 +144,7 @@ function Home() {
       {groups.length > 0 && (
       <LazySection minHeight={620} id="compare-wrap">
       <section id="compare">
-        <SectionHeader title="مقارنة الأسعار" subtitle="نفس المنتج، أرخص متجر أوّلاً" icon={<TrendingDown className="w-5 h-5" />} />
+        <SectionHeader title={t("home.compareTitle")} subtitle={t("home.compareSubtitle")} icon={<TrendingDown className="w-5 h-5" />} />
         <div className="space-y-4">
           {groups.map((g) => {
             const Icon = getDealIcon(g[0]);
@@ -157,8 +159,8 @@ function Home() {
                     {g[0].unit && <p className="text-xs text-muted-foreground">{g[0].unit}</p>}
                   </div>
                   <div className="text-left shrink-0">
-                    <div className="text-[10px] text-muted-foreground">أرخص سعر</div>
-                    <div className="font-display font-black text-lg text-gold-shine">{g[0].price} ر.س</div>
+                    <div className="text-[10px] text-muted-foreground">{t("home.cheapest")}</div>
+                    <div className="font-display font-black text-lg text-gold-shine">{g[0].price} {t("home.currency")}</div>
                   </div>
                 </div>
                 <div className="divide-y divide-border/50">
@@ -173,11 +175,11 @@ function Home() {
                         </div>
                         <span className="flex-1 text-sm font-medium truncate">{s.name}</span>
                         {i === 0? (
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">الأفضل</span>
+                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">{t("home.best")}</span>
                         ) : (
-                          <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
+                          <span className="text-xs text-hot font-bold">+{diff} {t("home.currency")}</span>
                         )}
-                        <span className="font-display font-black w-16 text-left">{d.price} ر.س</span>
+                        <span className="font-display font-black w-16 text-left">{d.price} {t("home.currency")}</span>
                       </div>
                     );
                   })}
@@ -221,7 +223,7 @@ function Home() {
       </LazySection>
 
       <section>
-        <SectionHeader title="استكشف HkeeemAI" subtitle="كل أقسام المنصة في مكان واحد" icon={<Zap className="w-5 h-5" />} />
+        <SectionHeader title={t("home.exploreTitle")} subtitle={t("home.exploreSubtitle")} icon={<Zap className="w-5 h-5" />} />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {pillars.map((p) => {
             const Icon = p.icon;
@@ -266,9 +268,9 @@ function Home() {
       <LazySection minHeight={140}>
       <section className="pb-10">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-bold text-base text-muted-foreground leading-snug">المتاجر المشاركة</h3>
+          <h3 className="font-bold text-base text-muted-foreground leading-snug">{t("home.partnersTitle")}</h3>
           <Link to="/stores" className="text-xs font-bold text-primary flex items-center gap-1 hover:gap-2 transition-all leading-normal">
-            كل المتاجر <ArrowLeft className="w-3 h-3" />
+            {t("home.allStores")} <ArrowLeft className="w-3 h-3" />
           </Link>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">

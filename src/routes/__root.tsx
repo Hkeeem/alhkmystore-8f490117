@@ -18,6 +18,7 @@ import { Footer } from "@/components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { NotificationPrompt } from "@/components/NotificationPrompt";
 import { FeedbackSurvey } from "@/components/FeedbackSurvey";
+import { LanguageProvider } from "@/lib/i18n";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -157,8 +158,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
       <div className="min-h-screen pb-20 md:pb-0">
-        <a href="#main-content" className="skip-link">تخطي إلى المحتوى الرئيسي</a>
+        <a href="#main-content" className="skip-link">تخطي إلى المحتوى الرئيسي / Skip to content</a>
         <TopBar />
         <ScrollMemory />
         <div key={pathname} id="main-content" tabIndex={-1} className="page-transition outline-none">
@@ -171,6 +173,7 @@ function RootComponent() {
         <NotificationPrompt />
         <FeedbackSurvey />
       </div>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

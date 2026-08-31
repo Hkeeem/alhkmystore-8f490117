@@ -6,6 +6,8 @@ import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { VisionBadge } from "@/components/VisionBadge";
 import { VisionBadgeSettings } from "@/components/VisionBadgeSettings";
 import { useAppearance } from "@/hooks/use-appearance";
+import { useI18n, type TKey } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 
 import { toast } from "sonner";
@@ -13,50 +15,50 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const items = [
-  { to: "/", label: "الرئيسية", icon: Home },
-  { to: "/deals", label: "العروض", icon: Tag },
-  { to: "/coupons", label: "كوبونات", icon: Ticket },
-  { to: "/maps", label: "خريطتي", icon: Map },
-  { to: "/smart-list", label: "قائمة", icon: ListChecks },
-  { to: "/rewards", label: "جوائز", icon: Trophy },
-  { to: "/chat", label: "مساعد", icon: MessageCircle },
+  { to: "/", key: "nav.home", icon: Home },
+  { to: "/deals", key: "nav.deals", icon: Tag },
+  { to: "/coupons", key: "nav.coupons", icon: Ticket },
+  { to: "/maps", key: "nav.maps", icon: Map },
+  { to: "/smart-list", key: "nav.list", icon: ListChecks },
+  { to: "/rewards", key: "nav.rewards", icon: Trophy },
+  { to: "/chat", key: "nav.assistant", icon: MessageCircle },
 ] as const;
 
-type SubItem = { to: string; label: string; icon: typeof Home; badge?: string };
-type Group = { label: string; icon: typeof Home; items: SubItem[] };
+type SubItem = { to: string; key: TKey; icon: typeof Home; badgeKey?: TKey };
+type Group = { key: TKey; icon: typeof Home; items: SubItem[] };
 
 const groups: Group[] = [
   {
-    label: "متجر حكيم AI",
+    key: "group.store",
     icon: Store,
     items: [
-      { to: "/stores", label: "المتاجر", icon: Store },
-      { to: "/deals", label: "العروض", icon: Tag },
-      { to: "/coupons", label: "الكوبونات", icon: Ticket },
-      { to: "/merchant", label: "بوابة التاجر", icon: Store, badge: "جديد" },
+      { to: "/stores", key: "item.stores", icon: Store },
+      { to: "/deals", key: "item.deals", icon: Tag },
+      { to: "/coupons", key: "item.coupons", icon: Ticket },
+      { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
     ],
   },
   {
-    label: "معرض حكيم AI",
+    key: "group.showroom",
     icon: Car,
-    items: [{ to: "/cars", label: "السيارات", icon: Car, badge: "AI" }],
+    items: [{ to: "/cars", key: "item.cars", icon: Car }],
   },
   {
-    label: "مكتب حكيم AI",
+    key: "group.office",
     icon: Building2,
-    items: [{ to: "/real-estate", label: "البحث العقاري", icon: Building2, badge: "AI" }],
+    items: [{ to: "/real-estate", key: "item.realEstate", icon: Building2 }],
   },
   {
-    label: "ذكاء حكيم AI",
+    key: "group.intelligence",
     icon: Sparkles,
     items: [
-      { to: "/compare", label: "مقارنة الأسعار", icon: Scale },
-      { to: "/analysis", label: "تحليل المتاجر", icon: BarChart3, badge: "AI" },
-      { to: "/ads", label: "مولد الإعلانات", icon: Megaphone, badge: "AI" },
-      { to: "/market", label: "سوق حكيم الموحد", icon: ShoppingBag },
-      { to: "/affiliate-setup", label: "ربط أمازون ونون", icon: Link2, badge: "دليل" },
-      { to: "/agents", label: "وكلاء حكيم", icon: ShieldCheck, badge: "جديد" },
-      { to: "/settings", label: "تخصيص المظهر", icon: Palette, badge: "جديد" },
+      { to: "/compare", key: "item.compare", icon: Scale },
+      { to: "/analysis", key: "item.analysis", icon: BarChart3 },
+      { to: "/ads", key: "item.ads", icon: Megaphone },
+      { to: "/market", key: "item.market", icon: ShoppingBag },
+      { to: "/affiliate-setup", key: "item.affiliate", icon: Link2, badgeKey: "nav.guide" },
+      { to: "/agents", key: "item.agents", icon: ShieldCheck, badgeKey: "nav.new" },
+      { to: "/settings", key: "item.settings", icon: Palette, badgeKey: "nav.new" },
     ],
   },
 ];
@@ -83,8 +85,9 @@ function SidebarGroup({
   shortcut?: number;
   onNavigate?: () => void;
 }) {
+  const { t } = useI18n();
   const GroupIcon = group.icon;
-  const slug = group.label.replace(/\s+/g, "-");
+  const slug = group.key.replace(/[.\s]+/g, "-");
   const panelId = `sidebar-group-panel-${slug}`;
   const buttonId = `sidebar-group-button-${slug}`;
 
@@ -99,7 +102,7 @@ function SidebarGroup({
         className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
       >
         <GroupIcon className="w-4.5 h-4.5 text-primary" />
-        <span className="text-sm font-bold">{group.label}</span>
+        <span className="text-sm font-bold">{t(group.key)}</span>
         {shortcut && (
           <kbd className="text-[10px] font-mono text-foreground/50 border border-border rounded px-1">
             Alt+{shortcut}
@@ -137,9 +140,9 @@ function SidebarGroup({
                   <span className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-full bg-primary-foreground/80" />
                 )}
                 <Icon className="w-4.5 h-4.5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm">{it.label}</span>
-                {it.badge && !active && (
-                  <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{it.badge}</span>
+                <span className="text-sm">{t(it.key)}</span>
+                {it.badgeKey && !active && (
+                  <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{t(it.badgeKey)}</span>
                 )}
               </Link>
               </li>
@@ -154,6 +157,7 @@ function SidebarGroup({
 
 export function TopBar() {
   const { user, signOut } = useAuth();
+  const { t } = useI18n();
   useAppearance();
   const isStaff = useIsStaff(user?.id);
   
@@ -386,7 +390,7 @@ export function TopBar() {
             <SheetTrigger asChild>
               <button
                 ref={menuTriggerRef}
-                aria-label="فتح القائمة الجانبية"
+                aria-label={t("nav.menu")}
                 aria-haspopup="dialog"
                 aria-expanded={menuOpen}
                 aria-controls="hkeeem-sidebar"
@@ -400,7 +404,7 @@ export function TopBar() {
               side="right"
               role="dialog"
               aria-modal="true"
-              aria-label="القائمة الجانبية"
+              aria-label={t("nav.sidebar")}
 
               onKeyDown={handleNavKeyDown}
               onEscapeKeyDown={(e) => { e.preventDefault(); handleMenuOpenChange(false); }}
@@ -498,9 +502,9 @@ export function TopBar() {
                         )}
 
                         <Icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                        <span className="text-sm">{it.label}</span>
+                        <span className="text-sm">{t(it.key)}</span>
                         {it.to === "/maps" && !active && (
-                          <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">جديد</span>
+                          <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{t("nav.new")}</span>
                         )}
                       </Link>
                       </li>
@@ -509,7 +513,7 @@ export function TopBar() {
 
                   {/* أقسام فرعية منضوية تفتح تلقائياً عند اختيار صفحة داخلها */}
                   {groups.map((g, gi) => (
-                    <li key={g.label} className="contents">
+                    <li key={g.key} className="contents">
                     <SidebarGroup
                       group={g}
                       pathname={pathname}
@@ -569,7 +573,7 @@ export function TopBar() {
           </span>
           <div className="relative flex flex-col leading-tight px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
             <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
-            <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">تسوّق أذكى… وفّر أكثر</span>
+            <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">{t("nav.tagline")}</span>
           </div>
           <VisionBadge />
         </Link>
@@ -583,7 +587,7 @@ export function TopBar() {
               className="px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition"
               activeProps={{ className: "px-3 py-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground glow-gold" }}
             >
-              {it.label}
+              {t(it.key)}
             </Link>
           ))}
         </nav>
@@ -594,9 +598,10 @@ export function TopBar() {
               className="hidden sm:flex items-center gap-1.5 rounded-xl bg-primary/10 border border-primary/30 text-primary px-3 py-2 text-xs font-bold"
             >
               <Shield className="w-3.5 h-3.5" />
-              لوحة التحكم
+              {t("nav.dashboard")}
             </Link>
           )}
+          <LanguageSwitcher />
           <VisionBadgeSettings className="hidden sm:inline-flex" />
           <ThemeSwitcher />
 
@@ -608,16 +613,16 @@ export function TopBar() {
                 className="hidden sm:flex items-center gap-1.5 rounded-xl bg-secondary/60 px-3 py-2 text-xs font-bold hover:bg-secondary transition"
               >
                 <Heart className="w-3.5 h-3.5 text-primary" />
-                حسابي
+                {t("nav.account")}
               </Link>
               <div className="hidden md:flex items-center gap-2 rounded-xl bg-secondary/60 px-3 py-1.5 text-xs">
                 <UserIcon className="w-3.5 h-3.5 text-primary" />
                 <span className="max-w-[140px] truncate">{user.user_metadata?.full_name || user.email}</span>
               </div>
               <button
-                onClick={async () => { await signOut(); toast.success("تم تسجيل الخروج"); }}
+                onClick={async () => { await signOut(); toast.success(t("nav.loggedOut")); }}
                 className="p-2 rounded-xl hover:bg-secondary transition"
-                aria-label="خروج"
+                aria-label={t("nav.logout")}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -628,7 +633,7 @@ export function TopBar() {
               className="flex items-center gap-1.5 rounded-xl bg-gradient-gold text-secondary px-3 py-2 text-xs font-bold glow-gold"
             >
               <LogIn className="w-3.5 h-3.5" />
-              دخول
+              {t("nav.login")}
             </Link>
           )}
         </div>
@@ -655,6 +660,7 @@ function useIsStaff(userId: string | undefined) {
 
 
 export function BottomBar() {
+  const { t } = useI18n();
   return (
     <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-background/95 backdrop-blur-xl border-t border-primary/15 pb-[env(safe-area-inset-bottom)]">
       <div className="grid grid-cols-7">
@@ -671,7 +677,7 @@ export function BottomBar() {
                 <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full" />
               )}
               <Icon className="w-5 h-5" />
-              <span>{it.label}</span>
+              <span>{t(it.key)}</span>
             </Link>
           );
         })}
