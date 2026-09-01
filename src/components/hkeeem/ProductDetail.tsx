@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "../../styles/hkeeem-theme.css";
+import { Link } from "@tanstack/react-router";
 
 const stores = [
   { name: "نون", price: 4799, discount: 22, best: true },
