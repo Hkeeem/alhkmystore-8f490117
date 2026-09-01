@@ -99,58 +99,72 @@ function SidebarGroup({
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={panelId}
-        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/90 hover:bg-secondary transition-all"
+        className={`group/sidebar w-full flex items-center gap-3 rounded-2xl px-3 py-2.5 text-right transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 ${
+          open
+            ? "bg-primary/10 text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_26%,transparent)]"
+            : "text-foreground/90 hover:bg-secondary/80 hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_18%,transparent)]"
+        }`}
       >
-        <GroupIcon className="w-4.5 h-4.5 text-primary" />
-        <span className="text-sm font-bold">{t(group.key)}</span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/15 transition-all duration-200 group-hover/sidebar:bg-primary group-hover/sidebar:text-primary-foreground group-hover/sidebar:shadow-[0_0_14px_color-mix(in_oklab,var(--color-primary)_36%,transparent)] group-active/sidebar:scale-95">
+          <GroupIcon aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover/sidebar:scale-110" />
+        </span>
+        <span className="min-w-0 text-sm font-bold">{t(group.key)}</span>
         {shortcut && (
-          <kbd className="text-[10px] font-mono text-foreground/50 border border-border rounded px-1">
+          <kbd className="hidden rounded border border-border/80 px-1.5 py-0.5 text-[10px] font-mono text-foreground/50 sm:inline-block">
             Alt+{shortcut}
           </kbd>
         )}
-        <ChevronDown className={`mr-auto w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          aria-hidden="true"
+          className={`mr-auto h-4 w-4 shrink-0 text-primary transition-transform duration-250 ease-[cubic-bezier(0.23,1,0.32,1)] ${open ? "rotate-180" : ""}`}
+        />
       </button>
 
-      {open && (
-        <ul
-          id={panelId}
-          role="group"
-          aria-labelledby={buttonId}
-          className="mt-1 flex flex-col gap-1 pr-3 list-none m-0 p-0"
-        >
-
-          {group.items.map((it) => {
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={buttonId}
+        aria-hidden={!open}
+        inert={!open}
+        className={`grid overflow-hidden transition-[grid-template-rows,opacity,transform] duration-250 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+          open ? "grid-rows-[1fr] translate-y-0 opacity-100" : "pointer-events-none grid-rows-[0fr] -translate-y-1 opacity-0"
+        }`}
+      >
+        <ul className="min-h-0 overflow-hidden mt-1 flex flex-col gap-1 pr-3 list-none m-0 p-0">
+          {group.items.map((it, index) => {
             const Icon = it.icon;
             const active = isPathActive(pathname, it.to);
             return (
               <li key={it.to} className="contents">
-              <Link
-                to={it.to}
-                preload="intent"
-                onClick={() => onNavigate?.()}
-                aria-current={active ? "page" : undefined}
-
-                className={
-                  active
-                    ? "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold glow-gold transition-all"
-                    : "relative flex items-center gap-3 px-4 py-2.5 rounded-2xl text-foreground/80 hover:bg-secondary hover:text-foreground transition-all group"
-                }
-              >
-                {active && (
-                  <span className="absolute right-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-full bg-primary-foreground/80" />
-                )}
-                <Icon className="w-4.5 h-4.5 group-hover:scale-110 transition-transform" />
-                <span className="text-sm">{t(it.key)}</span>
-                {it.badgeKey && !active && (
-                  <span className="mr-auto text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">{t(it.badgeKey)}</span>
-                )}
-              </Link>
+                <Link
+                  to={it.to}
+                  preload="intent"
+                  tabIndex={open ? 0 : -1}
+                  onClick={() => onNavigate?.()}
+                  aria-current={active ? "page" : undefined}
+                  style={{ transitionDelay: open ? `${index * 25}ms` : "0ms" }}
+                  className={
+                    active
+                      ? "relative flex items-center gap-3 rounded-2xl bg-primary px-4 py-2.5 font-bold text-primary-foreground shadow-[0_6px_18px_color-mix(in_oklab,var(--color-primary)_24%,transparent)] transition-all duration-200"
+                      : "group relative flex items-center gap-3 rounded-2xl px-4 py-2.5 text-foreground/80 transition-all duration-200 hover:bg-primary/10 hover:text-foreground hover:shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-primary)_18%,transparent)] hover:translate-x-[-2px] active:scale-[0.98]"
+                  }
+                >
+                  {active && (
+                    <span className="absolute right-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-full bg-primary-foreground/80" />
+                  )}
+                  <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-all duration-200 ${active ? "bg-primary-foreground/15" : "bg-secondary/70 group-hover:bg-primary/15"}`}>
+                    <Icon aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                  </span>
+                  <span className="text-sm">{t(it.key)}</span>
+                  {it.badgeKey && !active && (
+                    <span className="mr-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{t(it.badgeKey)}</span>
+                  )}
+                </Link>
               </li>
             );
           })}
         </ul>
-
-      )}
+      </div>
     </div>
   );
 }
