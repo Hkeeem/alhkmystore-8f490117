@@ -110,7 +110,12 @@ export type Deal = {
   rating?: number;
   ratingCount?: number;
   usageCount?: number;
+  /** وقت آخر تحقق من السعر (ISO) */
+  verifiedAt?: string;
+  /** مصدر العرض المعلن (مثل: أمازون، نون، التاجر) */
+  source?: string;
 };
+
 
 const demoDeals: Deal[] = [
   // Groceries - with real product images
