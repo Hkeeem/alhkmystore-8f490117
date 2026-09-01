@@ -198,6 +198,63 @@ export type Database = {
         }
         Relationships: []
       }
+      buyer_requests: {
+        Row: {
+          city: string
+          contact_consent: boolean
+          created_at: string
+          district: string
+          features: string[]
+          full_name: string
+          id: string
+          is_demo: boolean
+          max_price: number
+          min_bedrooms: number
+          phone: string | null
+          property_type: string
+          purpose: string
+          required_services: string[]
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          city: string
+          contact_consent?: boolean
+          created_at?: string
+          district: string
+          features?: string[]
+          full_name: string
+          id?: string
+          is_demo?: boolean
+          max_price: number
+          min_bedrooms: number
+          phone?: string | null
+          property_type: string
+          purpose?: string
+          required_services?: string[]
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          city?: string
+          contact_consent?: boolean
+          created_at?: string
+          district?: string
+          features?: string[]
+          full_name?: string
+          id?: string
+          is_demo?: boolean
+          max_price?: number
+          min_bedrooms?: number
+          phone?: string | null
+          property_type?: string
+          purpose?: string
+          required_services?: string[]
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
@@ -656,6 +713,54 @@ export type Database = {
         }
         Relationships: []
       }
+      property_listings: {
+        Row: {
+          bedrooms: number
+          city: string
+          created_at: string
+          district: string
+          features: string[]
+          id: string
+          owner_id: string
+          price: number
+          property_type: string
+          purpose: string
+          required_services: string[]
+          status: string
+          title: string
+        }
+        Insert: {
+          bedrooms: number
+          city: string
+          created_at?: string
+          district: string
+          features?: string[]
+          id?: string
+          owner_id: string
+          price: number
+          property_type: string
+          purpose?: string
+          required_services?: string[]
+          status?: string
+          title: string
+        }
+        Update: {
+          bedrooms?: number
+          city?: string
+          created_at?: string
+          district?: string
+          features?: string[]
+          id?: string
+          owner_id?: string
+          price?: number
+          property_type?: string
+          purpose?: string
+          required_services?: string[]
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -934,6 +1039,25 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      match_buyers_for_property: {
+        Args: { p_listing_id: string }
+        Returns: {
+          city: string
+          created_at: string
+          district: string
+          features: string[]
+          full_name: string
+          id: string
+          is_demo: boolean
+          match_score: number
+          max_price: number
+          min_bedrooms: number
+          phone: string
+          property_type: string
+          purpose: string
+          required_services: string[]
+        }[]
+      }
       register_affiliate_click: {
         Args: {
           _country?: string

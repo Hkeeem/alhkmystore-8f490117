@@ -1,10 +1,23 @@
 import { type Deal, discountPercent, getStore } from "@/data/deals";
-import { Clock, Share2, Info } from "lucide-react";
+import { Clock, Share2, Info, BadgeCheck, Copy, ExternalLink, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { toggleFavorite } from "@/lib/user.functions";
+import { useAuth } from "@/hooks/use-auth";
+import { timeAgoAr } from "@/hooks/use-live-deals";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
+
+/** وسم شفافية يوضح سبب ترقية العرض */
+function transparencyTag(deal: Deal, off: number): string | null {
+  if ((deal.rating ?? 0) >= 4.7) return "أعلى تقييم موثّق";
+  if (off >= 40) return "أقل سعر موثّق";
+  if ((deal.usageCount ?? 0) >= 1000) return "الأكثر استخداماً";
+  return null;
+}
 
 export function DealCard({
   deal,
@@ -25,8 +38,14 @@ export function DealCard({
   const [imgError, setImgError] = useState(false);
   const [whyOpen, setWhyOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const Icon = getDealIcon(deal);
+  const { user } = useAuth();
+  const toggleFav = useServerFn(toggleFavorite);
+  const tag = transparencyTag(deal, off);
+  const verified = deal.verifiedAt ? timeAgoAr(deal.verifiedAt) : null;
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
@@ -36,20 +55,41 @@ export function DealCard({
     typeof window !== "undefined" ? `${window.location.origin}/deals/${deal.id}` : "";
   const storeUrl = `/api/public/go/${deal.id}`;
 
+  const handleCopyCoupon = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!deal.couponCode) return;
+    void navigator.clipboard?.writeText(deal.couponCode);
+    setCopied(true);
+    toast.success(`تم نسخ كود الخصم ${deal.couponCode}`);
+    timer.current = setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleSave = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error("سجّل الدخول لحفظ العرض في المحفوظات");
+      return;
+    }
+    setSaving(true);
+    try {
+      const r = await toggleFav({ data: { itemType: "deal", itemId: deal.id } });
+      setSaved(r.favorited);
+      toast.success(r.favorited ? "أُضيف إلى المحفوظات" : "أُزيل من المحفوظات");
+    } catch {
+      toast.error("تعذّر حفظ العرض");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleCta = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (deal.couponCode) {
-      void navigator.clipboard?.writeText(deal.couponCode);
-      setCopied(true);
-      timer.current = setTimeout(() => {
-        setCopied(false);
-        window.open(storeUrl, "_blank", "noopener,noreferrer");
-      }, 3000);
-    } else {
-      window.open(storeUrl, "_blank", "noopener,noreferrer");
-    }
+    window.open(storeUrl, "_blank", "noopener,noreferrer");
   };
+
 
   return (
     <Link
