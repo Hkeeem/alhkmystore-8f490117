@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+:root {
+  --hkeeem-bg: #0A0A0A;
+  --hkeeem-card: #161616;
+  --hkeeem-gold: #D4AF37;
+  --hkeeem-gold-bright: #FFD700;
+  --hkeeem-gold-dark: #8B6914;
+  --hkeeem-success: #4CAF50;
+  --hkeeem-danger: #E53935;
+  --hkeeem-text: #FFFFFF;
+  --hkeeem-text-dim: #B0B0B0;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background-color: var(--hkeeem-bg);
+  color: var(--hkeeem-text);
+}
+
+.hk-card {
+  background-color: var(--hkeeem-card);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+}
+
+.hk-btn-gold {
+  background: linear-gradient(135deg, var(--hkeeem-gold), var(--hkeeem-gold-bright));
+  color: #000;
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 14px 24px;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+.hk-btn-gold:hover {
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+  transform: translateY(-1px);
+}
+
+.hk-btn-outline {
+  background: transparent;
+  color: var(--hkeeem-gold);
+  border: 1px solid var(--hkeeem-gold);
+  border-radius: 14px;
+  padding: 14px 24px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hk-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  background: var(--hkeeem-gold);
+  color: #000;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
+}
+
+.hk-savings {
+  background: linear-gradient(90deg, #3A2E0A, #8B6914, #D4AF37);
+  border-radius: 18px;
+  color: #000;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+}
+
+.hk-gold-text { color: var(--hkeeem-gold); }
+.hk-dim-text { color: var(--hkeeem-text-dim); }
+
+@keyframes hk-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+.hk-assistant-float {
+  animation: hk-breathe 2s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
+}
+
+@keyframes hk-typing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+.hk-typing-dot {
+  width: 8px; height: 8px;
+  background: var(--hkeeem-gold);
+  border-radius: 50%;
+  display: inline-block;
+  animation: hk-typing 1.2s ease-in-out infinite;
+}
+.hk-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.hk-typing-dot:nth-child(3) { animation-delay: 0.4s; }
