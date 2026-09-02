@@ -453,7 +453,7 @@ export function TopBar() {
                   <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
-                  {sidebarWide && <span>HkeeemAI</span>}
+                  <span className="truncate">HkeeemAI</span>
                   <div className="mr-auto flex items-center gap-1">
                     <button
                       type="button"
