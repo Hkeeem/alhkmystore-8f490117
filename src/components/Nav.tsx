@@ -437,8 +437,8 @@ export function TopBar() {
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
-                  ? "w-[300px] sm:w-[360px] max-w-[85vw] "
-                  : "w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] ") +
+                  ? "w-[320px] sm:w-[380px] max-w-[88vw] "
+                  : "w-[268px] sm:w-[288px] max-w-[82vw] ") +
                 (highContrast
                   ? "bg-background/95 border-primary/40 "
                   : "bg-background/55 border-primary/15 ") +
