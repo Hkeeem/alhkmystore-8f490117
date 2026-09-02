@@ -80,11 +80,11 @@ export const dict = {
   "pillar.couponsNote": { ar: "أحدث الأكواد الفعّالة", en: "Latest working codes" },
   "pillar.storesNote": { ar: "+65 متجرًا موثّقًا", en: "65+ verified stores" },
   "pillar.realEstate": { ar: "العقارات", en: "Real estate" },
-  "pillar.realEstateNote": { ar: "ذكاء عقاري — قريباً", en: "Property AI — soon" },
+  "pillar.realEstateNote": { ar: "بحث عقاري ذكي", en: "Smart property search" },
   "pillar.cars": { ar: "السيارات", en: "Cars" },
   "pillar.carsNote": { ar: "مقارنة وكالات — قريباً", en: "Dealer comparison — soon" },
   "pillar.maps": { ar: "الخرائط", en: "Maps" },
-  "pillar.mapsNote": { ar: "أقرب العروض — قريباً", en: "Nearby deals — soon" },
+  "pillar.mapsNote": { ar: "أقرب العروض حولك", en: "Deals near you" },
   "pillar.assistant": { ar: "مساعد حكيم AI", en: "HkeeemAI assistant" },
   "pillar.assistantNote": { ar: "اسأله بالعربي", en: "Ask in Arabic or English" },
 

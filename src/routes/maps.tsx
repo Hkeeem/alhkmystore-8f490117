@@ -54,6 +54,8 @@ function MapsPage() {
   const markersRef = useRef<Record<string, Leaflet.Marker>>({});
   const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
   const LRef = useRef<L | null>(null);
+  const resizeObsRef = useRef<ResizeObserver | null>(null);
+  const didFitRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
   const { data: liveDeals } = useLiveDeals(100);
 
@@ -227,15 +229,28 @@ function MapsPage() {
       const map = L.map(mapRef.current, {
         center: [userLocation.lat, userLocation.lng],
         zoom: 12,
+        minZoom: 5,
+        maxZoom: 18,
         zoomControl: true,
         attributionControl: false,
-        zoomSnap: 0.25,
-        zoomDelta: 0.5,
-        wheelPxPerZoomLevel: 120,
+        zoomSnap: 0,
+        zoomDelta: 0.4,
+        wheelDebounceTime: 20,
+        wheelPxPerZoomLevel: 220,
+        scrollWheelZoom: true,
+        touchZoom: true,
+        inertia: true,
+        zoomAnimation: true,
+        fadeAnimation: true,
+        preferCanvas: true,
       });
       mapInstanceRef.current = map;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        keepBuffer: 4,
+      }).addTo(map);
 
       const userIcon = L.divIcon({
         className: "",
@@ -256,16 +271,26 @@ function MapsPage() {
 
       // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
       setTimeout(() => map.invalidateSize(), 100);
+
+      // إعادة حساب الأبعاد تلقائياً عند تغيّر حجم الحاوية أو دوران الشاشة
+      if (typeof ResizeObserver !== "undefined" && mapRef.current) {
+        const ro = new ResizeObserver(() => map.invalidateSize());
+        ro.observe(mapRef.current);
+        resizeObsRef.current = ro;
+      }
       setMapReady(true);
     })();
 
     return () => {
       cancelled = true;
+      resizeObsRef.current?.disconnect();
+      resizeObsRef.current = null;
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
       markersRef.current = {};
+      didFitRef.current = false;
       setMapReady(false);
     };
   }, [userLocation]);
@@ -351,8 +376,11 @@ function MapsPage() {
       const m = markersRef.current[focusDealId];
       map.setView(m.getLatLng(), 14, { animate: true });
       m.openPopup();
-    } else if (bounds.length > 1) {
+      didFitRef.current = true;
+    } else if (bounds.length > 1 && !didFitRef.current) {
+      // ضبط الإطار مرة واحدة فقط حتى لا تُلغى حركة المستخدم عند تغيير الفلاتر
       map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
+      didFitRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady, mapped, focusDealId]);

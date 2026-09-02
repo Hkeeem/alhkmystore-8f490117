@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -37,11 +37,6 @@ const groups: Group[] = [
       { to: "/coupons", key: "item.coupons", icon: Ticket },
       { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
     ],
-  },
-  {
-    key: "group.showroom",
-    icon: Car,
-    items: [{ to: "/cars", key: "item.cars", icon: Car }],
   },
   {
     key: "group.office",
@@ -442,8 +437,8 @@ export function TopBar() {
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
-                  ? "w-[300px] sm:w-[360px] max-w-[85vw] "
-                  : "w-auto min-w-[190px] max-w-[260px] sm:max-w-[280px] ") +
+                  ? "w-[320px] sm:w-[380px] max-w-[88vw] "
+                  : "w-[268px] sm:w-[288px] max-w-[82vw] ") +
                 (highContrast
                   ? "bg-background/95 border-primary/40 "
                   : "bg-background/55 border-primary/15 ") +
@@ -458,7 +453,7 @@ export function TopBar() {
                   <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
-                  {sidebarWide && <span>HkeeemAI</span>}
+                  <span className="truncate">HkeeemAI</span>
                   <div className="mr-auto flex items-center gap-1">
                     <button
                       type="button"
@@ -489,9 +484,10 @@ export function TopBar() {
               </SheetHeader>
 
 
-              <div className="flex-1 overflow-y-auto py-6">
+              <div className="flex-1 overflow-y-auto py-5">
                 <nav className="flex flex-col gap-2" aria-label="روابط القائمة الجانبية">
-                  <ul className="flex flex-col gap-2 list-none m-0 p-0" role="list">
+                  <p className="px-3 pb-2 text-[11px] font-bold tracking-wide text-foreground/50">التنقل السريع</p>
+                  <ul className="flex flex-col gap-1.5 list-none m-0 p-0" role="list">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);

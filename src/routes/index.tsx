@@ -11,7 +11,7 @@ import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import { useI18n } from "@/lib/i18n";
 import {
   Sparkles, TrendingDown, ArrowLeft, Search, Flame, Ticket, Store as StoreIcon,
-  Home as HomeIcon, Car, MapPin, Bot, ShieldCheck, Zap, Award,
+  Home as HomeIcon, MapPin, Bot, ShieldCheck, Zap, Award,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -49,7 +49,6 @@ function Home() {
     { to: "/coupons", label: t("item.coupons"), icon: Ticket, tone: "from-primary/25 to-primary/5", note: t("pillar.couponsNote") },
     { to: "/stores", label: t("item.stores"), icon: StoreIcon, tone: "from-accent/25 to-accent/5", note: t("pillar.storesNote") },
     { to: "/real-estate", label: t("pillar.realEstate"), icon: HomeIcon, tone: "from-primary/25 to-primary/5", note: t("pillar.realEstateNote") },
-    { to: "/cars", label: t("pillar.cars"), icon: Car, tone: "from-accent/25 to-accent/5", note: t("pillar.carsNote") },
     { to: "/maps", label: t("pillar.maps"), icon: MapPin, tone: "from-primary/25 to-primary/5", note: t("pillar.mapsNote") },
     { to: "/chat", label: t("pillar.assistant"), icon: Bot, tone: "from-accent/25 to-accent/5", note: t("pillar.assistantNote") },
   ] as const;

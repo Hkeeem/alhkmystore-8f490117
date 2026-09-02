@@ -11,6 +11,5 @@ export const MONITORED_PATHS = [
   "/market",
   "/compare",
   "/real-estate",
-  "/cars",
   "/maps",
 ];
