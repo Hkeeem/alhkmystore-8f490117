@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { getSaudiCities, getSaudiDistricts, SAUDI_REGIONS } from "@/data/saudi-locations";
 import {
   FEATURES,
@@ -232,21 +233,47 @@ function BuyerRequestPanel() {
     contactConsent: false,
   });
   const saveMutation = useMutation({
-    mutationFn: () => submitRequest({
-      data: {
-        fullName: form.fullName,
-        phone: form.phone,
-        purpose: form.purpose,
-        city: form.city,
-        district: form.district,
-        propertyType: form.propertyType,
-        maxPrice: Number(form.price),
-        minBedrooms: Number(form.bedrooms),
-        features: form.features,
-        requiredServices: form.services,
-        contactConsent: true,
-      },
-    }),
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("real_estate_requests")
+        .insert([
+          {
+            name: form.fullName,
+            phone: form.phone,
+            request_type: form.purpose,
+            property_type: form.propertyType,
+            city: form.city,
+            district: form.district,
+            details: `الميزانية: ${form.price} ر.س | الغرف: ${form.bedrooms} | المميزات: ${form.features.join("، ")} | الخدمات: ${form.services.join("، ")}`,
+            status: "new",
+          },
+        ]);
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        throw new Error("تعذر حفظ الطلب في قاعدة البيانات");
+      }
+
+      try {
+        await submitRequest({
+          data: {
+            fullName: form.fullName,
+            phone: form.phone,
+            purpose: form.purpose,
+            city: form.city,
+            district: form.district,
+            propertyType: form.propertyType,
+            maxPrice: Number(form.price),
+            minBedrooms: Number(form.bedrooms),
+            features: form.features,
+            requiredServices: form.services,
+            contactConsent: true,
+          },
+        });
+      } catch (fnErr) {
+        console.warn("ServerFn fallback warning:", fnErr);
+      }
+    },
     onSuccess: () => toast.success("تم تسجيل طلبك. سنطابقه مع العقارات المناسبة."),
     onError: (error) => toast.error(error instanceof Error ? error.message : "تعذر حفظ طلب البحث."),
   });
