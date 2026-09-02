@@ -484,9 +484,10 @@ export function TopBar() {
               </SheetHeader>
 
 
-              <div className="flex-1 overflow-y-auto py-6">
+              <div className="flex-1 overflow-y-auto py-5">
                 <nav className="flex flex-col gap-2" aria-label="روابط القائمة الجانبية">
-                  <ul className="flex flex-col gap-2 list-none m-0 p-0" role="list">
+                  <p className="px-3 pb-2 text-[11px] font-bold tracking-wide text-foreground/50">التنقل السريع</p>
+                  <ul className="flex flex-col gap-1.5 list-none m-0 p-0" role="list">
                   {items.map((it, i) => {
                     const Icon = it.icon;
                     const active = isPathActive(pathname, it.to);
