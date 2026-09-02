@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, Car, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -37,11 +37,6 @@ const groups: Group[] = [
       { to: "/coupons", key: "item.coupons", icon: Ticket },
       { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
     ],
-  },
-  {
-    key: "group.showroom",
-    icon: Car,
-    items: [{ to: "/cars", key: "item.cars", icon: Car }],
   },
   {
     key: "group.office",
