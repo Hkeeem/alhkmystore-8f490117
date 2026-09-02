@@ -34,7 +34,11 @@ import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
+import { Route as HkeeemProductRouteImport } from './routes/hkeeem.product'
+import { Route as HkeeemNearbyRouteImport } from './routes/hkeeem.nearby'
+import { Route as HkeeemChatRouteImport } from './routes/hkeeem.chat'
 import { Route as DealsPandaVsOthaimComparisonRouteImport } from './routes/deals.panda-vs-othaim-comparison'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
@@ -177,10 +181,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HkeeemIndexRoute = HkeeemIndexRouteImport.update({
+  id: '/hkeeem/',
+  path: '/hkeeem/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RewardsIdRoute = RewardsIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => RewardsRoute,
+} as any)
+const HkeeemProductRoute = HkeeemProductRouteImport.update({
+  id: '/hkeeem/product',
+  path: '/hkeeem/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemNearbyRoute = HkeeemNearbyRouteImport.update({
+  id: '/hkeeem/nearby',
+  path: '/hkeeem/nearby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemChatRoute = HkeeemChatRouteImport.update({
+  id: '/hkeeem/chat',
+  path: '/hkeeem/chat',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DealsPandaVsOthaimComparisonRoute =
   DealsPandaVsOthaimComparisonRouteImport.update({
@@ -312,7 +336,11 @@ export interface FileRoutesByFullPath {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
+  '/hkeeem/chat': typeof HkeeemChatRoute
+  '/hkeeem/nearby': typeof HkeeemNearbyRoute
+  '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -356,7 +384,11 @@ export interface FileRoutesByTo {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
+  '/hkeeem/chat': typeof HkeeemChatRoute
+  '/hkeeem/nearby': typeof HkeeemNearbyRoute
+  '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/hkeeem': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -402,7 +434,11 @@ export interface FileRoutesById {
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
+  '/hkeeem/chat': typeof HkeeemChatRoute
+  '/hkeeem/nearby': typeof HkeeemNearbyRoute
+  '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
+  '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -448,7 +484,11 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
+    | '/hkeeem/chat'
+    | '/hkeeem/nearby'
+    | '/hkeeem/product'
     | '/rewards/$id'
+    | '/hkeeem/'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
@@ -492,7 +532,11 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
+    | '/hkeeem/chat'
+    | '/hkeeem/nearby'
+    | '/hkeeem/product'
     | '/rewards/$id'
+    | '/hkeeem'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
@@ -537,7 +581,11 @@ export interface FileRouteTypes {
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
+    | '/hkeeem/chat'
+    | '/hkeeem/nearby'
+    | '/hkeeem/product'
     | '/rewards/$id'
+    | '/hkeeem/'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
@@ -574,6 +622,10 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  HkeeemChatRoute: typeof HkeeemChatRoute
+  HkeeemNearbyRoute: typeof HkeeemNearbyRoute
+  HkeeemProductRoute: typeof HkeeemProductRoute
+  HkeeemIndexRoute: typeof HkeeemIndexRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
@@ -758,12 +810,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hkeeem/': {
+      id: '/hkeeem/'
+      path: '/hkeeem'
+      fullPath: '/hkeeem/'
+      preLoaderRoute: typeof HkeeemIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rewards/$id': {
       id: '/rewards/$id'
       path: '/$id'
       fullPath: '/rewards/$id'
       preLoaderRoute: typeof RewardsIdRouteImport
       parentRoute: typeof RewardsRoute
+    }
+    '/hkeeem/product': {
+      id: '/hkeeem/product'
+      path: '/hkeeem/product'
+      fullPath: '/hkeeem/product'
+      preLoaderRoute: typeof HkeeemProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hkeeem/nearby': {
+      id: '/hkeeem/nearby'
+      path: '/hkeeem/nearby'
+      fullPath: '/hkeeem/nearby'
+      preLoaderRoute: typeof HkeeemNearbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hkeeem/chat': {
+      id: '/hkeeem/chat'
+      path: '/hkeeem/chat'
+      fullPath: '/hkeeem/chat'
+      preLoaderRoute: typeof HkeeemChatRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/deals/panda-vs-othaim-comparison': {
       id: '/deals/panda-vs-othaim-comparison'
@@ -971,6 +1051,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
+  HkeeemChatRoute: HkeeemChatRoute,
+  HkeeemNearbyRoute: HkeeemNearbyRoute,
+  HkeeemProductRoute: HkeeemProductRoute,
+  HkeeemIndexRoute: HkeeemIndexRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
