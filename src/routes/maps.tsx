@@ -248,7 +248,7 @@ function MapsPage() {
         maxZoom: 19,
         maxNativeZoom: 19,
         keepBuffer: 4,
-ತ      }).addTo(map);
+      }).addTo(map);
 
       const userIcon = L.divIcon({
         className: "",
