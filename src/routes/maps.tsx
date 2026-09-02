@@ -269,16 +269,26 @@ function MapsPage() {
 
       // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
       setTimeout(() => map.invalidateSize(), 100);
+
+      // إعادة حساب الأبعاد تلقائياً عند تغيّر حجم الحاوية أو دوران الشاشة
+      if (typeof ResizeObserver !== "undefined" && mapRef.current) {
+        const ro = new ResizeObserver(() => map.invalidateSize());
+        ro.observe(mapRef.current);
+        resizeObsRef.current = ro;
+      }
       setMapReady(true);
     })();
 
     return () => {
       cancelled = true;
+      resizeObsRef.current?.disconnect();
+      resizeObsRef.current = null;
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
       markersRef.current = {};
+      didFitRef.current = false;
       setMapReady(false);
     };
   }, [userLocation]);
