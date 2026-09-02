@@ -376,8 +376,11 @@ function MapsPage() {
       const m = markersRef.current[focusDealId];
       map.setView(m.getLatLng(), 14, { animate: true });
       m.openPopup();
-    } else if (bounds.length > 1) {
+      didFitRef.current = true;
+    } else if (bounds.length > 1 && !didFitRef.current) {
+      // ضبط الإطار مرة واحدة فقط حتى لا تُلغى حركة المستخدم عند تغيير الفلاتر
       map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
+      didFitRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady, mapped, focusDealId]);
