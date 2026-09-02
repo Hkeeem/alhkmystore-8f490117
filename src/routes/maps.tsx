@@ -227,15 +227,28 @@ function MapsPage() {
       const map = L.map(mapRef.current, {
         center: [userLocation.lat, userLocation.lng],
         zoom: 12,
+        minZoom: 5,
+        maxZoom: 18,
         zoomControl: true,
         attributionControl: false,
-        zoomSnap: 0.25,
-        zoomDelta: 0.5,
-        wheelPxPerZoomLevel: 120,
+        zoomSnap: 0,
+        zoomDelta: 0.4,
+        wheelDebounceTime: 20,
+        wheelPxPerZoomLevel: 220,
+        scrollWheelZoom: true,
+        touchZoom: true,
+        inertia: true,
+        zoomAnimation: true,
+        fadeAnimation: true,
+        preferCanvas: true,
       });
       mapInstanceRef.current = map;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(map);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        maxNativeZoom: 19,
+        keepBuffer: 4,
+ತ      }).addTo(map);
 
       const userIcon = L.divIcon({
         className: "",
