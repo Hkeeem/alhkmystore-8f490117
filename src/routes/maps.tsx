@@ -54,6 +54,8 @@ function MapsPage() {
   const markersRef = useRef<Record<string, Leaflet.Marker>>({});
   const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
   const LRef = useRef<L | null>(null);
+  const resizeObsRef = useRef<ResizeObserver | null>(null);
+  const didFitRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
   const { data: liveDeals } = useLiveDeals(100);
 
