@@ -234,25 +234,7 @@ function BuyerRequestPanel() {
   });
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
-        .from("real_estate_requests")
-        .insert([
-          {
-            name: form.fullName,
-            phone: form.phone,
-            request_type: form.purpose,
-            property_type: form.propertyType,
-            city: form.city,
-            district: form.district,
-            details: `الميزانية: ${form.price} ر.س | الغرف: ${form.bedrooms} | المميزات: ${form.features.join("، ")} | الخدمات: ${form.services.join("، ")}`,
-            status: "new",
-          },
-        ]);
 
-      if (error) {
-        console.error("Supabase insert error:", error);
-        throw new Error("تعذر حفظ الطلب في قاعدة البيانات");
-      }
 
       try {
         await submitRequest({
