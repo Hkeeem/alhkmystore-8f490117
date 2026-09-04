@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { deals, discountPercent, stores } from "@/data/deals";
+import { discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles } from "lucide-react";
 import { useLiveDeals, timeAgoAr } from "@/hooks/use-live-deals";
+import { useRealDeals, REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
@@ -62,12 +63,11 @@ function DealsPage() {
     setQuickFilter(nextCategory as DealFilter);
   };
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
-  // العروض غير الحقيقية ممنوعة نهائياً — تُعرض فقط عروض التجّار الموثّقين
-  const showDemoData = false;
   const queryClient = useQueryClient();
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
+    await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
   };
 
   useEffect(() => {
@@ -101,7 +101,7 @@ function DealsPage() {
     <main className="max-w-6xl mx-auto px-4 pt-6 pb-12 space-y-5 md:space-y-6">
       <div>
         <h1 className="font-display font-black text-2xl md:text-3xl">كل العروض</h1>
-        <p className="text-sm text-muted-foreground mt-1">{filtered.length} عرض متاح الآن</p>
+        <p className="text-sm text-muted-foreground mt-1">{realDealsQuery.isPending ? "جارٍ تحميل العروض…" : `${filtered.length} عرض متاح الآن`}</p>
         <Link
           to="/deals/panda-vs-othaim-comparison"
           className="inline-flex items-center gap-2 mt-3 rounded-2xl border border-border px-3 py-2 text-xs font-black hover:bg-muted/50 transition"
@@ -110,8 +110,6 @@ function DealsPage() {
         </Link>
       </div>
 
-
-      <MerchantDealsSection />
 
       <HkeeemCatalogSection />
 
@@ -177,7 +175,9 @@ function DealsPage() {
         </p>
       )}
 
-      {filtered.length === 0 ? (
+      {realDealsQuery.isPending ? (
+        <div className="text-center py-20 text-muted-foreground">جارٍ تحميل العروض الحقيقية…</div>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
           لا توجد عروض حقيقية مطابقة حالياً — نعرض فقط عروض التجّار الموثّقين.
         </div>
