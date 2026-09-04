@@ -77,9 +77,11 @@ function DealsPage() {
     return () => window.removeEventListener("hkeeem-prefs-change", load);
   }, []);
 
+  const realDealsQuery = useRealDeals(120);
+  const realDeals = useMemo(() => realDealsQuery.data ?? [], [realDealsQuery.data]);
+
   const filtered = useMemo(() => {
-    if (!showDemoData) return [];
-    const list = deals.filter((d) => {
+    const list = realDeals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
       if (q && !d.title.includes(q)) return false;
@@ -88,7 +90,8 @@ function DealsPage() {
     if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [q, category, storeId, sort, prefs, showDemoData]);
+  }, [q, category, storeId, sort, prefs, realDeals]);
+
 
 
 
