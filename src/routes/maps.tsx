@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
-import { stores, deals, getStore } from "@/data/deals";
+import { stores, getStore } from "@/data/deals";
+import { useRealDeals } from "@/hooks/use-real-deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import { useLiveDeals } from "@/hooks/use-live-deals";
 import type * as Leaflet from "leaflet";
@@ -104,6 +105,9 @@ function MapsPage() {
   }, [requestLocation]);
 
   /** ربط كل عرض بأقرب فرع فعلي لمتجره (مع مراعاة التصفية) */
+  const { data: realDeals } = useRealDeals(120);
+  const deals = useMemo(() => realDeals ?? [], [realDeals]);
+
   const mapped = useMemo(() => {
     if (!userLocation) return [];
     const groupCats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
@@ -135,7 +139,7 @@ function MapsPage() {
       branch: Branch;
       km: number;
     }[];
-  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter, deals]);
 
   const nearbyDeals = useMemo(
     () =>
@@ -156,7 +160,7 @@ function MapsPage() {
     const cats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
     const all = Array.from(new Set(deals.map((d) => d.category)));
     return ["الكل", ...(groupFilter === "الكل" ? all : all.filter((c) => cats.includes(c)))];
-  }, [groupFilter]);
+  }, [groupFilter, deals]);
   const categories = groupCategories;
   const activeFiltersCount =
     (cityFilter !== "الكل" ? 1 : 0) +

@@ -1,15 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { deals, discountPercent, stores } from "@/data/deals";
+import { discountPercent, stores } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { DemoDataBanner } from "@/components/DemoDataBanner";
 import { StoreLogo } from "@/components/StoreLogo";
 import { useState, useMemo, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Search, SlidersHorizontal, X, BadgeCheck, Store as StoreIcon, Sparkles } from "lucide-react";
-import { useLiveDeals, timeAgoAr } from "@/hooks/use-live-deals";
+import { Search, SlidersHorizontal, X, Sparkles } from "lucide-react";
+import { useRealDeals, REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
-import { affiliateHref, AFFILIATE_LINK_PROPS } from "@/lib/affiliate";
 import { HkeeemOffersSection } from "@/components/HkeeemOffersSection";
 import { HkeeemCatalogSection } from "@/components/HkeeemCatalogSection";
 import { DealsFilter, InterestToggle, type DealFilter, type Interest } from "@/components/DealsFilter";
@@ -62,12 +61,11 @@ function DealsPage() {
     setQuickFilter(nextCategory as DealFilter);
   };
   const [prefs, setPrefs] = useState<Prefs>({ categories: {}, stores: {} });
-  // العروض غير الحقيقية ممنوعة نهائياً — تُعرض فقط عروض التجّار الموثّقين
-  const showDemoData = false;
   const queryClient = useQueryClient();
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"] });
+    await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
   };
 
   useEffect(() => {
@@ -77,9 +75,11 @@ function DealsPage() {
     return () => window.removeEventListener("hkeeem-prefs-change", load);
   }, []);
 
+  const realDealsQuery = useRealDeals(120);
+  const realDeals = useMemo(() => realDealsQuery.data ?? [], [realDealsQuery.data]);
+
   const filtered = useMemo(() => {
-    if (!showDemoData) return [];
-    const list = deals.filter((d) => {
+    const list = realDeals.filter((d) => {
       if (category && d.category !== category) return false;
       if (storeId && d.storeId !== storeId) return false;
       if (q && !d.title.includes(q)) return false;
@@ -88,7 +88,8 @@ function DealsPage() {
     if (sort === "smart") return smartSort(list, prefs);
     list.sort((a, b) => sort === "discount" ? discountPercent(b) - discountPercent(a) : a.price - b.price);
     return list;
-  }, [q, category, storeId, sort, prefs, showDemoData]);
+  }, [q, category, storeId, sort, prefs, realDeals]);
+
 
 
 
@@ -98,7 +99,7 @@ function DealsPage() {
     <main className="max-w-6xl mx-auto px-4 pt-6 pb-12 space-y-5 md:space-y-6">
       <div>
         <h1 className="font-display font-black text-2xl md:text-3xl">كل العروض</h1>
-        <p className="text-sm text-muted-foreground mt-1">{filtered.length} عرض متاح الآن</p>
+        <p className="text-sm text-muted-foreground mt-1">{realDealsQuery.isPending ? "جارٍ تحميل العروض…" : `${filtered.length} عرض متاح الآن`}</p>
         <Link
           to="/deals/panda-vs-othaim-comparison"
           className="inline-flex items-center gap-2 mt-3 rounded-2xl border border-border px-3 py-2 text-xs font-black hover:bg-muted/50 transition"
@@ -107,8 +108,6 @@ function DealsPage() {
         </Link>
       </div>
 
-
-      <MerchantDealsSection />
 
       <HkeeemCatalogSection />
 
@@ -174,7 +173,9 @@ function DealsPage() {
         </p>
       )}
 
-      {filtered.length === 0 ? (
+      {realDealsQuery.isPending ? (
+        <div className="text-center py-20 text-muted-foreground">جارٍ تحميل العروض الحقيقية…</div>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
           لا توجد عروض حقيقية مطابقة حالياً — نعرض فقط عروض التجّار الموثّقين.
         </div>
@@ -196,70 +197,6 @@ function DealsPage() {
     </main>
   );
 }
-
-/** عروض حقيقية أضافها تجّار موثّقون — تُحدّث أول بأول */
-function MerchantDealsSection() {
-  const q = useLiveDeals(24);
-  const items = q.data ?? [];
-  if (q.isLoading || items.length === 0) return null;
-
-  return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 className="font-display font-black text-lg flex items-center gap-2">
-          <BadgeCheck className="w-5 h-5 text-primary" /> عروض حقيقية من التجّار
-          <span
-            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${q.live ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"}`}
-            aria-live="polite"
-          >
-            <span className={`w-1.5 h-1.5 rounded-full ${q.live ? "bg-primary animate-pulse" : "bg-muted-foreground"}`} />
-            {q.live ? "مباشر" : "تحديث دوري"}
-          </span>
-        </h2>
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] text-muted-foreground">
-            {q.isFetching ? "جارٍ التحديث…" : `آخر تحديث ${timeAgoAr(q.dataUpdatedAt)}`}
-          </span>
-          <Link to="/merchant" className="text-xs text-primary hover:underline flex items-center gap-1">
-            <StoreIcon className="w-3.5 h-3.5" /> أضف عرض متجرك
-          </Link>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-        {items.map((d) => (
-          <article key={d.id} className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift">
-            {d.image_url && (
-              <img src={d.image_url} alt={d.title} loading="lazy" className="w-full h-28 object-cover" />
-            )}
-            <div className="p-3 space-y-1">
-              <p className="font-bold text-sm line-clamp-2">{d.title}</p>
-              <p className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <BadgeCheck className="w-3 h-3 text-primary" /> {d.merchants.name}
-              </p>
-              <p className="text-sm font-black text-primary">
-                {d.price} ر.س{" "}
-                <span className="text-[11px] font-normal text-muted-foreground line-through">{d.original_price}</span>
-              </p>
-              <span className="inline-block text-[10px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                وفّر {d.discount_percent}%
-              </span>
-              {d.product_url && (
-                <a
-                  href={affiliateHref(d.id, "deals-live")}
-                  {...AFFILIATE_LINK_PROPS}
-                  className="block text-[11px] text-primary hover:underline pt-1"
-                >
-                  اذهب للعرض
-                </a>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 
 function Chip({ active, onClick, children, small }: { active: boolean; onClick: () => void; children: React.ReactNode; small?: boolean }) {
   return (
