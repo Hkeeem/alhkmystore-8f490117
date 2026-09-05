@@ -333,6 +333,57 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          active: boolean
+          category: string | null
+          code: string
+          created_at: string
+          description: string
+          discount: string
+          expires_at: string | null
+          id: string
+          min_order: number | null
+          source: string
+          store_id: string | null
+          store_name: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string | null
+          code: string
+          created_at?: string
+          description?: string
+          discount: string
+          expires_at?: string | null
+          id?: string
+          min_order?: number | null
+          source?: string
+          store_id?: string | null
+          store_name: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category?: string | null
+          code?: string
+          created_at?: string
+          description?: string
+          discount?: string
+          expires_at?: string | null
+          id?: string
+          min_order?: number | null
+          source?: string
+          store_id?: string | null
+          store_name?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       external_deals: {
         Row: {
           active: boolean
@@ -460,6 +511,7 @@ export type Database = {
         Row: {
           category: string
           clicks: number
+          coupon_code: string | null
           created_at: string
           description: string | null
           discount_percent: number | null
@@ -480,6 +532,7 @@ export type Database = {
         Insert: {
           category?: string
           clicks?: number
+          coupon_code?: string | null
           created_at?: string
           description?: string | null
           discount_percent?: number | null
@@ -500,6 +553,7 @@ export type Database = {
         Update: {
           category?: string
           clicks?: number
+          coupon_code?: string | null
           created_at?: string
           description?: string | null
           discount_percent?: number | null
