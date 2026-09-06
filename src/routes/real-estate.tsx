@@ -234,27 +234,21 @@ function BuyerRequestPanel() {
   });
   const saveMutation = useMutation({
     mutationFn: async () => {
-
-
-      try {
-        await submitRequest({
-          data: {
-            fullName: form.fullName,
-            phone: form.phone,
-            purpose: form.purpose,
-            city: form.city,
-            district: form.district,
-            propertyType: form.propertyType,
-            maxPrice: Number(form.price),
-            minBedrooms: Number(form.bedrooms),
-            features: form.features,
-            requiredServices: form.services,
-            contactConsent: true,
-          },
-        });
-      } catch (fnErr) {
-        console.warn("ServerFn fallback warning:", fnErr);
-      }
+      await submitRequest({
+        data: {
+          fullName: form.fullName,
+          phone: form.phone,
+          purpose: form.purpose,
+          city: form.city,
+          district: form.district,
+          propertyType: form.propertyType,
+          maxPrice: Number(form.price),
+          minBedrooms: Number(form.bedrooms),
+          features: form.features,
+          requiredServices: form.services,
+          contactConsent: true,
+        },
+      });
     },
     onSuccess: () => toast.success("تم تسجيل طلبك. سنطابقه مع العقارات المناسبة."),
     onError: (error) => toast.error(error instanceof Error ? error.message : "تعذر حفظ طلب البحث."),
