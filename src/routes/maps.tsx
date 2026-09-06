@@ -116,7 +116,7 @@ function MapsPage() {
       .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
       .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
-        const branch =
+        const matched =
           cityFilter === "الكل"
             ? nearestBranch(deal.storeId, userLocation)
             : branches
@@ -126,6 +126,24 @@ function MapsPage() {
                     distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
                     distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
                 )[0] ?? null;
+        // متاجر غير مسجّلة في دليل الفروع (تجّار ومصادر خارجية): نضعها في مركز المدينة
+        let branch: Branch | null = matched;
+        if (!branch) {
+          const fallbackCity =
+            cityFilter === "الكل"
+              ? nearestCity(userLocation)
+              : CITIES.find((c) => c.name === cityFilter) ?? null;
+          if (fallbackCity) {
+            branch = {
+              id: `${deal.storeId}-${fallbackCity.name}-city`,
+              storeId: deal.storeId,
+              name: `${deal.source ?? deal.storeId} — ${fallbackCity.name}`,
+              city: fallbackCity.name,
+              lat: fallbackCity.lat,
+              lng: fallbackCity.lng,
+            };
+          }
+        }
         if (!branch) return null;
         return {
           deal,
