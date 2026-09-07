@@ -559,6 +559,26 @@ export function TopBar() {
                     </Link>
                   </li>
 
+                  <li className="contents">
+                    <Link
+                      to="/sync-partners"
+                      onClick={() => handleMenuOpenChange(false)}
+                      aria-current={isPathActive(pathname, "/sync-partners") ? "page" : undefined}
+                      className={
+                        "sidebar-item " +
+                        (isPathActive(pathname, "/sync-partners")
+                          ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                          : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
+                      }
+                    >
+                      {isPathActive(pathname, "/sync-partners") && (
+                        <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
+                      )}
+                      <RefreshCw className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-sm">سجل المزامنة والشركاء</span>
+                    </Link>
+                  </li>
+
                   {isStaff && (
 
                     <li className="contents">
