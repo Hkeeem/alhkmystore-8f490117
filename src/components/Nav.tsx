@@ -1,5 +1,5 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette, RefreshCw } from "lucide-react";
+import { Sparkles, Home, ListChecks, MessageCircle, Tag, Ticket, Trophy, LogIn, LogOut, User as UserIcon, Shield, Heart, Menu, ExternalLink, Map, Building2, Store, ChevronDown, ChevronLeft, ChevronRight, Contrast, Scale, BarChart3, Megaphone, ShoppingBag, Link2, ShieldCheck, Palette, RefreshCw, Tags, Crown } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
@@ -52,6 +52,7 @@ const groups: Group[] = [
       { to: "/analysis", key: "item.analysis", icon: BarChart3 },
       { to: "/ads", key: "item.ads", icon: Megaphone },
       { to: "/market", key: "item.market", icon: ShoppingBag },
+      { to: "/pro", key: "item.pro", icon: Crown, badgeKey: "nav.new" },
       { to: "/affiliate-setup", key: "item.affiliate", icon: Link2, badgeKey: "nav.guide" },
       { to: "/agents", key: "item.agents", icon: ShieldCheck, badgeKey: "nav.new" },
       { to: "/settings", key: "item.settings", icon: Palette, badgeKey: "nav.new" },
@@ -580,14 +581,35 @@ export function TopBar() {
                   </li>
 
                   {isStaff && (
+                    <li className="contents">
+                      <Link
+                        to="/admin"
+                        onClick={() => handleMenuOpenChange(false)}
+                        aria-current={isPathActive(pathname, "/admin") ? "page" : undefined}
+                        className={
+                          "sidebar-item mt-2 " +
+                          (isPathActive(pathname, "/admin")
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
+                        }
+                      >
+                        {isPathActive(pathname, "/admin") && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
+                        )}
+                        <Shield className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm">{t("item.admin")}</span>
+                      </Link>
+                    </li>
+                  )}
 
+                  {isStaff && (
                     <li className="contents">
                       <Link
                         to="/sync-log"
                         onClick={() => handleMenuOpenChange(false)}
                         aria-current={isPathActive(pathname, "/sync-log") ? "page" : undefined}
                         className={
-                          "sidebar-item mt-2 " +
+                          "sidebar-item " +
                           (isPathActive(pathname, "/sync-log")
                             ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
                             : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
@@ -616,7 +638,7 @@ export function TopBar() {
                             : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
                         }
                       >
-                        <RefreshCw className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <Tags className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         <span className="text-sm">لوحة عروض التجّار</span>
                       </Link>
                     </li>

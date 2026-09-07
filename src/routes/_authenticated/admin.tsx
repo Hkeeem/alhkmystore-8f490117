@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import {
   Shield, Users, MessageSquareWarning, Lightbulb, Bell, Crown,
   BarChart3, ScrollText, LayoutDashboard, Loader2, Send, Check, X, Sparkles,
-  Wallet, BellRing, Rocket, Mail, RefreshCw, ExternalLink, AlertTriangle, MousePointerClick, Globe, Link2,
+  Wallet, BellRing, Rocket, Mail, RefreshCw, ExternalLink, AlertTriangle, MousePointerClick, Globe, Link2, Tags,
 } from "lucide-react";
 import {
   getAdminContext, claimSuperAdmin, getAdminStats,
@@ -16,6 +16,7 @@ import {
   listUsersWithRoles, assignRole, revokeRole,
   listPremium, broadcastNotification, listAuditLog,
 } from "@/lib/admin.functions";
+import { staffListDeals, staffListMerchants, DEAL_STATUS_LABEL } from "@/lib/merchant-api";
 import { getDeployStatus } from "@/lib/deploy.functions";
 import {
   adminListCashback, adminUpdateCashbackStatus, adminListAlerts,
@@ -26,7 +27,7 @@ import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 
 type Tab =
   | "dashboard" | "complaints" | "suggestions" | "users"
-  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks" | "reports";
+  | "notifications" | "premium" | "cashback" | "alerts" | "audit" | "deploy" | "clicks" | "reports" | "deals";
 
 
 
@@ -72,6 +73,7 @@ function AdminPage() {
     { id: "reports" as const, label: "التقارير الدورية", icon: Mail, allow: ["super_admin","admin"] },
     { id: "audit" as const, label: "سجل العمليات", icon: ScrollText, allow: ["super_admin","admin"] },
     { id: "deploy" as const, label: "حالة النشر", icon: Rocket, allow: ["super_admin","admin"] },
+    { id: "deals" as const, label: "عروض التجّار", icon: Tags, allow: ["super_admin","admin","content_manager"] },
   ]).filter((t) => can(t.allow));
 
 
@@ -119,6 +121,7 @@ function AdminPage() {
           {tab === "reports" && <ReportsTab />}
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
+          {tab === "deals" && <DealsAdminTab />}
 
         </main>
       </div>
@@ -851,6 +854,108 @@ function ClickAnalyticsTab() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function DealsAdminTab() {
+  const dealsQ = useQuery({ queryKey: ["staff-deals"], queryFn: () => staffListDeals() });
+  const merchantsQ = useQuery({ queryKey: ["staff-merchants"], queryFn: () => staffListMerchants() });
+
+  if (dealsQ.isLoading || merchantsQ.isLoading) {
+    return (
+      <div className="space-y-4">
+        <ListSkeleton />
+      </div>
+    );
+  }
+
+  const deals = dealsQ.data ?? [];
+  const merchants = merchantsQ.data ?? [];
+  const published = deals.filter((d) => d.status === "published").length;
+  const pending = deals.filter((d) => d.status === "pending").length;
+  const expired = deals.filter((d) => d.status === "expired").length;
+  const verifiedMerchants = merchants.filter((m) => m.status === "verified").length;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
+        <h2 className="font-black text-xl">إدارة عروض التجّار</h2>
+        <Link
+          to="/deals-admin"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-95 transition"
+        >
+          <Tags className="w-4 h-4" />
+          فتح لوحة عروض التجّار الكاملة
+        </Link>
+      </div>
+
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="hk-card p-4 space-y-1">
+          <p className="text-xs text-muted-foreground">إجمالي العروض</p>
+          <p className="text-2xl font-black text-primary">{deals.length}</p>
+        </div>
+        <div className="hk-card p-4 space-y-1">
+          <p className="text-xs text-muted-foreground">منشورة</p>
+          <p className="text-2xl font-black text-emerald-500">{published}</p>
+        </div>
+        <div className="hk-card p-4 space-y-1">
+          <p className="text-xs text-muted-foreground">بانتظار المراجعة</p>
+          <p className="text-2xl font-black text-amber-500">{pending}</p>
+        </div>
+        <div className="hk-card p-4 space-y-1">
+          <p className="text-xs text-muted-foreground">منتهية / منتهية الصلاحية</p>
+          <p className="text-2xl font-black text-rose-500">{expired}</p>
+        </div>
+      </div>
+
+      <div className="hk-card p-4 space-y-3">
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="font-bold">آخر العروض</h3>
+          <span className="text-xs text-muted-foreground">{merchants.length} تاجر · {verifiedMerchants} موثّق</span>
+        </div>
+        {deals.length === 0 ? (
+          <p className="text-sm text-muted-foreground">لا توجد عروض مسجّلة.</p>
+        ) : (
+          <div className="overflow-x-auto rounded-xl border border-primary/15">
+            <table className="w-full text-sm">
+              <thead className="text-xs text-muted-foreground border-b border-primary/15 bg-muted/30">
+                <tr>
+                  <th className="text-right p-3 font-medium">العرض</th>
+                  <th className="text-right p-3 font-medium">التاجر</th>
+                  <th className="text-right p-3 font-medium">الحالة</th>
+                  <th className="text-right p-3 font-medium">السعر</th>
+                  <th className="text-right p-3 font-medium">الخصم</th>
+                  <th className="text-right p-3 font-medium">الانتهاء</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deals.slice(0, 10).map((deal) => (
+                  <tr key={deal.id} className="border-b border-primary/10 last:border-0 hover:bg-muted/40">
+                    <td className="p-3 max-w-[200px] truncate font-medium">{deal.title}</td>
+                    <td className="p-3 text-muted-foreground">{deal.merchants?.name ?? "—"}</td>
+                    <td className="p-3">
+                      <span className={`inline-flex px-2 py-0.5 rounded-md text-xs font-bold ${
+                        deal.status === "published" ? "bg-emerald-500/15 text-emerald-600" :
+                        deal.status === "pending" ? "bg-amber-500/15 text-amber-600" :
+                        deal.status === "expired" ? "bg-rose-500/15 text-rose-600" :
+                        "bg-muted text-muted-foreground"
+                      }`}>
+                        {DEAL_STATUS_LABEL[deal.status]}
+                      </span>
+                    </td>
+                    <td className="p-3 whitespace-nowrap">{deal.price.toFixed(2)} ر.س</td>
+                    <td className="p-3 whitespace-nowrap">{deal.discount_percent ?? 0}%</td>
+                    <td className="p-3 text-xs text-muted-foreground whitespace-nowrap">
+                      {deal.expires_at ? new Date(deal.expires_at).toLocaleDateString("ar-SA") : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
