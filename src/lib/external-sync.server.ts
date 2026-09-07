@@ -313,15 +313,20 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
 
   let json: { hits?: NoonHit[]; products?: NoonHit[] };
   try {
-    const response = await fetch(url, {
-      headers: {
-        accept: "application/json",
-        "x-locale": "ar-sa",
-        "x-content-type": "application/json",
-        "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
-      },
-      signal: AbortSignal.timeout(12_000),
-    });
+    const official = apiKey ? await fetchNoonOfficial(keyword, apiKey, affiliateId) : null;
+    const response =
+      official && official.ok
+        ? official
+        : await fetch(url, {
+            headers: {
+              accept: "application/json",
+              "x-locale": "ar-sa",
+              "x-content-type": "application/json",
+              "user-agent": "Mozilla/5.0 (compatible; HkeeemAI/1.0; +https://alhkmystore.lovable.app)",
+            },
+            signal: AbortSignal.timeout(12_000),
+          });
+
     if (!response.ok) {
       console.error(`noon catalog failed [${response.status}]`);
       await recordSyncEvent({
