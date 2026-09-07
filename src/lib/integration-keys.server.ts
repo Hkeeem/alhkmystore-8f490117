@@ -9,8 +9,9 @@ export const INTEGRATION_KEY_NAMES = [
   "AMAZON_SECRET_KEY",
   "AMAZON_PARTNER_TAG",
   "NOON_AFFILIATE_ID",
-
-
+  "NOON_AFFILIATE_API_KEY",
+  "NOON_AFFILIATE_API_SECRET",
+  "NOON_AFFILIATE_API_BASE",
 ] as const;
 
 export type IntegrationKeyName = (typeof INTEGRATION_KEY_NAMES)[number];

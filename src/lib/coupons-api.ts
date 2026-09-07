@@ -15,12 +15,16 @@ export type LiveCoupon = {
   discount: string;
   minOrder?: number;
   expiresIn: string;
+  expiresAt?: string;
   category?: string;
   storeId?: string;
   storeName: string;
   logo?: string;
   color?: string;
   storeUrl?: string;
+  imageUrl?: string;
+  originalPrice?: number;
+  price?: number;
   source: string;
 };
 
@@ -29,6 +33,24 @@ const STORE_LINKS: Record<string, string> = {
   noon: "https://www.noon.com/saudi-ar/",
   amazon: "https://www.amazon.sa/",
 };
+
+/** معرّف الناشر العام (كود الخصم) الذي يُمرَّر مع كل رابط ترويجي */
+export const PUBLISHER_TAG = "HKM11";
+
+/** يضيف وسوم التتبع وكود الخصم إلى أي رابط متجر */
+export function withPromo(url: string | undefined, code?: string) {
+  if (!url) return undefined;
+  try {
+    const u = new URL(url);
+    u.searchParams.set("utm_source", "hkeeem");
+    u.searchParams.set("utm_medium", "affiliate");
+    u.searchParams.set("utm_campaign", PUBLISHER_TAG);
+    if (code) u.searchParams.set("coupon", code);
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
 
 function storeLink(storeId?: string | null) {
   if (!storeId) return undefined;
@@ -88,12 +110,13 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       discount: row.discount,
       minOrder: row.min_order != null ? Number(row.min_order) : undefined,
       expiresIn: expiresLabel(row.expires_at),
+      expiresAt: row.expires_at ?? undefined,
       category: row.category ?? undefined,
       storeId: row.store_id ?? undefined,
       storeName: row.store_name || meta?.name || "متجر",
       logo: meta?.logo,
       color: meta?.color,
-      storeUrl: storeLink(row.store_id),
+      storeUrl: withPromo(storeLink(row.store_id), row.code),
       source: row.source,
     });
 
@@ -111,12 +134,19 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       description: row.description ?? `كود خصم من ${merchant?.name ?? "تاجر موثّق"}`,
       discount: discountLabel(Number(row.original_price), Number(row.price)),
       expiresIn: expiresLabel(row.expires_at),
+      expiresAt: row.expires_at ?? undefined,
       category: "حصري",
       storeId: merchant?.slug,
       storeName: merchant?.name ?? "تاجر موثّق",
       logo: meta?.logo,
       color: meta?.color,
-      storeUrl: (row as { product_url?: string | null }).product_url ?? storeLink(merchant?.slug),
+      storeUrl: withPromo(
+        (row as { product_url?: string | null }).product_url ?? storeLink(merchant?.slug),
+        code,
+      ),
+      imageUrl: (row as { image_url?: string | null }).image_url ?? undefined,
+      originalPrice: Number(row.original_price) || undefined,
+      price: Number(row.price) || undefined,
       source: "تاجر موثّق",
 
     });
