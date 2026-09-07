@@ -564,6 +564,25 @@ export function TopBar() {
                   {isStaff && (
                     <li className="contents">
                       <Link
+                        to="/deals-admin"
+                        onClick={() => handleMenuOpenChange(false)}
+                        aria-current={isPathActive(pathname, "/deals-admin") ? "page" : undefined}
+                        className={
+                          "sidebar-item " +
+                          (isPathActive(pathname, "/deals-admin")
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
+                        }
+                      >
+                        <RefreshCw className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm">لوحة عروض التجّار</span>
+                      </Link>
+                    </li>
+                  )}
+
+                  {isStaff && (
+                    <li className="contents">
+                      <Link
                         to="/visitors"
                         onClick={() => handleMenuOpenChange(false)}
                         aria-current={isPathActive(pathname, "/visitors") ? "page" : undefined}
