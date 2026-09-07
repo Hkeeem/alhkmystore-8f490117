@@ -114,7 +114,16 @@ export type Deal = {
   verifiedAt?: string;
   /** مصدر العرض المعلن (مثل: أمازون، نون، التاجر) */
   source?: string;
+  /** تاريخ انتهاء العرض (ISO) لحساب تنبيه آخر يوم */
+  expiresAt?: string;
 };
+
+/** هل العرض في يومه الأخير (ينتهي خلال 24 ساعة ولم ينتهِ بعد)؟ */
+export function isLastDay(deal: Pick<Deal, "expiresAt">, now = Date.now()): boolean {
+  if (!deal.expiresAt) return false;
+  const ms = new Date(deal.expiresAt).getTime() - now;
+  return Number.isFinite(ms) && ms > 0 && ms <= 86_400_000;
+}
 
 
 const demoDeals: Deal[] = [
