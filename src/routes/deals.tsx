@@ -109,9 +109,13 @@ function DealsPage() {
       </div>
 
 
-      <HkeeemCatalogSection />
-
-      <HkeeemOffersSection />
+      {/* أقسام عروض حكيم مخفية مؤقتاً بطلب المالك (خدمة حكيم الخارجية متوقفة) */}
+      {SHOW_HKEEEM_SECTIONS ? (
+        <>
+          <HkeeemCatalogSection />
+          <HkeeemOffersSection />
+        </>
+      ) : null}
 
       <div className="relative">
 
