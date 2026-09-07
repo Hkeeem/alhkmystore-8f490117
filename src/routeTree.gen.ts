@@ -52,6 +52,7 @@ import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authent
 import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
@@ -277,6 +278,11 @@ const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   path: '/me',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDealsAdminRoute = AuthenticatedDealsAdminRouteImport.update({
+  id: '/deals-admin',
+  path: '/deals-admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
@@ -388,6 +395,7 @@ export interface FileRoutesByTo {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
@@ -440,6 +448,7 @@ export interface FileRoutesById {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/_authenticated/merchant-review': typeof AuthenticatedMerchantReviewRoute
@@ -492,6 +501,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/admin'
+    | '/deals-admin'
     | '/me'
     | '/merchant'
     | '/merchant-review'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/admin'
+    | '/deals-admin'
     | '/me'
     | '/merchant'
     | '/merchant-review'
@@ -593,6 +604,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/_authenticated/admin'
+    | '/_authenticated/deals-admin'
     | '/_authenticated/me'
     | '/_authenticated/merchant'
     | '/_authenticated/merchant-review'
@@ -961,6 +973,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/deals-admin': {
+      id: '/_authenticated/deals-admin'
+      path: '/deals-admin'
+      fullPath: '/deals-admin'
+      preLoaderRoute: typeof AuthenticatedDealsAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -1008,6 +1027,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDealsAdminRoute: typeof AuthenticatedDealsAdminRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
   AuthenticatedMerchantReviewRoute: typeof AuthenticatedMerchantReviewRoute
@@ -1019,6 +1039,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDealsAdminRoute: AuthenticatedDealsAdminRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
   AuthenticatedMerchantReviewRoute: AuthenticatedMerchantReviewRoute,
