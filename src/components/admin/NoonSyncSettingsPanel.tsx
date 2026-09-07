@@ -11,7 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getNoonCampaignStatus, verifyNoonPublisherId, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
 import { saveIntegrationKeyValue } from "@/lib/integration-keys.functions";
 import { fetchLiveCoupons } from "@/lib/coupons-api";
-import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
+import { REAL_DEALS_KEY, useRealDeals } from "@/hooks/use-real-deals";
+import { isLastDay } from "@/data/deals";
 
 /** لوحة إعدادات نون داخل صفحة سجل المزامنة: معرّف الناشر، حالة الحملة، وتشغيل المزامنة */
 export function NoonSyncSettingsPanel() {
