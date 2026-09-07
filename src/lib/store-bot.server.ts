@@ -7,6 +7,8 @@
 
 import { recordSyncEvent, type ExternalOffer } from "./external-sync.server";
 
+type BotOffer = Omit<ExternalOffer, "source"> & { source: string };
+
 export type StoreFeed = {
   id: string;
   store_name: string;
@@ -141,7 +143,7 @@ function parseJsonFeed(body: string): RawItem[] {
   });
 }
 
-export async function fetchStoreFeedOffers(feed: StoreFeed): Promise<ExternalOffer[]> {
+export async function fetchStoreFeedOffers(feed: StoreFeed): Promise<BotOffer[]> {
   const response = await fetch(feed.feed_url, {
     headers: { "User-Agent": "HkeeemAI-DealBot/1.0", Accept: "application/rss+xml, application/xml, application/json;q=0.9, */*;q=0.5" },
   });
@@ -151,7 +153,7 @@ export async function fetchStoreFeedOffers(feed: StoreFeed): Promise<ExternalOff
   const looksJson = feed.feed_type === "json" || (feed.feed_type === "auto" && body.trimStart().startsWith("["));
   const items = looksJson || body.trimStart().startsWith("{") ? parseJsonFeed(body) : parseXmlFeed(body);
 
-  const offers: ExternalOffer[] = [];
+  const offers: BotOffer[] = [];
   for (const item of items) {
     const title = item.title?.slice(0, 200);
     const link = item.link ?? null;
