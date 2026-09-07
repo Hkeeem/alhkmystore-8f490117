@@ -75,6 +75,56 @@ function AuthPage() {
     navigate({ to: "/" });
   }
 
+  async function handleApple() {
+    setBusy(true);
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      toast.error("فشل تسجيل الدخول بـ Apple");
+      setBusy(false);
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/" });
+  }
+
+  async function handleSendOtp(e: React.FormEvent) {
+    e.preventDefault();
+    const normalized = phone.replace(/\s/g, "").replace(/^0/, "+966");
+    if (!/^\+9665\d{8}$/.test(normalized)) {
+      toast.error("أدخل رقم جوال سعودي صحيح مثل 05xxxxxxxx");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
+      if (error) throw error;
+      setPhone(normalized);
+      setOtpSent(true);
+      toast.success("أُرسل رمز التحقق إلى جوالك");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذّر إرسال الرمز");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
+      if (error) throw error;
+      toast.success("مرحبًا بعودتك!");
+      navigate({ to: "/" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "الرمز غير صحيح");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
