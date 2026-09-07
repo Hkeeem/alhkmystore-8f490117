@@ -31,8 +31,20 @@ export async function runDealPushSweep(): Promise<DealPushResult> {
   const subs = (subsRaw ?? []) as StoredSubscription[];
   if (subs.length === 0) return { ...empty, reason: "no_subscriptions" };
 
+  // إعدادات لوحة تنبيهات العروض (وقت التنبيه قبل الانتهاء)
+  const { data: settings } = await supabaseAdmin
+    .from("deal_alert_settings")
+    .select("enabled, lead_hours, coupons_enabled, coupon_window_hours")
+    .maybeSingle();
+
+  const enabled = settings?.enabled ?? true;
+  if (!enabled) return { ...empty, subscriptions: subs.length, reason: "alerts_disabled" };
+  const leadMs = Math.min(168, Math.max(1, settings?.lead_hours ?? 24)) * 60 * 60 * 1000;
+  const couponsEnabled = settings?.coupons_enabled ?? true;
+  const couponWindowMs = Math.min(168, Math.max(1, settings?.coupon_window_hours ?? 24)) * 60 * 60 * 1000;
+
   const now = Date.now();
-  const soonIso = new Date(now + DAY_MS).toISOString();
+  const soonIso = new Date(now + leadMs).toISOString();
   const nowIso = new Date(now).toISOString();
 
   // 1) Deals (merchant + external) that expire within the next 24 hours.
