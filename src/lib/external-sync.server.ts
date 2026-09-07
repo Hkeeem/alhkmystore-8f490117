@@ -389,24 +389,34 @@ export async function syncExternalDeals(
     throw new Error(`upsert failed: ${error.message}`);
   }
 
-  // أي عرض لم يعد يظهر في المصدر منذ 24 ساعة يُعطّل تلقائياً
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { data: stale } = await supabaseAdmin
-    .from("external_deals")
-    .update({ active: false })
-    .in("source", targets)
-    .eq("active", true)
-    .lt("fetched_at", cutoff)
-    .select("id");
-
+  // أي عرض لم يعد يظهر في المصدر منذ 24 ساعة يُعطّل تلقائياً —
+  // لكن فقط للمصادر التي نجح جلبها في هذه الدورة، حتى لا يؤدي فشل مصدر (مثل حجب نون)
+  // إلى تعطيل كل عروضه الموجودة
   const amazonCount = offers.filter((o) => o.source === "amazon").length;
   const noonCount = offers.filter((o) => o.source === "noon").length;
+  const succeededTargets = targets.filter(
+    (t) => (t === "amazon" ? amazonCount : noonCount) > 0,
+  );
+
+  let deactivated = 0;
+  if (succeededTargets.length > 0) {
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: stale } = await supabaseAdmin
+      .from("external_deals")
+      .update({ active: false })
+      .in("source", succeededTargets)
+      .eq("active", true)
+      .lt("fetched_at", cutoff)
+      .select("id");
+    deactivated = stale?.length ?? 0;
+  }
+
   if (amazonCount > 0) await recordSyncEvent({ source: "amazon", status: "success", message: `${amazonCount} عرضًا` });
   if (noonCount > 0) await recordSyncEvent({ source: "noon", status: "success", message: `${noonCount} عرضًا` });
 
   return {
     upserted: offers.length,
-    deactivated: stale?.length ?? 0,
+    deactivated,
     sources: { amazon: amazonCount, noon: noonCount },
   };
 }

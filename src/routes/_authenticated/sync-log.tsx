@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { listSyncEvents } from "@/lib/affiliate-setup.functions";
+import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 
 export const Route = createFileRoute("/_authenticated/sync-log")({
   component: SyncLogPage,
@@ -93,6 +94,8 @@ function SyncLogPage() {
           تحديث
         </Button>
       </div>
+
+      <NoonSyncSettingsPanel />
 
       <div className="mb-5 flex flex-wrap gap-4">
         <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب المصدر">
