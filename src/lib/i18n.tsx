@@ -43,6 +43,7 @@ export const dict = {
   "item.affiliate": { ar: "ربط أمازون ونون", en: "Amazon & noon setup" },
   "item.agents": { ar: "وكلاء حكيم", en: "Hkeeem agents" },
   "item.settings": { ar: "تخصيص المظهر", en: "Appearance" },
+  "item.syncLog": { ar: "سجل المزامنة", en: "Sync log" },
 
   // Home / hero
   "home.badge": { ar: "HkeeemAI — وفّر أكثر… لا تدفع أكثر", en: "HkeeemAI — save more, never overpay" },
