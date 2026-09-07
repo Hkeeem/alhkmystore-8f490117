@@ -247,7 +247,7 @@ function StoresDirectory({ offerStoreNames }: { offerStoreNames: string[] }) {
       <h3 className="font-display font-black text-base flex items-center gap-2">
         <StoreIcon className="w-4 h-4 text-primary" /> دليل المتاجر الرسمية
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
         {STORES_DIRECTORY.map((s) => {
           const hasOffers = names.has(s.name);
           return (
@@ -256,20 +256,20 @@ function StoresDirectory({ offerStoreNames }: { offerStoreNames: string[] }) {
               href={s.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative rounded-2xl border border-border/70 bg-card/80 p-3 pr-2 hover:border-primary transition-colors flex items-start gap-2.5 min-h-[72px]"
+              className="group relative rounded-xl border border-border/70 bg-card/80 p-2 pr-2 hover:border-primary transition-colors flex items-center gap-2 min-h-[54px]"
             >
               <span
                 aria-hidden
-                className="hex-tile w-9 h-10 shrink-0 text-primary font-black text-sm leading-none"
+                className="hex-tile w-8 h-9 shrink-0 text-primary font-black text-sm leading-none"
               >
                 {s.name.trim().charAt(0)}
               </span>
-              <span className="flex flex-col gap-0.5 min-w-0 flex-1">
-                <span className="font-bold text-xs leading-snug line-clamp-2">{s.name}</span>
-                <span className="text-[10px] text-primary font-bold">{s.category}</span>
-                <span className="text-[10px] text-muted-foreground">{s.region}</span>
+              <span className="flex flex-col gap-0 min-w-0 flex-1">
+                <span className="font-bold text-[13px] leading-tight line-clamp-1 text-foreground">{s.name}</span>
+                <span className="text-xs text-primary font-bold">{s.category}</span>
+                <span className="text-xs text-muted-foreground font-medium">{s.region}</span>
                 {!hasOffers && (
-                  <span className="text-[10px] text-muted-foreground">لا توجد عروض موثقة حاليًا</span>
+                  <span className="text-xs text-muted-foreground font-medium">لا توجد عروض موثقة حاليًا</span>
                 )}
               </span>
               <ExternalLink className="w-3.5 h-3.5 text-primary/70 shrink-0 self-center group-hover:text-primary transition-colors" />
