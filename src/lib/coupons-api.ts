@@ -20,8 +20,20 @@ export type LiveCoupon = {
   storeName: string;
   logo?: string;
   color?: string;
+  storeUrl?: string;
   source: string;
 };
+
+/** روابط ترويجية مباشرة للمتاجر (بدون مزامنة تلقائية) */
+const STORE_LINKS: Record<string, string> = {
+  noon: "https://www.noon.com/saudi-ar/",
+  amazon: "https://www.amazon.sa/",
+};
+
+function storeLink(storeId?: string | null) {
+  if (!storeId) return undefined;
+  return STORE_LINKS[storeId.trim().toLowerCase()];
+}
 
 function expiresLabel(expiresAt: string | null | undefined) {
   if (!expiresAt) return "غير محدد";
