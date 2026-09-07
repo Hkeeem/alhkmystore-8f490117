@@ -87,9 +87,11 @@ function SyncLogPage() {
       } catch {
         if (!auto) toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
       }
-      await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
-      await queryClient.invalidateQueries({ queryKey: ["merchant-deals"] });
-      await queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
+      // refetchType: "all" حتى تتحدّث الخريطة وكل العروض فوراً ولو كانت صفحاتها غير مفتوحة
+      await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY, refetchType: "all" });
+      await queryClient.invalidateQueries({ queryKey: ["merchant-deals"], refetchType: "all" });
+      await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"], refetchType: "all" });
+      await queryClient.invalidateQueries({ queryKey: ["live-coupons"], refetchType: "all" });
 
       await refetch();
       if (auto) setLastAutoSync(new Date());
