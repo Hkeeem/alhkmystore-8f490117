@@ -26,6 +26,10 @@ export function NoonSyncSettingsPanel() {
   const statusQuery = useQuery({ queryKey: ["noon-campaign-status"], queryFn: () => fetchStatus() });
   const status = statusQuery.data;
 
+  // يتحدّث تلقائيًا مع كل مزامنة نون (نفس مفتاح العروض الحقيقية)
+  const realDeals = useRealDeals();
+  const lastDayCount = (realDeals.data ?? []).filter((d) => isLastDay(d)).length;
+
   const saveMutation = useMutation({
     mutationFn: async () => {
       const id = publisherId.trim();
