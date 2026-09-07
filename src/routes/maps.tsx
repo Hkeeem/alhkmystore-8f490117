@@ -925,14 +925,17 @@ function MapsPage() {
           aria-label="خريطة العروض والفروع القريبة"
         />
         {userLocation && mapped.length === 0 && (
-          <div className="absolute inset-0 z-[500] rounded-3xl bg-background/70 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-center space-y-1 px-6">
-              <MapPin className="w-8 h-8 text-primary mx-auto" aria-hidden="true" />
-              <p className="font-black text-sm">لا توجد عروض ضمن هذه التصفية</p>
-              <p className="text-xs text-muted-foreground">وسّع نطاق المسافة أو امسح الفلاتر لعرض كل العروض</p>
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] pointer-events-none">
+            <div className="flex items-center gap-2 bg-card/95 border border-primary/30 shadow-lg rounded-2xl px-3 py-2">
+              <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+              <div className="text-right">
+                <p className="font-black text-[12px] leading-tight">لا توجد عروض ضمن هذه التصفية</p>
+                <p className="text-[10px] text-muted-foreground leading-tight">وسّع نطاق المسافة أو امسح الفلاتر</p>
+              </div>
             </div>
           </div>
         )}
+
       </div>
 
       {userLocation && (
