@@ -81,6 +81,7 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       unit: row.unit ?? undefined,
       image: row.image_url ?? "🏷️",
       expiresIn: expiresLabel(row.expires_at),
+      expiresAt: row.expires_at ?? undefined,
       productKey: row.product_key ?? undefined,
       verifiedAt: row.fetched_at ?? row.updated_at ?? undefined,
       source: row.store_name ?? row.source ?? undefined,
