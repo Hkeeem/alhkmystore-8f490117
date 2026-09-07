@@ -534,6 +534,29 @@ export function TopBar() {
                     />
                     </li>
                   ))}
+
+                  {isStaff && (
+                    <li className="contents">
+                      <Link
+                        to="/sync-log"
+                        onClick={() => handleMenuOpenChange(false)}
+                        aria-current={isPathActive(pathname, "/sync-log") ? "page" : undefined}
+                        className={
+                          "sidebar-item mt-2 " +
+                          (isPathActive(pathname, "/sync-log")
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
+                        }
+                      >
+                        {isPathActive(pathname, "/sync-log") && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-full bg-primary-foreground/80" />
+                        )}
+                        <RefreshCw className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm">{t("item.syncLog")}</span>
+                        <span className="mr-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">{t("nav.new")}</span>
+                      </Link>
+                    </li>
+                  )}
                   </ul>
 
 
