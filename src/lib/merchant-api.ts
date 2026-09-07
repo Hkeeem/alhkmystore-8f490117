@@ -165,15 +165,19 @@ export async function staffCreateDeal(input: {
   expires_at?: string | null;
   status: DealStatus;
 }) {
+  const { starts_at, ...rest } = input;
   const { error } = await supabase.from("merchant_deals").insert({
-    ...input,
-    starts_at: input.starts_at || new Date().toISOString(),
+    ...rest,
+    starts_at: starts_at || new Date().toISOString(),
   });
   if (error) throw error;
 }
 
 /** تعديل تواريخ العرض من لوحة الإدارة */
 export async function staffUpdateDealDates(id: string, patch: { starts_at?: string | null; expires_at?: string | null }) {
-  const { error } = await supabase.from("merchant_deals").update(patch).eq("id", id);
+  const update: { starts_at?: string; expires_at?: string | null } = {};
+  if (patch.starts_at) update.starts_at = patch.starts_at;
+  if (patch.expires_at !== undefined) update.expires_at = patch.expires_at;
+  const { error } = await supabase.from("merchant_deals").update(update).eq("id", id);
   if (error) throw error;
 }
