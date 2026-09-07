@@ -46,6 +46,7 @@ export function DealCard({
   const toggleFav = useServerFn(toggleFavorite);
   const tag = transparencyTag(deal, off);
   const verified = deal.verifiedAt ? timeAgoAr(deal.verifiedAt) : null;
+  const lastDay = isLastDay(deal);
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
