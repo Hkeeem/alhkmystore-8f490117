@@ -88,7 +88,9 @@ function SyncLogPage() {
         if (!auto) toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
       }
       await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
+      await queryClient.invalidateQueries({ queryKey: ["merchant-deals"] });
       await queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
+
       await refetch();
       if (auto) setLastAutoSync(new Date());
     } finally {
