@@ -191,10 +191,8 @@ function Home() {
       </LazySection>
       )}
 
-      {/* عروض السوشال ميديا الأقوى */}
-      <LazySection minHeight={420}>
-        <SocialOffersSection />
-      </LazySection>
+
+
 
       <LazySection minHeight={340}>
         <IntroVideo />
