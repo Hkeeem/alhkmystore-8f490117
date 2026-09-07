@@ -126,7 +126,12 @@ function SyncLogPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             كل عملية سحب عروض من Amazon وnoon مع وقتها وحالتها وسبب الفشل إن حصل.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            المزامنة تلقائية كل 5 دقائق ودمج عروض نون مع عروض التجّار{" "}
+            {lastAutoSync ? `• آخر مزامنة تلقائية: ${formatDate(lastAutoSync.toISOString())}` : "• جارٍ التشغيل…"}
+          </p>
         </div>
+
         <Button
           variant="outline"
           onClick={() => void refreshAndMerge()}
