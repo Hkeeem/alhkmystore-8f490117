@@ -5,6 +5,7 @@ import { stores, getStore } from "@/data/deals";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import { useLiveDeals } from "@/hooks/use-live-deals";
+import { useSocialOffers } from "@/hooks/use-social-offers";
 import type * as Leaflet from "leaflet";
 type L = typeof Leaflet;
 
@@ -54,11 +55,13 @@ function MapsPage() {
   const mapInstanceRef = useRef<Leaflet.Map | null>(null);
   const markersRef = useRef<Record<string, Leaflet.Marker>>({});
   const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
+  const socialMarkersRef = useRef<Leaflet.Marker[]>([]);
   const LRef = useRef<L | null>(null);
   const resizeObsRef = useRef<ResizeObserver | null>(null);
   const didFitRef = useRef(false);
   const [mapReady, setMapReady] = useState(false);
   const { data: liveDeals } = useLiveDeals(100);
+  const { data: socialOffers } = useSocialOffers(60);
 
   const focusNearestRef = useRef(false);
 
@@ -158,6 +161,37 @@ function MapsPage() {
       km: number;
     }[];
   }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter, deals]);
+
+  /** أقرب عرض متاح بغضّ النظر عن التصفية — يُستخدم بدل رسالة «لا توجد عروض» */
+  const nearestAnyDeal = useMemo(() => {
+    if (!userLocation) return null;
+    const candidates = deals
+      .map((deal) => {
+        const matched = nearestBranch(deal.storeId, userLocation);
+        let branch: Branch | null = matched;
+        if (!branch) {
+          const fallbackCity = nearestCity(userLocation);
+          if (fallbackCity) {
+            branch = {
+              id: `${deal.storeId}-${fallbackCity.name}-city`,
+              storeId: deal.storeId,
+              name: `${deal.source ?? deal.storeId} — ${fallbackCity.name}`,
+              city: fallbackCity.name,
+              lat: fallbackCity.lat,
+              lng: fallbackCity.lng,
+            };
+          }
+        }
+        if (!branch) return null;
+        return {
+          deal,
+          branch,
+          km: distanceKm(userLocation.lat, userLocation.lng, branch.lat, branch.lng),
+        };
+      })
+      .filter(Boolean) as { deal: (typeof deals)[number]; branch: Branch; km: number }[];
+    return candidates.sort((a, b) => a.km - b.km)[0] ?? null;
+  }, [deals, userLocation]);
 
   const nearbyDeals = useMemo(
     () =>
@@ -468,6 +502,75 @@ function MapsPage() {
       liveMarkersRef.current.push(marker);
     }
   }, [mapReady, liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
+
+  /** طبقة عروض السوشال ميديا — تُعرض بإحداثيات الحساب مع تاريخ الانتهاء */
+  useEffect(() => {
+    const L = LRef.current;
+    const map = mapInstanceRef.current;
+    if (!L || !map) return;
+
+    socialMarkersRef.current.forEach((m) => map.removeLayer(m));
+    socialMarkersRef.current = [];
+    if (!socialOffers || socialOffers.length === 0) return;
+
+    for (const offer of socialOffers) {
+      const base = offer.lat != null && offer.lng != null
+        ? { lat: offer.lat, lng: offer.lng }
+        : CITIES.find((c) => c.name === offer.city) ?? (userLocation ? nearestCity(userLocation) : null);
+      if (!base) continue;
+
+      const h = [...offer.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 11);
+      const angle = (h % 360) * (Math.PI / 180);
+      const r = 0.006 + (h % 5) * 0.003;
+      const lat = base.lat + Math.sin(angle) * r;
+      const lng = base.lng + Math.cos(angle) * r;
+
+      const expiry = offer.expires_at ? new Date(offer.expires_at) : null;
+      const hoursLeft = expiry ? (expiry.getTime() - Date.now()) / 3600000 : null;
+      const expiryLabel = expiry
+        ? hoursLeft !== null && hoursLeft <= 24
+          ? "⏰ آخر يوم للعرض"
+          : `ينتهي ${expiry.toLocaleDateString("ar-SA")}`
+        : "بدون تاريخ انتهاء";
+
+      const icon = L.divIcon({
+        className: "",
+        html: `
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <div style="background:#1d1d1f;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #7c5cff;box-shadow:0 2px 10px rgba(0,0,0,0.4);white-space:nowrap;">
+              📣 ${offer.platform} · @${offer.handle}
+            </div>
+            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #1d1d1f;margin-top:-1px;"></div>
+          </div>`,
+        iconSize: [100, 30],
+        iconAnchor: [50, 30],
+        popupAnchor: [0, -32],
+      });
+
+      const marker = L.marker([lat, lng], { icon }).addTo(map);
+      const priceRow = offer.price
+        ? `<div style="font-size:13px;font-weight:900;color:#B8860B;margin-top:4px;">${offer.price} ر.س${offer.original_price ? ` <span style="font-size:11px;color:#999;text-decoration:line-through;">${offer.original_price} ر.س</span>` : ""}</div>`
+        : "";
+      const codeRow = offer.coupon_code
+        ? `<div style="font-size:11px;font-weight:900;margin-top:4px;">كود: ${offer.coupon_code}</div>`
+        : "";
+      const linkRow = offer.post_url
+        ? `<a href="${offer.post_url}" target="_blank" rel="nofollow sponsored noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#7c5cff;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">فتح المنشور</a>`
+        : "";
+      marker.bindPopup(`
+        <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:200px;max-width:250px;">
+          <div style="font-size:10px;font-weight:900;color:#7c5cff;margin-bottom:2px;">عرض من السوشال ميديا</div>
+          <div style="font-size:13px;font-weight:900;">${offer.title}</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">${expiryLabel}</div>
+          ${priceRow}
+          ${codeRow}
+          ${linkRow}
+        </div>`);
+      socialMarkersRef.current.push(marker);
+    }
+  }, [mapReady, socialOffers, userLocation]);
+
+
 
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
@@ -910,7 +1013,9 @@ function MapsPage() {
         <div className="text-[11px] text-muted-foreground">
           {nearbyDeals.length > 0
             ? `${nearbyDeals.length} عرض مطابق`
-            : "لا توجد عروض مطابقة لهذه التصفية — جرّب توسيع الخيارات"}
+            : nearestAnyDeal
+              ? `أقرب عرض لك: ${nearestAnyDeal.deal.title} — ${nearestAnyDeal.km.toFixed(1)} كم`
+              : "جارٍ تحديد أقرب عرض لك…"}
         </div>
       </section>
 
@@ -924,17 +1029,35 @@ function MapsPage() {
           role="application"
           aria-label="خريطة العروض والفروع القريبة"
         />
-        {userLocation && mapped.length === 0 && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] pointer-events-none">
+        {userLocation && mapped.length === 0 && nearestAnyDeal && (
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[500] w-[min(92%,340px)]">
             <div className="flex items-center gap-2 bg-card/95 border border-primary/30 shadow-lg rounded-2xl px-3 py-2">
               <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-              <div className="text-right">
-                <p className="font-black text-[12px] leading-tight">لا توجد عروض ضمن هذه التصفية</p>
-                <p className="text-[10px] text-muted-foreground leading-tight">وسّع نطاق المسافة أو امسح الفلاتر</p>
+              <div className="text-right min-w-0 flex-1">
+                <p className="font-black text-[12px] leading-tight truncate">
+                  أقرب عرض: {nearestAnyDeal.deal.title}
+                </p>
+                <p className="text-[10px] text-muted-foreground leading-tight truncate">
+                  {nearestAnyDeal.branch.name} • {nearestAnyDeal.km.toFixed(1)} كم
+                </p>
               </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setGroupFilter("الكل");
+                  setCategoryFilter("الكل");
+                  setStoreFilter("الكل");
+                  setCityFilter("الكل");
+                  setRadiusKm("الكل");
+                }}
+                className="shrink-0 text-[11px] font-black px-2.5 py-1.5 rounded-xl bg-primary text-secondary"
+              >
+                اعرضه
+              </button>
             </div>
           </div>
         )}
+
 
       </div>
 

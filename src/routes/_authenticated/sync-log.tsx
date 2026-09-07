@@ -12,6 +12,7 @@ import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 import { StoreBotPanel } from "@/components/admin/StoreBotPanel";
+import { SocialSyncPanel } from "@/components/admin/SocialSyncPanel";
 
 /** كل 5 دقائق: مزامنة تلقائية لعروض نون ودمجها مع عروض التجّار */
 const AUTO_SYNC_MS = 5 * 60 * 1000;
@@ -150,6 +151,7 @@ function SyncLogPage() {
 
       <NoonSyncSettingsPanel />
       <StoreBotPanel />
+      <SocialSyncPanel />
 
       <div className="mb-5 flex flex-wrap gap-4">
         <div className="flex flex-wrap gap-2" role="group" aria-label="تصفية حسب المصدر">
