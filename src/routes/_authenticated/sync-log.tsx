@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, History, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listSyncEvents } from "@/lib/affiliate-setup.functions";
+import { listSyncEvents, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
+import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
+import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 
 export const Route = createFileRoute("/_authenticated/sync-log")({
@@ -63,6 +65,28 @@ function SyncLogPage() {
   const [source, setSource] = useState("all");
   const [status, setStatus] = useState("all");
   const fetchEvents = useServerFn(listSyncEvents);
+  const runSync = useServerFn(runExternalSyncNow);
+  const queryClient = useQueryClient();
+  const [merging, setMerging] = useState(false);
+
+  /** تحديث يدوي: يشغّل مزامنة نون ويدمج نتائجها مع عروض التجّار (تظهر في كل العروض والخريطة) */
+  async function refreshAndMerge() {
+    setMerging(true);
+    try {
+      try {
+        const res = await runSync({ data: { source: "noon" } });
+        if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
+        else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
+      } catch {
+        toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
+      }
+      await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
+      await queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
+      await refetch();
+    } finally {
+      setMerging(false);
+    }
+  }
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sync-events", source, status],
@@ -86,11 +110,11 @@ function SyncLogPage() {
         </div>
         <Button
           variant="outline"
-          onClick={() => refetch()}
-          disabled={isFetching}
+          onClick={() => void refreshAndMerge()}
+          disabled={isFetching || merging}
           aria-label="تحديث سجل المزامنة"
         >
-          <RefreshCw className={`ms-2 size-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden="true" />
+          <RefreshCw className={`ms-2 size-4 ${isFetching || merging ? "animate-spin" : ""}`} aria-hidden="true" />
           تحديث
         </Button>
       </div>
