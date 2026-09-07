@@ -12,6 +12,10 @@ import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 
+/** كل 5 دقائق: مزامنة تلقائية لعروض نون ودمجها مع عروض التجّار */
+const AUTO_SYNC_MS = 5 * 60 * 1000;
+
+
 export const Route = createFileRoute("/_authenticated/sync-log")({
   component: SyncLogPage,
   head: () => ({
