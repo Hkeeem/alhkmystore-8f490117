@@ -5,7 +5,7 @@ import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
-import { SocialOffersSection } from "@/components/SocialOffersSection";
+
 
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import { useI18n } from "@/lib/i18n";
