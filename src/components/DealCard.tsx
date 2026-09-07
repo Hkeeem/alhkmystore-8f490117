@@ -1,4 +1,4 @@
-import { type Deal, discountPercent, getStore } from "@/data/deals";
+import { type Deal, discountPercent, getStore, isLastDay } from "@/data/deals";
 import { Clock, Share2, Info, BadgeCheck, Copy, ExternalLink, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
@@ -46,6 +46,7 @@ export function DealCard({
   const toggleFav = useServerFn(toggleFavorite);
   const tag = transparencyTag(deal, off);
   const verified = deal.verifiedAt ? timeAgoAr(deal.verifiedAt) : null;
+  const lastDay = isLastDay(deal);
 
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
 
@@ -113,9 +114,17 @@ export function DealCard({
           </div>
         )}
 
-        <div className="absolute top-3 right-3 bg-amber-400 text-zinc-900 text-[11px] font-black px-2.5 py-1 rounded-full shadow">
-          وفر {savings} ر.س
+        <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
+          <div className="bg-amber-400 text-zinc-900 text-[11px] font-black px-2.5 py-1 rounded-full shadow">
+            وفر {savings} ر.س
+          </div>
+          {lastDay && (
+            <div className="bg-rose-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow animate-pulse">
+              ⏰ آخر يوم للعرض
+            </div>
+          )}
         </div>
+
 
         <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center overflow-hidden">
           <StoreLogo store={store} size="sm" />

@@ -11,7 +11,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getNoonCampaignStatus, verifyNoonPublisherId, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
 import { saveIntegrationKeyValue } from "@/lib/integration-keys.functions";
 import { fetchLiveCoupons } from "@/lib/coupons-api";
-import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
+import { REAL_DEALS_KEY, useRealDeals } from "@/hooks/use-real-deals";
+import { isLastDay } from "@/data/deals";
 
 /** لوحة إعدادات نون داخل صفحة سجل المزامنة: معرّف الناشر، حالة الحملة، وتشغيل المزامنة */
 export function NoonSyncSettingsPanel() {
@@ -24,6 +25,10 @@ export function NoonSyncSettingsPanel() {
 
   const statusQuery = useQuery({ queryKey: ["noon-campaign-status"], queryFn: () => fetchStatus() });
   const status = statusQuery.data;
+
+  // يتحدّث تلقائيًا مع كل مزامنة نون (نفس مفتاح العروض الحقيقية)
+  const realDeals = useRealDeals();
+  const lastDayCount = (realDeals.data ?? []).filter((d) => isLastDay(d)).length;
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -111,6 +116,13 @@ export function NoonSyncSettingsPanel() {
                 <p className="text-xl font-bold">{status?.stats.conversions ?? 0}</p>
                 <p className="text-xs text-muted-foreground">تحويلات مسجّلة</p>
               </div>
+            </div>
+
+            <div className="rounded-lg border p-3 flex items-center justify-between gap-2">
+              <span className="text-sm font-semibold">عروض في يومها الأخير</span>
+              <Badge variant={lastDayCount > 0 ? "destructive" : "secondary"}>
+                {lastDayCount} عرض
+              </Badge>
             </div>
 
             {status?.maskedPublisherId && (
