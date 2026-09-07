@@ -353,7 +353,22 @@ function DashboardTab() {
       <StatCard label="شكاوى مفتوحة" value={s.complaintsOpen} icon={MessageSquareWarning} />
       <StatCard label="اقتراحات" value={s.suggestions} icon={Lightbulb} />
       <StatCard label="اشتراكات نشطة" value={s.premiumActive} icon={Crown} />
-      <div className="sm:col-span-2 lg:col-span-4 p-5 rounded-2xl border border-primary/10 bg-card/60 text-sm text-muted-foreground flex items-start gap-3">
+      <Link
+        to="/sync-log"
+        className="sm:col-span-2 lg:col-span-2 p-5 rounded-2xl border border-primary/20 bg-card hover:bg-primary/5 transition-colors flex items-center justify-between gap-3 group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+            <RefreshCw className="w-5 h-5" />
+          </div>
+          <div>
+            <p className="font-bold text-foreground">سجل المزامنة</p>
+            <p className="text-xs text-muted-foreground">مراجعة حالة مزامنة أمازون ونون وتشغيلها يدوياً</p>
+          </div>
+        </div>
+        <span className="text-primary text-sm font-bold">فتح &larr;</span>
+      </Link>
+      <div className="sm:col-span-2 lg:col-span-2 p-5 rounded-2xl border border-primary/10 bg-card/60 text-sm text-muted-foreground flex items-start gap-3">
         <Sparkles className="w-5 h-5 text-primary shrink-0" />
         <p>هذه المرحلة الأولى من لوحة التحكم. سنضيف تقارير Analytics تفصيلية ورسوم بيانية في المرحلة القادمة.</p>
       </div>
