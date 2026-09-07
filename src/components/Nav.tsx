@@ -13,6 +13,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import hLogo from "@/assets/h-logo.png";
 
 const items = [
   { to: "/", key: "nav.home", icon: Home },
