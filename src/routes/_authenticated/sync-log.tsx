@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 import { StoreBotPanel } from "@/components/admin/StoreBotPanel";
 import { SocialSyncPanel } from "@/components/admin/SocialSyncPanel";
+import { DealAlertsPanel } from "@/components/admin/DealAlertsPanel";
 
 /** كل 5 دقائق: مزامنة تلقائية لعروض نون ودمجها مع عروض التجّار */
 const AUTO_SYNC_MS = 5 * 60 * 1000;
@@ -149,6 +150,7 @@ function SyncLogPage() {
         </Button>
       </div>
 
+      <DealAlertsPanel />
       <NoonSyncSettingsPanel />
       <StoreBotPanel />
       <SocialSyncPanel />
