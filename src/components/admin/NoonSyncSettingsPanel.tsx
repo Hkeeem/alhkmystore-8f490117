@@ -52,6 +52,8 @@ export function NoonSyncSettingsPanel() {
       }
       void queryClient.invalidateQueries({ queryKey: ["sync-events"] });
       void queryClient.invalidateQueries({ queryKey: ["noon-campaign-status"] });
+      // دمج عروض نون مع عروض التجّار فورًا (تنعكس في كل العروض والخريطة)
+      void queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
     },
     onError: () => toast.error("تعذّر تشغيل المزامنة"),
   });
@@ -70,6 +72,7 @@ export function NoonSyncSettingsPanel() {
     onSuccess: (count) => {
       void queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
       void queryClient.invalidateQueries({ queryKey: ["sync-events"] });
+      void queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
       toast.success(count > 0 ? `تم جلب ${count} كوبون من نون` : "لا توجد كوبونات نون فعّالة حاليًا");
     },
     onError: () => toast.error("تعذّر جلب كوبونات نون"),
