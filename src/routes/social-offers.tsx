@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SocialOffersSection } from "@/components/SocialOffersSection";
 import { useSocialOffers } from "@/hooks/use-social-offers";
 
@@ -28,16 +28,30 @@ function SocialOffersPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 space-y-4" dir="rtl">
-      <h1 className="text-lg font-black">عروض السوشال ميديا</h1>
+      <div className="flex items-center justify-between gap-2">
+        <h1 className="text-lg font-black">عروض السوشال ميديا</h1>
+        <Link
+          to="/sync-log"
+          className="rounded-xl bg-primary/10 border border-primary/30 text-primary px-3 py-1.5 text-[12px] font-black"
+        >
+          + أضف حساباتي
+        </Link>
+      </div>
 
       <section className="space-y-2">
         <h2 className="text-sm font-black">عروض محدّثة تلقائيًا من حساباتنا</h2>
         {isLoading && <p className="text-[12px] text-muted-foreground">جارٍ التحديث…</p>}
         {isError && <p className="text-[12px] text-destructive">تعذّر تحميل العروض المحدثة — جرّب لاحقًا.</p>}
         {!isLoading && !isError && (live?.length ?? 0) === 0 && (
-          <p className="text-[12px] text-muted-foreground">
-            لم تُضف حسابات بعد — تُعرض هنا فور ربط حساباتك في سجل المزامنة.
-          </p>
+          <div className="border border-dashed border-primary/30 rounded-2xl p-4 text-center space-y-2">
+            <p className="text-[12px] text-muted-foreground">لم تُضف حسابات بعد.</p>
+            <Link
+              to="/sync-log"
+              className="inline-block rounded-xl bg-gradient-gold text-secondary px-4 py-2 text-[13px] font-black"
+            >
+              أضف حساباتي من سجل المزامنة
+            </Link>
+          </div>
         )}
         <ul className="grid gap-2 sm:grid-cols-2">
           {(live ?? []).map((offer) => {
