@@ -661,9 +661,9 @@ export function TopBar() {
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); }}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); } }}
             tabIndex={0}
-            className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full bg-gradient-to-br from-primary/90 to-primary/60 flex items-center justify-center ring-2 ring-primary/40 shadow-[0_0_14px_oklch(0.75_0.16_78_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
+            className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full bg-gradient-to-br from-background to-background/80 flex items-center justify-center ring-2 ring-[oklch(0.78_0.18_80)] shadow-[0_0_16px_oklch(0.78_0.18_80_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
           >
-            <span className="relative font-display font-black text-xl sm:text-2xl text-primary-foreground drop-shadow-md select-none">H</span>
+            <span className="relative font-display font-black text-xl sm:text-2xl text-gold-shine drop-shadow-md select-none">H</span>
           </span>
           <div className="relative flex min-w-0 flex-col leading-tight px-1.5 sm:px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
             <span className="relative z-10 font-display font-black text-base sm:text-lg md:text-xl tracking-tight text-gold-shine truncate drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
