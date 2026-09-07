@@ -68,21 +68,25 @@ function SyncLogPage() {
   const runSync = useServerFn(runExternalSyncNow);
   const queryClient = useQueryClient();
   const [merging, setMerging] = useState(false);
+  const [lastAutoSync, setLastAutoSync] = useState<Date | null>(null);
 
-  /** تحديث يدوي: يشغّل مزامنة نون ويدمج نتائجها مع عروض التجّار (تظهر في كل العروض والخريطة) */
-  async function refreshAndMerge() {
+  /** يشغّل مزامنة نون ويدمج نتائجها مع عروض التجّار (تظهر في كل العروض والخريطة) */
+  async function refreshAndMerge(auto = false) {
     setMerging(true);
     try {
       try {
         const res = await runSync({ data: { source: "noon" } });
-        if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
-        else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
+        if (!auto) {
+          if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
+          else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
+        }
       } catch {
-        toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
+        if (!auto) toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
       }
       await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
       await queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
       await refetch();
+      if (auto) setLastAutoSync(new Date());
     } finally {
       setMerging(false);
     }
@@ -91,7 +95,18 @@ function SyncLogPage() {
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sync-events", source, status],
     queryFn: () => fetchEvents({ data: { source, status, limit: 150 } }),
+    refetchInterval: AUTO_SYNC_MS,
   });
+
+  // مزامنة تلقائية دورية: تدمج عروض نون مع عروض التجّار دون الحاجة لزر يدوي
+  const mergeRef = useRef(refreshAndMerge);
+  mergeRef.current = refreshAndMerge;
+  useEffect(() => {
+    void mergeRef.current(true);
+    const id = setInterval(() => void mergeRef.current(true), AUTO_SYNC_MS);
+    return () => clearInterval(id);
+  }, []);
+
 
   const events = data?.ok ? data.events : [];
   const failures = events.filter((e) => e.status === "failure").length;
