@@ -145,7 +145,7 @@ function RegisterForm({ userId, onDone }: { userId: string; onDone: () => void }
 
 const emptyDeal = {
   title: "", description: "", image_url: "", category: MERCHANT_CATEGORIES[0], unit: "",
-  original_price: "", price: "", product_url: "", expires_at: "",
+  original_price: "", price: "", product_url: "", expires_at: "", coupon_code: "",
 };
 
 function DealsManager({ merchantId }: { merchantId: string }) {
@@ -171,6 +171,7 @@ function DealsManager({ merchantId }: { merchantId: string }) {
       original_price: Number(form.original_price),
       price: Number(form.price),
       product_url: form.product_url || undefined,
+      coupon_code: form.coupon_code.trim().toUpperCase() || undefined,
       expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
       submit,
     }),
@@ -229,6 +230,10 @@ function DealsManager({ merchantId }: { merchantId: string }) {
           </div>
           <Field label="ينتهي في" value={form.expires_at} onChange={(v) => setForm({ ...form, expires_at: v })} type="date" />
           <Field label="رابط صورة المنتج" value={form.image_url} onChange={(v) => setForm({ ...form, image_url: v })} />
+          <div>
+            <Field label="كود خصم (اختياري)" value={form.coupon_code} onChange={(v) => setForm({ ...form, coupon_code: v.toUpperCase() })} />
+            <p className="text-[11px] text-muted-foreground mt-1">إذا أضفت كوداً، سيظهر عرضك في صفحة الكوبونات بعد موافقة المراجعة.</p>
+          </div>
           <Field label="رابط الشراء" value={form.product_url} onChange={(v) => setForm({ ...form, product_url: v })} />
           <Field label="وصف مختصر" value={form.description} onChange={(v) => setForm({ ...form, description: v })} textarea />
           <div className="flex gap-2">
