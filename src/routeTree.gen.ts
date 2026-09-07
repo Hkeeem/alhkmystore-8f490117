@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as StoresRouteImport } from './routes/stores'
+import { Route as SocialOffersRouteImport } from './routes/social-offers'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -70,6 +71,11 @@ const TermsRoute = TermsRouteImport.update({
 const StoresRoute = StoresRouteImport.update({
   id: '/stores',
   path: '/stores',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialOffersRoute = SocialOffersRouteImport.update({
+  id: '/social-offers',
+  path: '/social-offers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SmartListRoute = SmartListRouteImport.update({
@@ -353,6 +359,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
+  '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -406,6 +413,7 @@ export interface FileRoutesByTo {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
+  '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
@@ -461,6 +469,7 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
+  '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
@@ -516,6 +525,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
+    | '/social-offers'
     | '/stores'
     | '/terms'
     | '/admin'
@@ -569,6 +579,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
+    | '/social-offers'
     | '/stores'
     | '/terms'
     | '/admin'
@@ -623,6 +634,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/sitemap.xml'
     | '/smart-list'
+    | '/social-offers'
     | '/stores'
     | '/terms'
     | '/_authenticated/admin'
@@ -678,6 +690,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SmartListRoute: typeof SmartListRoute
+  SocialOffersRoute: typeof SocialOffersRoute
   StoresRoute: typeof StoresRoute
   TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -710,6 +723,13 @@ declare module '@tanstack/react-router' {
       path: '/stores'
       fullPath: '/stores'
       preLoaderRoute: typeof StoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social-offers': {
+      id: '/social-offers'
+      path: '/social-offers'
+      fullPath: '/social-offers'
+      preLoaderRoute: typeof SocialOffersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/smart-list': {
@@ -1150,6 +1170,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SmartListRoute: SmartListRoute,
+  SocialOffersRoute: SocialOffersRoute,
   StoresRoute: StoresRoute,
   TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
