@@ -118,6 +118,13 @@ export function NoonSyncSettingsPanel() {
               </div>
             </div>
 
+            <div className="rounded-lg border p-3 flex items-center justify-between gap-2">
+              <span className="text-sm font-semibold">عروض في يومها الأخير</span>
+              <Badge variant={lastDayCount > 0 ? "destructive" : "secondary"}>
+                {lastDayCount} عرض
+              </Badge>
+            </div>
+
             {status?.maskedPublisherId && (
               <p className="text-sm text-muted-foreground">
                 المعرّف الحالي: <span className="font-mono" dir="ltr">{status.maskedPublisherId}</span>
