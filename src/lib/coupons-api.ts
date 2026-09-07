@@ -116,7 +116,9 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       storeName: merchant?.name ?? "تاجر موثّق",
       logo: meta?.logo,
       color: meta?.color,
+      storeUrl: (row as { product_url?: string | null }).product_url ?? storeLink(merchant?.slug),
       source: "تاجر موثّق",
+
     });
   }
 
