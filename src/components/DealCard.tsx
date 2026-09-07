@@ -1,4 +1,4 @@
-import { type Deal, discountPercent, getStore } from "@/data/deals";
+import { type Deal, discountPercent, getStore, isLastDay } from "@/data/deals";
 import { Clock, Share2, Info, BadgeCheck, Copy, ExternalLink, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
