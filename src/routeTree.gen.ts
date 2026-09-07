@@ -47,6 +47,7 @@ import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
 import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
+import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
 import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
@@ -248,6 +249,12 @@ const AuthenticatedSearchConsoleRoute =
     path: '/search-console',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedNoonSettingsRoute =
+  AuthenticatedNoonSettingsRouteImport.update({
+    id: '/noon-settings',
+    path: '/noon-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMerchantReviewRoute =
   AuthenticatedMerchantReviewRouteImport.update({
     id: '/merchant-review',
@@ -328,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
@@ -376,6 +384,7 @@ export interface FileRoutesByTo {
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
@@ -426,6 +435,7 @@ export interface FileRoutesById {
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/_authenticated/merchant-review': typeof AuthenticatedMerchantReviewRoute
+  '/_authenticated/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/_authenticated/search-console': typeof AuthenticatedSearchConsoleRoute
   '/_authenticated/sync-log': typeof AuthenticatedSyncLogRoute
   '/api/chat': typeof ApiChatRoute
@@ -476,6 +486,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/merchant'
     | '/merchant-review'
+    | '/noon-settings'
     | '/search-console'
     | '/sync-log'
     | '/api/chat'
@@ -524,6 +535,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/merchant'
     | '/merchant-review'
+    | '/noon-settings'
     | '/search-console'
     | '/sync-log'
     | '/api/chat'
@@ -573,6 +585,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me'
     | '/_authenticated/merchant'
     | '/_authenticated/merchant-review'
+    | '/_authenticated/noon-settings'
     | '/_authenticated/search-console'
     | '/_authenticated/sync-log'
     | '/api/chat'
@@ -901,6 +914,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchConsoleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/noon-settings': {
+      id: '/_authenticated/noon-settings'
+      path: '/noon-settings'
+      fullPath: '/noon-settings'
+      preLoaderRoute: typeof AuthenticatedNoonSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/merchant-review': {
       id: '/_authenticated/merchant-review'
       path: '/merchant-review'
@@ -972,6 +992,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
   AuthenticatedMerchantReviewRoute: typeof AuthenticatedMerchantReviewRoute
+  AuthenticatedNoonSettingsRoute: typeof AuthenticatedNoonSettingsRoute
   AuthenticatedSearchConsoleRoute: typeof AuthenticatedSearchConsoleRoute
   AuthenticatedSyncLogRoute: typeof AuthenticatedSyncLogRoute
 }
@@ -981,6 +1002,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
   AuthenticatedMerchantReviewRoute: AuthenticatedMerchantReviewRoute,
+  AuthenticatedNoonSettingsRoute: AuthenticatedNoonSettingsRoute,
   AuthenticatedSearchConsoleRoute: AuthenticatedSearchConsoleRoute,
   AuthenticatedSyncLogRoute: AuthenticatedSyncLogRoute,
 }

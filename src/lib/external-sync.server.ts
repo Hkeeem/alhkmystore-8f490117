@@ -265,10 +265,119 @@ type NoonHit = {
   is_buyable?: boolean;
 };
 
-/** noon.com — كتالوج البحث العام (بدون مفاتيح API؛ الاعتماد على كود الخصم والروابط المباشرة) */
+type NoonApiProduct = {
+  sku?: string;
+  product_id?: string;
+  title?: string;
+  name?: string;
+  brand?: string;
+  category?: string;
+  price?: number;
+  sale_price?: number;
+  offer_price?: number;
+  list_price?: number;
+  image?: string;
+  image_url?: string;
+  product_url?: string;
+  deeplink?: string;
+  url?: string;
+  in_stock?: boolean;
+};
+
+/**
+ * مزامنة عروض نون عبر واجهة الأفلييت الرسمية عند توفّر المفاتيح.
+ * ترجع null عندما لا توجد مفاتيح أو يفشل النداء حتى يعمل الكتالوج العام كخيار احتياطي.
+ */
+async function fetchNoonOffersViaAffiliateApi(
+  keyword: string,
+  affiliateId: string | null,
+): Promise<ExternalOffer[] | null> {
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const apiKey = await getIntegrationKey("NOON_AFFILIATE_API_KEY");
+  if (!apiKey) return null;
+  const apiSecret = await getIntegrationKey("NOON_AFFILIATE_API_SECRET");
+  const base =
+    (await getIntegrationKey("NOON_AFFILIATE_API_BASE")) ?? "https://affiliate-api.noon.com/v1";
+
+  const endpoint = `${base.replace(/\/$/, "")}/products/search?q=${encodeURIComponent(keyword)}&limit=25${
+    affiliateId ? `&publisher_id=${encodeURIComponent(affiliateId)}` : ""
+  }`;
+
+  try {
+    const response = await fetch(endpoint, {
+      headers: {
+        accept: "application/json",
+        authorization: `Bearer ${apiKey}`,
+        ...(apiSecret ? { "x-api-secret": apiSecret } : {}),
+      },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) {
+      await recordSyncEvent({
+        source: "noon",
+        status: "failure",
+        code: response.status === 401 || response.status === 403 ? "auth_error" : "http_error",
+        message: `واجهة أفلييت نون الرسمية ${response.status}`,
+        keyword,
+      });
+      return null;
+    }
+    const json = (await response.json()) as {
+      products?: NoonApiProduct[];
+      data?: NoonApiProduct[];
+      results?: NoonApiProduct[];
+    };
+    const items = json.products ?? json.data ?? json.results ?? [];
+    const offers: ExternalOffer[] = [];
+    for (const item of items) {
+      const sku = item.sku ?? item.product_id;
+      const price = item.sale_price ?? item.offer_price ?? item.price;
+      if (!sku || !price) continue;
+      const original = item.list_price && item.list_price > price ? item.list_price : (item.price ?? price);
+      const link =
+        item.deeplink ??
+        item.product_url ??
+        item.url ??
+        `https://www.noon.com/saudi-ar/p/?sku=${sku}`;
+      offers.push({
+        source: "noon",
+        source_key: sku,
+        store_id: "noon",
+        store_name: "نون",
+        title: item.title ?? item.name ?? "منتج",
+        brand: item.brand ?? null,
+        category: item.category ?? "إلكترونيات",
+        original_price: original,
+        price,
+        discount_percent: pct(original, price),
+        image_url: item.image ?? item.image_url ?? null,
+        product_url: link,
+        product_key: `noon:${sku}`,
+        active: item.in_stock !== false,
+      });
+    }
+    if (offers.length === 0) return null;
+    return offers;
+  } catch (error) {
+    await recordSyncEvent({
+      source: "noon",
+      status: "failure",
+      code: "network_error",
+      message: error instanceof Error ? error.message : "تعذّر الاتصال بواجهة أفلييت نون",
+      keyword,
+    });
+    return null;
+  }
+}
+
+/** noon.com — واجهة الأفلييت الرسمية عند توفر المفاتيح، وإلا الكتالوج العام */
 export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]> {
   const { getIntegrationKey } = await import("@/lib/integration-keys.server");
   const affiliateId = await getIntegrationKey("NOON_AFFILIATE_ID");
+
+  const official = await fetchNoonOffersViaAffiliateApi(keyword, affiliateId);
+  if (official) return official;
+
   if (!affiliateId) {
     await recordSyncEvent({
       source: "noon",

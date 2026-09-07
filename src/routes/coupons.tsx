@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Copy, Check, Ticket, Search, MessageCircle, Loader2 } from "lucide-react";
+import { Copy, Check, Ticket, Search, MessageCircle, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { fetchLiveCoupons, type LiveCoupon } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
@@ -174,6 +174,18 @@ function CouponsPage() {
                   واتساب
                 </button>
               </div>
+
+              {c.storeUrl && (
+                <a
+                  href={c.storeUrl}
+                  target="_blank"
+                  rel="nofollow sponsored noopener noreferrer"
+                  className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-secondary hover:bg-secondary/80 font-black text-sm transition"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  افتح المنتج في {c.storeName} بالكود
+                </a>
+              )}
             </article>
           );
         })}

@@ -1,5 +1,25 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+/** عدّاد تنازلي حي لتاريخ انتهاء الكوبون (يتحدث كل ثانية) */
+function useCountdown(expiresAt?: string) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!expiresAt) return;
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, [expiresAt]);
+  if (!expiresAt) return null;
+  const ms = new Date(expiresAt).getTime() - now;
+  if (!Number.isFinite(ms)) return null;
+  if (ms <= 0) return "انتهى";
+  const d = Math.floor(ms / 86_400_000);
+  const h = Math.floor((ms % 86_400_000) / 3_600_000);
+  const m = Math.floor((ms % 3_600_000) / 60_000);
+  const s = Math.floor((ms % 60_000) / 1000);
+  if (d > 0) return `${d} يوم و ${h} ساعة`;
+  return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, Check, Copy, Share2, Store as StoreIcon, Ticket, Clock, Tag, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -32,9 +52,14 @@ function CouponDetail() {
     queryKey: ["live-coupons"],
     queryFn: () => fetchLiveCoupons(),
     staleTime: 30_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
   });
 
   const coupon = (couponsQ.data ?? []).find((c) => c.id === id);
+  const remaining = useCountdown(coupon?.expiresAt) ?? coupon?.expiresIn ?? "غير محدد";
+
+
 
   if (couponsQ.isLoading) {
     return (
@@ -114,6 +139,54 @@ function CouponDetail() {
         </div>
       </section>
 
+      {(coupon.imageUrl || coupon.price) && (
+        <section className="rounded-3xl border border-border/60 bg-card overflow-hidden">
+          {coupon.imageUrl && (
+            <img
+              src={coupon.imageUrl}
+              alt={`صورة منتج ${coupon.title} من ${coupon.storeName}`}
+              loading="lazy"
+              className="w-full max-h-72 object-contain bg-secondary/30"
+            />
+          )}
+          <div className="p-5 space-y-3">
+            {coupon.price != null && (
+              <div className="flex flex-wrap items-baseline gap-3">
+                <span className="text-3xl font-black text-primary tabular-nums">
+                  {coupon.price.toLocaleString("ar-SA")} ر.س
+                </span>
+                {coupon.originalPrice != null && coupon.originalPrice > coupon.price && (
+                  <>
+                    <span className="text-base text-muted-foreground line-through tabular-nums">
+                      {coupon.originalPrice.toLocaleString("ar-SA")} ر.س
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-green-600/10 text-green-700 dark:text-green-400 text-xs font-black">
+                      وفّر {(coupon.originalPrice - coupon.price).toLocaleString("ar-SA")} ر.س
+                    </span>
+                  </>
+                )}
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              الخصم المتبقي: <span className="font-bold text-foreground">{coupon.discount}</span> · ينتهي خلال{" "}
+              <span className="font-bold text-foreground">{remaining}</span>
+            </p>
+            {coupon.storeUrl && (
+              <a
+                href={coupon.storeUrl}
+                target="_blank"
+                rel="nofollow sponsored noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 font-black text-sm transition"
+              >
+                شراء مباشر من {coupon.storeName}
+              </a>
+            )}
+          </div>
+        </section>
+      )}
+
+
+
       <section className="rounded-3xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center">
         <div className="text-xs text-muted-foreground mb-2">كود الخصم</div>
         <div className="font-mono text-3xl md:text-4xl font-black tracking-widest text-primary mb-4">
@@ -136,7 +209,7 @@ function CouponDetail() {
         <p className="text-sm leading-7 text-foreground/90">{coupon.description}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <InfoTile icon={<Tag className="w-4 h-4" />} label="الخصم" value={coupon.discount} />
-          <InfoTile icon={<Clock className="w-4 h-4" />} label="ينتهي خلال" value={coupon.expiresIn} />
+          <InfoTile icon={<Clock className="w-4 h-4" />} label="ينتهي خلال" value={remaining} />
           {coupon.minOrder && (
             <InfoTile icon={<Ticket className="w-4 h-4" />} label="حد أدنى للطلب" value={`${coupon.minOrder} ر.س`} />
           )}
