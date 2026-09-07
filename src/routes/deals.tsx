@@ -118,7 +118,11 @@ function DealsPage() {
           <HkeeemCatalogSection />
           <HkeeemOffersSection />
         </>
-      ) : null}
+      ) : (
+        /* دليل المتاجر يبقى ظاهراً حتى مع إخفاء أقسام حكيم */
+        <StoresDirectory />
+      )}
+
 
       <div className="relative">
 
