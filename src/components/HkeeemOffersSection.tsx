@@ -239,7 +239,7 @@ function formatDateAr(value: string) {
 }
 
 /** دليل المتاجر الرسمية — روابط رسمية فقط دون أكواد أو أسعار مُختلقة */
-function StoresDirectory({ offerStoreNames }: { offerStoreNames: string[] }) {
+export function StoresDirectory({ offerStoreNames = [] }: { offerStoreNames?: string[] }) {
   const names = useMemo(() => new Set(offerStoreNames.filter(Boolean)), [offerStoreNames]);
 
   return (
