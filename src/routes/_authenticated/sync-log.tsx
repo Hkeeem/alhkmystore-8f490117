@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -11,6 +11,10 @@ import { listSyncEvents, runExternalSyncNow } from "@/lib/affiliate-setup.functi
 import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
+
+/** كل 5 دقائق: مزامنة تلقائية لعروض نون ودمجها مع عروض التجّار */
+const AUTO_SYNC_MS = 5 * 60 * 1000;
+
 
 export const Route = createFileRoute("/_authenticated/sync-log")({
   component: SyncLogPage,
@@ -68,21 +72,25 @@ function SyncLogPage() {
   const runSync = useServerFn(runExternalSyncNow);
   const queryClient = useQueryClient();
   const [merging, setMerging] = useState(false);
+  const [lastAutoSync, setLastAutoSync] = useState<Date | null>(null);
 
-  /** تحديث يدوي: يشغّل مزامنة نون ويدمج نتائجها مع عروض التجّار (تظهر في كل العروض والخريطة) */
-  async function refreshAndMerge() {
+  /** يشغّل مزامنة نون ويدمج نتائجها مع عروض التجّار (تظهر في كل العروض والخريطة) */
+  async function refreshAndMerge(auto = false) {
     setMerging(true);
     try {
       try {
         const res = await runSync({ data: { source: "noon" } });
-        if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
-        else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
+        if (!auto) {
+          if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
+          else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
+        }
       } catch {
-        toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
+        if (!auto) toast.message("مزامنة نون متوقفة مؤقتًا — عُرضت آخر العروض المحفوظة");
       }
       await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
       await queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
       await refetch();
+      if (auto) setLastAutoSync(new Date());
     } finally {
       setMerging(false);
     }
@@ -91,7 +99,18 @@ function SyncLogPage() {
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["sync-events", source, status],
     queryFn: () => fetchEvents({ data: { source, status, limit: 150 } }),
+    refetchInterval: AUTO_SYNC_MS,
   });
+
+  // مزامنة تلقائية دورية: تدمج عروض نون مع عروض التجّار دون الحاجة لزر يدوي
+  const mergeRef = useRef(refreshAndMerge);
+  mergeRef.current = refreshAndMerge;
+  useEffect(() => {
+    void mergeRef.current(true);
+    const id = setInterval(() => void mergeRef.current(true), AUTO_SYNC_MS);
+    return () => clearInterval(id);
+  }, []);
+
 
   const events = data?.ok ? data.events : [];
   const failures = events.filter((e) => e.status === "failure").length;
@@ -107,7 +126,12 @@ function SyncLogPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             كل عملية سحب عروض من Amazon وnoon مع وقتها وحالتها وسبب الفشل إن حصل.
           </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            المزامنة تلقائية كل 5 دقائق ودمج عروض نون مع عروض التجّار{" "}
+            {lastAutoSync ? `• آخر مزامنة تلقائية: ${formatDate(lastAutoSync.toISOString())}` : "• جارٍ التشغيل…"}
+          </p>
         </div>
+
         <Button
           variant="outline"
           onClick={() => void refreshAndMerge()}
