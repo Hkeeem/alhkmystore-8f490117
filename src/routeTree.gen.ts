@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as SyncPartnersRouteImport } from './routes/sync-partners'
 import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SocialOffersRouteImport } from './routes/social-offers'
 import { Route as SmartListRouteImport } from './routes/smart-list'
@@ -66,6 +67,11 @@ import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$d
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SyncPartnersRoute = SyncPartnersRouteImport.update({
+  id: '/sync-partners',
+  path: '/sync-partners',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoresRoute = StoresRouteImport.update({
@@ -361,6 +367,7 @@ export interface FileRoutesByFullPath {
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
+  '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
@@ -415,6 +422,7 @@ export interface FileRoutesByTo {
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
+  '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
@@ -471,6 +479,7 @@ export interface FileRoutesById {
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
   '/stores': typeof StoresRoute
+  '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/deals-admin': typeof AuthenticatedDealsAdminRoute
@@ -527,6 +536,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/social-offers'
     | '/stores'
+    | '/sync-partners'
     | '/terms'
     | '/admin'
     | '/deals-admin'
@@ -581,6 +591,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/social-offers'
     | '/stores'
+    | '/sync-partners'
     | '/terms'
     | '/admin'
     | '/deals-admin'
@@ -636,6 +647,7 @@ export interface FileRouteTypes {
     | '/smart-list'
     | '/social-offers'
     | '/stores'
+    | '/sync-partners'
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/deals-admin'
@@ -692,6 +704,7 @@ export interface RootRouteChildren {
   SmartListRoute: typeof SmartListRoute
   SocialOffersRoute: typeof SocialOffersRoute
   StoresRoute: typeof StoresRoute
+  SyncPartnersRoute: typeof SyncPartnersRoute
   TermsRoute: typeof TermsRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
@@ -716,6 +729,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sync-partners': {
+      id: '/sync-partners'
+      path: '/sync-partners'
+      fullPath: '/sync-partners'
+      preLoaderRoute: typeof SyncPartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stores': {
@@ -1172,6 +1192,7 @@ const rootRouteChildren: RootRouteChildren = {
   SmartListRoute: SmartListRoute,
   SocialOffersRoute: SocialOffersRoute,
   StoresRoute: StoresRoute,
+  SyncPartnersRoute: SyncPartnersRoute,
   TermsRoute: TermsRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
