@@ -2,8 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Store, Loader2, Plus, Trash2, Send, BadgeCheck, Clock, Ban, PencilLine } from "lucide-react";
+import { Store, Loader2, Plus, Trash2, Send, BadgeCheck, Clock, Ban, PencilLine, Shield, Sparkles } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useServerFn } from "@tanstack/react-start";
+import { getAdminContext } from "@/lib/admin.functions";
 import {
   MERCHANT_CATEGORIES, MERCHANT_STATUS_LABEL, DEAL_STATUS_LABEL,
   createDeal, createMerchant, deleteDeal, fetchMerchantDeals, fetchMyMerchant, updateDeal,
@@ -28,10 +30,17 @@ export const Route = createFileRoute("/_authenticated/merchant")({
 function MerchantPortal() {
   const { user, loading } = useAuth();
   const qc = useQueryClient();
+  const fetchAdminCtx = useServerFn(getAdminContext);
 
   const merchantQ = useQuery({
     queryKey: ["my-merchant", user?.id],
     queryFn: () => fetchMyMerchant(user!.id),
+    enabled: !!user?.id,
+  });
+
+  const adminCtxQ = useQuery({
+    queryKey: ["admin-context-merchant"],
+    queryFn: () => fetchAdminCtx(),
     enabled: !!user?.id,
   });
 
@@ -40,9 +49,35 @@ function MerchantPortal() {
   }
 
   const merchant = merchantQ.data;
+  const isStaff = adminCtxQ.data?.isStaff ?? false;
 
   return (
     <main dir="rtl" className="max-w-4xl mx-auto px-4 pt-6 pb-24 space-y-6">
+      {isStaff && (
+        <div className="bg-gradient-to-l from-primary/15 to-primary/5 border border-primary/25 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            <span className="text-sm font-bold">أنت مشرف — يمكنك إدارة كل العروض والتجار</span>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Link
+              to="/admin"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-95 transition"
+            >
+              <Shield className="w-4 h-4" />
+              لوحة التحكم
+            </Link>
+            <Link
+              to="/deals-admin"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-primary/30 bg-background text-sm font-bold hover:bg-primary/5 transition"
+            >
+              <Sparkles className="w-4 h-4" />
+              إدارة العروض
+            </Link>
+          </div>
+        </div>
+      )}
+
       <header className="flex items-center gap-3">
         <div className="w-12 h-12 rounded-2xl bg-gradient-hero glow-gold grid place-items-center shrink-0">
           <Store className="w-6 h-6 text-primary" />

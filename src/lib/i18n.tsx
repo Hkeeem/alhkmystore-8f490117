@@ -44,6 +44,8 @@ export const dict = {
   "item.agents": { ar: "وكلاء حكيم", en: "Hkeeem agents" },
   "item.settings": { ar: "تخصيص المظهر", en: "Appearance" },
   "item.syncLog": { ar: "سجل المزامنة", en: "Sync log" },
+  "item.admin": { ar: "لوحة التحكم", en: "Admin dashboard" },
+  "item.pro": { ar: "حكيم برو", en: "Hkeeem Pro" },
 
   // Home / hero
   "home.badge": { ar: "HkeeemAI — وفّر أكثر… لا تدفع أكثر", en: "HkeeemAI — save more, never overpay" },

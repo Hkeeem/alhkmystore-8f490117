@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BellRing, Crown, GitCompareArrows, Palette, Percent, Sparkles } from "lucide-react";
+import { BellRing, Crown, GitCompareArrows, Palette, Percent, Sparkles, Store, Map, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
@@ -100,6 +100,52 @@ function ProPage() {
               <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      {/* بوابة التاجر */}
+      <section aria-labelledby="pro-merchant" className="hk-card p-6 md:p-8 space-y-5 border-primary/30">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-primary/12 text-primary flex items-center justify-center ring-1 ring-primary/30">
+            <Store className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 id="pro-merchant" className="font-black text-xl">بوابة التاجر</h2>
+            <p className="text-sm text-muted-foreground">أضف عروضك وكوبوناتك ووثّق حسابك للظهور في الخريطة.</p>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-3">
+          <div className="p-4 rounded-2xl bg-muted/40 space-y-2">
+            <Tag className="w-5 h-5 text-primary" />
+            <p className="font-bold text-sm">كوبونات حصرية</p>
+            <p className="text-xs text-muted-foreground">أكواد خصم تظهر أولاً للمشتركين.</p>
+          </div>
+          <div className="p-4 rounded-2xl bg-muted/40 space-y-2">
+            <BellRing className="w-5 h-5 text-primary" />
+            <p className="font-bold text-sm">تنبيهات مبكرة</p>
+            <p className="text-xs text-muted-foreground">إشعار فوري قبل انتهاء العرض بـ24 ساعة.</p>
+          </div>
+          <div className="p-4 rounded-2xl bg-muted/40 space-y-2">
+            <Map className="w-5 h-5 text-primary" />
+            <p className="font-bold text-sm">ظهور أقوى على الخريطة</p>
+            <p className="text-xs text-muted-foreground">علامة مميزة وإحداثيات دقيقة لمتجرك.</p>
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-1">
+          <Link
+            to="/merchant"
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-bold px-6 py-3 rounded-2xl hover:opacity-95 transition w-full sm:w-auto justify-center"
+          >
+            <Store className="w-5 h-5" />
+            دخول بوابة التاجر
+          </Link>
+          <Link
+            to="/deals-admin"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-primary/30 bg-primary/5 font-bold hover:bg-primary/10 transition w-full sm:w-auto justify-center"
+          >
+            <Sparkles className="w-5 h-5" />
+            لوحة إدارة العروض
+          </Link>
         </div>
       </section>
 
