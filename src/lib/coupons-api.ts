@@ -1,0 +1,110 @@
+import { supabase } from "@/integrations/supabase/client";
+import { stores } from "@/data/deals";
+
+/**
+ * مصدر موحّد للكوبونات الحقيقية:
+ * - جدول coupons (أكواد موثّقة مفعّلة)
+ * - عروض التجّار المنشورة التي تحتوي على كود خصم
+ * لا توجد أي بيانات تجريبية هنا.
+ */
+export type LiveCoupon = {
+  id: string;
+  code: string;
+  title: string;
+  description: string;
+  discount: string;
+  minOrder?: number;
+  expiresIn: string;
+  category?: string;
+  storeId?: string;
+  storeName: string;
+  logo?: string;
+  color?: string;
+  source: string;
+};
+
+function expiresLabel(expiresAt: string | null | undefined) {
+  if (!expiresAt) return "غير محدد";
+  const ms = new Date(expiresAt).getTime() - Date.now();
+  if (!Number.isFinite(ms)) return "غير محدد";
+  const days = Math.ceil(ms / 86_400_000);
+  if (days <= 0) return "اليوم";
+  if (days === 1) return "يوم";
+  if (days === 2) return "يومان";
+  if (days <= 7) return `${days} أيام`;
+  if (days <= 14) return "أسبوعان";
+  return `${Math.ceil(days / 7)} أسابيع`;
+}
+
+function storeMeta(storeId?: string | null) {
+  if (!storeId) return undefined;
+  return stores.find((s) => s.id === storeId.trim().toLowerCase());
+}
+
+function discountLabel(original: number, price: number) {
+  if (!(original > 0) || !(price >= 0) || price >= original) return "خصم";
+  const pct = Math.round(((original - price) / original) * 100);
+  return `${pct}%`;
+}
+
+export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
+  const [couponsRes, dealsRes] = await Promise.all([
+    supabase
+      .from("coupons")
+      .select("*")
+      .eq("active", true)
+      .order("created_at", { ascending: false })
+      .limit(limit),
+    supabase
+      .from("merchant_deals")
+      .select("*, merchants!inner(id,name,slug,logo_url)")
+      .eq("status", "published")
+      .not("coupon_code", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(limit),
+  ]);
+
+  const list: LiveCoupon[] = [];
+
+  for (const row of couponsRes.data ?? []) {
+    const meta = storeMeta(row.store_id);
+    list.push({
+      id: row.id,
+      code: row.code,
+      title: row.title,
+      description: row.description,
+      discount: row.discount,
+      minOrder: row.min_order != null ? Number(row.min_order) : undefined,
+      expiresIn: expiresLabel(row.expires_at),
+      category: row.category ?? undefined,
+      storeId: row.store_id ?? undefined,
+      storeName: row.store_name || meta?.name || "متجر",
+      logo: meta?.logo,
+      color: meta?.color,
+      source: row.source,
+    });
+  }
+
+  for (const row of dealsRes.data ?? []) {
+    const code = (row as { coupon_code?: string | null }).coupon_code;
+    if (!code) continue;
+    const merchant = (row as { merchants?: { name?: string; slug?: string } }).merchants;
+    const meta = storeMeta(merchant?.slug);
+    list.push({
+      id: row.id,
+      code,
+      title: row.title,
+      description: row.description ?? `كود خصم من ${merchant?.name ?? "تاجر موثّق"}`,
+      discount: discountLabel(Number(row.original_price), Number(row.price)),
+      expiresIn: expiresLabel(row.expires_at),
+      category: "حصري",
+      storeId: merchant?.slug,
+      storeName: merchant?.name ?? "تاجر موثّق",
+      logo: meta?.logo,
+      color: meta?.color,
+      source: "تاجر موثّق",
+    });
+  }
+
+  return list;
+}

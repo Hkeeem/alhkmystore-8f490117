@@ -1,69 +1,73 @@
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Check, Copy, Share2, Store as StoreIcon, Ticket, Clock, Tag } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Check, Copy, Share2, Store as StoreIcon, Ticket, Clock, Tag, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { coupons, storeById, type Coupon } from "@/data/coupons";
+import { fetchLiveCoupons } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/coupons/$id")({
-  loader: ({ params }) => {
-    const coupon = coupons.find((c) => c.id === params.id);
-    if (!coupon) throw notFound();
-    return { coupon };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "الكوبون غير متوفر — وفّر" }, { name: "robots", content: "noindex" }] };
-    }
-    const c = loaderData.coupon;
-    const s = storeById(c.storeId);
-    return {
-      meta: [
-        { title: `${c.title} — ${s?.name ?? "كوبون"} — وفّر` },
-        { name: "description", content: `${c.description} — الكود: ${c.code}` },
-        { property: "og:title", content: `${c.title} — ${s?.name ?? "وفّر"}` },
-        { property: "og:description", content: c.description },
-      ],
-    };
-  },
-  notFoundComponent: CouponNotFound,
+  head: () => ({
+    meta: [
+      { title: "تفاصيل الكوبون — حكيم AI" },
+      { name: "description", content: "تفاصيل كود الخصم الموثّق: نسبة الخصم، الحد الأدنى للطلب، وتاريخ الانتهاء." },
+      { property: "og:title", content: "تفاصيل الكوبون — حكيم AI" },
+      { property: "og:description", content: "كود خصم موثّق من تاجر معتمد داخل تطبيق حكيم AI." },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: CouponDetail,
 });
 
-function CouponNotFound() {
-  const nearest = coupons[0];
-  const s = nearest ? storeById(nearest.storeId) : undefined;
-  return (
-    <InvalidLinkFallback
-      icon="🎟️"
-      title="الكوبون غير متوفر"
-      message="يمكن الكوبون انتهى أو تغيّر الكود. جربّ هذا الكوبون المتاح حالياً."
-      suggestion={nearest ? {
-        to: `/coupons/${nearest.id}`,
-        label: `${nearest.title} — ${s?.name ?? ""}`,
-        hint: `الكود: ${nearest.code} · ${nearest.discount}`,
-        emoji: s?.logo ?? "🎟️",
-      } : undefined}
-      backTo={{ to: "/coupons", label: "كل الكوبونات" }}
-    />
-  );
-}
-
 function CouponDetail() {
-  const { coupon } = Route.useLoaderData() as { coupon: Coupon };
+  const { id } = Route.useParams();
   const router = useRouter();
-  const s = storeById(coupon.storeId);
   const [copied, setCopied] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+
+  const couponsQ = useQuery({
+    queryKey: ["live-coupons"],
+    queryFn: () => fetchLiveCoupons(),
+    staleTime: 30_000,
+  });
+
+  const coupon = (couponsQ.data ?? []).find((c) => c.id === id);
+
+  if (couponsQ.isLoading) {
+    return (
+      <div className="flex items-center justify-center gap-2 text-muted-foreground py-24">
+        <Loader2 className="w-5 h-5 animate-spin" /> جارِ تحميل الكوبون...
+      </div>
+    );
+  }
+
+  if (!coupon) {
+    const nearest = couponsQ.data?.[0];
+    return (
+      <InvalidLinkFallback
+        icon="🎟️"
+        title="الكوبون غير متوفر"
+        message="يمكن الكوبون انتهى أو تغيّر الكود. جربّ هذا الكوبون المتاح حالياً."
+        suggestion={nearest ? {
+          to: `/coupons/${nearest.id}`,
+          label: `${nearest.title} — ${nearest.storeName}`,
+          hint: `الكود: ${nearest.code} · ${nearest.discount}`,
+          emoji: nearest.logo ?? "🎟️",
+        } : undefined}
+        backTo={{ to: "/coupons", label: "كل الكوبونات" }}
+      />
+    );
+  }
 
   const shareUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}/coupons/${coupon.id}`
       : `/coupons/${coupon.id}`;
 
-  const shareText = `🎟️ كوبون ${s?.name ?? ""}\n${coupon.title}\nالكود: ${coupon.code}\n${coupon.description}\nينتهي: ${coupon.expiresIn}\n\nمن تطبيق وفّر`;
+  const shareText = `🎟️ كوبون ${coupon.storeName}\n${coupon.title}\nالكود: ${coupon.code}\n${coupon.description}\nينتهي: ${coupon.expiresIn}\n\nمن تطبيق حكيم AI`;
 
   const copy = async () => {
     try {
@@ -86,19 +90,18 @@ function CouponDetail() {
         <ArrowRight className="w-4 h-4" /> رجوع
       </button>
 
-      {/* Hero */}
       <section
         className="relative overflow-hidden rounded-3xl p-8 shadow-glow text-white"
-        style={{ background: s?.color ?? "hsl(var(--primary))" }}
+        style={{ background: coupon.color ?? "hsl(var(--primary))" }}
       >
         <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
         <div className="relative flex items-center gap-5">
           <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur flex items-center justify-center text-4xl font-black">
-            {s?.logo ?? "?"}
+            {coupon.logo ?? coupon.storeName.slice(0, 1)}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 text-xs opacity-90 mb-1">
-              <StoreIcon className="w-3.5 h-3.5" /> {s?.name}
+              <StoreIcon className="w-3.5 h-3.5" /> {coupon.storeName}
               {coupon.category && (
                 <span className="mr-1 px-2 py-0.5 rounded-full bg-white/20 font-bold text-[10px]">
                   {coupon.category}
@@ -111,7 +114,6 @@ function CouponDetail() {
         </div>
       </section>
 
-      {/* Code card */}
       <section className="rounded-3xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center">
         <div className="text-xs text-muted-foreground mb-2">كود الخصم</div>
         <div className="font-mono text-3xl md:text-4xl font-black tracking-widest text-primary mb-4">
@@ -127,7 +129,6 @@ function CouponDetail() {
         </button>
       </section>
 
-      {/* Details */}
       <section className="rounded-3xl border border-border/60 bg-card p-6 space-y-4">
         <h2 className="font-black text-lg flex items-center gap-2">
           <Ticket className="w-4 h-4 text-primary" /> تفاصيل الكوبون
@@ -135,22 +136,14 @@ function CouponDetail() {
         <p className="text-sm leading-7 text-foreground/90">{coupon.description}</p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <InfoTile icon={<Tag className="w-4 h-4" />} label="الخصم" value={coupon.discount} />
-          <InfoTile
-            icon={<Clock className="w-4 h-4" />}
-            label="ينتهي خلال"
-            value={coupon.expiresIn}
-          />
+          <InfoTile icon={<Clock className="w-4 h-4" />} label="ينتهي خلال" value={coupon.expiresIn} />
           {coupon.minOrder && (
-            <InfoTile
-              icon={<Ticket className="w-4 h-4" />}
-              label="حد أدنى للطلب"
-              value={`${coupon.minOrder} ر.س`}
-            />
+            <InfoTile icon={<Ticket className="w-4 h-4" />} label="حد أدنى للطلب" value={`${coupon.minOrder} ر.س`} />
           )}
         </div>
+        <p className="text-[11px] text-muted-foreground">المصدر: {coupon.source}</p>
       </section>
 
-      {/* Share CTA */}
       <button
         onClick={() => setShareOpen(true)}
         className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-3xl bg-secondary hover:bg-secondary/80 font-black text-base transition"

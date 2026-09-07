@@ -1,19 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Copy, Check, Ticket, Search, MessageCircle } from "lucide-react";
-import { StoreLogo } from "@/components/StoreLogo";
+import { useQuery } from "@tanstack/react-query";
+import { Copy, Check, Ticket, Search, MessageCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { coupons, storeById } from "@/data/coupons";
+import { fetchLiveCoupons, type LiveCoupon } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
 
 export const Route = createFileRoute("/coupons")({
   head: () => ({
     meta: [
-      { title: "كوبونات وأكواد خصم — وفّر" },
-      { name: "description", content: "أحدث كوبونات وأكواد الخصم لمتاجر المملكة: هنقرستيشن، جاهز، نون، جرير، النهدي والمزيد. انسخ الكود واستخدمه فوراً." },
-      { property: "og:title", content: "كوبونات وأكواد خصم — وفّر" },
-      { property: "og:description", content: "أكواد خصم جاهزة للنسخ من كل متاجر المملكة." },
+      { title: "كوبونات وأكواد خصم موثّقة — حكيم AI" },
+      { name: "description", content: "أحدث كوبونات وأكواد الخصم الموثّقة من التجّار والمتاجر في السعودية. انسخ الكود واستخدمه فوراً." },
+      { property: "og:title", content: "كوبونات وأكواد خصم موثّقة — حكيم AI" },
+      { property: "og:description", content: "أكواد خصم حقيقية من تجّار موثّقين، جاهزة للنسخ." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: CouponsPage,
@@ -27,15 +29,23 @@ function CouponsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const [share, setShare] = useState<{ open: boolean; text: string; title: string; url: string }>({ open: false, text: "", title: "", url: "" });
 
+  const couponsQ = useQuery({
+    queryKey: ["live-coupons"],
+    queryFn: () => fetchLiveCoupons(),
+    staleTime: 30_000,
+    refetchInterval: 120_000,
+  });
+
+  const all: LiveCoupon[] = couponsQ.data ?? [];
+
   const filtered = useMemo(() => {
-    return coupons.filter((c) => {
+    return all.filter((c) => {
       if (cat !== "الكل" && c.category !== cat) return false;
       if (!q.trim()) return true;
-      const s = storeById(c.storeId);
-      const hay = `${c.title} ${c.description} ${c.code} ${s?.name ?? ""}`.toLowerCase();
+      const hay = `${c.title} ${c.description} ${c.code} ${c.storeName}`.toLowerCase();
       return hay.includes(q.toLowerCase());
     });
-  }, [q, cat]);
+  }, [all, q, cat]);
 
   const handleCopy = async (code: string) => {
     try {
@@ -56,7 +66,9 @@ function CouponsPage() {
           <Ticket className="w-8 h-8" />
           <div>
             <h1 className="text-2xl md:text-3xl font-black">كوبونات وأكواد خصم</h1>
-            <p className="text-sm opacity-90 mt-1">انسخ الكود واستخدمه في المتجر — وكل نسخة تكسبك 10 نقاط 🎁</p>
+            <p className="text-sm opacity-90 mt-1">
+              {couponsQ.isLoading ? "جارِ التحميل..." : `${all.length} كود موثّق الآن — انسخ واستخدم، وكل نسخة تكسبك 10 نقاط 🎁`}
+            </p>
           </div>
         </div>
       </section>
@@ -86,28 +98,39 @@ function CouponsPage() {
         </div>
       </div>
 
+      {couponsQ.isLoading && (
+        <div className="flex items-center justify-center gap-2 text-muted-foreground py-16">
+          <Loader2 className="w-5 h-5 animate-spin" /> جارِ تحميل الأكواد الموثّقة...
+        </div>
+      )}
+
+      {couponsQ.isError && (
+        <div className="text-center py-16">
+          <p className="text-muted-foreground mb-3">تعذّر تحميل الكوبونات حالياً.</p>
+          <button onClick={() => couponsQ.refetch()} className="px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm">
+            إعادة المحاولة
+          </button>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((c) => {
-          const s = storeById(c.storeId);
           const isCopied = copied === c.code;
           return (
             <article
               key={c.id}
               className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card p-5 shadow-sm hover:shadow-glow transition"
             >
-              <Link
-                to="/coupons/$id"
-                params={{ id: c.id }}
-                className="flex items-start gap-4 hover:opacity-95"
-              >
-                {s ? (
-                  <StoreLogo store={s} size="lg" />
-                ) : (
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-primary text-primary-foreground font-black text-xl shrink-0">?</div>
-                )}
+              <Link to="/coupons/$id" params={{ id: c.id }} className="flex items-start gap-4 hover:opacity-95">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground font-black text-xl shrink-0"
+                  style={{ background: c.color ?? "hsl(var(--primary))" }}
+                >
+                  {c.logo ?? c.storeName.slice(0, 1)}
+                </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    {s?.name}
+                    {c.storeName}
                     {c.category && (
                       <span className="mr-auto px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold text-[10px]">
                         {c.category}
@@ -141,7 +164,7 @@ function CouponsPage() {
                 </button>
                 <button
                   onClick={() => {
-                    const text = encodeURIComponent(`🏟️ *كوبون ${s?.name}*\n${c.title}\nالكود: *${c.code}*\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق HkeeemAI`);
+                    const text = encodeURIComponent(`🏷️ *كوبون ${c.storeName}*\n${c.title}\nالكود: *${c.code}*\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق حكيم AI`);
                     window.open(`https://wa.me/?text=${text}`, "_blank");
                   }}
                   className="h-12 px-3 rounded-2xl bg-green-600 text-white text-sm font-bold hover:bg-green-700 flex items-center gap-1.5"
@@ -156,7 +179,7 @@ function CouponsPage() {
         })}
       </div>
 
-      {filtered.length === 0 && (
+      {!couponsQ.isLoading && !couponsQ.isError && filtered.length === 0 && (
         <div className="text-center text-muted-foreground py-16 leading-8">
           لا توجد كوبونات حقيقية متاحة حالياً.
           <br />

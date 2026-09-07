@@ -94,6 +94,7 @@ export async function createDeal(input: {
   original_price: number;
   price: number;
   product_url?: string;
+  coupon_code?: string;
   expires_at?: string | null;
   submit: boolean;
 }) {

@@ -104,6 +104,11 @@ function ReviewPage() {
                     {d.merchants?.name ?? "—"} · {d.price} ر.س · وفّر {d.discount_percent}%
                   </p>
                   <span className="text-[11px] font-bold text-primary">{DEAL_STATUS_LABEL[d.status]}</span>
+                  {d.coupon_code && (
+                    <span className="mr-2 text-[11px] font-mono font-black px-2 py-0.5 rounded-md bg-primary/10 text-primary">
+                      كود: {d.coupon_code}
+                    </span>
+                  )}
                 </div>
                 <button
                   onClick={() => setDealStatus.mutate({ id: d.id, status: "published" })}
