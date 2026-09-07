@@ -384,6 +384,39 @@ export type Database = {
         }
         Relationships: []
       }
+      deal_alert_settings: {
+        Row: {
+          coupon_window_hours: number
+          coupons_enabled: boolean
+          created_at: string
+          enabled: boolean
+          id: boolean
+          lead_hours: number
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          coupon_window_hours?: number
+          coupons_enabled?: boolean
+          created_at?: string
+          enabled?: boolean
+          id?: boolean
+          lead_hours?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          coupon_window_hours?: number
+          coupons_enabled?: boolean
+          created_at?: string
+          enabled?: boolean
+          id?: boolean
+          lead_hours?: number
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       external_deals: {
         Row: {
           active: boolean
