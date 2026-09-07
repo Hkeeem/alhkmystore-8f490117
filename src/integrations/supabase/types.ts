@@ -989,6 +989,51 @@ export type Database = {
         }
         Relationships: []
       }
+      store_feeds: {
+        Row: {
+          active: boolean
+          affiliate_param: string | null
+          category: string
+          created_at: string
+          feed_type: string
+          feed_url: string
+          id: string
+          last_count: number
+          last_run_at: string | null
+          last_status: string | null
+          store_name: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          affiliate_param?: string | null
+          category?: string
+          created_at?: string
+          feed_type?: string
+          feed_url: string
+          id?: string
+          last_count?: number
+          last_run_at?: string | null
+          last_status?: string | null
+          store_name: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          affiliate_param?: string | null
+          category?: string
+          created_at?: string
+          feed_type?: string
+          feed_url?: string
+          id?: string
+          last_count?: number
+          last_run_at?: string | null
+          last_status?: string | null
+          store_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       suggestions: {
         Row: {
           body: string
