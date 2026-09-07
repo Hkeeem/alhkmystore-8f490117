@@ -20,8 +20,20 @@ export type LiveCoupon = {
   storeName: string;
   logo?: string;
   color?: string;
+  storeUrl?: string;
   source: string;
 };
+
+/** روابط ترويجية مباشرة للمتاجر (بدون مزامنة تلقائية) */
+const STORE_LINKS: Record<string, string> = {
+  noon: "https://www.noon.com/saudi-ar/",
+  amazon: "https://www.amazon.sa/",
+};
+
+function storeLink(storeId?: string | null) {
+  if (!storeId) return undefined;
+  return STORE_LINKS[storeId.trim().toLowerCase()];
+}
 
 function expiresLabel(expiresAt: string | null | undefined) {
   if (!expiresAt) return "غير محدد";
@@ -81,8 +93,10 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       storeName: row.store_name || meta?.name || "متجر",
       logo: meta?.logo,
       color: meta?.color,
+      storeUrl: storeLink(row.store_id),
       source: row.source,
     });
+
   }
 
   for (const row of dealsRes.data ?? []) {
@@ -102,7 +116,9 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       storeName: merchant?.name ?? "تاجر موثّق",
       logo: meta?.logo,
       color: meta?.color,
+      storeUrl: (row as { product_url?: string | null }).product_url ?? storeLink(merchant?.slug),
       source: "تاجر موثّق",
+
     });
   }
 

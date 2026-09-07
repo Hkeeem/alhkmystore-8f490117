@@ -144,12 +144,24 @@ function CouponDetail() {
         <p className="text-[11px] text-muted-foreground">المصدر: {coupon.source}</p>
       </section>
 
+      {coupon.storeUrl && (
+        <a
+          href={coupon.storeUrl}
+          target="_blank"
+          rel="nofollow sponsored noopener noreferrer"
+          className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-3xl bg-primary text-primary-foreground hover:opacity-90 font-black text-base transition"
+        >
+          الانتقال إلى {coupon.storeName} واستخدام الكود
+        </a>
+      )}
+
       <button
         onClick={() => setShareOpen(true)}
         className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-3xl bg-secondary hover:bg-secondary/80 font-black text-base transition"
       >
         <Share2 className="w-5 h-5" /> شارك الكوبون مع صحابك
       </button>
+
 
       <ShareSheet
         open={shareOpen}
