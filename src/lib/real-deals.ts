@@ -63,6 +63,7 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       unit: row.unit ?? undefined,
       image: row.image_url ?? "🏷️",
       expiresIn: expiresLabel(row.expires_at),
+      expiresAt: row.expires_at ?? undefined,
       verifiedAt: row.updated_at ?? row.created_at ?? undefined,
       source: merchant?.name ?? "تاجر موثّق",
     });
