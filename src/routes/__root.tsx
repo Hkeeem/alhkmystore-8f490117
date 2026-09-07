@@ -164,7 +164,8 @@ function RootComponent() {
       <div className="min-h-screen pb-20 md:pb-0">
         <a href="#main-content" className="skip-link">تخطي إلى المحتوى الرئيسي / Skip to content</a>
         <VisitorTracker />
-      <DealAlerts />
+        <DealAlerts />
+
         <TopBar />
         <ScrollMemory />
         <div key={pathname} id="main-content" tabIndex={-1} className="page-transition outline-none">
