@@ -45,6 +45,7 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
 import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
 import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
 import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
@@ -238,6 +239,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedVisitorsRoute = AuthenticatedVisitorsRouteImport.update({
+  id: '/visitors',
+  path: '/visitors',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSyncLogRoute = AuthenticatedSyncLogRouteImport.update({
   id: '/sync-log',
   path: '/sync-log',
@@ -338,6 +344,7 @@ export interface FileRoutesByFullPath {
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
+  '/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -387,6 +394,7 @@ export interface FileRoutesByTo {
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
+  '/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/_authenticated/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/_authenticated/search-console': typeof AuthenticatedSearchConsoleRoute
   '/_authenticated/sync-log': typeof AuthenticatedSyncLogRoute
+  '/_authenticated/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -489,6 +498,7 @@ export interface FileRouteTypes {
     | '/noon-settings'
     | '/search-console'
     | '/sync-log'
+    | '/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -538,6 +548,7 @@ export interface FileRouteTypes {
     | '/noon-settings'
     | '/search-console'
     | '/sync-log'
+    | '/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -588,6 +599,7 @@ export interface FileRouteTypes {
     | '/_authenticated/noon-settings'
     | '/_authenticated/search-console'
     | '/_authenticated/sync-log'
+    | '/_authenticated/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -900,6 +912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/visitors': {
+      id: '/_authenticated/visitors'
+      path: '/visitors'
+      fullPath: '/visitors'
+      preLoaderRoute: typeof AuthenticatedVisitorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sync-log': {
       id: '/_authenticated/sync-log'
       path: '/sync-log'
@@ -995,6 +1014,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedNoonSettingsRoute: typeof AuthenticatedNoonSettingsRoute
   AuthenticatedSearchConsoleRoute: typeof AuthenticatedSearchConsoleRoute
   AuthenticatedSyncLogRoute: typeof AuthenticatedSyncLogRoute
+  AuthenticatedVisitorsRoute: typeof AuthenticatedVisitorsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1005,6 +1025,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedNoonSettingsRoute: AuthenticatedNoonSettingsRoute,
   AuthenticatedSearchConsoleRoute: AuthenticatedSearchConsoleRoute,
   AuthenticatedSyncLogRoute: AuthenticatedSyncLogRoute,
+  AuthenticatedVisitorsRoute: AuthenticatedVisitorsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

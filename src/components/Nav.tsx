@@ -393,8 +393,8 @@ export function TopBar() {
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur-xl bg-background/75 border-b border-primary/15">
-      <div className="relative max-w-6xl mx-auto flex items-center justify-between px-4 h-16">
-        <div className="flex items-center gap-4">
+      <div className="relative max-w-6xl mx-auto flex items-center justify-between gap-2 px-3 sm:px-4 h-16 overflow-hidden">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
           <Sheet open={menuOpen} onOpenChange={handleMenuOpenChange} modal>
             <SheetTrigger asChild>
               <button
@@ -437,18 +437,18 @@ export function TopBar() {
               data-sidebar-hc={highContrast ? "on" : "off"}
               className={
                 (sidebarWide
-                  ? "w-[320px] sm:w-[380px] max-w-[88vw] "
-                  : "w-[268px] sm:w-[288px] max-w-[82vw] ") +
+                  ? "w-[290px] sm:w-[340px] max-w-[84vw] "
+                  : "w-[236px] sm:w-[258px] max-w-[78vw] ") +
                 (highContrast
                   ? "bg-background/95 border-primary/40 "
                   : "bg-background/55 border-primary/15 ") +
-                "sidebar-panel p-4 flex flex-col backdrop-blur-2xl border-l shadow-xl " +
+                "sidebar-panel p-3 flex flex-col backdrop-blur-2xl border-l shadow-xl " +
                 "transition-[width,max-width,background-color,border-color] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] " +
                 "data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:duration-400 data-[state=closed]:duration-250 data-[state=open]:ease-[cubic-bezier(0.22,1,0.36,1)]"
               }
 
             >
-              <SheetHeader className="text-right border-b border-primary/10 pb-4">
+              <SheetHeader className="text-right border-b border-primary/15 pb-3">
                 <SheetTitle className="flex items-center gap-2 text-gold-shine font-display font-black text-xl">
                   <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center ring-1 ring-primary/30">
                     <Sparkles className="w-4 h-4 text-primary" />
@@ -482,6 +482,9 @@ export function TopBar() {
                   </div>
                 </SheetTitle>
               </SheetHeader>
+              <div className="sm:hidden pt-3">
+                <ThemeSwitcher className="w-full justify-center" />
+              </div>
 
 
               <div className="flex-1 overflow-y-auto py-5">
@@ -561,6 +564,25 @@ export function TopBar() {
                   {isStaff && (
                     <li className="contents">
                       <Link
+                        to="/visitors"
+                        onClick={() => handleMenuOpenChange(false)}
+                        aria-current={isPathActive(pathname, "/visitors") ? "page" : undefined}
+                        className={
+                          "sidebar-item " +
+                          (isPathActive(pathname, "/visitors")
+                            ? "relative flex items-center gap-2.5 px-3 py-2 rounded-xl bg-primary/90 text-primary-foreground font-bold transition-all duration-200 whitespace-nowrap"
+                            : "relative flex items-center gap-2.5 px-3 py-2 rounded-xl text-foreground/80 hover:bg-secondary/60 hover:text-foreground hover:translate-x-[-2px] transition-all duration-200 group whitespace-nowrap")
+                        }
+                      >
+                        <RefreshCw className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm">الزوار ومساراتهم</span>
+                      </Link>
+                    </li>
+                  )}
+
+                  {isStaff && (
+                    <li className="contents">
+                      <Link
                         to="/noon-settings"
                         onClick={() => handleMenuOpenChange(false)}
                         aria-current={isPathActive(pathname, "/noon-settings") ? "page" : undefined}
@@ -620,13 +642,13 @@ export function TopBar() {
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); }}
             onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); navigate({ to: "/chat", search: { q: "" } }); } }}
             tabIndex={0}
-            className="relative z-10 w-10 h-10 rounded-full bg-gradient-to-br from-primary/90 to-primary/60 flex items-center justify-center ring-2 ring-primary/40 shadow-[0_0_14px_oklch(0.75_0.16_78_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
+            className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full bg-gradient-to-br from-primary/90 to-primary/60 flex items-center justify-center ring-2 ring-primary/40 shadow-[0_0_14px_oklch(0.75_0.16_78_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
           >
-            <span className="relative font-display font-black text-2xl text-primary-foreground drop-shadow-md select-none">H</span>
+            <span className="relative font-display font-black text-xl sm:text-2xl text-primary-foreground drop-shadow-md select-none">H</span>
           </span>
-          <div className="relative flex flex-col leading-tight px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
-            <span className="relative z-10 font-display font-black text-lg md:text-xl tracking-tight text-gold-shine drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
-            <span className="relative z-10 text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">{t("nav.tagline")}</span>
+          <div className="relative flex min-w-0 flex-col leading-tight px-1.5 sm:px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
+            <span className="relative z-10 font-display font-black text-base sm:text-lg md:text-xl tracking-tight text-gold-shine truncate drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
+            <span className="relative z-10 hidden sm:block text-[10px] text-muted-foreground -mt-0.5 drop-shadow-[0_1px_2px_var(--background)]">{t("nav.tagline")}</span>
           </div>
           <VisionBadge />
         </Link>
@@ -644,7 +666,7 @@ export function TopBar() {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 mr-auto shrink-0">
           {isStaff && (
             <Link
               to="/admin"
@@ -656,7 +678,7 @@ export function TopBar() {
           )}
           <LanguageSwitcher />
           <VisionBadgeSettings className="hidden sm:inline-flex" />
-          <ThemeSwitcher />
+          <ThemeSwitcher className="hidden sm:flex" />
 
 
           {user ? (

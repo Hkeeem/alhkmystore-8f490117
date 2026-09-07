@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
 import { ArrowRight, CalendarClock, Clock, FileText, Flame, MapPin, Share2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { ShareSheet, buildDealShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { DealActions } from "@/components/DealActions";
 import { dealDescription, dealTerms, expiryDate, formatArabicDate } from "@/lib/deal-details";
+import { RealDealDetail } from "@/components/RealDealDetail";
 
 export const Route = createFileRoute("/deals/$id")({
   head: ({ params }) => {
@@ -59,8 +60,13 @@ export const Route = createFileRoute("/deals/$id")({
 
 function DealDetailPage() {
   const { id } = Route.useParams();
-  const deal = deals.find((d) => d.id === id);
-  if (!deal) throw notFound();
+  const isStatic = deals.some((d) => d.id === id);
+  return isStatic ? <StaticDealDetail /> : <RealDealDetail id={id} />;
+}
+
+function StaticDealDetail() {
+  const { id } = Route.useParams();
+  const deal = deals.find((d) => d.id === id)!;
 
   const store = getStore(deal.storeId);
   const off = discountPercent(deal);
