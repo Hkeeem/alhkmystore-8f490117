@@ -15,6 +15,9 @@ import { DealsFilter, InterestToggle, type DealFilter, type Interest } from "@/c
 import { MapButton } from "@/components/MapButton";
 import { z } from "zod";
 
+/** إخفاء مؤقت لأقسام عروض حكيم إلى أن تعود خدمتها الخارجية للعمل */
+const SHOW_HKEEEM_SECTIONS = false;
+
 
 const searchSchema = z.object({
   cat: z.string().optional(),
