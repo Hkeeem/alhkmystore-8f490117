@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SocialOffersSection } from "@/components/SocialOffersSection";
+import { useSocialOffers } from "@/hooks/use-social-offers";
 
 export const Route = createFileRoute("/social-offers")({
   head: () => ({
