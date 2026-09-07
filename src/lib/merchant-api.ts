@@ -148,3 +148,36 @@ export async function staffListDeals() {
   if (error) throw error;
   return (data ?? []) as (MerchantDeal & { merchants: { name: string } | null })[];
 }
+
+/** إنشاء عرض يدوي من لوحة الإدارة (يسمح بالنشر المباشر) */
+export async function staffCreateDeal(input: {
+  merchant_id: string;
+  title: string;
+  description?: string;
+  image_url?: string;
+  category: string;
+  unit?: string;
+  original_price: number;
+  price: number;
+  product_url?: string;
+  coupon_code?: string;
+  starts_at?: string | null;
+  expires_at?: string | null;
+  status: DealStatus;
+}) {
+  const { starts_at, ...rest } = input;
+  const { error } = await supabase.from("merchant_deals").insert({
+    ...rest,
+    starts_at: starts_at || new Date().toISOString(),
+  });
+  if (error) throw error;
+}
+
+/** تعديل تواريخ العرض من لوحة الإدارة */
+export async function staffUpdateDealDates(id: string, patch: { starts_at?: string | null; expires_at?: string | null }) {
+  const update: { starts_at?: string; expires_at?: string | null } = {};
+  if (patch.starts_at) update.starts_at = patch.starts_at;
+  if (patch.expires_at !== undefined) update.expires_at = patch.expires_at;
+  const { error } = await supabase.from("merchant_deals").update(update).eq("id", id);
+  if (error) throw error;
+}

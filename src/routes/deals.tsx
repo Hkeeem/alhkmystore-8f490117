@@ -15,8 +15,7 @@ import { DealsFilter, InterestToggle, type DealFilter, type Interest } from "@/c
 import { MapButton } from "@/components/MapButton";
 import { z } from "zod";
 
-/** إخفاء مؤقت لأقسام عروض حكيم إلى أن تعود خدمتها الخارجية للعمل */
-const SHOW_HKEEEM_SECTIONS = false;
+import { useHkeeemAvailability } from "@/hooks/use-hkeeem-availability";
 
 
 const searchSchema = z.object({
@@ -78,6 +77,8 @@ function DealsPage() {
     return () => window.removeEventListener("hkeeem-prefs-change", load);
   }, []);
 
+  /** أقسام حكيم تظهر تلقائياً فور عودة خدمتها الخارجية */
+  const { available: showHkeeemSections } = useHkeeemAvailability();
   const realDealsQuery = useRealDeals(120);
   const realDeals = useMemo(() => realDealsQuery.data ?? [], [realDealsQuery.data]);
 
@@ -113,7 +114,7 @@ function DealsPage() {
 
 
       {/* أقسام عروض حكيم مخفية مؤقتاً بطلب المالك (خدمة حكيم الخارجية متوقفة) */}
-      {SHOW_HKEEEM_SECTIONS ? (
+      {showHkeeemSections ? (
         <>
           <HkeeemCatalogSection />
           <HkeeemOffersSection />

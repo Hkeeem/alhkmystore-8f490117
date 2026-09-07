@@ -1027,3 +1027,32 @@ html {
     0 8px 40px -8px oklch(0.75 0.02 250 / 0.55),
     0 0 0 1px oklch(0.75 0.02 250 / 0.25);
 }
+
+/* قائمة جانبية أنحف وبلمسة ذهبية */
+.sidebar-panel {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--primary) 10%, transparent),
+    transparent 55%
+  );
+}
+.sidebar-panel .sidebar-item {
+  padding: 0.34rem 0.6rem;
+  gap: 0.5rem;
+  border-radius: 0.65rem;
+  font-size: 13px;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+}
+.sidebar-panel .sidebar-item svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: color-mix(in oklab, var(--primary) 85%, var(--foreground));
+}
+.sidebar-panel .sidebar-item[aria-current="page"],
+.sidebar-panel .sidebar-item[aria-current="page"] svg {
+  color: var(--primary-foreground);
+}
+.sidebar-panel .sidebar-item span {
+  font-size: 13px;
+}

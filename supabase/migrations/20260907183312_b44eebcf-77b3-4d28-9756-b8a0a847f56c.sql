@@ -1,0 +1,1 @@
+CREATE POLICY "deals_staff_insert" ON public.merchant_deals FOR INSERT TO authenticated WITH CHECK (public.is_staff(auth.uid()));

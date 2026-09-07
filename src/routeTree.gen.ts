@@ -45,12 +45,14 @@ import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
 import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
 import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
 import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
 import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
@@ -238,6 +240,11 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedVisitorsRoute = AuthenticatedVisitorsRouteImport.update({
+  id: '/visitors',
+  path: '/visitors',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSyncLogRoute = AuthenticatedSyncLogRouteImport.update({
   id: '/sync-log',
   path: '/sync-log',
@@ -269,6 +276,11 @@ const AuthenticatedMerchantRoute = AuthenticatedMerchantRouteImport.update({
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDealsAdminRoute = AuthenticatedDealsAdminRouteImport.update({
+  id: '/deals-admin',
+  path: '/deals-admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -332,12 +344,14 @@ export interface FileRoutesByFullPath {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
+  '/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -381,12 +395,14 @@ export interface FileRoutesByTo {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
+  '/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -432,12 +448,14 @@ export interface FileRoutesById {
   '/stores': typeof StoresRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/_authenticated/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/_authenticated/noon-settings': typeof AuthenticatedNoonSettingsRoute
   '/_authenticated/search-console': typeof AuthenticatedSearchConsoleRoute
   '/_authenticated/sync-log': typeof AuthenticatedSyncLogRoute
+  '/_authenticated/visitors': typeof AuthenticatedVisitorsRoute
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
@@ -483,12 +501,14 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/admin'
+    | '/deals-admin'
     | '/me'
     | '/merchant'
     | '/merchant-review'
     | '/noon-settings'
     | '/search-console'
     | '/sync-log'
+    | '/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -532,12 +552,14 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/admin'
+    | '/deals-admin'
     | '/me'
     | '/merchant'
     | '/merchant-review'
     | '/noon-settings'
     | '/search-console'
     | '/sync-log'
+    | '/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -582,12 +604,14 @@ export interface FileRouteTypes {
     | '/stores'
     | '/terms'
     | '/_authenticated/admin'
+    | '/_authenticated/deals-admin'
     | '/_authenticated/me'
     | '/_authenticated/merchant'
     | '/_authenticated/merchant-review'
     | '/_authenticated/noon-settings'
     | '/_authenticated/search-console'
     | '/_authenticated/sync-log'
+    | '/_authenticated/visitors'
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
@@ -900,6 +924,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/visitors': {
+      id: '/_authenticated/visitors'
+      path: '/visitors'
+      fullPath: '/visitors'
+      preLoaderRoute: typeof AuthenticatedVisitorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/sync-log': {
       id: '/_authenticated/sync-log'
       path: '/sync-log'
@@ -940,6 +971,13 @@ declare module '@tanstack/react-router' {
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deals-admin': {
+      id: '/_authenticated/deals-admin'
+      path: '/deals-admin'
+      fullPath: '/deals-admin'
+      preLoaderRoute: typeof AuthenticatedDealsAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin': {
@@ -989,22 +1027,26 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDealsAdminRoute: typeof AuthenticatedDealsAdminRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
   AuthenticatedMerchantReviewRoute: typeof AuthenticatedMerchantReviewRoute
   AuthenticatedNoonSettingsRoute: typeof AuthenticatedNoonSettingsRoute
   AuthenticatedSearchConsoleRoute: typeof AuthenticatedSearchConsoleRoute
   AuthenticatedSyncLogRoute: typeof AuthenticatedSyncLogRoute
+  AuthenticatedVisitorsRoute: typeof AuthenticatedVisitorsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDealsAdminRoute: AuthenticatedDealsAdminRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
   AuthenticatedMerchantReviewRoute: AuthenticatedMerchantReviewRoute,
   AuthenticatedNoonSettingsRoute: AuthenticatedNoonSettingsRoute,
   AuthenticatedSearchConsoleRoute: AuthenticatedSearchConsoleRoute,
   AuthenticatedSyncLogRoute: AuthenticatedSyncLogRoute,
+  AuthenticatedVisitorsRoute: AuthenticatedVisitorsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

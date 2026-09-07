@@ -66,6 +66,8 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       expiresAt: row.expires_at ?? undefined,
       verifiedAt: row.updated_at ?? row.created_at ?? undefined,
       source: merchant?.name ?? "تاجر موثّق",
+      productUrl: row.product_url ?? undefined,
+      couponCode: row.coupon_code ?? undefined,
     });
   }
 
@@ -85,8 +87,66 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       productKey: row.product_key ?? undefined,
       verifiedAt: row.fetched_at ?? row.updated_at ?? undefined,
       source: row.store_name ?? row.source ?? undefined,
+      productUrl: row.product_url ?? undefined,
     });
   }
 
   return list;
+}
+
+/** جلب عرض حقيقي واحد بالمعرّف (تاجر موثّق أو مصدر خارجي مثل نون) */
+export async function fetchRealDealById(id: string): Promise<Deal | null> {
+  const [merchantRes, externalRes] = await Promise.all([
+    supabase
+      .from("merchant_deals")
+      .select("*, merchants(id,name,logo_url,city,slug)")
+      .eq("id", id)
+      .eq("status", "published")
+      .maybeSingle(),
+    supabase.from("external_deals").select("*").eq("id", id).maybeSingle(),
+  ]);
+
+  const m = merchantRes.data;
+  if (m) {
+    const merchant = (m as { merchants?: { name?: string; slug?: string } }).merchants;
+    return {
+      id: m.id,
+      title: m.title,
+      storeId: toStoreId(merchant?.slug, merchant?.slug ?? "merchant"),
+      category: toCategory(m.category),
+      originalPrice: Number(m.original_price),
+      price: Number(m.price),
+      unit: m.unit ?? undefined,
+      image: m.image_url ?? "🏷️",
+      expiresIn: expiresLabel(m.expires_at),
+      expiresAt: m.expires_at ?? undefined,
+      verifiedAt: m.updated_at ?? m.created_at ?? undefined,
+      source: merchant?.name ?? "تاجر موثّق",
+      productUrl: m.product_url ?? undefined,
+      couponCode: m.coupon_code ?? undefined,
+    };
+  }
+
+  const e = externalRes.data;
+  if (e) {
+    return {
+      id: e.id,
+      title: e.title,
+      brand: e.brand ?? undefined,
+      storeId: toStoreId(e.store_id, e.store_id ?? "external"),
+      category: toCategory(e.category),
+      originalPrice: Number(e.original_price),
+      price: Number(e.price),
+      unit: e.unit ?? undefined,
+      image: e.image_url ?? "🏷️",
+      expiresIn: expiresLabel(e.expires_at),
+      expiresAt: e.expires_at ?? undefined,
+      productKey: e.product_key ?? undefined,
+      verifiedAt: e.fetched_at ?? e.updated_at ?? undefined,
+      source: e.store_name ?? e.source ?? undefined,
+      productUrl: e.product_url ?? undefined,
+    };
+  }
+
+  return null;
 }
