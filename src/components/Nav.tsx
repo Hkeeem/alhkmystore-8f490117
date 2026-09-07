@@ -13,6 +13,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import hLogo from "@/assets/h-logo.png";
 
 const items = [
   { to: "/", key: "nav.home", icon: Home },
@@ -663,7 +664,7 @@ export function TopBar() {
             tabIndex={0}
             className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full bg-gradient-to-br from-background to-background/80 flex items-center justify-center ring-2 ring-[oklch(0.78_0.18_80)] shadow-[0_0_16px_oklch(0.78_0.18_80_/_0.55)] overflow-hidden cursor-pointer transition-transform hover:scale-110 active:scale-95"
           >
-            <span className="relative font-display font-black text-xl sm:text-2xl text-gold-shine drop-shadow-md select-none">H</span>
+            <img src={hLogo} alt="شعار حكيم AI" className="h-full w-full object-cover select-none" loading="eager" />
           </span>
           <div className="relative flex min-w-0 flex-col leading-tight px-1.5 sm:px-2 py-0.5 rounded-xl bg-background/70 backdrop-blur-sm">
             <span className="relative z-10 font-display font-black text-base sm:text-lg md:text-xl tracking-tight text-gold-shine truncate drop-shadow-[0_1px_2px_var(--background)]">HkeeemAI</span>
