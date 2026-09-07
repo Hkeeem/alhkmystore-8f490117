@@ -58,6 +58,7 @@ import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
 import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
+import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -312,6 +313,11 @@ const ApiPublicHooksSearchConsoleSnapshotRoute =
     path: '/api/public/hooks/search-console-snapshot',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
+  id: '/api/public/hooks/deal-push',
+  path: '/api/public/hooks/deal-push',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
   id: '/api/public/go/$dealId',
   path: '/api/public/go/$dealId',
@@ -364,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
@@ -415,6 +422,7 @@ export interface FileRoutesByTo {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
@@ -468,6 +476,7 @@ export interface FileRoutesById {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
@@ -521,6 +530,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem/'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
@@ -572,6 +582,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
@@ -624,6 +635,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem/'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
@@ -664,6 +676,7 @@ export interface RootRouteChildren {
   HkeeemProductRoute: typeof HkeeemProductRoute
   HkeeemIndexRoute: typeof HkeeemIndexRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
+  ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
   ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
@@ -1015,6 +1028,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/deal-push': {
+      id: '/api/public/hooks/deal-push'
+      path: '/api/public/hooks/deal-push'
+      fullPath: '/api/public/hooks/deal-push'
+      preLoaderRoute: typeof ApiPublicHooksDealPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/go/$dealId': {
       id: '/api/public/go/$dealId'
       path: '/api/public/go/$dealId'
@@ -1120,6 +1140,7 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemProductRoute: HkeeemProductRoute,
   HkeeemIndexRoute: HkeeemIndexRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
+  ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
   ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
