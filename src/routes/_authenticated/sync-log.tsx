@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { AlertTriangle, CheckCircle2, History, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { listSyncEvents } from "@/lib/affiliate-setup.functions";
+import { listSyncEvents, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
+import { REAL_DEALS_KEY } from "@/hooks/use-real-deals";
+import { toast } from "sonner";
 import { NoonSyncSettingsPanel } from "@/components/admin/NoonSyncSettingsPanel";
 
 export const Route = createFileRoute("/_authenticated/sync-log")({
