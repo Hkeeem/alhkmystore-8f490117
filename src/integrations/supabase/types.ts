@@ -989,6 +989,137 @@ export type Database = {
         }
         Relationships: []
       }
+      social_accounts: {
+        Row: {
+          active: boolean
+          city: string | null
+          created_at: string
+          display_name: string | null
+          feed_url: string | null
+          handle: string
+          id: string
+          last_count: number
+          last_run_at: string | null
+          last_status: string | null
+          lat: number | null
+          lng: number | null
+          platform: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          feed_url?: string | null
+          handle: string
+          id?: string
+          last_count?: number
+          last_run_at?: string | null
+          last_status?: string | null
+          lat?: number | null
+          lng?: number | null
+          platform: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          display_name?: string | null
+          feed_url?: string | null
+          handle?: string
+          id?: string
+          last_count?: number
+          last_run_at?: string | null
+          last_status?: string | null
+          lat?: number | null
+          lng?: number | null
+          platform?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      social_offers: {
+        Row: {
+          account_id: string | null
+          active: boolean
+          city: string | null
+          coupon_code: string | null
+          created_at: string
+          description: string | null
+          discount_percent: number | null
+          expires_at: string | null
+          fetched_at: string
+          handle: string
+          id: string
+          image_url: string | null
+          lat: number | null
+          lng: number | null
+          original_price: number | null
+          platform: string
+          post_url: string | null
+          price: number | null
+          source_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          active?: boolean
+          city?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          fetched_at?: string
+          handle: string
+          id?: string
+          image_url?: string | null
+          lat?: number | null
+          lng?: number | null
+          original_price?: number | null
+          platform: string
+          post_url?: string | null
+          price?: number | null
+          source_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          active?: boolean
+          city?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number | null
+          expires_at?: string | null
+          fetched_at?: string
+          handle?: string
+          id?: string
+          image_url?: string | null
+          lat?: number | null
+          lng?: number | null
+          original_price?: number | null
+          platform?: string
+          post_url?: string | null
+          price?: number | null
+          source_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_offers_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "social_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       store_feeds: {
         Row: {
           active: boolean
