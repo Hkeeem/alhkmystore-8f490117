@@ -57,6 +57,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
 import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
+import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/hooks/store-bot'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
 import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
@@ -307,6 +308,11 @@ const ApiPublicHooksSyncExternalDealsRoute =
     path: '/api/public/hooks/sync-external-deals',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksStoreBotRoute = ApiPublicHooksStoreBotRouteImport.update({
+  id: '/api/public/hooks/store-bot',
+  path: '/api/public/hooks/store-bot',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSearchConsoleSnapshotRoute =
   ApiPublicHooksSearchConsoleSnapshotRouteImport.update({
     id: '/api/public/hooks/search-console-snapshot',
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -424,6 +431,7 @@ export interface FileRoutesByTo {
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -478,6 +486,7 @@ export interface FileRoutesById {
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
   '/api/public/hooks/weekly-report': typeof ApiPublicHooksWeeklyReportRoute
   '/api/public/postback/$network': typeof ApiPublicPostbackNetworkRoute
@@ -532,6 +541,7 @@ export interface FileRouteTypes {
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -584,6 +594,7 @@ export interface FileRouteTypes {
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -637,6 +648,7 @@ export interface FileRouteTypes {
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
     | '/api/public/hooks/weekly-report'
     | '/api/public/postback/$network'
@@ -678,6 +690,7 @@ export interface RootRouteChildren {
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  ApiPublicHooksStoreBotRoute: typeof ApiPublicHooksStoreBotRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
   ApiPublicHooksWeeklyReportRoute: typeof ApiPublicHooksWeeklyReportRoute
   ApiPublicPostbackNetworkRoute: typeof ApiPublicPostbackNetworkRoute
@@ -1021,6 +1034,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncExternalDealsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/store-bot': {
+      id: '/api/public/hooks/store-bot'
+      path: '/api/public/hooks/store-bot'
+      fullPath: '/api/public/hooks/store-bot'
+      preLoaderRoute: typeof ApiPublicHooksStoreBotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/search-console-snapshot': {
       id: '/api/public/hooks/search-console-snapshot'
       path: '/api/public/hooks/search-console-snapshot'
@@ -1143,6 +1163,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
+  ApiPublicHooksStoreBotRoute: ApiPublicHooksStoreBotRoute,
   ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
   ApiPublicHooksWeeklyReportRoute: ApiPublicHooksWeeklyReportRoute,
   ApiPublicPostbackNetworkRoute: ApiPublicPostbackNetworkRoute,
