@@ -150,6 +150,7 @@ function SyncLogPage() {
         </Button>
       </div>
 
+      <DealAlertsPanel />
       <NoonSyncSettingsPanel />
       <StoreBotPanel />
       <SocialSyncPanel />
