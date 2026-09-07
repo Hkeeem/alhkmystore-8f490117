@@ -265,20 +265,51 @@ type NoonHit = {
   is_buyable?: boolean;
 };
 
-/** noon.com — كتالوج البحث العام */
+/** واجهة نون الرسمية للشركاء (تُستخدم تلقائيًا عند توفر مفاتيح الأفلييت) */
+async function fetchNoonOfficial(
+  keyword: string,
+  apiKey: string,
+  affiliateId: string | null,
+): Promise<Response | null> {
+  const { getIntegrationKey } = await import("@/lib/integration-keys.server");
+  const base =
+    (await getIntegrationKey("NOON_AFFILIATE_API_BASE")) ??
+    "https://api.noon.partners/v1/catalog/search";
+  const url = `${base}?q=${encodeURIComponent(keyword)}&limit=20${
+    affiliateId ? `&affiliate_id=${encodeURIComponent(affiliateId)}` : ""
+  }`;
+  try {
+    return await fetch(url, {
+      headers: {
+        accept: "application/json",
+        authorization: `Bearer ${apiKey}`,
+        "x-api-key": apiKey,
+        "x-locale": "ar-sa",
+      },
+      signal: AbortSignal.timeout(12_000),
+    });
+  } catch (error) {
+    console.error("noon official api threw", error);
+    return null;
+  }
+}
+
+/** noon.com — الواجهة الرسمية عند توفر المفاتيح، وإلا الكتالوج العام */
 export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]> {
   const { getIntegrationKey } = await import("@/lib/integration-keys.server");
   const affiliateId = await getIntegrationKey("NOON_AFFILIATE_ID");
-  if (!affiliateId) {
+  const apiKey = await getIntegrationKey("NOON_AFFILIATE_API_KEY");
+  if (!affiliateId && !apiKey) {
     await recordSyncEvent({
       source: "noon",
       status: "failure",
       code: "missing_keys",
-      message: "مفاتيح ناقصة: NOON_AFFILIATE_ID",
+      message: "مفاتيح ناقصة: NOON_AFFILIATE_API_KEY / NOON_AFFILIATE_ID",
       keyword,
     });
   }
   const url = `https://www.noon.com/_svc/catalog/api/v3/u/search?q=${encodeURIComponent(keyword)}&limit=20`;
+
 
   let json: { hits?: NoonHit[]; products?: NoonHit[] };
   try {
