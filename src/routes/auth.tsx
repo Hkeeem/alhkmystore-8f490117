@@ -18,9 +18,13 @@ export const Route = createFileRoute("/auth")({
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [method, setMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -71,6 +75,56 @@ function AuthPage() {
     navigate({ to: "/" });
   }
 
+  async function handleApple() {
+    setBusy(true);
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      toast.error("فشل تسجيل الدخول بـ Apple");
+      setBusy(false);
+      return;
+    }
+    if (result.redirected) return;
+    navigate({ to: "/" });
+  }
+
+  async function handleSendOtp(e: React.FormEvent) {
+    e.preventDefault();
+    const normalized = phone.replace(/\s/g, "").replace(/^0/, "+966");
+    if (!/^\+9665\d{8}$/.test(normalized)) {
+      toast.error("أدخل رقم جوال سعودي صحيح مثل 05xxxxxxxx");
+      return;
+    }
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({ phone: normalized });
+      if (error) throw error;
+      setPhone(normalized);
+      setOtpSent(true);
+      toast.success("أُرسل رمز التحقق إلى جوالك");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "تعذّر إرسال الرمز");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
+      if (error) throw error;
+      toast.success("مرحبًا بعودتك!");
+      navigate({ to: "/" });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "الرمز غير صحيح");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
@@ -104,12 +158,91 @@ function AuthPage() {
             الدخول بحساب Google
           </button>
 
+          <button
+            onClick={handleApple}
+            disabled={busy}
+            className="w-full mt-2 flex items-center justify-center gap-2 rounded-2xl border border-border bg-background hover:bg-secondary py-3 font-semibold transition disabled:opacity-50"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.98-.2 1.92-.86 3.24-.75 1.5.12 2.63.71 3.38 1.79-3.13 1.87-2.38 5.73.48 6.86-.6 1.56-1.37 3.1-2.48 4.27zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+            </svg>
+            الدخول بحساب Apple
+          </button>
+
           <div className="flex items-center gap-3 my-5">
             <div className="flex-1 h-px bg-border" />
             <span className="text-xs text-muted-foreground">أو</span>
             <div className="flex-1 h-px bg-border" />
           </div>
 
+          <div className="grid grid-cols-2 gap-2 mb-4 rounded-2xl bg-secondary/60 p-1">
+            <button
+              type="button"
+              onClick={() => { setMethod("email"); setOtpSent(false); }}
+              className={`rounded-xl py-2 text-sm font-bold transition ${method === "email" ? "bg-card shadow text-foreground" : "text-muted-foreground"}`}
+            >
+              بالإيميل
+            </button>
+            <button
+              type="button"
+              onClick={() => { setMethod("phone"); setOtpSent(false); }}
+              className={`rounded-xl py-2 text-sm font-bold transition ${method === "phone" ? "bg-card shadow text-foreground" : "text-muted-foreground"}`}
+            >
+              برقم الجوال
+            </button>
+          </div>
+
+          {method === "phone" ? (
+            otpSent ? (
+              <form onSubmit={handleVerifyOtp} className="space-y-3">
+                <p className="text-xs text-muted-foreground text-center">أدخل الرمز المرسل إلى {phone}</p>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  required
+                  maxLength={6}
+                  placeholder="رمز التحقق (6 أرقام)"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-center text-lg tracking-[0.5em] font-bold"
+                  dir="ltr"
+                />
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="w-full rounded-2xl bg-primary text-primary-foreground py-3 font-bold shadow-glow disabled:opacity-50"
+                >
+                  {busy ? "..." : "تأكيد الدخول"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setOtpSent(false); setOtp(""); }}
+                  className="w-full text-center text-sm text-muted-foreground hover:text-foreground"
+                >
+                  تغيير الرقم
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleSendOtp} className="space-y-3">
+                <input
+                  type="tel"
+                  required
+                  placeholder="05xxxxxxxx"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm"
+                  dir="ltr"
+                />
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="w-full rounded-2xl bg-primary text-primary-foreground py-3 font-bold shadow-glow disabled:opacity-50"
+                >
+                  {busy ? "..." : "إرسال رمز التحقق"}
+                </button>
+              </form>
+            )
+          ) : (
           <form onSubmit={handleEmail} className="space-y-3">
             {mode === "signup" && (
               <input
@@ -151,6 +284,7 @@ function AuthPage() {
               {busy ? "..." : mode === "signin" ? "دخول" : "إنشاء حساب"}
             </button>
           </form>
+          )}
 
           <button
             onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
