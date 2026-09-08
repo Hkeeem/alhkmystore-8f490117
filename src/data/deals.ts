@@ -169,8 +169,16 @@ export function discountPercent(d: Deal) {
   return Math.round(((d.originalPrice - d.price) / d.originalPrice) * 100);
 }
 
-export function getStore(id: string) {
-  return stores.find((s) => s.id === id)!;
+export function getStore(id: string): Store {
+  const found = stores.find((s) => s.id === id);
+  if (found) return found;
+  return {
+    id: id || "unknown",
+    name: id ? id.replace(/[-_]/g, " ") : "متجر غير معروف",
+    logo: "؟",
+    color: "oklch(0.6 0.02 250)",
+    category: stores[0]!.category,
+  };
 }
 
 export function bestDeals(n = 6) {
