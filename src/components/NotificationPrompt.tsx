@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Bell, X, BellRing } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
+import { usePush } from "@/hooks/use-push";
 import { toast } from "sonner";
 
 export function NotificationPrompt() {
-  const { permission, dismissed, isReady, request, dismiss } = useNotifications();
+  const { permission, dismissed, isReady, dismiss } = useNotifications();
+  const push = usePush();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -19,17 +21,26 @@ export function NotificationPrompt() {
 
   if (!visible) return null;
 
+  /** يسجّل الجهاز فعلياً في إشعارات الجوال (Web Push) وليس فقط داخل التطبيق */
   const handleEnable = async () => {
-    const result = await request();
-    if (result === "granted") {
-      toast.success("تم تفعيل الإشعارات", {
-        description: "سنرسل لك تنبيهات بأفضل العروض والكوبونات الجديدة.",
+    const result = await push.subscribe();
+    if (result.ok) {
+      dismiss();
+      setVisible(false);
+      toast.success("تم تفعيل إشعارات الجوال", {
+        description: "بيصلك تنبيه على جوالك قبل انتهاء العرض وعند كل كوبون جديد.",
         icon: <BellRing className="w-4 h-4" />,
       });
-    } else if (result === "denied") {
+      return;
+    }
+    if (result.reason === "denied") {
       toast.info("تم حظر الإشعارات", {
         description: "يمكنك تفعيلها لاحقًا من إعدادات المتصفح.",
       });
+    } else if (result.reason === "server_not_configured") {
+      toast.error("خدمة الإشعارات غير جاهزة حالياً، جرّب بعد قليل.");
+    } else if (result.reason !== "default") {
+      toast.error("تعذّر تفعيل إشعارات الجوال على هذا المتصفح.");
     }
   };
 
