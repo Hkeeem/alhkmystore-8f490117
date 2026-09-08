@@ -176,17 +176,21 @@ export const getNoonCampaignStatus = createServerFn({ method: "GET" }).handler(a
     recommended,
     campaigns,
     stats: { liveDeals, clicks, conversions },
+    // لا نكشف المعرّف الكامل لأي زائر — نعرض النسخة المخفية فقط
     sampleDeepLink: configured
-      ? `https://www.noon.com/saudi-ar/p/?sku=EXAMPLE&utm_source=${encodeURIComponent(publisherId)}&utm_medium=affiliate&subid=<clickId>`
+      ? `https://www.noon.com/saudi-ar/p/?sku=EXAMPLE&utm_source=${`${publisherId.slice(0, 3)}${"*".repeat(Math.max(2, publisherId.length - 5))}${publisherId.slice(-2)}`}&utm_medium=affiliate&subid=<clickId>`
       : null,
   };
 });
 
 export const verifyNoonPublisherId = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => ({
     publisherId: String((data as { publisherId?: unknown })?.publisherId ?? "").trim().slice(0, 120),
   }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) return { ok: false as const, reason: "هذه الأداة للمشرفين فقط." };
     const input = data.publisherId;
     if (!input) return { ok: false as const, reason: "أدخل معرّف الناشر أولًا." };
     if (!/^[A-Za-z0-9._-]{3,64}$/.test(input)) {
@@ -215,7 +219,11 @@ export type SyncFailureInfo = {
   recoveredAt: string | null;
 };
 
-export const getSyncFailures = createServerFn({ method: "GET" }).handler(async () => {
+export const getSyncFailures = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+  const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+  if (!isStaff) return { amazon: null, noon: null } as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const sources = ["amazon", "noon"] as const;
   const out: Record<string, SyncFailureInfo | null> = { amazon: null, noon: null };

@@ -4,9 +4,9 @@ import { z } from "zod";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 
 const AnalysisInput = z.object({
-  store: z.string().min(1),
-  competitors: z.string(),
-  notes: z.string(),
+  store: z.string().min(1).max(600),
+  competitors: z.string().max(1000),
+  notes: z.string().max(2000),
 });
 
 const AnalysisSchema = z.object({

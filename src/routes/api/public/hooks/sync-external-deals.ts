@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { assertCronRequest } from "@/lib/cron-auth.server";
 import { z } from "zod";
 
 const bodySchema = z
@@ -8,11 +9,8 @@ const bodySchema = z
   .optional();
 
 async function runSync(request: Request) {
-  const apikey = request.headers.get("apikey") ?? "";
-  const expected = process.env["SUPABASE_ANON_KEY"] ?? process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "";
-  if (!expected || apikey !== expected) {
-    return Response.json({ error: "unauthorized" }, { status: 401 });
-  }
+  const denied = await assertCronRequest(request);
+  if (denied) return denied;
 
   let keywords: string[] | undefined;
   try {

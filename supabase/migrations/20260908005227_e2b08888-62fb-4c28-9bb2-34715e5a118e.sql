@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.register_affiliate_click(uuid, text, text, text, text, text) FROM anon, authenticated, public;
+REVOKE EXECUTE ON FUNCTION public.register_affiliate_click_returning(uuid, text, text, text, text, text) FROM anon, authenticated, public;
