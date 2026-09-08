@@ -4,11 +4,11 @@ import { z } from "zod";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 
 const AdsInput = z.object({
-  product: z.string().min(1),
-  audience: z.string(),
+  product: z.string().min(1).max(600),
+  audience: z.string().max(600),
   platform: z.enum(["سناب شات", "تيك توك", "إنستغرام"]),
   dialect: z.enum(["سعودية", "فصحى"]),
-  tone: z.string(),
+  tone: z.string().max(300),
 });
 
 const AdsSchema = z.object({
