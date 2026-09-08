@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Bell, X, BellRing } from "lucide-react";
 import { useNotifications } from "@/hooks/use-notifications";
+import { usePush } from "@/hooks/use-push";
 import { toast } from "sonner";
 
 export function NotificationPrompt() {
-  const { permission, dismissed, isReady, request, dismiss } = useNotifications();
+  const { permission, dismissed, isReady, dismiss } = useNotifications();
+  const push = usePush();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
