@@ -73,13 +73,13 @@ export async function runDealPushSweep(): Promise<DealPushResult> {
       key: `expiring:merchant:${d.id}`,
       title: "⏰ آخر فرصة للعرض",
       body: `${d.title} — ينتهي خلال أقل من ${leadLabel} (${Number(d.price)} ر.س)`,
-      url: `/deal/${d.id}`,
+      url: `/deals/${d.id}`,
     })),
     ...(external.data ?? []).map((d) => ({
       key: `expiring:external:${d.id}`,
       title: "⏰ آخر فرصة للعرض",
       body: `${d.title}${d.store_name ? ` — ${d.store_name}` : ""} ينتهي خلال أقل من ${leadLabel}`,
-      url: `/deal/${d.id}`,
+      url: `/deals/${d.id}`,
     })),
   ];
 

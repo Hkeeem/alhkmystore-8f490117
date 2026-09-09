@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
 import { stores, getStore } from "@/data/deals";
+import { trackDealClick } from "@/lib/track-deal";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
 import { useLiveDeals } from "@/hooks/use-live-deals";
@@ -1098,7 +1099,15 @@ function MapsPage() {
                 >
                   <button
                     type="button"
-                    onClick={() => focusOnMap(deal.id)}
+                    onClick={() => {
+                      trackDealClick({
+                        dealId: deal.id,
+                        title: deal.title,
+                        storeName: store.name,
+                        surface: "map",
+                      });
+                      focusOnMap(deal.id);
+                    }}
                     aria-label={`عرض ${deal.title} على الخريطة`}
                     className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-secondary/40"
                   >
@@ -1147,7 +1156,15 @@ function MapsPage() {
                   <div className="flex flex-col items-center gap-1 shrink-0">
                     <button
                       type="button"
-                      onClick={() => focusOnMap(deal.id)}
+                      onClick={() => {
+                      trackDealClick({
+                        dealId: deal.id,
+                        title: deal.title,
+                        storeName: store.name,
+                        surface: "map",
+                      });
+                      focusOnMap(deal.id);
+                    }}
                       className="flex items-center gap-1 bg-secondary/60 text-primary text-[10px] font-black px-2 py-1 rounded-xl hover:bg-secondary transition"
                     >
                       <MapPin className="w-3 h-3" />

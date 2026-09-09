@@ -10,6 +10,7 @@ import { timeAgoAr } from "@/hooks/use-live-deals";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
+import { trackDealClick } from "@/lib/track-deal";
 
 /** وسم شفافية يوضح سبب ترقية العرض */
 function transparencyTag(deal: Deal, off: number): string | null {
@@ -88,6 +89,7 @@ export function DealCard({
   const handleCta = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    trackDealClick({ dealId: deal.id, title: deal.title, storeName: store.name, surface: "list" });
     window.open(storeUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -97,6 +99,9 @@ export function DealCard({
       to="/deals/$id"
       params={{ id: deal.id }}
       className="hk-card group flex flex-col h-full relative overflow-hidden"
+      onClick={() =>
+        trackDealClick({ dealId: deal.id, title: deal.title, storeName: store.name, surface: "list" })
+      }
     >
       <div className="relative aspect-[4/3] bg-zinc-50">
         {hasRealImage ? (
