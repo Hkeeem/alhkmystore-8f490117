@@ -46,6 +46,7 @@ export type DealClickStats = {
   uniqueDeals: number;
   sessions: number;
   bySurface: { surface: string; count: number }[];
+  cities: { city: string; clicks: number; deals: number; conversions: number }[];
   conversions: number;
   conversionRate: number;
   deals: {
@@ -57,6 +58,7 @@ export type DealClickStats = {
     listClicks: number;
     conversions: number;
     lastAt: string;
+    city: string;
   }[];
 };
 
@@ -93,10 +95,11 @@ export const getDealClickStats = createServerFn({ method: "GET" })
     }
 
     const surfaces = new Map<string, number>();
+    const cityAgg = new Map<string, { clicks: number; deals: Set<string> }>();
     const sessions = new Set<string>();
     const perDeal = new Map<
       string,
-      { title: string; storeName: string; clicks: number; map: number; list: number; lastAt: string }
+      { title: string; storeName: string; clicks: number; map: number; list: number; lastAt: string; city: string }
     >();
 
     for (const r of list) {
@@ -106,6 +109,11 @@ export const getDealClickStats = createServerFn({ method: "GET" })
       const surface = p.surface ?? "list";
       surfaces.set(surface, (surfaces.get(surface) ?? 0) + 1);
       if (p.session) sessions.add(p.session);
+      const city = p.city || "غير محدد";
+      const ca = cityAgg.get(city) ?? { clicks: 0, deals: new Set<string>() };
+      ca.clicks += 1;
+      ca.deals.add(id);
+      cityAgg.set(city, ca);
       const cur = perDeal.get(id) ?? {
         title: p.title || "عرض",
         storeName: p.storeName || "—",
@@ -113,6 +121,7 @@ export const getDealClickStats = createServerFn({ method: "GET" })
         map: 0,
         list: 0,
         lastAt: r.created_at,
+        city,
       };
       cur.clicks += 1;
       if (surface === "map") cur.map += 1;
@@ -130,6 +139,14 @@ export const getDealClickStats = createServerFn({ method: "GET" })
       bySurface: [...surfaces.entries()]
         .map(([surface, count]) => ({ surface, count }))
         .sort((a, b) => b.count - a.count),
+      cities: [...cityAgg.entries()]
+        .map(([city, v]) => ({
+          city,
+          clicks: v.clicks,
+          deals: v.deals.size,
+          conversions: [...v.deals].reduce((s2, id) => s2 + (convByDeal.get(id) ?? 0), 0),
+        }))
+        .sort((a, b) => b.clicks - a.clicks),
       conversions,
       conversionRate: list.length ? Math.round((conversions / list.length) * 1000) / 10 : 0,
       deals: [...perDeal.entries()]
@@ -142,6 +159,7 @@ export const getDealClickStats = createServerFn({ method: "GET" })
           listClicks: v.list,
           conversions: convByDeal.get(dealId) ?? 0,
           lastAt: v.lastAt,
+          city: v.city,
         }))
         .sort((a, b) => b.clicks - a.clicks)
         .slice(0, 50),
