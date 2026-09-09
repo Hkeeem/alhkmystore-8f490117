@@ -26,7 +26,7 @@ export const analyzeStore = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<StoreAnalysis> => {
     const gateway = createLovableAiGateway();
 
-    const prompt = `حلّل المتجر السعودي التالي تحليلاً تجارياً عملياً باللغة العربية:
+    const prompt = `حلّل المتجر السعودي التالي تحليلاً تجارياً عملياً باللغة العربية الفصحى المعاصرة:
 - المتجر: ${data.store}
 - المنافسون: ${data.competitors || "غير محدد (استنتج أبرز المنافسين في السوق السعودي)"}
 - ملاحظات إضافية: ${data.notes || "لا يوجد"}
@@ -36,7 +36,7 @@ export const analyzeStore = createServerFn({ method: "POST" })
 - strengths / weaknesses / opportunities / threats: من 3 إلى 4 نقاط لكل عنصر، كل نقطة جملة قصيرة.
 - growth: 3 استراتيجيات نمو عملية.
 - shipping: 3 طرق لتخفيض تكلفة الشحن في السعودية (سبل، سمسا، التجميع، حدود الشحن المجاني).
-لا تستخدم رموزاً تعبيرية، واذكر الأسعار بالريال السعودي شاملة الضريبة عند اللزوم.`;
+لا تستخدم رموزاً تعبيرية، واذكر الأسعار بالريال السعودي شاملة الضريبة عند اللزوم. اكتب كل النصوص بالعربية الفصحى المعاصرة فقط، دون عامية.`;
 
     try {
       const { output } = await generateText({

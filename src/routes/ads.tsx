@@ -27,7 +27,7 @@ function AdsPage() {
   const [product, setProduct] = useState("");
   const [audience, setAudience] = useState("");
   const [platform, setPlatform] = useState<(typeof PLATFORMS)[number]>("سناب شات");
-  const [dialect, setDialect] = useState<(typeof DIALECTS)[number]>("سعودية");
+  const [dialect, setDialect] = useState<(typeof DIALECTS)[number]>("فصحى");
   const [tone, setTone] = useState("حماسية");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AdsResult | null>(null);

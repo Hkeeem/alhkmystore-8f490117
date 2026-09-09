@@ -8,11 +8,11 @@ type Msg = {
   product?: { store: string; price: string; saving: string };
 };
 
-const quickActions = ["🔍 ابحث عن منتج", "💰 أفضل العروض", "📊 قارن الأسعار"];
+const quickActions = ["ابحث عن منتج", "أفضل العروض", "قارن الأسعار"];
 
 export default function AiChat() {
   const [messages, setMessages] = useState<Msg[]>([
-    { isUser: false, text: "مرحبًا! 👋 أنا مساعدك الذكي في hkeeemAI. كيف يمكنني مساعدتك اليوم؟" },
+    { isUser: false, text: "مرحباً، أنا حكيم، مساعدك الذكي في Hkeeem AI. كيف يمكنني مساعدتك اليوم؟" },
   ]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
@@ -33,8 +33,8 @@ export default function AiChat() {
         ...m,
         {
           isUser: false,
-          text: "🎯 وجدت لك 3 عروض ممتازة! أفضلها:",
-          product: { store: "نون", price: "4,799 ر.س", saving: "وفر 1,350 ر.س" },
+          text: "وجدت لك ثلاثة عروض ممتازة، وأفضلها الآن:",
+          product: { store: "نون", price: "4,799 ر.س", saving: "توفير 1,350 ر.س" },
         },
       ]);
     }, 1200);
@@ -46,11 +46,11 @@ export default function AiChat() {
         <Link to="/hkeeem" className="hk-gold-text text-xl">→</Link>
         <div className="w-10 h-10 rounded-full hk-card flex items-center justify-center text-xl"
           style={{ boxShadow: "0 0 12px rgba(212,175,55,0.4)" }}>
-          🤖
+          ح
         </div>
         <div className="flex-1">
-          <p className="font-bold text-sm hk-gold-text">مساعد hkeeemAI</p>
-          <p className="text-[11px]" style={{ color: "var(--hkeeem-success)" }}>🟢 متصل الآن</p>
+          <p className="font-bold text-sm hk-gold-text">مساعد Hkeeem AI</p>
+          <p className="text-[11px]" style={{ color: "var(--hkeeem-success)" }}>متصل الآن</p>
         </div>
         <button className="hk-gold-text text-xl">⋮</button>
       </header>
@@ -70,9 +70,9 @@ export default function AiChat() {
                 <p className="text-sm">{m.text}</p>
                 {m.product && (
                   <div className="mt-2 p-3 rounded-xl bg-black/30 border border-[rgba(212,175,55,0.5)]">
-                    <p className="font-bold hk-gold-text text-sm">📱 {m.product.store} - {m.product.price}</p>
+                    <p className="font-bold hk-gold-text text-sm">{m.product.store} - {m.product.price}</p>
                     <p className="text-[11px] mt-0.5" style={{ color: "var(--hkeeem-success)" }}>
-                      ⬇ {m.product.saving}
+                      {m.product.saving}
                     </p>
                     <button className="hk-btn-gold w-full mt-2 text-sm !py-2">اشتري الآن</button>
                   </div>
@@ -122,7 +122,7 @@ export default function AiChat() {
           <button className="hk-gold-text text-xl">🎤</button>
         </div>
         <p className="text-center text-[10px] mt-1.5" style={{ color: "var(--hkeeem-gold-dark)" }}>
-          ✨ مدعوم بالذكاء الاصطناعي
+          مدعوم بالذكاء الاصطناعي
         </p>
       </div>
     </div>
