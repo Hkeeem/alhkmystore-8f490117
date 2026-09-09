@@ -16,9 +16,9 @@ export const Route = createFileRoute("/api/tts")({
           body: JSON.stringify({
             model: "openai/gpt-4o-mini-tts",
             input: text,
-            voice: "alloy",
+            voice: "onyx",
             response_format: "mp3",
-            instructions: "تحدث بلهجة سعودية ودودة ومتحمسة، بسرعة طبيعية.",
+            instructions: "تحدث باللغة العربية الفصحى، بصوت ثقيل وعميق وواضح، وبوتيرة معتدلة. تجنب اللهجة العامية.",
           }),
         });
         if (!r.ok) return new Response(await r.text(), { status: r.status });
