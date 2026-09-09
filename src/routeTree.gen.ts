@@ -55,6 +55,7 @@ import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authe
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
+import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenticated/deal-reports'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
@@ -298,6 +299,12 @@ const AuthenticatedDealsAdminRoute = AuthenticatedDealsAdminRouteImport.update({
   path: '/deals-admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDealReportsRoute =
+  AuthenticatedDealReportsRouteImport.update({
+    id: '/deal-reports',
+    path: '/deal-reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -377,6 +384,7 @@ export interface FileRoutesByFullPath {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deal-reports': typeof AuthenticatedDealReportsRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
@@ -433,6 +441,7 @@ export interface FileRoutesByTo {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/deal-reports': typeof AuthenticatedDealReportsRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
   '/merchant': typeof AuthenticatedMerchantRoute
@@ -491,6 +500,7 @@ export interface FileRoutesById {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/deal-reports': typeof AuthenticatedDealReportsRoute
   '/_authenticated/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/admin'
+    | '/deal-reports'
     | '/deals-admin'
     | '/me'
     | '/merchant'
@@ -605,6 +616,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/admin'
+    | '/deal-reports'
     | '/deals-admin'
     | '/me'
     | '/merchant'
@@ -662,6 +674,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/_authenticated/admin'
+    | '/_authenticated/deal-reports'
     | '/_authenticated/deals-admin'
     | '/_authenticated/me'
     | '/_authenticated/merchant'
@@ -1060,6 +1073,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDealsAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/deal-reports': {
+      id: '/_authenticated/deal-reports'
+      path: '/deal-reports'
+      fullPath: '/deal-reports'
+      preLoaderRoute: typeof AuthenticatedDealReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -1128,6 +1148,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedDealReportsRoute: typeof AuthenticatedDealReportsRoute
   AuthenticatedDealsAdminRoute: typeof AuthenticatedDealsAdminRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
@@ -1140,6 +1161,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedDealReportsRoute: AuthenticatedDealReportsRoute,
   AuthenticatedDealsAdminRoute: AuthenticatedDealsAdminRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
