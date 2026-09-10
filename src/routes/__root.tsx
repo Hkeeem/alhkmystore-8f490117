@@ -21,6 +21,7 @@ import { FeedbackSurvey } from "@/components/FeedbackSurvey";
 import { LanguageProvider } from "@/lib/i18n";
 import { DealAlerts } from "@/components/DealAlerts";
 import { VisitorTracker } from "@/components/VisitorTracker";
+import { PreviewErrorRecorder } from "@/components/PreviewErrorRecorder";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
