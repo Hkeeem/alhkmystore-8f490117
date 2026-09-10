@@ -1,6 +1,7 @@
 import { recordDealClick } from "@/lib/deal-tracking.functions";
+import { recordOfferClick } from "@/lib/offer-clicks.functions";
 
-function sessionId() {
+export function sessionId() {
   if (typeof window === "undefined") return "";
   try {
     let s = localStorage.getItem("hk_session");
@@ -22,15 +23,58 @@ export function trackDealClick(input: {
   dealId: string;
   title?: string;
   storeName?: string;
+  storeId?: string;
   surface: "list" | "map" | "detail" | "coupon";
   kind?: "click" | "view";
 }) {
   if (typeof window === "undefined" || !input.dealId) return;
+  const session = sessionId();
+  const path = window.location.pathname;
   try {
     void recordDealClick({
+      data: { ...input, kind: input.kind ?? "click", session, path },
+    }).catch(() => {
+      /* تجاهل */
+    });
+    void recordOfferClick({
       data: {
-        ...input,
-        kind: input.kind ?? "click",
+        kind: "offer",
+        offerId: input.dealId,
+        offerTitle: input.title,
+        storeId: input.storeId,
+        storeName: input.storeName,
+        surface: input.surface,
+        session,
+        path,
+      },
+    }).catch(() => {
+      /* تجاهل */
+    });
+  } catch {
+    /* تجاهل */
+  }
+}
+
+/** تسجيل نقرة على كوبون (نسخ الكود أو فتح المتجر) */
+export function trackCouponClick(input: {
+  couponId: string;
+  code?: string;
+  title?: string;
+  storeId?: string;
+  storeName?: string;
+  surface?: "coupon" | "coupon-detail";
+}) {
+  if (typeof window === "undefined" || !input.couponId) return;
+  try {
+    void recordOfferClick({
+      data: {
+        kind: "coupon",
+        offerId: input.couponId,
+        offerTitle: input.title,
+        couponCode: input.code,
+        storeId: input.storeId,
+        storeName: input.storeName,
+        surface: input.surface ?? "coupon",
         session: sessionId(),
         path: window.location.pathname,
       },
