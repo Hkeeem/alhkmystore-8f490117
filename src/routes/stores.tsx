@@ -19,6 +19,7 @@ export const Route = createFileRoute("/stores")({
 });
 
 function Stores() {
+  const { t } = useI18n();
   const grouped = stores.reduce<Record<string, typeof stores>>((acc, s) => {
     (acc[s.category] ||= []).push(s);
     return acc;
