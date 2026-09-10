@@ -31,8 +31,8 @@ function Stores() {
           <StoreIcon className="w-6 h-6 text-secondary" />
         </div>
         <div>
-          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">المتاجر</h1>
-          <p className="text-sm text-muted-foreground">{stores.length} متجرًا شريكًا</p>
+          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">{t("stores.title")}</h1>
+          <p className="text-sm text-muted-foreground">{stores.length} {t("stores.count")}</p>
         </div>
       </header>
 
