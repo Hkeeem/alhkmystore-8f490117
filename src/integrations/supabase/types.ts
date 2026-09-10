@@ -171,6 +171,66 @@ export type Database = {
           },
         ]
       }
+      affiliate_stores: {
+        Row: {
+          active: boolean
+          affiliate_param: string | null
+          category: string | null
+          city: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          network: string
+          network_account_email: string | null
+          network_account_id: string | null
+          notes: string | null
+          site_url: string
+          slug: string | null
+          tracking_template: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          affiliate_param?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          network?: string
+          network_account_email?: string | null
+          network_account_id?: string | null
+          notes?: string | null
+          site_url: string
+          slug?: string | null
+          tracking_template?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          affiliate_param?: string | null
+          category?: string | null
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          network?: string
+          network_account_email?: string | null
+          network_account_id?: string | null
+          notes?: string | null
+          site_url?: string
+          slug?: string | null
+          tracking_template?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -330,6 +390,63 @@ export type Database = {
           subject?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      coupon_reports: {
+        Row: {
+          coupon_code: string | null
+          coupon_id: string
+          created_at: string
+          id: string
+          note: string | null
+          offer_url: string | null
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          session: string | null
+          site_url: string | null
+          status: string
+          store_id: string | null
+          store_name: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          coupon_code?: string | null
+          coupon_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          offer_url?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          session?: string | null
+          site_url?: string | null
+          status?: string
+          store_id?: string | null
+          store_name?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          coupon_code?: string | null
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          offer_url?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          session?: string | null
+          site_url?: string | null
+          status?: string
+          store_id?: string | null
+          store_name?: string | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -716,6 +833,57 @@ export type Database = {
           read_at?: string | null
           title?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      offer_clicks: {
+        Row: {
+          city: string | null
+          country: string | null
+          coupon_code: string | null
+          created_at: string
+          id: string
+          kind: string
+          offer_id: string
+          offer_title: string | null
+          path: string | null
+          session: string | null
+          store_id: string | null
+          store_name: string | null
+          surface: string
+          user_id: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          offer_id: string
+          offer_title?: string | null
+          path?: string | null
+          session?: string | null
+          store_id?: string | null
+          store_name?: string | null
+          surface?: string
+          user_id?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          coupon_code?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          offer_id?: string
+          offer_title?: string | null
+          path?: string | null
+          session?: string | null
+          store_id?: string | null
+          store_name?: string | null
+          surface?: string
+          user_id?: string | null
         }
         Relationships: []
       }
