@@ -16,9 +16,22 @@ export const Route = createFileRoute("/maps")({
   }),
   head: () => ({
     meta: [
-      { title: "خريطتي — HkeeemAI" },
-      { name: "description", content: "أقرب العروض والمتاجر على خريطة المملكة مع فروع حقيقية وتوجيه مباشر." },
+      { title: "Hkeeem Map — خريطة العروض القريبة منك" },
+      {
+        name: "description",
+        content:
+          "Hkeeem Map: أقرب العروض والكوبونات والمتاجر على خريطة المملكة، مع فروع حقيقية ومسافات وتوجيه مباشر.",
+      },
+      { property: "og:title", content: "Hkeeem Map — خريطة العروض القريبة منك" },
+      {
+        property: "og:description",
+        content: "شاهد العروض القريبة منك على الخريطة واحصل على الاتجاهات لأقرب فرع.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://alhkmystore.lovable.app/maps" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/maps" }],
   }),
   component: MapsPage,
 });
