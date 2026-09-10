@@ -56,6 +56,7 @@ import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
 import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenticated/deal-reports'
+import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenticated/build-errors'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
 import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
@@ -305,6 +306,12 @@ const AuthenticatedDealReportsRoute =
     path: '/deal-reports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBuildErrorsRoute =
+  AuthenticatedBuildErrorsRouteImport.update({
+    id: '/build-errors',
+    path: '/build-errors',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -384,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/deal-reports': typeof AuthenticatedDealReportsRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
@@ -441,6 +449,7 @@ export interface FileRoutesByTo {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/deal-reports': typeof AuthenticatedDealReportsRoute
   '/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/me': typeof AuthenticatedMeRoute
@@ -500,6 +509,7 @@ export interface FileRoutesById {
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/_authenticated/deal-reports': typeof AuthenticatedDealReportsRoute
   '/_authenticated/deals-admin': typeof AuthenticatedDealsAdminRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
@@ -559,6 +569,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/admin'
+    | '/build-errors'
     | '/deal-reports'
     | '/deals-admin'
     | '/me'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/admin'
+    | '/build-errors'
     | '/deal-reports'
     | '/deals-admin'
     | '/me'
@@ -674,6 +686,7 @@ export interface FileRouteTypes {
     | '/sync-partners'
     | '/terms'
     | '/_authenticated/admin'
+    | '/_authenticated/build-errors'
     | '/_authenticated/deal-reports'
     | '/_authenticated/deals-admin'
     | '/_authenticated/me'
@@ -1080,6 +1093,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDealReportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/build-errors': {
+      id: '/_authenticated/build-errors'
+      path: '/build-errors'
+      fullPath: '/build-errors'
+      preLoaderRoute: typeof AuthenticatedBuildErrorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -1148,6 +1168,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedBuildErrorsRoute: typeof AuthenticatedBuildErrorsRoute
   AuthenticatedDealReportsRoute: typeof AuthenticatedDealReportsRoute
   AuthenticatedDealsAdminRoute: typeof AuthenticatedDealsAdminRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
@@ -1161,6 +1182,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedBuildErrorsRoute: AuthenticatedBuildErrorsRoute,
   AuthenticatedDealReportsRoute: AuthenticatedDealReportsRoute,
   AuthenticatedDealsAdminRoute: AuthenticatedDealsAdminRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,

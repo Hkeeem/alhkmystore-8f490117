@@ -106,6 +106,45 @@ export const dict = {
   "common.retry": { ar: "إعادة المحاولة", en: "Try again" },
   "common.errorTitle": { ar: "صار خطأ غير متوقع", en: "Something went wrong" },
   "common.errorHint": { ar: "جرّب تحدّث الصفحة.", en: "Try refreshing the page." },
+  "common.loading": { ar: "جارِ التحميل…", en: "Loading…" },
+  "common.back": { ar: "رجوع", en: "Back" },
+
+  // Build / preview errors page
+  "item.buildErrors": { ar: "سجل الأخطاء", en: "Error log" },
+  "errors.title": { ar: "سجل أخطاء المعاينة", en: "Preview error log" },
+  "errors.subtitle": {
+    ar: "آخر أخطاء البناء والتشغيل مع وقتها والرسالة التي ظهرت للمستخدم",
+    en: "Latest build and runtime errors with their time and the message shown to the user",
+  },
+  "errors.refresh": { ar: "تحديث", en: "Refresh" },
+  "errors.clear": { ar: "مسح السجل", en: "Clear log" },
+  "errors.empty": { ar: "لا توجد أخطاء مسجّلة", en: "No errors recorded" },
+  "errors.emptyHint": {
+    ar: "أي خطأ يظهر أثناء المعاينة سيُسجَّل هنا تلقائياً.",
+    en: "Any error shown during preview is recorded here automatically.",
+  },
+  "errors.details": { ar: "تفاصيل تقنية", en: "Technical details" },
+
+  // Stores page
+  "stores.title": { ar: "المتاجر", en: "Stores" },
+  "stores.count": { ar: "متجرًا شريكًا", en: "partner stores" },
+
+  // Notifications page
+  "notif.title": { ar: "إعدادات الإشعارات", en: "Notification settings" },
+  "notif.subtitle": {
+    ar: "تحكّم في تنبيهات العروض وانخفاض الأسعار",
+    en: "Control deal alerts and price-drop notifications",
+  },
+  "notif.enable": { ar: "تفعيل الإشعارات", en: "Enable notifications" },
+  "notif.test": { ar: "إشعار تجريبي", en: "Send a test notification" },
+  "notif.reprompt": { ar: "إعادة طلب الإذن", en: "Ask for permission again" },
+
+  // Maps page
+  "maps.title": { ar: "خريطتي", en: "Hkeeem Map" },
+  "maps.subtitle": {
+    ar: "أقرب العروض والمتاجر حولك",
+    en: "The closest deals and stores around you",
+  },
 } as const;
 
 export type TKey = keyof typeof dict;
