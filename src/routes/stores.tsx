@@ -3,6 +3,7 @@ import { getStoreIcon } from "@/lib/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Store as StoreIcon } from "lucide-react";
 import { StoresPageSkeleton } from "@/components/Skeletons";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/stores")({
   head: () => ({
