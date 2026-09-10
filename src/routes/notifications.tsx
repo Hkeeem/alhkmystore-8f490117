@@ -24,31 +24,45 @@ export const Route = createFileRoute("/notifications")({
   }),
 });
 
-const STATUS_META: Record<string, { label: string; tone: string; desc: string }> = {
+type Bi = { ar: string; en: string };
+const STATUS_META: Record<string, { label: Bi; tone: string; desc: Bi }> = {
   granted: {
-    label: "مفعّلة",
+    label: { ar: "مفعّلة", en: "Enabled" },
     tone: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400",
-    desc: "ستصلك تنبيهات العروض القوية وانخفاض الأسعار مباشرة على جهازك.",
+    desc: {
+      ar: "ستصلك تنبيهات العروض القوية وانخفاض الأسعار مباشرة على جهازك.",
+      en: "You will receive strong deal and price-drop alerts directly on your device.",
+    },
   },
   denied: {
-    label: "محظورة من المتصفح",
+    label: { ar: "محظورة من المتصفح", en: "Blocked by the browser" },
     tone: "border-red-500/40 bg-red-500/10 text-red-400",
-    desc: "المتصفح حظر الإشعارات لهذا الموقع. لتفعيلها: افتح إعدادات الموقع في المتصفح (أيقونة القفل بجانب الرابط) واسمح بالإشعارات، ثم عد لهذه الصفحة.",
+    desc: {
+      ar: "المتصفح حظر الإشعارات لهذا الموقع. لتفعيلها: افتح إعدادات الموقع في المتصفح (أيقونة القفل بجانب الرابط) واسمح بالإشعارات، ثم عد لهذه الصفحة.",
+      en: "Your browser blocked notifications for this site. Open the site settings (the lock icon next to the address), allow notifications, then come back to this page.",
+    },
   },
   default: {
-    label: "لم يُطلب الإذن بعد",
+    label: { ar: "لم يُطلب الإذن بعد", en: "Permission not requested yet" },
     tone: "border-amber-500/40 bg-amber-500/10 text-amber-400",
-    desc: "اضغط «تفعيل الإشعارات» وسيظهر لك طلب الإذن من المتصفح.",
+    desc: {
+      ar: "اضغط «تفعيل الإشعارات» وسيظهر لك طلب الإذن من المتصفح.",
+      en: "Tap \"Enable notifications\" and the browser will ask for permission.",
+    },
   },
   unsupported: {
-    label: "غير مدعومة",
+    label: { ar: "غير مدعومة", en: "Not supported" },
     tone: "border-border bg-muted/40 text-muted-foreground",
-    desc: "متصفحك الحالي لا يدعم إشعارات الويب. جرّب متصفحًا حديثًا مثل Chrome أو Edge.",
+    desc: {
+      ar: "متصفحك الحالي لا يدعم إشعارات الويب. جرّب متصفحًا حديثًا مثل Chrome أو Edge.",
+      en: "This browser does not support web notifications. Try a modern browser such as Chrome or Edge.",
+    },
   },
 };
 
 function NotificationSettingsPage() {
   const { permission, dismissed, isReady, request, reset } = useNotifications();
+  const { t, lang } = useI18n();
 
   const status = STATUS_META[permission] ?? STATUS_META.default;
 
