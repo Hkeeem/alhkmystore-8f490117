@@ -21,6 +21,7 @@ import { FeedbackSurvey } from "@/components/FeedbackSurvey";
 import { LanguageProvider } from "@/lib/i18n";
 import { DealAlerts } from "@/components/DealAlerts";
 import { VisitorTracker } from "@/components/VisitorTracker";
+import { PreviewErrorRecorder } from "@/components/PreviewErrorRecorder";
 
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
@@ -163,6 +164,7 @@ function RootComponent() {
       <LanguageProvider>
       <div className="min-h-screen pb-20 md:pb-0">
         <a href="#main-content" className="skip-link">تخطي إلى المحتوى الرئيسي / Skip to content</a>
+        <PreviewErrorRecorder />
         <VisitorTracker />
         <DealAlerts />
 

@@ -3,6 +3,7 @@ import { getStoreIcon } from "@/lib/icons";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Store as StoreIcon } from "lucide-react";
 import { StoresPageSkeleton } from "@/components/Skeletons";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/stores")({
   head: () => ({
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/stores")({
 });
 
 function Stores() {
+  const { t } = useI18n();
   const grouped = stores.reduce<Record<string, typeof stores>>((acc, s) => {
     (acc[s.category] ||= []).push(s);
     return acc;
@@ -29,8 +31,8 @@ function Stores() {
           <StoreIcon className="w-6 h-6 text-secondary" />
         </div>
         <div>
-          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">المتاجر</h1>
-          <p className="text-sm text-muted-foreground">{stores.length} متجرًا شريكًا</p>
+          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">{t("stores.title")}</h1>
+          <p className="text-sm text-muted-foreground">{stores.length} {t("stores.count")}</p>
         </div>
       </header>
 
