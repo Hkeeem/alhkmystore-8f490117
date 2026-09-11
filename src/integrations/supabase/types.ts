@@ -648,6 +648,60 @@ export type Database = {
         }
         Relationships: []
       }
+      haraj_listings: {
+        Row: {
+          active: boolean
+          author: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          fetched_at: string
+          id: string
+          image_url: string | null
+          post_url: string
+          posted_at: string | null
+          price: number | null
+          rank: number
+          source_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          author?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          post_url: string
+          posted_at?: string | null
+          price?: number | null
+          rank?: number
+          source_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          author?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          post_url?: string
+          posted_at?: string | null
+          price?: number | null
+          rank?: number
+          source_key?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       integration_credentials: {
         Row: {
           created_at: string
@@ -884,6 +938,60 @@ export type Database = {
           store_name?: string | null
           surface?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      office_picks: {
+        Row: {
+          active: boolean
+          city: string | null
+          created_at: string
+          fetched_at: string
+          id: string
+          image_url: string | null
+          kind: string
+          link_url: string | null
+          price: number | null
+          rank: number
+          rating: number | null
+          source_key: string
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          kind: string
+          link_url?: string | null
+          price?: number | null
+          rank?: number
+          rating?: number | null
+          source_key: string
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          city?: string | null
+          created_at?: string
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          kind?: string
+          link_url?: string | null
+          price?: number | null
+          rank?: number
+          rating?: number | null
+          source_key?: string
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1205,6 +1313,66 @@ export type Database = {
           sitemap_errors?: number
           sitemap_warnings?: number
           submitted?: number
+        }
+        Relationships: []
+      }
+      showroom_offers: {
+        Row: {
+          active: boolean
+          brand: string
+          category: string
+          city: string | null
+          created_at: string
+          description: string | null
+          discount_percent: number
+          fetched_at: string
+          id: string
+          image_url: string | null
+          offer_url: string | null
+          original_price: number | null
+          price: number | null
+          rank: number
+          source_key: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          brand: string
+          category?: string
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          offer_url?: string | null
+          original_price?: number | null
+          price?: number | null
+          rank?: number
+          source_key: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          brand?: string
+          category?: string
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          discount_percent?: number
+          fetched_at?: string
+          id?: string
+          image_url?: string | null
+          offer_url?: string | null
+          original_price?: number | null
+          price?: number | null
+          rank?: number
+          source_key?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
