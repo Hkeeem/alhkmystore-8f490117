@@ -153,8 +153,21 @@ function CouponsPage() {
               <Link
                 to="/coupons/$id"
                 params={{ id: c.id }}
+                onClick={() =>
+                  trackOfferEvent({
+                    eventType: "detail_view",
+                    kind: "coupon",
+                    offerId: c.id,
+                    offerTitle: c.title,
+                    couponCode: c.code,
+                    storeId: c.storeId,
+                    storeName: c.storeName,
+                    surface: "coupon",
+                  })
+                }
                 className="flex items-start gap-4 hover:opacity-95"
               >
+
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-primary-foreground font-black text-xl shrink-0"
                   style={{ background: c.color ?? "hsl(var(--primary))" }}
@@ -192,7 +205,7 @@ function CouponsPage() {
                   </span>
                 </div>
                 <button
-                  onClick={() => handleCopy(c.code)}
+                  onClick={() => handleCopy(c)}
                   className={`h-12 px-4 rounded-2xl font-bold text-sm transition flex items-center gap-2 ${
                     isCopied
                       ? "bg-green-600 text-white"
@@ -211,6 +224,16 @@ function CouponsPage() {
                 </button>
                 <button
                   onClick={() => {
+                    trackOfferEvent({
+                      eventType: "share",
+                      kind: "coupon",
+                      offerId: c.id,
+                      offerTitle: c.title,
+                      couponCode: c.code,
+                      storeId: c.storeId,
+                      storeName: c.storeName,
+                      surface: "coupon",
+                    });
                     const text = encodeURIComponent(
                       `🏷️ *كوبون ${c.storeName}*\n${c.title}\nالكود: *${c.code}*\n${c.description}\nينتهي: ${c.expiresIn}\n\nمن تطبيق حكيم AI`,
                     );
@@ -229,12 +252,25 @@ function CouponsPage() {
                   href={c.storeUrl}
                   target="_blank"
                   rel="nofollow sponsored noopener noreferrer"
+                  onClick={() =>
+                    trackOfferEvent({
+                      eventType: "store_click",
+                      kind: "coupon",
+                      offerId: c.id,
+                      offerTitle: c.title,
+                      couponCode: c.code,
+                      storeId: c.storeId,
+                      storeName: c.storeName,
+                      surface: "coupon",
+                    })
+                  }
                   className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-secondary hover:bg-secondary/80 font-black text-sm transition"
                 >
                   <ExternalLink className="w-4 h-4" />
                   افتح المنتج في {c.storeName} بالكود
                 </a>
               )}
+
             </article>
           );
         })}
