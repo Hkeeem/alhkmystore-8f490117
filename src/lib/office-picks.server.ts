@@ -9,8 +9,8 @@ export async function runOfficePicksSync(limit = 5) {
 
   const [props, devs] = await Promise.all([
     supabaseAdmin
-      .from("property_listings")
-      .select("id, title, city, district, property_type, price, purpose, created_at")
+      .from("real_estate_listings" as never)
+      .select("id, title, city, district, property_type, status, created_at")
       .eq("status", "active")
       .order("created_at", { ascending: false })
       .limit(60),
@@ -23,7 +23,7 @@ export async function runOfficePicksSync(limit = 5) {
   ]);
 
   const properties = (props.data ?? [])
-    .sort((a, b) => Number(b.price ?? 0) - Number(a.price ?? 0))
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, limit)
     .map((p, i) => ({
       kind: "property",
@@ -31,8 +31,8 @@ export async function runOfficePicksSync(limit = 5) {
       title: p.title,
       subtitle: `${p.property_type ?? ""} · ${p.district ?? ""}`.trim(),
       image_url: null,
-      link_url: "/real-estate",
-      price: p.price === null ? null : Number(p.price),
+      link_url: "https://haraj.com.sa",
+      price: null,
       city: p.city ?? null,
       rating: null,
       rank: i + 1,
