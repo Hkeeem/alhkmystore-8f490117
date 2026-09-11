@@ -68,7 +68,9 @@ export const staffListAffiliateStores = createServerFn({ method: "GET" })
   .handler(async ({ context }): Promise<AffiliateStore[]> => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("Forbidden");
-    const { data, error } = await context.supabase
+    // البيانات الحساسة (حساب الشبكة) محجوبة عن العملاء وتُقرأ من الخادم الآمن فقط
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
       .from("affiliate_stores")
       .select("*")
       .order("created_at", { ascending: false })
@@ -76,6 +78,7 @@ export const staffListAffiliateStores = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return (data ?? []).map((r) => toStore(r as Row));
   });
+
 
 /** إضافة أو تعديل متجر أفلييت مع ربطه بحساب الشبكة */
 export const staffSaveAffiliateStore = createServerFn({ method: "POST" })
