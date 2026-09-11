@@ -896,8 +896,10 @@ export type Database = {
           country: string | null
           coupon_code: string | null
           created_at: string
+          event_type: string
           id: string
           kind: string
+          occurred_at: string
           offer_id: string
           offer_title: string | null
           path: string | null
@@ -912,8 +914,10 @@ export type Database = {
           country?: string | null
           coupon_code?: string | null
           created_at?: string
+          event_type?: string
           id?: string
           kind?: string
+          occurred_at?: string
           offer_id: string
           offer_title?: string | null
           path?: string | null
@@ -928,8 +932,10 @@ export type Database = {
           country?: string | null
           coupon_code?: string | null
           created_at?: string
+          event_type?: string
           id?: string
           kind?: string
+          occurred_at?: string
           offer_id?: string
           offer_title?: string | null
           path?: string | null
