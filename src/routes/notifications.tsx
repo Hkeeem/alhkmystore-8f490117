@@ -135,9 +135,10 @@ function NotificationSettingsPage() {
               ) : (
                 <BellOff className="w-4 h-4" />
               )}
-              {status.label}
+              {status.label[lang]}
             </span>
-            <p className="text-sm text-muted-foreground leading-relaxed">{status.desc}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{status.desc[lang]}</p>
+
           </>
         ) : (
           <div className="h-10 rounded-xl bg-muted/40 animate-pulse" aria-hidden="true" />
