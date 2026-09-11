@@ -70,7 +70,7 @@ const STATUS_META: Record<string, { label: Bi; tone: string; desc: Bi }> = {
 
 function NotificationSettingsPage() {
   const { permission, dismissed, isReady, request, reset } = useNotifications();
-  const lang: "ar" | "en" = "ar";
+  const { t, lang } = useI18n();
 
   const status = STATUS_META[permission] ?? STATUS_META.default;
 
@@ -135,10 +135,9 @@ function NotificationSettingsPage() {
               ) : (
                 <BellOff className="w-4 h-4" />
               )}
-              {status.label[lang]}
+              {status.label}
             </span>
-            <p className="text-sm text-muted-foreground leading-relaxed">{status.desc[lang]}</p>
-
+            <p className="text-sm text-muted-foreground leading-relaxed">{status.desc}</p>
           </>
         ) : (
           <div className="h-10 rounded-xl bg-muted/40 animate-pulse" aria-hidden="true" />

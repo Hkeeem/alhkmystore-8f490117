@@ -30,12 +30,8 @@ function BuildErrorsPage() {
 
   useEffect(() => {
     setEntries(readPreviewErrors());
-    const unsubscribe = subscribePreviewErrors((next) => setEntries([...next]));
-    return () => {
-      unsubscribe();
-    };
+    return subscribePreviewErrors((next) => setEntries([...next]));
   }, []);
-
 
   const fmt = (at: number) =>
     new Date(at).toLocaleString(lang === "ar" ? "ar-SA" : "en-GB", {
