@@ -28,19 +28,28 @@ export function NoonAuditPanel() {
         <CardTitle className="flex items-center gap-2 text-lg">
           <History className="size-5" /> سجل تدقيق ربط noon
         </CardTitle>
-        <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => refetch()}
+          disabled={isFetching}
+          className="press-ripple"
+        >
           <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} />
         </Button>
       </CardHeader>
 
       <CardContent className="space-y-3">
         <p className="text-xs text-muted-foreground">
-          كل عملية ربط أو فك ربط للحملة، وكل تغيير على Publisher ID، تُسجَّل هنا بالوقت والمستخدم وتفاصيل التغيير (المعرّفات مقنّعة دائمًا).
+          كل عملية ربط أو فك ربط للحملة، وكل تغيير على Publisher ID، تُسجَّل هنا بالوقت والمستخدم
+          وتفاصيل التغيير (المعرّفات مقنّعة دائمًا).
         </p>
 
         {isLoading && <p className="text-sm text-muted-foreground">جارٍ تحميل السجل…</p>}
         {isError && <p className="text-sm text-destructive">سجل التدقيق متاح للمشرفين فقط.</p>}
-        {data?.length === 0 && <p className="text-sm text-muted-foreground">لا توجد عمليات مسجّلة بعد.</p>}
+        {data?.length === 0 && (
+          <p className="text-sm text-muted-foreground">لا توجد عمليات مسجّلة بعد.</p>
+        )}
 
         <ol className="space-y-2">
           {(data ?? []).map((e) => (
@@ -48,10 +57,15 @@ export function NoonAuditPanel() {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <Badge variant={TONE[e.action] ?? "secondary"}>{e.actionLabel}</Badge>
                 <span className="flex items-center gap-3 text-[11px] text-muted-foreground">
-                  <span className="flex items-center gap-1"><User className="size-3" /> {e.actorName}</span>
+                  <span className="flex items-center gap-1">
+                    <User className="size-3" /> {e.actorName}
+                  </span>
                   <span className="flex items-center gap-1" dir="ltr">
                     <Clock className="size-3" />
-                    {new Date(e.at).toLocaleString("ar-SA", { dateStyle: "medium", timeStyle: "short" })}
+                    {new Date(e.at).toLocaleString("ar-SA", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
                   </span>
                 </span>
               </div>
@@ -60,7 +74,9 @@ export function NoonAuditPanel() {
                   {e.details.map((d) => (
                     <div key={d.label} className="flex items-center gap-1 text-xs">
                       <dt className="text-muted-foreground">{d.label}:</dt>
-                      <dd className="font-medium truncate" dir="auto">{d.value}</dd>
+                      <dd className="font-medium truncate" dir="auto">
+                        {d.value}
+                      </dd>
                     </div>
                   ))}
                 </dl>

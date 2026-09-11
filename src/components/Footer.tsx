@@ -136,7 +136,9 @@ export function LegalPage({
             <Icon className="w-6 h-6 text-secondary" />
           </div>
           <div className="min-w-0">
-            <h1 className="truncate font-display font-black text-2xl md:text-3xl text-gold-shine">{title}</h1>
+            <h1 className="truncate font-display font-black text-2xl md:text-3xl text-gold-shine">
+              {title}
+            </h1>
             <p className="text-xs text-muted-foreground">آخر تحديث: {updated}</p>
           </div>
         </div>

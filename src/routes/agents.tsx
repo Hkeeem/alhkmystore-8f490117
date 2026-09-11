@@ -1,7 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { ShieldCheck, Crosshair, Megaphone, Copy, ExternalLink, AlertTriangle, Power } from "lucide-react";
+import {
+  ShieldCheck,
+  Crosshair,
+  Megaphone,
+  Copy,
+  ExternalLink,
+  AlertTriangle,
+  Power,
+} from "lucide-react";
 import { useLiveDeals } from "@/hooks/use-live-deals";
 import {
   AGENT_DESC,
@@ -156,7 +164,9 @@ function AgentsPage() {
                 onClick={() => setChannel(c)}
                 aria-pressed={channel === c}
                 className={`text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap press-ripple ${
-                  channel === c ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"
+                  channel === c
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-secondary-foreground"
                 }`}
               >
                 {CHANNEL_LABEL[c]}
@@ -183,12 +193,16 @@ function AgentsPage() {
               const link = `${origin}/deals/${deal.id}`;
               const post = buildPublishPost(deal, channel, link);
               return (
-                <li key={deal.id} className="rounded-3xl border border-border bg-card p-4 space-y-2">
+                <li
+                  key={deal.id}
+                  className="rounded-3xl border border-border bg-card p-4 space-y-2"
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-1">
                       <p className="font-bold text-sm">{deal.title}</p>
                       <p className="text-[11px] text-muted-foreground">
-                        {deal.storeName ?? "تاجر معتمد"} · {deal.price} ر.س بدلاً من {deal.original_price} ر.س
+                        {deal.storeName ?? "تاجر معتمد"} · {deal.price} ر.س بدلاً من{" "}
+                        {deal.original_price} ر.س
                       </p>
                     </div>
                     <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-1 rounded-full whitespace-nowrap">

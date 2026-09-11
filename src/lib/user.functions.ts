@@ -29,10 +29,12 @@ export const listFavorites = createServerFn({ method: "GET" })
 export const toggleFavorite = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      itemType: z.enum(["deal", "coupon", "reward", "store"]),
-      itemId: z.string().min(1).max(200),
-    }).parse(d),
+    z
+      .object({
+        itemType: z.enum(["deal", "coupon", "reward", "store"]),
+        itemId: z.string().min(1).max(200),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     const { data: existing } = await context.supabase
@@ -75,13 +77,15 @@ export const listMyAlerts = createServerFn({ method: "GET" })
 export const upsertPriceAlert = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      dealId: z.string().min(1).max(200),
-      productKey: z.string().max(200).nullable(),
-      title: z.string().min(1).max(200),
-      currentPrice: z.number().nonnegative(),
-      targetPrice: z.number().nonnegative(),
-    }).parse(d),
+    z
+      .object({
+        dealId: z.string().min(1).max(200),
+        productKey: z.string().max(200).nullable(),
+        title: z.string().min(1).max(200),
+        currentPrice: z.number().nonnegative(),
+        targetPrice: z.number().nonnegative(),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     const { error } = await context.supabase.from("price_alerts").upsert(
@@ -150,8 +154,16 @@ export const listMyCashback = createServerFn({ method: "GET" })
     if (txs.error) throw new Error(txs.error.message);
     return {
       transactions: txs.data ?? [],
-      totals: (totals.data as { confirmed_total: number; pending_total: number; paid_total: number; tx_count: number } | null) ?? {
-        confirmed_total: 0, pending_total: 0, paid_total: 0, tx_count: 0,
+      totals: (totals.data as {
+        confirmed_total: number;
+        pending_total: number;
+        paid_total: number;
+        tx_count: number;
+      } | null) ?? {
+        confirmed_total: 0,
+        pending_total: 0,
+        paid_total: 0,
+        tx_count: 0,
       },
     };
   });
@@ -159,13 +171,15 @@ export const listMyCashback = createServerFn({ method: "GET" })
 export const logCashbackClaim = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      storeId: z.string().min(1).max(100),
-      dealId: z.string().max(200).nullable(),
-      purchaseAmount: z.number().positive().max(1_000_000),
-      cashbackRate: z.number().min(0).max(100).optional(),
-      note: z.string().max(500).nullable(),
-    }).parse(d),
+    z
+      .object({
+        storeId: z.string().min(1).max(100),
+        dealId: z.string().max(200).nullable(),
+        purchaseAmount: z.number().positive().max(1_000_000),
+        cashbackRate: z.number().min(0).max(100).optional(),
+        note: z.string().max(500).nullable(),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     const rate = data.cashbackRate ?? 2.0;
@@ -206,10 +220,12 @@ export const adminListCashback = createServerFn({ method: "GET" })
 export const adminUpdateCashbackStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      id: z.string().uuid(),
-      status: z.enum(["pending", "confirmed", "paid", "rejected"]),
-    }).parse(d),
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.enum(["pending", "confirmed", "paid", "rejected"]),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     if (!(await hasAnyRole(context.supabase, context.userId, ["super_admin", "admin"]))) {

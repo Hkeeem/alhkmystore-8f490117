@@ -1,6 +1,15 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { deals, getStore, discountPercent, comparableGroups } from "@/data/deals";
-import { ArrowRight, CalendarClock, Clock, FileText, Flame, MapPin, Share2, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarClock,
+  Clock,
+  FileText,
+  Flame,
+  MapPin,
+  Share2,
+  ShieldCheck,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { recordInterest } from "@/lib/preferences";
 
@@ -93,10 +102,7 @@ function StaticDealDetail() {
       ?.filter((d) => d.id !== id)
       .sort((a, b) => a.price - b.price) || [];
 
-  const dealUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/deals/${deal.id}`
-      : "";
+  const dealUrl = typeof window !== "undefined" ? `${window.location.origin}/deals/${deal.id}` : "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -118,7 +124,6 @@ function StaticDealDetail() {
           </Link>
         </div>
 
-
         <div className="grid md:grid-cols-2 gap-6 md:gap-10">
           <div className="bg-gradient-to-br from-secondary to-muted rounded-[2rem] aspect-square md:aspect-auto md:h-full flex items-center justify-center relative overflow-hidden">
             {hasRealImage ? (
@@ -129,7 +134,10 @@ function StaticDealDetail() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <DealIcon className="w-32 h-32 text-primary drop-shadow-[0_0_24px_oklch(0.77_0.13_85_/_0.6)]" strokeWidth={1.2} />
+              <DealIcon
+                className="w-32 h-32 text-primary drop-shadow-[0_0_24px_oklch(0.77_0.13_85_/_0.6)]"
+                strokeWidth={1.2}
+              />
             )}
             {isHot && (
               <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-hot text-hot-foreground text-sm font-bold shadow-soft">
@@ -159,9 +167,7 @@ function StaticDealDetail() {
               <h1 className="font-display font-black text-2xl md:text-4xl leading-tight">
                 {deal.title}
               </h1>
-              {deal.brand && (
-                <p className="text-muted-foreground mt-1">{deal.brand}</p>
-              )}
+              {deal.brand && <p className="text-muted-foreground mt-1">{deal.brand}</p>}
             </div>
 
             <div className="flex items-end gap-4">
@@ -221,7 +227,6 @@ function StaticDealDetail() {
               </Link>
             </div>
 
-
             <DealActions deal={deal} />
           </div>
         </div>
@@ -264,7 +269,6 @@ function StaticDealDetail() {
           </section>
         </div>
 
-
         {sameProduct.length > 0 && (
           <div className="mt-10 md:mt-16">
             <h2 className="font-display font-black text-xl md:text-2xl mb-4">
@@ -283,7 +287,13 @@ function StaticDealDetail() {
                   >
                     <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center text-2xl overflow-hidden">
                       {d.image?.startsWith("http") ? (
-                        <img src={d.image} alt={d.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                        <img
+                          src={d.image}
+                          alt={d.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <span>{d.image}</span>
                       )}
@@ -300,9 +310,7 @@ function StaticDealDetail() {
                       </div>
                       <p className="font-bold text-sm line-clamp-1">{d.title}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="font-display font-black text-primary">
-                          {d.price} ر.س
-                        </span>
+                        <span className="font-display font-black text-primary">{d.price} ر.س</span>
                         <span className="text-xs text-muted-foreground line-through">
                           {d.originalPrice} ر.س
                         </span>
@@ -335,12 +343,16 @@ function DealNotFound() {
       icon="🔍"
       title="ما لقينا هذا العرض"
       message="يمكن العرض انتهى أو الرابط قديم. تصفّح العروض الحقيقية المتاحة الحين."
-      suggestion={nearest ? {
-        to: `/deals/${nearest.id}`,
-        label: nearest.title,
-        hint: `خصم ${discountPercent(nearest)}٪ · ${nearest.price} ر.س`,
-        emoji: nearest.image,
-      } : undefined}
+      suggestion={
+        nearest
+          ? {
+              to: `/deals/${nearest.id}`,
+              label: nearest.title,
+              hint: `خصم ${discountPercent(nearest)}٪ · ${nearest.price} ر.س`,
+              emoji: nearest.image,
+            }
+          : undefined
+      }
       backTo={{ to: "/deals", label: "كل العروض" }}
     />
   );

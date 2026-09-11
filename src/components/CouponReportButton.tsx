@@ -63,7 +63,9 @@ export function CouponReportButton({
 
   if (done) {
     return (
-      <p className="mt-2 text-[11px] text-muted-foreground text-center">شكراً لك، البلاغ قيد المراجعة.</p>
+      <p className="mt-2 text-[11px] text-muted-foreground text-center">
+        شكراً لك، البلاغ قيد المراجعة.
+      </p>
     );
   }
 
@@ -89,7 +91,9 @@ export function CouponReportButton({
                 type="button"
                 onClick={() => setReason(r.id)}
                 className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition ${
-                  reason === r.id ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
+                  reason === r.id
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground"
                 }`}
               >
                 {r.label}

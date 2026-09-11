@@ -8,7 +8,7 @@ export function OffersSection() {
       store_name: "أمازون السعودية",
       old_price: 5299,
       new_price: 4499,
-      discount: 15
+      discount: 15,
     },
     {
       id: 2,
@@ -18,7 +18,7 @@ export function OffersSection() {
       store_name: "نون",
       old_price: 399,
       new_price: 199,
-      discount: 50
+      discount: 50,
     },
     {
       id: 3,
@@ -28,7 +28,7 @@ export function OffersSection() {
       store_name: "أمازون",
       old_price: 899,
       new_price: 649,
-      discount: 28
+      discount: 28,
     },
     {
       id: 4,
@@ -38,8 +38,8 @@ export function OffersSection() {
       store_name: "نون",
       old_price: 250,
       new_price: 129,
-      discount: 48
-    }
+      discount: 48,
+    },
   ];
 
   return (
@@ -47,7 +47,13 @@ export function OffersSection() {
       <h2 className="font-black text-2xl md:text-3xl mb-4">🔥 عروض اليوم - حية</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {offers.map((offer) => (
-          <a key={offer.id} href={offer.affiliate_link} target="_blank" rel="noopener" className="bg-card rounded-3xl border border-border/60 p-3 hover:shadow-glow transition">
+          <a
+            key={offer.id}
+            href={offer.affiliate_link}
+            target="_blank"
+            rel="noopener"
+            className="bg-card rounded-3xl border border-border/60 p-3 hover:shadow-glow transition"
+          >
             <img src={offer.image_url} className="w-full h-32 object-cover rounded-2xl" />
             <h3 className="text-sm font-bold mt-2 line-clamp-2">{offer.title}</h3>
             <p className="text-xs text-muted-foreground">{offer.store_name}</p>
@@ -55,10 +61,12 @@ export function OffersSection() {
               <span className="line-through text-xs">{offer.old_price} ر.س</span>
               <span className="text-red-600 font-black text-sm">{offer.new_price} ر.س</span>
             </div>
-            <span className="bg-red-600 text-white text-[10px] px-2 py-1 rounded-full mt-2 inline-block">خصم {offer.discount}%</span>
+            <span className="bg-red-600 text-white text-[10px] px-2 py-1 rounded-full mt-2 inline-block">
+              خصم {offer.discount}%
+            </span>
           </a>
         ))}
       </div>
     </section>
-  )
+  );
 }

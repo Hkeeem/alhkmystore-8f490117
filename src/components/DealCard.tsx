@@ -49,7 +49,12 @@ export function DealCard({
   const verified = deal.verifiedAt ? timeAgoAr(deal.verifiedAt) : null;
   const lastDay = isLastDay(deal);
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
 
   const hasRealImage = deal.image?.startsWith("http") && !imgError;
 
@@ -93,14 +98,18 @@ export function DealCard({
     window.open(storeUrl, "_blank", "noopener,noreferrer");
   };
 
-
   return (
     <Link
       to="/deals/$id"
       params={{ id: deal.id }}
       className="hk-card group flex flex-col h-full relative overflow-hidden"
       onClick={() =>
-        trackDealClick({ dealId: deal.id, title: deal.title, storeName: store.name, surface: "list" })
+        trackDealClick({
+          dealId: deal.id,
+          title: deal.title,
+          storeName: store.name,
+          surface: "list",
+        })
       }
     >
       <div className="relative aspect-[4/3] bg-zinc-50">
@@ -130,13 +139,16 @@ export function DealCard({
           )}
         </div>
 
-
         <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center overflow-hidden">
           <StoreLogo store={store} size="sm" />
         </div>
 
         <button
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareOpen(true); }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setShareOpen(true);
+          }}
           aria-label="مشاركة العرض"
           className="absolute bottom-3 left-3 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center"
         >
@@ -153,14 +165,20 @@ export function DealCard({
           <span>{deal.usageCount ?? 1243} استخدام</span>
         </div>
 
-        <h3 className="font-bold text-[15px] leading-snug line-clamp-2 text-zinc-900">{deal.title}</h3>
+        <h3 className="font-bold text-[15px] leading-snug line-clamp-2 text-zinc-900">
+          {deal.title}
+        </h3>
         {deal.unit && <p className="text-[12px] text-zinc-400">{deal.unit}</p>}
 
         {reason && (
           <div>
             <button
               type="button"
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setWhyOpen((v) => !v); }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setWhyOpen((v) => !v);
+              }}
               aria-expanded={whyOpen}
               aria-label={`لماذا هذا العرض في الأعلى؟ ${reason}`}
               title={reasonDetail ?? reason}

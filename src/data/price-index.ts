@@ -15,7 +15,12 @@ export const retailers: Retailer[] = [
   { id: "amazon", name: "أمازون السعودية", color: "oklch(0.6 0.15 70)", shipping: "شحن سريع" },
   { id: "jarir", name: "مكتبة جرير", color: "oklch(0.55 0.19 150)", shipping: "استلام من الفرع" },
   { id: "extra", name: "إكسترا", color: "oklch(0.55 0.2 25)", shipping: "تقسيط متاح" },
-  { id: "hkeeem", name: "متجر حكيم المباشر", color: "oklch(0.77 0.13 85)", shipping: "سبل/سمسا 24-48 س" },
+  {
+    id: "hkeeem",
+    name: "متجر حكيم المباشر",
+    color: "oklch(0.77 0.13 85)",
+    shipping: "سبل/سمسا 24-48 س",
+  },
 ];
 
 export function getRetailer(id: RetailerId): Retailer {

@@ -24,13 +24,21 @@ export const SOCIAL_SIGNALS: Record<string, SocialSignal> = {
   nahdi: { strength: 89, engagement: 80, bestPlatforms: ["snapchat", "x", "instagram"] },
   panda: { strength: 91, engagement: 82, bestPlatforms: ["snapchat", "x", "telegram"] },
   othaim: { strength: 87, engagement: 79, bestPlatforms: ["snapchat", "x", "telegram"] },
-  "carrefour-sa": { strength: 85, engagement: 78, bestPlatforms: ["snapchat", "instagram", "telegram"] },
+  "carrefour-sa": {
+    strength: 85,
+    engagement: 78,
+    bestPlatforms: ["snapchat", "instagram", "telegram"],
+  },
   lulu: { strength: 84, engagement: 76, bestPlatforms: ["instagram", "snapchat", "telegram"] },
   jahez: { strength: 88, engagement: 91, bestPlatforms: ["tiktok", "snapchat", "x"] },
   hungerstation: { strength: 87, engagement: 89, bestPlatforms: ["snapchat", "tiktok", "x"] },
   styli: { strength: 80, engagement: 85, bestPlatforms: ["tiktok", "instagram", "snapchat"] },
   trendyol: { strength: 83, engagement: 88, bestPlatforms: ["tiktok", "instagram"] },
-  "sephora-sa": { strength: 85, engagement: 87, bestPlatforms: ["instagram", "tiktok", "snapchat"] },
+  "sephora-sa": {
+    strength: 85,
+    engagement: 87,
+    bestPlatforms: ["instagram", "tiktok", "snapchat"],
+  },
   "golden-scent": { strength: 78, engagement: 84, bestPlatforms: ["snapchat", "instagram"] },
   "ikea-sa": { strength: 86, engagement: 77, bestPlatforms: ["instagram", "youtube", "x"] },
   "home-centre": { strength: 79, engagement: 74, bestPlatforms: ["instagram", "snapchat"] },
@@ -92,7 +100,10 @@ export function recordSocialClick(
   const next: SocialPrefs = {
     ...prefs,
     storeClicks: { ...prefs.storeClicks, [storeId]: (prefs.storeClicks[storeId] ?? 0) + 1 },
-    platformClicks: { ...prefs.platformClicks, [platformId]: (prefs.platformClicks[platformId] ?? 0) + 1 },
+    platformClicks: {
+      ...prefs.platformClicks,
+      [platformId]: (prefs.platformClicks[platformId] ?? 0) + 1,
+    },
   };
   saveSocialPrefs(next);
   return next;
@@ -280,4 +291,3 @@ export function matchesTiming(
   if (timing === "now") return matchesNow(cadence, now) && isPeakNow(platformId, now);
   return cadence === timing;
 }
-

@@ -62,7 +62,9 @@ export function NoonApiKeysPanel() {
       return entries.length;
     },
     onSuccess: (count) => {
-      toast.success(`تم حفظ ${count} مفتاحًا بشكل مشفّر — ستُربط عروض نون تلقائيًا في المزامنة القادمة`);
+      toast.success(
+        `تم حفظ ${count} مفتاحًا بشكل مشفّر — ستُربط عروض نون تلقائيًا في المزامنة القادمة`,
+      );
       setValues({});
       void queryClient.invalidateQueries({ queryKey: ["integration-keys-status"] });
       void queryClient.invalidateQueries({ queryKey: ["noon-campaign-status"] });
@@ -101,8 +103,8 @@ export function NoonApiKeysPanel() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          عند إضافة المفاتيح تُسحب عروض نون تلقائيًا وتُدمج مع عروض التجّار في «كل العروض» بدل الاعتماد على كود
-          الخصم فقط. تُخزَّن القيم مشفّرة ولا تظهر مرة أخرى.
+          عند إضافة المفاتيح تُسحب عروض نون تلقائيًا وتُدمج مع عروض التجّار في «كل العروض» بدل
+          الاعتماد على كود الخصم فقط. تُخزَّن القيم مشفّرة ولا تظهر مرة أخرى.
         </p>
 
         {statusQuery.isLoading ? (
@@ -114,7 +116,9 @@ export function NoonApiKeysPanel() {
                 <Label htmlFor={field.name} className="flex flex-wrap items-center gap-2">
                   {field.label}
                   {isConfigured(field.name) && (
-                    <Badge variant="secondary" className="text-[10px]">محفوظ</Badge>
+                    <Badge variant="secondary" className="text-[10px]">
+                      محفوظ
+                    </Badge>
                   )}
                 </Label>
                 <div className="flex gap-2">

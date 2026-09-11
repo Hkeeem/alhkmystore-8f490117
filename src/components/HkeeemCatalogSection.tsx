@@ -32,7 +32,10 @@ export function HkeeemCatalogSection() {
   return (
     <section dir="rtl" className="space-y-4" aria-labelledby="hkeeem-catalog-title">
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 id="hkeeem-catalog-title" className="font-display font-black text-lg flex items-center gap-2">
+        <h2
+          id="hkeeem-catalog-title"
+          className="font-display font-black text-lg flex items-center gap-2"
+        >
           <BadgeCheck className="w-5 h-5 text-primary" /> عروض HkeeemAI المعتمدة
         </h2>
         <div className="flex items-center gap-2">
@@ -52,10 +55,18 @@ export function HkeeemCatalogSection() {
       </div>
 
       {stores.length > 0 && (
-        <div className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1" role="group" aria-label="تصفية حسب المتجر">
-          <Chip active={!storeId} onClick={() => setStoreId(undefined)}>كل المتاجر</Chip>
+        <div
+          className="flex gap-2 overflow-x-auto -mx-4 px-4 pb-1"
+          role="group"
+          aria-label="تصفية حسب المتجر"
+        >
+          <Chip active={!storeId} onClick={() => setStoreId(undefined)}>
+            كل المتاجر
+          </Chip>
           {stores.map((s) => (
-            <Chip key={s.id} active={storeId === s.id} onClick={() => setStoreId(s.id)}>{s.name}</Chip>
+            <Chip key={s.id} active={storeId === s.id} onClick={() => setStoreId(s.id)}>
+              {s.name}
+            </Chip>
           ))}
         </div>
       )}
@@ -73,7 +84,10 @@ export function HkeeemCatalogSection() {
           ))}
         </div>
       ) : query.isError || catalog?.unavailable ? (
-        <div role="alert" className="rounded-3xl border border-border bg-card p-6 text-center space-y-3">
+        <div
+          role="alert"
+          className="rounded-3xl border border-border bg-card p-6 text-center space-y-3"
+        >
           <p className="text-sm font-bold text-muted-foreground">{GENERIC_ERROR}</p>
           <button
             onClick={() => query.refetch()}
@@ -82,7 +96,6 @@ export function HkeeemCatalogSection() {
             إعادة المحاولة
           </button>
         </div>
-
       ) : offers.length === 0 ? (
         <div className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
           لا توجد عروض معتمدة متاحة حاليًا.
@@ -90,9 +103,17 @@ export function HkeeemCatalogSection() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
           {offers.map((o) => (
-            <article key={o.id} className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift flex flex-col">
+            <article
+              key={o.id}
+              className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift flex flex-col"
+            >
               {o.imageUrl && (
-                <img src={o.imageUrl} alt={o.title} loading="lazy" className="w-full aspect-[4/3] object-cover" />
+                <img
+                  src={o.imageUrl}
+                  alt={o.title}
+                  loading="lazy"
+                  className="w-full aspect-[4/3] object-cover"
+                />
               )}
               <div className="p-3 space-y-1 flex-1 flex flex-col">
                 <p className="font-bold text-sm line-clamp-2">{o.title}</p>
@@ -100,7 +121,9 @@ export function HkeeemCatalogSection() {
                 <p className="text-sm font-black text-primary">
                   {o.price !== null ? `${o.price} ر.س` : ""}{" "}
                   {o.originalPrice !== null && (
-                    <span className="text-[11px] font-normal text-muted-foreground line-through">{o.originalPrice}</span>
+                    <span className="text-[11px] font-normal text-muted-foreground line-through">
+                      {o.originalPrice}
+                    </span>
                   )}
                 </p>
                 {o.discountPercent !== null && (
@@ -109,7 +132,9 @@ export function HkeeemCatalogSection() {
                   </span>
                 )}
                 {o.updatedAt && (
-                  <p className="text-[10px] text-muted-foreground">آخر تحديث {formatDateAr(o.updatedAt)}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    آخر تحديث {formatDateAr(o.updatedAt)}
+                  </p>
                 )}
                 {o.purchaseUrl && (
                   <a
@@ -134,15 +159,36 @@ export function HkeeemCatalogSection() {
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {stores.map((s) => (
-              <div key={s.id} className="rounded-2xl border border-border bg-card p-3 flex flex-col gap-1">
+              <div
+                key={s.id}
+                className="rounded-2xl border border-border bg-card p-3 flex flex-col gap-1"
+              >
                 <div className="flex items-center gap-2">
-                  {s.logoUrl && <img src={s.logoUrl} alt={s.name} loading="lazy" className="w-7 h-7 rounded-lg object-contain bg-background" />}
+                  {s.logoUrl && (
+                    <img
+                      src={s.logoUrl}
+                      alt={s.name}
+                      loading="lazy"
+                      className="w-7 h-7 rounded-lg object-contain bg-background"
+                    />
+                  )}
                   <span className="font-bold text-xs">{s.name}</span>
                 </div>
-                {s.category && <span className="text-[10px] text-muted-foreground">{s.category}</span>}
-                {s.description && <span className="text-[10px] text-muted-foreground line-clamp-2">{s.description}</span>}
+                {s.category && (
+                  <span className="text-[10px] text-muted-foreground">{s.category}</span>
+                )}
+                {s.description && (
+                  <span className="text-[10px] text-muted-foreground line-clamp-2">
+                    {s.description}
+                  </span>
+                )}
                 {s.websiteUrl && (
-                  <a href={s.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-primary font-bold hover:underline">
+                  <a
+                    href={s.websiteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] text-primary font-bold hover:underline"
+                  >
                     الموقع الرسمي
                   </a>
                 )}
@@ -155,7 +201,15 @@ export function HkeeemCatalogSection() {
   );
 }
 
-function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       type="button"

@@ -1,17 +1,17 @@
 :root {
-  --hkeeem-bg: #0A0A0A;
+  --hkeeem-bg: #0a0a0a;
   --hkeeem-card: #161616;
-  --hkeeem-gold: #D4AF37;
-  --hkeeem-gold-bright: #FFD700;
-  --hkeeem-gold-dark: #8B6914;
-  --hkeeem-success: #4CAF50;
-  --hkeeem-danger: #E53935;
-  --hkeeem-text: #FFFFFF;
-  --hkeeem-text-dim: #B0B0B0;
+  --hkeeem-gold: #d4af37;
+  --hkeeem-gold-bright: #ffd700;
+  --hkeeem-gold-dark: #8b6914;
+  --hkeeem-success: #4caf50;
+  --hkeeem-danger: #e53935;
+  --hkeeem-text: #ffffff;
+  --hkeeem-text-dim: #b0b0b0;
 }
 
 body {
-  font-family: 'Cairo', sans-serif;
+  font-family: "Cairo", sans-serif;
   background-color: var(--hkeeem-bg);
   color: var(--hkeeem-text);
 }
@@ -62,18 +62,27 @@ body {
 }
 
 .hk-savings {
-  background: linear-gradient(90deg, #3A2E0A, #8B6914, #D4AF37);
+  background: linear-gradient(90deg, #3a2e0a, #8b6914, #d4af37);
   border-radius: 18px;
   color: #000;
   box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
 }
 
-.hk-gold-text { color: var(--hkeeem-gold); }
-.hk-dim-text { color: var(--hkeeem-text-dim); }
+.hk-gold-text {
+  color: var(--hkeeem-gold);
+}
+.hk-dim-text {
+  color: var(--hkeeem-text-dim);
+}
 
 @keyframes hk-breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
 }
 .hk-assistant-float {
   animation: hk-breathe 2s ease-in-out infinite;
@@ -81,15 +90,28 @@ body {
 }
 
 @keyframes hk-typing {
-  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-  30% { opacity: 1; transform: translateY(-4px); }
+  0%,
+  60%,
+  100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
 }
 .hk-typing-dot {
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   background: var(--hkeeem-gold);
   border-radius: 50%;
   display: inline-block;
   animation: hk-typing 1.2s ease-in-out infinite;
 }
-.hk-typing-dot:nth-child(2) { animation-delay: 0.2s; }
-.hk-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+.hk-typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.hk-typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}

@@ -27,7 +27,10 @@ async function aesKey(): Promise<CryptoKey> {
   const secret = process.env["INTEGRATION_KEYS_ENC_SECRET"];
   if (!secret) throw new Error("INTEGRATION_KEYS_ENC_SECRET is not set");
   const material = await crypto.subtle.digest("SHA-256", enc.encode(secret));
-  return crypto.subtle.importKey("raw", material, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+  return crypto.subtle.importKey("raw", material, { name: "AES-GCM" }, false, [
+    "encrypt",
+    "decrypt",
+  ]);
 }
 
 function toBase64(bytes: Uint8Array): string {
@@ -46,7 +49,9 @@ function fromBase64(value: string): Uint8Array<ArrayBuffer> {
 export async function encryptValue(plaintext: string): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const key = await aesKey();
-  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(plaintext)));
+  const ct = new Uint8Array(
+    await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, enc.encode(plaintext)),
+  );
   const merged = new Uint8Array(iv.length + ct.length);
   merged.set(iv, 0);
   merged.set(ct, iv.length);
@@ -112,7 +117,9 @@ export async function getIntegrationKeyPresence(): Promise<IntegrationKeyPresenc
   let rows: Array<{ key_name: string; updated_at: string }> = [];
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data } = await supabaseAdmin.from("integration_credentials").select("key_name, updated_at");
+    const { data } = await supabaseAdmin
+      .from("integration_credentials")
+      .select("key_name, updated_at");
     rows = data ?? [];
   } catch (error) {
     console.error("integration key presence failed", error);
@@ -147,7 +154,10 @@ export async function saveIntegrationKey(name: IntegrationKeyName, value: string
 
 export async function deleteIntegrationKey(name: IntegrationKeyName) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { error } = await supabaseAdmin.from("integration_credentials").delete().eq("key_name", name);
+  const { error } = await supabaseAdmin
+    .from("integration_credentials")
+    .delete()
+    .eq("key_name", name);
   if (error) throw error;
   invalidateIntegrationKeyCache(name);
 }

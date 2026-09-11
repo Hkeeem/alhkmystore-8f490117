@@ -44,11 +44,15 @@ function read(): VisionBadgeSettings {
     return {
       visible: typeof parsed.visible === "boolean" ? parsed.visible : DEFAULT_BADGE.visible,
       opacity:
-        typeof parsed.opacity === "number" ? Math.min(100, Math.max(0, parsed.opacity)) : DEFAULT_BADGE.opacity,
+        typeof parsed.opacity === "number"
+          ? Math.min(100, Math.max(0, parsed.opacity))
+          : DEFAULT_BADGE.opacity,
       position: BADGE_POSITIONS.some((p) => p.id === parsed.position)
         ? (parsed.position as BadgePosition)
         : DEFAULT_BADGE.position,
-      size: BADGE_SIZES.some((s) => s.id === parsed.size) ? (parsed.size as BadgeSize) : DEFAULT_BADGE.size,
+      size: BADGE_SIZES.some((s) => s.id === parsed.size)
+        ? (parsed.size as BadgeSize)
+        : DEFAULT_BADGE.size,
     };
   } catch {
     return DEFAULT_BADGE;

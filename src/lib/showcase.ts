@@ -56,7 +56,9 @@ export async function fetchShowroomOffers(limit = 24): Promise<ShowroomOffer[]> 
 export async function fetchHarajListings(limit = 5): Promise<HarajListing[]> {
   const { data, error } = await supabase
     .from("haraj_listings")
-    .select("id, title, description, image_url, post_url, price, city, author, posted_at, fetched_at")
+    .select(
+      "id, title, description, image_url, post_url, price, city, author, posted_at, fetched_at",
+    )
     .eq("active", true)
     .order("rank", { ascending: true })
     .limit(limit);
@@ -64,7 +66,10 @@ export async function fetchHarajListings(limit = 5): Promise<HarajListing[]> {
   return (data ?? []) as HarajListing[];
 }
 
-export async function fetchOfficePicks(kind: "property" | "developer", limit = 5): Promise<OfficePick[]> {
+export async function fetchOfficePicks(
+  kind: "property" | "developer",
+  limit = 5,
+): Promise<OfficePick[]> {
   const { data, error } = await supabase
     .from("office_picks")
     .select("id, kind, title, subtitle, image_url, link_url, price, city, rank")

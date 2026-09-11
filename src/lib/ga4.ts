@@ -1,7 +1,6 @@
 const DEFAULT_MEASUREMENT_ID = "G-QCKHXEMS2K";
 
-const measurementId =
-  import.meta.env.VITE_GA_MEASUREMENT_ID || DEFAULT_MEASUREMENT_ID;
+const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID || DEFAULT_MEASUREMENT_ID;
 
 declare global {
   interface Window {
@@ -16,9 +15,11 @@ function ensureGtag() {
   if (typeof window === "undefined") return null;
 
   window.dataLayer = window.dataLayer || [];
-  window.gtag = window.gtag || ((...args: unknown[]) => {
-    window.dataLayer?.push(args);
-  });
+  window.gtag =
+    window.gtag ||
+    ((...args: unknown[]) => {
+      window.dataLayer?.push(args);
+    });
 
   return window.gtag;
 }

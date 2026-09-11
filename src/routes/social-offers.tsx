@@ -41,7 +41,9 @@ function SocialOffersPage() {
       <section className="space-y-2">
         <h2 className="text-sm font-black">عروض محدّثة تلقائيًا من حساباتنا</h2>
         {isLoading && <p className="text-[12px] text-muted-foreground">جارٍ التحديث…</p>}
-        {isError && <p className="text-[12px] text-destructive">تعذّر تحميل العروض المحدثة — جرّب لاحقًا.</p>}
+        {isError && (
+          <p className="text-[12px] text-destructive">تعذّر تحميل العروض المحدثة — جرّب لاحقًا.</p>
+        )}
         {!isLoading && !isError && (live?.length ?? 0) === 0 && (
           <div className="border border-dashed border-primary/30 rounded-2xl p-4 text-center space-y-2">
             <p className="text-[12px] text-muted-foreground">لم تُضف حسابات بعد.</p>
@@ -64,7 +66,9 @@ function SocialOffersPage() {
                     {offer.platform} · @{offer.handle}
                   </span>
                   {expiry && (
-                    <span className={`text-[10px] font-black ${lastDay ? "text-destructive" : "text-muted-foreground"}`}>
+                    <span
+                      className={`text-[10px] font-black ${lastDay ? "text-destructive" : "text-muted-foreground"}`}
+                    >
                       {lastDay ? "⏰ آخر يوم للعرض" : `ينتهي ${expiry.toLocaleDateString("ar-SA")}`}
                     </span>
                   )}
@@ -74,7 +78,9 @@ function SocialOffersPage() {
                   <p className="text-[13px] font-black text-primary mt-1">
                     {offer.price} ر.س{" "}
                     {offer.original_price != null && (
-                      <span className="text-[11px] text-muted-foreground line-through">{offer.original_price} ر.س</span>
+                      <span className="text-[11px] text-muted-foreground line-through">
+                        {offer.original_price} ر.س
+                      </span>
                     )}
                   </p>
                 )}

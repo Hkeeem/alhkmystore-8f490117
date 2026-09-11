@@ -70,8 +70,9 @@ describe("Saudi locations index", () => {
     expect(getSaudiDistricts("منطقة الرياض", riyadhCities[0] ?? "").length).toBeGreaterThan(0);
     expect(getSaudiDistricts("", "الرياض")).toEqual([]);
 
-    const districtCount = SAUDI_REGIONS.flatMap((region) => getSaudiCities(region)
-      .flatMap((city) => getSaudiDistricts(region, city))).length;
+    const districtCount = SAUDI_REGIONS.flatMap((region) =>
+      getSaudiCities(region).flatMap((city) => getSaudiDistricts(region, city)),
+    ).length;
     expect(districtCount).toBeGreaterThanOrEqual(3700);
   });
 });

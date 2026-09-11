@@ -12,7 +12,9 @@ async function loadLiveCatalog(): Promise<{ deals: CatalogLine[]; coupons: Catal
     const [merchantRes, externalRes, couponRes] = await Promise.all([
       supabaseAdmin
         .from("merchant_deals")
-        .select("id,title,unit,price,original_price,expires_at,coupon_code,product_url,merchants!inner(name)")
+        .select(
+          "id,title,unit,price,original_price,expires_at,coupon_code,product_url,merchants!inner(name)",
+        )
         .eq("status", "published")
         .order("discount_percent", { ascending: false })
         .limit(60),
@@ -71,7 +73,9 @@ export const Route = createFileRoute("/api/chat")({
         });
 
         const allLines = [...live.deals, ...staticLines];
-        const catalog = allLines.length ? allLines.join("\n") : "(لا توجد عروض محدّثة في القاعدة الآن)";
+        const catalog = allLines.length
+          ? allLines.join("\n")
+          : "(لا توجد عروض محدّثة في القاعدة الآن)";
         const couponsBlock = live.coupons.length
           ? live.coupons.join("\n")
           : "(لا توجد أكواد خصم مفعّلة الآن)";
@@ -95,7 +99,6 @@ ${couponsBlock}
 - إذا كانت القاعدة فارغة تماماً، قل "العروض تُحدَّث أولاً بأول" ثم قدّم كود خصم مفعّل أو تنبيه سعر، ولا تخترع أي سعراً.
 - إذا كان العرض مكتوباً عليه "انتهت صلاحية العرض"، نبّه المستخدم أنه قد يكون منتهياً قبل أن توصي به.
 - مهم جداً: كلما ذكرت عرضاً محدداً، ألصق بعده مباشرة الرمز {{deal:المعرّف}} حيث المعرّف هو قيمة id من القاعدة أعلاه، بدون فراغ. مثال: "أرز بسمتي من العثيم بـ 39 ر.س {{deal:othaim-basmati}}". لا تعرض المعرّف بأي شكل آخر ولا تنطقه.`;
-
 
         const gateway = createLovableAiGateway();
         const result = streamText({

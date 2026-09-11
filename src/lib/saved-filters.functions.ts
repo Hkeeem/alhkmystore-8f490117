@@ -37,7 +37,8 @@ const normalizeFilters = (raw: unknown) => {
   };
 };
 
-const parseScope = (value: unknown) => (typeof value === "string" && value.trim() ? value.trim().slice(0, 40) : "clicks");
+const parseScope = (value: unknown) =>
+  typeof value === "string" && value.trim() ? value.trim().slice(0, 40) : "clicks";
 
 export const listSavedFilters = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -62,16 +63,20 @@ export const listSavedFilters = createServerFn({ method: "GET" })
 
 export const saveFilter = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { scope?: string; name: string; filters: unknown; isDefault?: boolean }) => {
-    const name = String(data?.name ?? "").trim().slice(0, 60);
-    if (!name) throw new Error("اسم الفلتر مطلوب");
-    return {
-      scope: parseScope(data?.scope),
-      name,
-      filters: normalizeFilters(data?.filters),
-      isDefault: !!data?.isDefault,
-    };
-  })
+  .inputValidator(
+    (data: { scope?: string; name: string; filters: unknown; isDefault?: boolean }) => {
+      const name = String(data?.name ?? "")
+        .trim()
+        .slice(0, 60);
+      if (!name) throw new Error("اسم الفلتر مطلوب");
+      return {
+        scope: parseScope(data?.scope),
+        name,
+        filters: normalizeFilters(data?.filters),
+        isDefault: !!data?.isDefault,
+      };
+    },
+  )
   .handler(async ({ context, data }) => {
     await assertStaff(context as unknown as Ctx);
     if (data.isDefault) {
@@ -97,7 +102,10 @@ export const saveFilter = createServerFn({ method: "POST" })
 
 export const setDefaultFilter = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { id: string; scope?: string }) => ({ id: String(data.id), scope: parseScope(data?.scope) }))
+  .inputValidator((data: { id: string; scope?: string }) => ({
+    id: String(data.id),
+    scope: parseScope(data?.scope),
+  }))
   .handler(async ({ context, data }) => {
     await assertStaff(context as unknown as Ctx);
     await context.supabase

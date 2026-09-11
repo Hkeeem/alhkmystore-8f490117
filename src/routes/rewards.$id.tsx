@@ -20,7 +20,9 @@ export const Route = createFileRoute("/rewards/$id")({
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
-      return { meta: [{ title: "الجائزة غير متوفرة — وفّر" }, { name: "robots", content: "noindex" }] };
+      return {
+        meta: [{ title: "الجائزة غير متوفرة — وفّر" }, { name: "robots", content: "noindex" }],
+      };
     }
     const r = loaderData.reward;
     return {
@@ -75,7 +77,9 @@ function RewardDetail() {
   }, []);
 
   // Check if already redeemed in history.
-  const alreadyRedeemed = state.history.find((h) => h.action === "redeem" && h.rewardId === reward.id);
+  const alreadyRedeemed = state.history.find(
+    (h) => h.action === "redeem" && h.rewardId === reward.id,
+  );
 
   const can = state.points >= reward.cost;
   const missing = Math.max(0, reward.cost - state.points);
@@ -142,7 +146,10 @@ function RewardDetail() {
           </div>
         </div>
         <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
-          <div className="h-full bg-gradient-hero transition-all" style={{ width: `${progress}%` }} />
+          <div
+            className="h-full bg-gradient-hero transition-all"
+            style={{ width: `${progress}%` }}
+          />
         </div>
         <div className="text-[11px] text-muted-foreground mt-2">
           {can ? "✨ نقاطك كافية للاستبدال" : `ينقصك ${missing} نقطة`}
@@ -194,7 +201,10 @@ function RewardDetail() {
               <Share2 className="w-4 h-4" /> مشاركة
             </button>
           </div>
-          <Link to="/rewards" className="inline-block text-sm text-primary font-bold underline underline-offset-4">
+          <Link
+            to="/rewards"
+            className="inline-block text-sm text-primary font-bold underline underline-offset-4"
+          >
             رجوع لكل الجوائز
           </Link>
         </section>
@@ -209,7 +219,9 @@ function RewardDetail() {
             onClick={handleRedeem}
             disabled={!can}
             className={`mt-2 px-5 py-2.5 rounded-2xl font-bold text-sm transition ${
-              can ? "bg-primary text-primary-foreground hover:opacity-90" : "bg-secondary text-muted-foreground cursor-not-allowed"
+              can
+                ? "bg-primary text-primary-foreground hover:opacity-90"
+                : "bg-secondary text-muted-foreground cursor-not-allowed"
             }`}
           >
             استبدل مرة ثانية

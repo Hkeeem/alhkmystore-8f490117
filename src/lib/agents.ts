@@ -75,7 +75,8 @@ export function discountOf(deal: AgentDeal): number {
 
 /* ───────────────────────── حارس حكيم ───────────────────────── */
 
-export type GuardIssue = "expired" | "no-url" | "insecure-url" | "bad-price" | "unrealistic-discount";
+export type GuardIssue =
+  "expired" | "no-url" | "insecure-url" | "bad-price" | "unrealistic-discount";
 
 export const GUARD_ISSUE_LABEL: Record<GuardIssue, string> = {
   expired: "العرض منتهي الصلاحية",

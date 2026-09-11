@@ -9,7 +9,11 @@ export const Route = createFileRoute("/stores")({
   head: () => ({
     meta: [
       { title: "المتاجر — HkeeemAI" },
-      { name: "description", content: "كل المتاجر السعودية الشريكة في مكان واحد: العثيم، بنده، لولو، نون، جرير، إكسترا، النهدي." },
+      {
+        name: "description",
+        content:
+          "كل المتاجر السعودية الشريكة في مكان واحد: العثيم، بنده، لولو، نون، جرير، إكسترا، النهدي.",
+      },
     ],
   }),
   pendingComponent: StoresPageSkeleton,
@@ -31,8 +35,12 @@ function Stores() {
           <StoreIcon className="w-6 h-6 text-secondary" />
         </div>
         <div>
-          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">{t("stores.title")}</h1>
-          <p className="text-sm text-muted-foreground">{stores.length} {t("stores.count")}</p>
+          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">
+            {t("stores.title")}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            {stores.length} {t("stores.count")}
+          </p>
         </div>
       </header>
 
@@ -49,7 +57,10 @@ function Stores() {
                   search={{ store: s.id }}
                   className="p-4 rounded-2xl bg-card border border-border/60 shadow-card hover:border-primary hover:shadow-glow hover-lift press-ripple flex items-center gap-3"
                 >
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0" style={{ background: s.color }}>
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white shrink-0"
+                    style={{ background: s.color }}
+                  >
                     <Icon className="w-6 h-6" strokeWidth={2} />
                   </div>
                   <div className="min-w-0">

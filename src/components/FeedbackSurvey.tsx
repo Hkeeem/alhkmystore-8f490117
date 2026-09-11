@@ -157,14 +157,18 @@ export function FeedbackSurvey() {
               <div className="text-center py-8 space-y-3">
                 <PartyPopper className="w-12 h-12 mx-auto text-primary" />
                 <h2 className="font-black text-xl">شكراً لك! 🌟</h2>
-                <p className="text-sm text-muted-foreground">تقييمك وصلنا ويساعدنا نحسّن التوفير للجميع.</p>
+                <p className="text-sm text-muted-foreground">
+                  تقييمك وصلنا ويساعدنا نحسّن التوفير للجميع.
+                </p>
               </div>
             ) : (
               <>
                 <div className="flex items-start justify-between">
                   <div>
                     <h2 className="font-black text-lg leading-snug">كيف كانت تجربتك؟</h2>
-                    <p className="text-xs text-muted-foreground mt-1">دقيقة واحدة تكفي — رأيك يصنع الفرق</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      دقيقة واحدة تكفي — رأيك يصنع الفرق
+                    </p>
                   </div>
                   <button
                     onClick={() => setOpen(false)}
@@ -176,7 +180,11 @@ export function FeedbackSurvey() {
                 </div>
 
                 {/* النجوم */}
-                <div className="flex justify-center gap-2" role="radiogroup" aria-label="تقييم بالنجوم">
+                <div
+                  className="flex justify-center gap-2"
+                  role="radiogroup"
+                  aria-label="تقييم بالنجوم"
+                >
                   {[1, 2, 3, 4, 5].map((n) => {
                     const active = n <= (hovered || rating);
                     return (

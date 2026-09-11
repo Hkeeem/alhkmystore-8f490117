@@ -78,10 +78,16 @@ export function StoreBotPanel() {
 
   const runMutation = useMutation({
     mutationFn: (feedId?: string) => run({ data: feedId ? { feedId } : {} }),
-    onSuccess: (result: { upserted: number; feeds: number; errors: Array<{ store: string; message: string }> }) => {
+    onSuccess: (result: {
+      upserted: number;
+      feeds: number;
+      errors: Array<{ store: string; message: string }>;
+    }) => {
       if (result.feeds === 0) toast.info("لا توجد متاجر مفعّلة في البوت بعد");
       else if (result.errors.length > 0)
-        toast.warning(`جُلب ${result.upserted} عرضًا — تعذّر: ${result.errors.map((e) => e.store).join("، ")}`);
+        toast.warning(
+          `جُلب ${result.upserted} عرضًا — تعذّر: ${result.errors.map((e) => e.store).join("، ")}`,
+        );
       else toast.success(`تم جلب ${result.upserted} عرضًا من ${result.feeds} متجرًا`);
       refreshAll();
     },
@@ -118,19 +124,37 @@ export function StoreBotPanel() {
         <div className="grid gap-2 sm:grid-cols-2">
           <div className="space-y-1">
             <Label className="text-xs">اسم المتجر</Label>
-            <Input value={storeName} onChange={(e) => setStoreName(e.target.value)} placeholder="مثال: جرير" />
+            <Input
+              value={storeName}
+              onChange={(e) => setStoreName(e.target.value)}
+              placeholder="مثال: جرير"
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-xs">القسم</Label>
-            <Input value={category} onChange={(e) => setCategory(e.target.value)} placeholder="إلكترونيات" />
+            <Input
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="إلكترونيات"
+            />
           </div>
           <div className="space-y-1 sm:col-span-2">
             <Label className="text-xs">رابط تغذية المنتجات</Label>
-            <Input dir="ltr" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} placeholder="https://store.com/feed.xml" />
+            <Input
+              dir="ltr"
+              value={feedUrl}
+              onChange={(e) => setFeedUrl(e.target.value)}
+              placeholder="https://store.com/feed.xml"
+            />
           </div>
           <div className="space-y-1 sm:col-span-2">
             <Label className="text-xs">وسم الإحالة (اختياري)</Label>
-            <Input dir="ltr" value={affiliate} onChange={(e) => setAffiliate(e.target.value)} placeholder="utm_source=hkeeem&ref=HKM11" />
+            <Input
+              dir="ltr"
+              value={affiliate}
+              onChange={(e) => setAffiliate(e.target.value)}
+              placeholder="utm_source=hkeeem&ref=HKM11"
+            />
           </div>
         </div>
 
@@ -153,7 +177,9 @@ export function StoreBotPanel() {
           ) : feeds.isError ? (
             <div className="rounded-lg border p-3 text-xs text-destructive">
               تعذّر تحميل قائمة المتاجر.
-              <Button size="sm" variant="ghost" onClick={() => feeds.refetch()}>إعادة المحاولة</Button>
+              <Button size="sm" variant="ghost" onClick={() => feeds.refetch()}>
+                إعادة المحاولة
+              </Button>
             </div>
           ) : rows.length === 0 ? (
             <p className="rounded-lg border border-dashed p-4 text-center text-xs text-muted-foreground">
@@ -165,15 +191,25 @@ export function StoreBotPanel() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate text-sm font-bold">{feed.store_name}</span>
-                    <Badge variant="secondary" className="text-[10px]">{feed.category}</Badge>
+                    <Badge variant="secondary" className="text-[10px]">
+                      {feed.category}
+                    </Badge>
                     {feed.last_count > 0 && (
-                      <Badge variant="outline" className="text-[10px]">{feed.last_count} عرض</Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        {feed.last_count} عرض
+                      </Badge>
                     )}
                   </div>
-                  <p className="truncate text-[11px] text-muted-foreground" dir="ltr">{feed.feed_url}</p>
+                  <p className="truncate text-[11px] text-muted-foreground" dir="ltr">
+                    {feed.feed_url}
+                  </p>
                   {feed.last_status && (
-                    <p className={`truncate text-[11px] ${feed.last_status.startsWith("failure") ? "text-destructive" : "text-muted-foreground"}`}>
-                      {feed.last_status.startsWith("failure") ? feed.last_status.replace("failure:", "فشل:") : "آخر تشغيل ناجح"}
+                    <p
+                      className={`truncate text-[11px] ${feed.last_status.startsWith("failure") ? "text-destructive" : "text-muted-foreground"}`}
+                    >
+                      {feed.last_status.startsWith("failure")
+                        ? feed.last_status.replace("failure:", "فشل:")
+                        : "آخر تشغيل ناجح"}
                     </p>
                   )}
                 </div>
@@ -183,7 +219,12 @@ export function StoreBotPanel() {
                     toggle({ data: { id: feed.id, active } }).then(refreshAll)
                   }
                 />
-                <Button size="icon" variant="ghost" onClick={() => runMutation.mutate(feed.id)} aria-label="تشغيل">
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => runMutation.mutate(feed.id)}
+                  aria-label="تشغيل"
+                >
                   <RefreshCw className="h-4 w-4" />
                 </Button>
                 <Button

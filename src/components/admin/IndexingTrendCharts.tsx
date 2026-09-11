@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
 import { TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -86,26 +95,51 @@ export function IndexingTrendCharts() {
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            عند اختيار نطاق أو صفحات، تُحسب الصفحات المفهرسة/المفحوصة من تفاصيل كل لقطة ضمن النطاق المختار فقط.
+            عند اختيار نطاق أو صفحات، تُحسب الصفحات المفهرسة/المفحوصة من تفاصيل كل لقطة ضمن النطاق
+            المختار فقط.
           </p>
         </div>
 
         {trend.isLoading && <Skeleton className="h-64 w-full rounded-2xl" />}
         {!trend.isLoading && points.length === 0 && (
-          <p className="text-sm text-muted-foreground">لا توجد لقطات محفوظة خلال آخر 30 يوماً بعد.</p>
+          <p className="text-sm text-muted-foreground">
+            لا توجد لقطات محفوظة خلال آخر 30 يوماً بعد.
+          </p>
         )}
         {points.length > 0 && (
           <>
             <div>
-              <div className="mb-2 text-xs text-muted-foreground">عدد الصفحات المفهرسة مقابل المفحوصة</div>
+              <div className="mb-2 text-xs text-muted-foreground">
+                عدد الصفحات المفهرسة مقابل المفحوصة
+              </div>
               <ChartContainer config={config} className="h-56 w-full">
                 <ResponsiveContainer>
                   <LineChart data={points} margin={{ left: 8, right: 8 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="day" tickFormatter={formatDay} tickLine={false} axisLine={false} fontSize={11} />
-                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={32} fontSize={11} />
-                    <ChartTooltip content={<ChartTooltipContent labelFormatter={(l) => formatDay(String(l))} />} />
-                    <Line type="monotone" dataKey="indexedUrls" stroke="var(--color-indexedUrls)" strokeWidth={2} dot={false} />
+                    <XAxis
+                      dataKey="day"
+                      tickFormatter={formatDay}
+                      tickLine={false}
+                      axisLine={false}
+                      fontSize={11}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tickLine={false}
+                      axisLine={false}
+                      width={32}
+                      fontSize={11}
+                    />
+                    <ChartTooltip
+                      content={<ChartTooltipContent labelFormatter={(l) => formatDay(String(l))} />}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="indexedUrls"
+                      stroke="var(--color-indexedUrls)"
+                      strokeWidth={2}
+                      dot={false}
+                    />
                     <Line
                       type="monotone"
                       dataKey="inspected"
@@ -120,14 +154,30 @@ export function IndexingTrendCharts() {
             </div>
 
             <div>
-              <div className="mb-2 text-xs text-muted-foreground">زحف Google عبر خريطة الموقع (مُرسلة مقابل مفهرسة)</div>
+              <div className="mb-2 text-xs text-muted-foreground">
+                زحف Google عبر خريطة الموقع (مُرسلة مقابل مفهرسة)
+              </div>
               <ChartContainer config={config} className="h-56 w-full">
                 <ResponsiveContainer>
                   <AreaChart data={points} margin={{ left: 8, right: 8 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="day" tickFormatter={formatDay} tickLine={false} axisLine={false} fontSize={11} />
-                    <YAxis allowDecimals={false} tickLine={false} axisLine={false} width={32} fontSize={11} />
-                    <ChartTooltip content={<ChartTooltipContent labelFormatter={(l) => formatDay(String(l))} />} />
+                    <XAxis
+                      dataKey="day"
+                      tickFormatter={formatDay}
+                      tickLine={false}
+                      axisLine={false}
+                      fontSize={11}
+                    />
+                    <YAxis
+                      allowDecimals={false}
+                      tickLine={false}
+                      axisLine={false}
+                      width={32}
+                      fontSize={11}
+                    />
+                    <ChartTooltip
+                      content={<ChartTooltipContent labelFormatter={(l) => formatDay(String(l))} />}
+                    />
                     <Area
                       type="monotone"
                       dataKey="submitted"

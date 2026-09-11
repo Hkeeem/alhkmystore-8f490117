@@ -130,7 +130,6 @@ export const logNoonCampaignEvent = createServerFn({ method: "POST" })
     return { ok: true as const, notified };
   });
 
-
 /** قراءة سجل تدقيق noon — للمشرفين فقط. */
 export const listNoonAuditLog = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -150,14 +149,17 @@ export const listNoonAuditLog = createServerFn({ method: "GET" })
       .limit(data.limit);
     if (error) throw new Error(error.message);
 
-    const actorIds = [...new Set((rows ?? []).map((r) => r.actor_id).filter(Boolean))] as Array<string>;
+    const actorIds = [
+      ...new Set((rows ?? []).map((r) => r.actor_id).filter(Boolean)),
+    ] as Array<string>;
     const names = new Map<string, string>();
     if (actorIds.length) {
       const { data: profiles } = await supabaseAdmin
         .from("profiles")
         .select("id, display_name")
         .in("id", actorIds);
-      for (const p of profiles ?? []) names.set(p.id as string, (p.display_name as string) || "مشرف");
+      for (const p of profiles ?? [])
+        names.set(p.id as string, (p.display_name as string) || "مشرف");
     }
 
     return (rows ?? []).map((r) => {

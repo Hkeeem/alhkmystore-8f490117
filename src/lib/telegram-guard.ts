@@ -33,8 +33,7 @@ export function isValidTelegramRequest(
   if (!body || typeof body !== "object") return false;
 
   const message = (body as { message?: unknown }).message as
-    | { text?: unknown; chat?: { id?: unknown } }
-    | undefined;
+    { text?: unknown; chat?: { id?: unknown } } | undefined;
   if (!message || typeof message !== "object") return false;
 
   const text = typeof message.text === "string" ? message.text.trim() : "";

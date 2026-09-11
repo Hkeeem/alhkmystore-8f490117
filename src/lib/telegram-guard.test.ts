@@ -21,7 +21,8 @@ describe("حارس تيليجرام", () => {
   });
 
   it("يحد المعدل عند تجاوز ٥ رسائل بالدقيقة", () => {
-    for (let i = 0; i < 5; i++) expect(isValidTelegramRequest(body(`m${i}`), SECRET, SECRET)).toBe(true);
+    for (let i = 0; i < 5; i++)
+      expect(isValidTelegramRequest(body(`m${i}`), SECRET, SECRET)).toBe(true);
     expect(isValidTelegramRequest(body("m6"), SECRET, SECRET)).toBe(false);
   });
 });

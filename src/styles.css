@@ -13,16 +13,13 @@
 @import "@fontsource/aref-ruqaa/400.css";
 @import "@fontsource/aref-ruqaa/700.css";
 
-
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-
   --font-sans: "Tajawal", system-ui, sans-serif;
   --font-display: "Cairo", "Tajawal", system-ui, sans-serif;
   /* خط عربي بأسلوب الثلث/الرقعة للعناوين الفاخرة */
   --font-thuluth: "Aref Ruqaa", "Cairo", serif;
-
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -64,9 +61,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
-}:root {
-
+}
+:root {
   /* Hkeeem AI — Luxury Gold & Black */
 
   --radius: 1rem;
@@ -100,7 +96,7 @@
   --accent-foreground: oklch(0.22 0.02 60);
 
   /* Status — دُكِّنت لضمان تباين ٤.٥:١ مع النص الأبيض */
-  --destructive: oklch(0.50 0.20 27);
+  --destructive: oklch(0.5 0.2 27);
   --destructive-foreground: oklch(0.99 0 0);
 
   --success: oklch(0.51 0.13 148);
@@ -113,50 +109,33 @@
   --border: oklch(0.86 0.025 75);
   --input: oklch(0.91 0.02 75);
   --ring: oklch(0.62 0.14 72);
-
-
-}:root {
-
+}
+:root {
   /* Gradients */
 
-  --gradient-hero:
-    linear-gradient(
-      135deg,
-      oklch(0.18 0.03 65) 0%,
-      oklch(0.28 0.05 70) 40%,
-      oklch(0.75 0.16 78) 100%
-    );
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.18 0.03 65) 0%,
+    oklch(0.28 0.05 70) 40%,
+    oklch(0.75 0.16 78) 100%
+  );
 
-  --gradient-gold:
-    linear-gradient(
-      135deg,
-      oklch(0.90 0.16 88) 0%,
-      oklch(0.78 0.18 80) 40%,
-      oklch(0.65 0.17 72) 100%
-    );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.9 0.16 88) 0%,
+    oklch(0.78 0.18 80) 40%,
+    oklch(0.65 0.17 72) 100%
+  );
 
-  --gradient-hot:
-    linear-gradient(
-      135deg,
-      oklch(0.65 0.22 35),
-      oklch(0.55 0.23 20)
-    );
+  --gradient-hot: linear-gradient(135deg, oklch(0.65 0.22 35), oklch(0.55 0.23 20));
 
   /* Shadows */
 
-  --shadow-soft:
-    0 4px 20px -8px
-    oklch(0.18 0 0 / 0.18);
+  --shadow-soft: 0 4px 20px -8px oklch(0.18 0 0 / 0.18);
 
-  --shadow-glow:
-    0 8px 40px -8px
-    oklch(0.75 0.16 78 / 0.65),
-    0 0 0 1px oklch(0.75 0.16 78 / 0.20);
+  --shadow-glow: 0 8px 40px -8px oklch(0.75 0.16 78 / 0.65), 0 0 0 1px oklch(0.75 0.16 78 / 0.2);
 
-  --shadow-card:
-    0 2px 12px -4px
-    oklch(0.18 0 0 / 0.10);
-
+  --shadow-card: 0 2px 12px -4px oklch(0.18 0 0 / 0.1);
 }
 
 /* Dark Mode Variables — Deep Indigo/Violet with Gold */
@@ -178,10 +157,10 @@
 
   /* الثانوي — بنفسجي شفاف */
   --secondary: oklch(0.22 0.06 280);
-  --secondary-foreground: oklch(0.90 0.02 85);
+  --secondary-foreground: oklch(0.9 0.02 85);
 
   /* المكتوم */
-  --muted: oklch(0.20 0.05 280);
+  --muted: oklch(0.2 0.05 280);
   --muted-foreground: oklch(0.58 0.04 280);
 
   /* التمييز */
@@ -191,7 +170,7 @@
   /* الحدود — بنفسجية شفافة */
   --border: oklch(0.28 0.06 280);
   --input: oklch(0.22 0.05 280);
-  --ring: oklch(0.80 0.14 85);
+  --ring: oklch(0.8 0.14 85);
 }
 
 /* ===== الأنماط المعدنية: ذهبي / فضي / برونزي ===== */
@@ -206,13 +185,12 @@
 }
 
 .theme-gold {
-  --primary: oklch(0.60 0.13 72);
+  --primary: oklch(0.6 0.13 72);
   --primary-foreground: oklch(0.99 0.01 85);
   --accent: oklch(0.86 0.06 80);
   --accent-foreground: oklch(0.22 0.02 60);
-  --ring: oklch(0.60 0.13 72);
+  --ring: oklch(0.6 0.13 72);
 }
-
 
 .theme-silver {
   --background: oklch(0.97 0.004 250);
@@ -233,14 +211,23 @@
   --input: oklch(0.91 0.008 250);
   --ring: oklch(0.52 0.015 250);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.20 0.01 250) 0%, oklch(0.36 0.012 250) 45%, oklch(0.62 0.015 250) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.92 0.006 250) 0%, oklch(0.76 0.012 250) 40%, oklch(0.58 0.015 250) 100%);
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.2 0.01 250) 0%,
+    oklch(0.36 0.012 250) 45%,
+    oklch(0.62 0.015 250) 100%
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.92 0.006 250) 0%,
+    oklch(0.76 0.012 250) 40%,
+    oklch(0.58 0.015 250) 100%
+  );
   --shadow-glow: 0 8px 40px -8px oklch(0.55 0.02 250 / 0.45), 0 0 0 1px oklch(0.55 0.02 250 / 0.25);
 
   --shine-dark: oklch(0.36 0.01 250);
   --shine-mid: oklch(0.46 0.012 250);
   --shine-light: oklch(0.58 0.014 250);
-
 }
 
 .theme-bronze {
@@ -262,14 +249,23 @@
   --input: oklch(0.91 0.025 55);
   --ring: oklch(0.52 0.11 52);
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.19 0.03 45) 0%, oklch(0.31 0.06 50) 45%, oklch(0.58 0.12 55) 100%);
-  --gradient-gold: linear-gradient(135deg, oklch(0.80 0.09 62) 0%, oklch(0.62 0.13 55) 45%, oklch(0.44 0.10 48) 100%);
-  --shadow-glow: 0 8px 40px -8px oklch(0.52 0.11 52 / 0.50), 0 0 0 1px oklch(0.52 0.11 52 / 0.25);
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.19 0.03 45) 0%,
+    oklch(0.31 0.06 50) 45%,
+    oklch(0.58 0.12 55) 100%
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.8 0.09 62) 0%,
+    oklch(0.62 0.13 55) 45%,
+    oklch(0.44 0.1 48) 100%
+  );
+  --shadow-glow: 0 8px 40px -8px oklch(0.52 0.11 52 / 0.5), 0 0 0 1px oklch(0.52 0.11 52 / 0.25);
 
   --shine-dark: oklch(0.38 0.09 48);
   --shine-mid: oklch(0.48 0.11 52);
   --shine-light: oklch(0.58 0.12 58);
-
 }
 
 /* ===== الوضع الداكن التلقائي (تفضيل النظام) لكل نمط معدني ===== */
@@ -284,17 +280,17 @@
   --primary-foreground: oklch(0.15 0.02 80);
   --secondary: oklch(0.22 0.02 80);
   --secondary-foreground: oklch(0.92 0.01 85);
-  --muted: oklch(0.20 0.02 80);
+  --muted: oklch(0.2 0.02 80);
   --muted-foreground: oklch(0.72 0.02 82);
   --accent: oklch(0.34 0.05 80);
   --accent-foreground: oklch(0.95 0.01 85);
-  --border: oklch(0.30 0.03 80);
+  --border: oklch(0.3 0.03 80);
   --input: oklch(0.24 0.02 80);
   --ring: oklch(0.82 0.15 82);
 
   --shine-dark: oklch(0.66 0.12 70);
   --shine-mid: oklch(0.78 0.14 80);
-  --shine-light: oklch(0.90 0.10 88);
+  --shine-light: oklch(0.9 0.1 88);
 }
 
 .dark.theme-silver {
@@ -317,7 +313,7 @@
   --ring: oklch(0.84 0.012 250);
 
   --shine-dark: oklch(0.68 0.008 250);
-  --shine-mid: oklch(0.80 0.01 250);
+  --shine-mid: oklch(0.8 0.01 250);
   --shine-light: oklch(0.93 0.005 250);
 }
 
@@ -328,7 +324,7 @@
   --card-foreground: oklch(0.96 0.01 60);
   --popover: oklch(0.18 0.025 45);
   --popover-foreground: oklch(0.96 0.01 60);
-  --primary: oklch(0.78 0.10 58);
+  --primary: oklch(0.78 0.1 58);
   --primary-foreground: oklch(0.16 0.02 45);
   --secondary: oklch(0.23 0.03 45);
   --secondary-foreground: oklch(0.92 0.015 55);
@@ -338,9 +334,9 @@
   --accent-foreground: oklch(0.95 0.01 60);
   --border: oklch(0.31 0.04 48);
   --input: oklch(0.25 0.03 45);
-  --ring: oklch(0.78 0.10 58);
+  --ring: oklch(0.78 0.1 58);
 
-  --shine-dark: oklch(0.62 0.10 48);
+  --shine-dark: oklch(0.62 0.1 48);
   --shine-mid: oklch(0.74 0.11 55);
   --shine-light: oklch(0.86 0.08 62);
 }
@@ -387,8 +383,6 @@ html.theme-switching *:active {
   }
 }
 
-
-
 /* ===== شعار رؤية 2030 الرسمي كخلفية شفافة خلف شعار HkeeemAI ===== */
 .vision-2030-bg {
   position: absolute;
@@ -406,22 +400,32 @@ html.theme-switching *:active {
 }
 
 /* الأحجام */
-.vision-2030-bg.vision-sm { --vision-size: 2.8rem; }
-.vision-2030-bg.vision-md { --vision-size: 4rem; }
-.vision-2030-bg.vision-lg { --vision-size: 5.5rem; }
+.vision-2030-bg.vision-sm {
+  --vision-size: 2.8rem;
+}
+.vision-2030-bg.vision-md {
+  --vision-size: 4rem;
+}
+.vision-2030-bg.vision-lg {
+  --vision-size: 5.5rem;
+}
 
 /* المكان داخل الترويسة (إحداثيات ثابتة لضمان التمركز الدقيق في RTL) */
-.vision-2030-bg.vision-start { right: -0.25rem; left: auto; }
-.vision-2030-bg.vision-end { left: -0.5rem; right: auto; }
+.vision-2030-bg.vision-start {
+  right: -0.25rem;
+  left: auto;
+}
+.vision-2030-bg.vision-end {
+  left: -0.5rem;
+  right: auto;
+}
 .vision-2030-bg.vision-center {
   left: 50%;
   right: auto;
   transform: translate(-50%, -50%);
 }
 
-
 @layer base {
-
   * {
     border-color: var(--color-border);
   }
@@ -431,7 +435,6 @@ html.theme-switching *:active {
   }
 
   body {
-
     background: var(--color-background);
 
     color: var(--color-foreground);
@@ -454,7 +457,6 @@ html.theme-switching *:active {
     -webkit-font-smoothing: antialiased;
 
     -moz-osx-font-smoothing: grayscale;
-
   }
 
   /* لا نصغّر النص عن الحد المقروء في أي مكان */
@@ -483,7 +485,6 @@ html.theme-switching *:active {
   h2,
   h3,
   h4 {
-
     font-family: var(--font-display);
 
     font-weight: 900;
@@ -493,9 +494,7 @@ html.theme-switching *:active {
     line-height: 1.5;
 
     text-wrap: balance;
-
   }
-
 }
 
 /* وضوح النص فوق الخلفيات الذهبية المتدرجة */
@@ -524,40 +523,27 @@ html.theme-switching *:active {
 }
 
 @utility bg-gradient-hero {
-
-
   background-image: var(--gradient-hero);
-
 }
 
 @utility bg-gradient-gold {
-
   background-image: var(--gradient-gold);
-
 }
 
 @utility bg-gradient-hot {
-
   background-image: var(--gradient-hot);
-
 }
 
 @utility shadow-soft {
-
   box-shadow: var(--shadow-soft);
-
 }
 
 @utility shadow-glow {
-
   box-shadow: var(--shadow-glow);
-
 }
 
 @utility shadow-card {
-
   box-shadow: var(--shadow-card);
-
 }
 
 @utility font-thuluth {
@@ -571,13 +557,15 @@ html.theme-switching *:active {
 }
 
 @utility text-gold-shine {
-  background-image: linear-gradient(100deg,
+  background-image: linear-gradient(
+    100deg,
     var(--shine-dark) 0%,
 
     var(--shine-light) 35%,
     var(--shine-mid) 50%,
     var(--shine-light) 65%,
-    var(--shine-dark) 100%);
+    var(--shine-dark) 100%
+  );
   background-size: 300% 100%;
   background-clip: text;
   color: transparent;
@@ -586,17 +574,20 @@ html.theme-switching *:active {
   animation: goldShine 4s ease-in-out infinite;
 }
 
-
 @utility glass-card {
   background-color: oklch(1 0 0 / 0.72);
   backdrop-filter: blur(18px) saturate(140%);
   border: 1px solid var(--border);
 }
 
-
 @keyframes goldShine {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 @utility glow-gold {
@@ -623,21 +614,18 @@ html.theme-switching *:active {
   place-items: center;
 }
 
-
-
-
 /* بطاقة زجاجية للوضع الليلي */
 @utility glass-dark {
-  background-color: oklch(0.20 0.06 280 / 0.60);
+  background-color: oklch(0.2 0.06 280 / 0.6);
   backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid oklch(0.50 0.10 280 / 0.25);
+  border: 1px solid oklch(0.5 0.1 280 / 0.25);
 }
 
 /* أيقونة شفافة للوضع الليلي */
 @utility icon-glass {
-  background-color: oklch(0.30 0.08 280 / 0.45);
+  background-color: oklch(0.3 0.08 280 / 0.45);
   backdrop-filter: blur(12px);
-  border: 1px solid oklch(0.55 0.10 280 / 0.30);
+  border: 1px solid oklch(0.55 0.1 280 / 0.3);
 }
 
 /* --- UX polish: soft elevation, ripple, skeleton --- */
@@ -707,7 +695,6 @@ html.theme-switching *:active {
   animation: skeletonShimmer 1.4s ease-in-out infinite;
 }
 
-
 @keyframes skeletonShimmer {
   0% {
     background-position: 100% 50%;
@@ -743,7 +730,6 @@ html.theme-switching *:active {
     }
   }
 }
-
 
 /* ===== تمرير ناعم + استعادة موضع التمرير ===== */
 html {
@@ -861,7 +847,6 @@ html {
   }
 }
 
-
 /* Skip to main content link */
 .skip-link {
   position: fixed;
@@ -885,7 +870,9 @@ html {
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .skip-link { transition: none; }
+  .skip-link {
+    transition: none;
+  }
 }
 
 @utility scrollbar-hide {
@@ -900,7 +887,9 @@ html {
 .leaflet-popup-content-wrapper {
   border-radius: 16px !important;
   border: 1px solid rgba(212, 175, 55, 0.45) !important;
-  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  box-shadow:
+    0 8px 30px rgba(212, 175, 55, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15) !important;
 }
 .leaflet-popup-tip {
   border-top: 1px solid rgba(212, 175, 55, 0.45) !important;
@@ -929,7 +918,10 @@ html {
   color: var(--card-foreground);
   border: 1px solid var(--border);
   box-shadow: 0 8px 30px rgb(0 0 0 / 0.06);
-  transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
 }
 
 .hk-card:hover {
@@ -959,7 +951,7 @@ html {
   background-color: oklch(1 0 0 / 0.68);
   backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid color-mix(in oklab, var(--primary) 24%, transparent);
-  box-shadow: 0 10px 34px rgb(0 0 0 / 0.10);
+  box-shadow: 0 10px 34px rgb(0 0 0 / 0.1);
 }
 
 /* ===== قاعدة التباين العامة في كل الثيمات والصفحات =====
@@ -1004,7 +996,7 @@ html {
     135deg,
     oklch(0.99 0.002 250) 0%,
     oklch(0.86 0.008 250) 40%,
-    oklch(0.70 0.014 250) 100%
+    oklch(0.7 0.014 250) 100%
   );
   /* سطح فاتح → نص غامق */
   color: oklch(0.18 0.01 250);
@@ -1015,7 +1007,7 @@ html {
     135deg,
     oklch(0.99 0.003 250) 0%,
     oklch(0.85 0.012 250) 45%,
-    oklch(0.70 0.02 250) 100%
+    oklch(0.7 0.02 250) 100%
   );
   -webkit-background-clip: text;
   background-clip: text;

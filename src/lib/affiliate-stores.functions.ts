@@ -1,7 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const clean = (v: unknown, max = 200) => String(v ?? "").trim().slice(0, max);
+const clean = (v: unknown, max = 200) =>
+  String(v ?? "")
+    .trim()
+    .slice(0, max);
 
 export type AffiliateStore = {
   id: string;
@@ -125,7 +128,10 @@ export const staffSaveAffiliateStore = createServerFn({ method: "POST" })
     };
 
     if (data.id) {
-      const { error } = await context.supabase.from("affiliate_stores").update(payload).eq("id", data.id);
+      const { error } = await context.supabase
+        .from("affiliate_stores")
+        .update(payload)
+        .eq("id", data.id);
       if (error) throw new Error(error.message);
       return { ok: true, id: data.id };
     }
@@ -187,7 +193,10 @@ export const staffSearchStoreCandidates = createServerFn({ method: "GET" })
       .limit(200);
     if (q) extQ = extQ.ilike("store_name", `%${q}%`);
 
-    let merQ = supabaseAdmin.from("merchants").select("name, slug, website, category, logo_url").limit(200);
+    let merQ = supabaseAdmin
+      .from("merchants")
+      .select("name, slug, website, category, logo_url")
+      .limit(200);
     if (q) merQ = merQ.ilike("name", `%${q}%`);
 
     const [ext, mer] = await Promise.all([extQ, merQ]);

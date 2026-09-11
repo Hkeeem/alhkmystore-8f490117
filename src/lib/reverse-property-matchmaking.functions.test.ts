@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buyerRequestInputSchema, propertyListingInputSchema } from "./reverse-property-matchmaking.functions";
+import {
+  buyerRequestInputSchema,
+  propertyListingInputSchema,
+} from "./reverse-property-matchmaking.functions";
 
 const buyerRequest = {
   fullName: "مشتري اختبار",
@@ -25,8 +28,12 @@ describe("reverse property matchmaking input schemas", () => {
   });
 
   it("rejects missing consent and invalid mobile numbers before persistence", () => {
-    expect(buyerRequestInputSchema.safeParse({ ...buyerRequest, contactConsent: false }).success).toBe(false);
-    expect(buyerRequestInputSchema.safeParse({ ...buyerRequest, phone: "050" }).success).toBe(false);
+    expect(
+      buyerRequestInputSchema.safeParse({ ...buyerRequest, contactConsent: false }).success,
+    ).toBe(false);
+    expect(buyerRequestInputSchema.safeParse({ ...buyerRequest, phone: "050" }).success).toBe(
+      false,
+    );
   });
 
   it("accepts a complete property listing and rejects unusable pricing", () => {

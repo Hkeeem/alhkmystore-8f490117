@@ -23,14 +23,10 @@ export function useLiveDeals(limit = 12) {
   useEffect(() => {
     const channel = supabase
       .channel("live-merchant-deals")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "merchant_deals" },
-        () => {
-          setLastEventAt(Date.now());
-          queryClient.invalidateQueries({ queryKey: LIVE_DEALS_KEY });
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "merchant_deals" }, () => {
+        setLastEventAt(Date.now());
+        queryClient.invalidateQueries({ queryKey: LIVE_DEALS_KEY });
+      })
       .subscribe((status) => setLive(status === "SUBSCRIBED"));
 
     return () => {

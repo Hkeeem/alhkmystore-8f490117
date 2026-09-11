@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 
 export type Lang = "ar" | "en";
 
@@ -48,7 +56,10 @@ export const dict = {
   "item.pro": { ar: "حكيم برو", en: "Hkeeem Pro" },
 
   // Home / hero
-  "home.badge": { ar: "HkeeemAI — وفّر أكثر… لا تدفع أكثر", en: "HkeeemAI — save more, never overpay" },
+  "home.badge": {
+    ar: "HkeeemAI — وفّر أكثر… لا تدفع أكثر",
+    en: "HkeeemAI — save more, never overpay",
+  },
   "home.title1": { ar: "تسوّق ذكي…", en: "Smart shopping…" },
   "home.title2": { ar: "توفير أكثر", en: "bigger savings" },
   "home.subtitle": {
@@ -57,7 +68,7 @@ export const dict = {
   },
   "home.searchPlaceholder": {
     ar: "اسأل حكيم: مثلاً «أرخص أرز بسمتي؟» أو «أفضل عرض جوال»",
-    en: "Ask Hkeeem: e.g. \"cheapest basmati rice?\" or \"best phone deal\"",
+    en: 'Ask Hkeeem: e.g. "cheapest basmati rice?" or "best phone deal"',
   },
   "home.searchLabel": { ar: "بحث ذكي", en: "Smart search" },
   "home.search": { ar: "ابحث", en: "Search" },
@@ -65,13 +76,22 @@ export const dict = {
   "home.statSaving": { ar: "متوسط التوفير", en: "avg. saving" },
   "home.statAssistant": { ar: "مساعد ذكي", en: "AI assistant" },
   "home.bestTitle": { ar: "أفضل العروض الآن", en: "Best deals right now" },
-  "home.bestSubtitle": { ar: "مرتّبة تلقائياً حسب نسبة التوفير", en: "Auto-ranked by savings percentage" },
+  "home.bestSubtitle": {
+    ar: "مرتّبة تلقائياً حسب نسبة التوفير",
+    en: "Auto-ranked by savings percentage",
+  },
   "home.compareTitle": { ar: "مقارنة الأسعار", en: "Price comparison" },
-  "home.compareSubtitle": { ar: "نفس المنتج، أرخص متجر أوّلاً", en: "Same product, cheapest store first" },
+  "home.compareSubtitle": {
+    ar: "نفس المنتج، أرخص متجر أوّلاً",
+    en: "Same product, cheapest store first",
+  },
   "home.cheapest": { ar: "أرخص سعر", en: "Lowest price" },
   "home.best": { ar: "الأفضل", en: "Best" },
   "home.exploreTitle": { ar: "استكشف HkeeemAI", en: "Explore HkeeemAI" },
-  "home.exploreSubtitle": { ar: "كل أقسام المنصة في مكان واحد", en: "Every section of the platform in one place" },
+  "home.exploreSubtitle": {
+    ar: "كل أقسام المنصة في مكان واحد",
+    en: "Every section of the platform in one place",
+  },
   "home.partnersTitle": { ar: "المتاجر المشاركة", en: "Participating stores" },
   "home.allStores": { ar: "كل المتاجر", en: "All stores" },
   "home.currency": { ar: "ر.س", en: "SAR" },
@@ -162,11 +182,15 @@ function detectLang(): Lang {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved === "ar" || saved === "en") return saved;
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   try {
     const nav = navigator.languages?.[0] || navigator.language || "ar";
     return nav.toLowerCase().startsWith("ar") ? "ar" : "en";
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return "ar";
 }
 
@@ -187,7 +211,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    try { localStorage.setItem(STORAGE_KEY, l); } catch { /* ignore */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, l);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const value = useMemo<Ctx>(

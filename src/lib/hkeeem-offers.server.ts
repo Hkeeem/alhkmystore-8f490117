@@ -25,7 +25,12 @@ export type HkeeemOffer = {
 
 export type HkeeemStore = { id: string; name: string };
 
-export type HkeeemQuery = { category?: string; platform?: string; storeId?: string; minDiscount?: number };
+export type HkeeemQuery = {
+  category?: string;
+  platform?: string;
+  storeId?: string;
+  minDiscount?: number;
+};
 
 type CacheEntry = { at: number; value: unknown };
 const cache = new Map<string, CacheEntry>();
@@ -62,7 +67,6 @@ function recordFailure(reason: string, httpStatus: number | null) {
 export function getHkeeemStatus(): HkeeemStatus {
   return { configured: Boolean(process.env["HKEEEM_INTEGRATION_KEY"]), ...status };
 }
-
 
 function num(v: unknown): number | null {
   if (v === null || v === undefined || v === "") return null;
@@ -129,13 +133,12 @@ async function callApi(params: Record<string, string>): Promise<unknown[]> {
   const data = Array.isArray(json.data)
     ? json.data
     : Array.isArray((json.data as { offers?: unknown[] } | undefined)?.offers)
-      ? ((json.data as { offers: unknown[] }).offers)
+      ? (json.data as { offers: unknown[] }).offers
       : [];
 
   recordSuccess(data.length);
   cache.set(cacheKey, { at: Date.now(), value: data });
   return data;
-
 }
 
 export function normalizeOffer(raw: unknown): HkeeemOffer | null {
@@ -164,7 +167,9 @@ export function normalizeOffer(raw: unknown): HkeeemOffer | null {
     category: str(pick(row, ["category", "categoryName"])),
     platform: str(pick(row, ["platform", "source"])),
     sourceUrl: str(pick(row, ["sourceUrl", "source_url", "officialUrl", "official_url"])),
-    updatedAt: str(pick(row, ["updatedAt", "updated_at", "lastUpdated", "last_updated", "publishedAt"])),
+    updatedAt: str(
+      pick(row, ["updatedAt", "updated_at", "lastUpdated", "last_updated", "publishedAt"]),
+    ),
   };
 }
 

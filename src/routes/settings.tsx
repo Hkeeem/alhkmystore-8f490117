@@ -1,13 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Check, MessageSquareHeart, Palette, RotateCcw, Square, Sparkles } from "lucide-react";
+import {
+  Bell,
+  Check,
+  MessageSquareHeart,
+  Palette,
+  RotateCcw,
+  Square,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useTheme } from "@/hooks/use-theme";
-import {
-  useAppearance,
-  ACCENT_PRESETS,
-  CARD_STYLES,
-  type CardStyle,
-} from "@/hooks/use-appearance";
+import { useAppearance, ACCENT_PRESETS, CARD_STYLES, type CardStyle } from "@/hooks/use-appearance";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -64,7 +67,10 @@ function SettingsPage() {
       </header>
 
       {/* نمط الثيم المعدني */}
-      <section aria-labelledby="theme-h" className="rounded-2xl border border-border bg-card p-5 space-y-4">
+      <section
+        aria-labelledby="theme-h"
+        className="rounded-2xl border border-border bg-card p-5 space-y-4"
+      >
         <h2 id="theme-h" className="font-bold flex items-center gap-2">
           <Sparkles className="w-4 h-4 text-primary" />
           نمط الثيم
@@ -95,7 +101,9 @@ function SettingsPage() {
             }}
             aria-pressed={auto}
             className={`rounded-xl border px-3 py-2 text-sm font-bold transition ${
-              auto ? "border-primary ring-2 ring-primary/40 text-primary" : "border-border hover:border-primary/50"
+              auto
+                ? "border-primary ring-2 ring-primary/40 text-primary"
+                : "border-border hover:border-primary/50"
             }`}
           >
             تلقائي حسب النظام
@@ -104,8 +112,13 @@ function SettingsPage() {
       </section>
 
       {/* لون التمييز */}
-      <section aria-labelledby="accent-h" className="rounded-2xl border border-border bg-card p-5 space-y-4">
-        <h2 id="accent-h" className="font-bold">لون التمييز</h2>
+      <section
+        aria-labelledby="accent-h"
+        className="rounded-2xl border border-border bg-card p-5 space-y-4"
+      >
+        <h2 id="accent-h" className="font-bold">
+          لون التمييز
+        </h2>
         <div className="flex flex-wrap gap-3">
           {ACCENT_PRESETS.map((p) => {
             const active = appearance.accent === p.hex;
@@ -123,7 +136,9 @@ function SettingsPage() {
                 aria-pressed={active}
                 title={p.label}
                 className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-bold transition ${
-                  active ? "border-primary ring-2 ring-primary/40" : "border-border hover:border-primary/50"
+                  active
+                    ? "border-primary ring-2 ring-primary/40"
+                    : "border-border hover:border-primary/50"
                 }`}
               >
                 <span
@@ -149,7 +164,10 @@ function SettingsPage() {
       </section>
 
       {/* شكل البطاقة */}
-      <section aria-labelledby="cards-h" className="rounded-2xl border border-border bg-card p-5 space-y-4">
+      <section
+        aria-labelledby="cards-h"
+        className="rounded-2xl border border-border bg-card p-5 space-y-4"
+      >
         <h2 id="cards-h" className="font-bold flex items-center gap-2">
           <Square className="w-4 h-4 text-primary" />
           شكل البطاقات
@@ -170,7 +188,9 @@ function SettingsPage() {
                 onBlur={restore}
                 aria-pressed={active}
                 className={`rounded-xl border p-3 text-right transition ${
-                  active ? "border-primary ring-2 ring-primary/40" : "border-border hover:border-primary/50"
+                  active
+                    ? "border-primary ring-2 ring-primary/40"
+                    : "border-border hover:border-primary/50"
                 }`}
               >
                 <span className="block text-sm font-bold">{s.label}</span>
@@ -210,7 +230,9 @@ function SettingsPage() {
 
       {/* معاينة حية */}
       <section aria-labelledby="preview-h" className="space-y-3">
-        <h2 id="preview-h" className="font-bold">معاينة البطاقات</h2>
+        <h2 id="preview-h" className="font-bold">
+          معاينة البطاقات
+        </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { t: "زيت زيتون بكر ممتاز", s: "متجر موثّق", p: 29, o: 45 },

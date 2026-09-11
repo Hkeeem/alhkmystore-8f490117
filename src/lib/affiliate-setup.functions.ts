@@ -32,14 +32,18 @@ export const getSyncOverview = createServerFn({ method: "GET" }).handler(async (
       .maybeSingle();
     out[source] = { active: count ?? 0, lastFetchedAt: data?.fetched_at ?? null };
   }
-  return out as { amazon: { active: number; lastFetchedAt: string | null }; noon: { active: number; lastFetchedAt: string | null } };
+  return out as {
+    amazon: { active: number; lastFetchedAt: string | null };
+    noon: { active: number; lastFetchedAt: string | null };
+  };
 });
 
 export const runExternalSyncNow = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => {
     const raw = String((data as { source?: unknown })?.source ?? "all");
-    const source = (["amazon", "noon", "all"].includes(raw) ? raw : "all") as "amazon" | "noon" | "all";
+    const source = (["amazon", "noon", "all"].includes(raw) ? raw : "all") as
+      "amazon" | "noon" | "all";
     return { source };
   })
   .handler(async ({ data, context }) => {
@@ -55,12 +59,14 @@ export const runExternalSyncNow = createServerFn({ method: "POST" })
     }
   });
 
-
 export const getConversionsOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
-    if (!isStaff) throw new Error("forbidden");
+    // This page is also visible to regular authenticated users. Return a
+    // non-sensitive result for them instead of throwing from a server
+    // function, which otherwise surfaces as a blank-page runtime error.
+    if (!isStaff) return { authorized: false as const };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data } = await supabaseAdmin
@@ -75,10 +81,19 @@ export const getConversionsOverview = createServerFn({ method: "GET" })
         approved: items.filter((r) => r.status === "approved").length,
         sales: items.reduce((s, r) => s + Number(r.amount ?? 0), 0),
         commission: items.reduce((s, r) => s + Number(r.commission ?? 0), 0),
-        lastAt: items.map((r) => r.created_at).sort().at(-1) ?? null,
+        lastAt:
+          items
+            .map((r) => r.created_at)
+            .sort()
+            .at(-1) ?? null,
       };
     };
-    return { amazon: summarize("amazon"), noon: summarize("noon"), other: summarize("other") };
+    return {
+      authorized: true as const,
+      amazon: summarize("amazon"),
+      noon: summarize("noon"),
+      other: summarize("other"),
+    };
   });
 
 export const getPostbackStatus = createServerFn({ method: "GET" }).handler(async () => ({
@@ -155,14 +170,26 @@ export const getNoonCampaignStatus = createServerFn({ method: "GET" }).handler(a
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [dealsRes, clicksRes, convRes] = await Promise.all([
-      supabaseAdmin.from("external_deals").select("id", { count: "exact", head: true }).eq("source", "noon").eq("active", true),
-      supabaseAdmin.from("affiliate_clicks").select("id", { count: "exact", head: true }).eq("network", "noon"),
-      supabaseAdmin.from("affiliate_conversions").select("id", { count: "exact", head: true }).eq("network", "noon"),
+      supabaseAdmin
+        .from("external_deals")
+        .select("id", { count: "exact", head: true })
+        .eq("source", "noon")
+        .eq("active", true),
+      supabaseAdmin
+        .from("affiliate_clicks")
+        .select("id", { count: "exact", head: true })
+        .eq("network", "noon"),
+      supabaseAdmin
+        .from("affiliate_conversions")
+        .select("id", { count: "exact", head: true })
+        .eq("network", "noon"),
     ]);
     liveDeals = dealsRes.count ?? 0;
     clicks = clicksRes.count ?? 0;
     conversions = convRes.count ?? 0;
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 
   // مربوطة فعليًا = المعرّف محفوظ + عروض نون تُسحب + مرّت نقرة واحدة على الأقل عبر التحويل
   const linked = configured && liveDeals > 0 && clicks > 0;
@@ -186,7 +213,9 @@ export const getNoonCampaignStatus = createServerFn({ method: "GET" }).handler(a
 export const verifyNoonPublisherId = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => ({
-    publisherId: String((data as { publisherId?: unknown })?.publisherId ?? "").trim().slice(0, 120),
+    publisherId: String((data as { publisherId?: unknown })?.publisherId ?? "")
+      .trim()
+      .slice(0, 120),
   }))
   .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
@@ -194,7 +223,10 @@ export const verifyNoonPublisherId = createServerFn({ method: "POST" })
     const input = data.publisherId;
     if (!input) return { ok: false as const, reason: "أدخل معرّف الناشر أولًا." };
     if (!/^[A-Za-z0-9._-]{3,64}$/.test(input)) {
-      return { ok: false as const, reason: "الصيغة غير صحيحة: يُسمح بالحروف والأرقام والرموز . _ - بطول ٣ إلى ٦٤." };
+      return {
+        ok: false as const,
+        reason: "الصيغة غير صحيحة: يُسمح بالحروف والأرقام والرموز . _ - بطول ٣ إلى ٦٤.",
+      };
     }
     const { getIntegrationKey } = await import("@/lib/integration-keys.server");
     const stored = ((await getIntegrationKey("NOON_AFFILIATE_ID")) ?? "").trim();
@@ -222,62 +254,71 @@ export type SyncFailureInfo = {
 export const getSyncFailures = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-  const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
-  if (!isStaff) return { amazon: null, noon: null } as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const sources = ["amazon", "noon"] as const;
-  const out: Record<string, SyncFailureInfo | null> = { amazon: null, noon: null };
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff)
+      return { amazon: null, noon: null } as {
+        amazon: SyncFailureInfo | null;
+        noon: SyncFailureInfo | null;
+      };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const sources = ["amazon", "noon"] as const;
+    const out: Record<string, SyncFailureInfo | null> = { amazon: null, noon: null };
 
-  for (const source of sources) {
-    const { data: failure } = await supabaseAdmin
-      .from("sync_events")
-      .select("source, code, message, keyword, created_at")
-      .eq("source", source)
-      .eq("status", "failure")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (!failure) continue;
+    for (const source of sources) {
+      const { data: failure } = await supabaseAdmin
+        .from("sync_events")
+        .select("source, code, message, keyword, created_at")
+        .eq("source", source)
+        .eq("status", "failure")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!failure) continue;
 
-    const { data: success } = await supabaseAdmin
-      .from("sync_events")
-      .select("created_at")
-      .eq("source", source)
-      .eq("status", "success")
-      .gt("created_at", failure.created_at)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      const { data: success } = await supabaseAdmin
+        .from("sync_events")
+        .select("created_at")
+        .eq("source", source)
+        .eq("status", "success")
+        .gt("created_at", failure.created_at)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
-    out[source] = {
-      source,
-      code: failure.code ?? "http_error",
-      message: failure.message ?? null,
-      keyword: failure.keyword ?? null,
-      at: failure.created_at,
-      recoveredAt: success?.created_at ?? null,
-    };
-  }
+      out[source] = {
+        source,
+        code: failure.code ?? "http_error",
+        message: failure.message ?? null,
+        keyword: failure.keyword ?? null,
+        at: failure.created_at,
+        recoveredAt: success?.created_at ?? null,
+      };
+    }
 
-  return out as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
-});
+    return out as { amazon: SyncFailureInfo | null; noon: SyncFailureInfo | null };
+  });
 
 /** قراءة إعدادات المزامنة المجدولة (فترة التشغيل + الحالة) — للمشرفين */
 export const getSyncSchedule = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await (context.supabase.rpc as unknown as (
-      fn: string,
-    ) => Promise<{ data: unknown; error: { message: string } | null }>)("get_sync_schedule");
+    const { data, error } = await (
+      context.supabase.rpc as unknown as (
+        fn: string,
+      ) => Promise<{ data: unknown; error: { message: string } | null }>
+    )("get_sync_schedule");
     if (error) return { ok: false as const, reason: "غير مصرّح أو تعذّر قراءة الجدولة" };
-    return { ok: true as const, schedule: data as {
-      exists: boolean;
-      jobid?: number;
-      schedule?: string;
-      active?: boolean;
-      lastStatus?: string | null;
-      lastRunAt?: string | null;
-    } };
+    return {
+      ok: true as const,
+      schedule: data as {
+        exists: boolean;
+        jobid?: number;
+        schedule?: string;
+        active?: boolean;
+        lastStatus?: string | null;
+        lastRunAt?: string | null;
+      },
+    };
   });
 
 /** تحديث فترة المزامنة التلقائية (تعبير cron) أو إيقافها — للمشرفين فقط */
@@ -285,17 +326,21 @@ export const setSyncSchedule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => {
     const d = data as { schedule?: unknown; active?: unknown };
-    const schedule = String(d?.schedule ?? "").trim().slice(0, 40);
+    const schedule = String(d?.schedule ?? "")
+      .trim()
+      .slice(0, 40);
     return { schedule, active: d?.active !== false };
   })
   .handler(async ({ data, context }) => {
     if (!/^[0-9*/,\- ]{5,40}$/.test(data.schedule)) {
       return { ok: false as const, reason: "صيغة الجدولة غير صحيحة" };
     }
-    const { error } = await (context.supabase.rpc as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => Promise<{ error: { message: string } | null }>)("set_sync_schedule", {
+    const { error } = await (
+      context.supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ error: { message: string } | null }>
+    )("set_sync_schedule", {
       _schedule: data.schedule,
       _active: data.active,
     });
@@ -324,11 +369,14 @@ export const listSyncEvents = createServerFn({ method: "POST" })
     return { source, status, limit };
   })
   .handler(async ({ data, context }) => {
-    const { data: isStaff } = await (context.supabase.rpc as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => Promise<{ data: unknown }>)("is_staff", { _user_id: context.userId });
-    if (!isStaff) return { ok: false as const, reason: "غير مصرّح — هذه الصفحة للفريق الإداري فقط" };
+    const { data: isStaff } = await (
+      context.supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown }>
+    )("is_staff", { _user_id: context.userId });
+    if (!isStaff)
+      return { ok: false as const, reason: "غير مصرّح — هذه الصفحة للفريق الإداري فقط" };
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let q = supabaseAdmin

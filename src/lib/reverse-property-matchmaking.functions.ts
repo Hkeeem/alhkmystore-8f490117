@@ -5,7 +5,10 @@ import { z } from "zod";
 const purposeSchema = z.enum(["شراء", "إيجار"]);
 export const buyerRequestInputSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
-  phone: z.string().trim().regex(/^(?:\+?966|0)5\d{8}$/, "رقم الجوال غير صالح."),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^(?:\+?966|0)5\d{8}$/, "رقم الجوال غير صالح."),
   purpose: purposeSchema,
   city: z.string().trim().min(2).max(120),
   district: z.string().trim().min(2).max(160),
@@ -79,7 +82,9 @@ export const createPropertyListingAndMatchBuyers = createServerFn({ method: "POS
       .single();
     if (insertError) throw new Error(insertError.message);
 
-    const { data: matches, error } = await db.rpc("match_buyers_for_property", { p_listing_id: listing.id });
+    const { data: matches, error } = await db.rpc("match_buyers_for_property", {
+      p_listing_id: listing.id,
+    });
     if (error) throw new Error(error.message);
     return matches ?? [];
   });

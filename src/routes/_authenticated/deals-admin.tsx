@@ -21,9 +21,15 @@ export const Route = createFileRoute("/_authenticated/deals-admin")({
   head: () => ({
     meta: [
       { title: "لوحة عروض التجّار — Hkeeem AI" },
-      { name: "description", content: "إضافة عروض التجّار يدوياً وتعديل تواريخها وربطها بمزامنة نون." },
+      {
+        name: "description",
+        content: "إضافة عروض التجّار يدوياً وتعديل تواريخها وربطها بمزامنة نون.",
+      },
       { property: "og:title", content: "لوحة عروض التجّار — Hkeeem AI" },
-      { property: "og:description", content: "إدارة عروض التجّار وتواريخها ومزامنة نون في حكيم AI." },
+      {
+        property: "og:description",
+        content: "إدارة عروض التجّار وتواريخها ومزامنة نون في حكيم AI.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex, nofollow" },
@@ -81,7 +87,8 @@ function DealsAdminPage() {
       const price = Number(form.price);
       const original = Number(form.original_price);
       if (!Number.isFinite(price) || price <= 0) throw new Error("سعر العرض غير صحيح");
-      if (!Number.isFinite(original) || original < price) throw new Error("السعر الأصلي يجب أن يكون أعلى من سعر العرض");
+      if (!Number.isFinite(original) || original < price)
+        throw new Error("السعر الأصلي يجب أن يكون أعلى من سعر العرض");
       await staffCreateDeal({
         merchant_id: form.merchant_id,
         title: form.title.trim(),
@@ -99,22 +106,48 @@ function DealsAdminPage() {
     },
     onSuccess: async () => {
       toast.success("تمت إضافة العرض");
-      setForm((f) => ({ ...f, title: "", description: "", image_url: "", original_price: "", price: "", product_url: "", coupon_code: "" }));
+      setForm((f) => ({
+        ...f,
+        title: "",
+        description: "",
+        image_url: "",
+        original_price: "",
+        price: "",
+        product_url: "",
+        coupon_code: "",
+      }));
       await invalidateDeals();
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const datesM = useMutation({
-    mutationFn: ({ id, starts_at, expires_at }: { id: string; starts_at: string; expires_at: string }) =>
-      staffUpdateDealDates(id, { starts_at: fromLocalInput(starts_at), expires_at: fromLocalInput(expires_at) }),
-    onSuccess: async () => { toast.success("تم تحديث التواريخ"); await invalidateDeals(); },
+    mutationFn: ({
+      id,
+      starts_at,
+      expires_at,
+    }: {
+      id: string;
+      starts_at: string;
+      expires_at: string;
+    }) =>
+      staffUpdateDealDates(id, {
+        starts_at: fromLocalInput(starts_at),
+        expires_at: fromLocalInput(expires_at),
+      }),
+    onSuccess: async () => {
+      toast.success("تم تحديث التواريخ");
+      await invalidateDeals();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const statusM = useMutation({
     mutationFn: ({ id, status }: { id: string; status: DealStatus }) => updateDeal(id, { status }),
-    onSuccess: async () => { toast.success("تم تحديث الحالة"); await invalidateDeals(); },
+    onSuccess: async () => {
+      toast.success("تم تحديث الحالة");
+      await invalidateDeals();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -147,10 +180,16 @@ function DealsAdminPage() {
             disabled={syncing}
             className="flex items-center gap-1.5 rounded-xl bg-primary/10 border border-primary/30 text-primary px-3 py-2 text-xs font-bold disabled:opacity-60"
           >
-            {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            {syncing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4" />
+            )}
             مزامنة نون الآن
           </button>
-          <Link to="/sync-log" className="text-sm text-primary hover:underline">سجل المزامنة</Link>
+          <Link to="/sync-log" className="text-sm text-primary hover:underline">
+            سجل المزامنة
+          </Link>
         </div>
       </header>
 
@@ -160,35 +199,103 @@ function DealsAdminPage() {
           <PlusCircle className="w-4 h-4 text-primary" /> إضافة عرض يدوي
         </h2>
         <div className="grid gap-2 sm:grid-cols-2">
-          <select className={input} value={form.merchant_id} onChange={(e) => setForm({ ...form, merchant_id: e.target.value })}>
+          <select
+            className={input}
+            value={form.merchant_id}
+            onChange={(e) => setForm({ ...form, merchant_id: e.target.value })}
+          >
             <option value="">اختر التاجر…</option>
             {merchants.map((m) => (
-              <option key={m.id} value={m.id}>{m.name}</option>
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
             ))}
           </select>
-          <select className={input} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-            {MERCHANT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          <select
+            className={input}
+            value={form.category}
+            onChange={(e) => setForm({ ...form, category: e.target.value })}
+          >
+            {MERCHANT_CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
-          <input className={input} placeholder="عنوان العرض" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-          <input className={input} placeholder="رابط الصورة" value={form.image_url} onChange={(e) => setForm({ ...form, image_url: e.target.value })} />
-          <input className={input} inputMode="decimal" placeholder="السعر الأصلي" value={form.original_price} onChange={(e) => setForm({ ...form, original_price: e.target.value })} />
-          <input className={input} inputMode="decimal" placeholder="سعر العرض" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
-          <input className={input} placeholder="رابط المنتج" value={form.product_url} onChange={(e) => setForm({ ...form, product_url: e.target.value })} />
-          <input className={input} placeholder="كود الخصم (اختياري)" value={form.coupon_code} onChange={(e) => setForm({ ...form, coupon_code: e.target.value })} />
+          <input
+            className={input}
+            placeholder="عنوان العرض"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <input
+            className={input}
+            placeholder="رابط الصورة"
+            value={form.image_url}
+            onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+          />
+          <input
+            className={input}
+            inputMode="decimal"
+            placeholder="السعر الأصلي"
+            value={form.original_price}
+            onChange={(e) => setForm({ ...form, original_price: e.target.value })}
+          />
+          <input
+            className={input}
+            inputMode="decimal"
+            placeholder="سعر العرض"
+            value={form.price}
+            onChange={(e) => setForm({ ...form, price: e.target.value })}
+          />
+          <input
+            className={input}
+            placeholder="رابط المنتج"
+            value={form.product_url}
+            onChange={(e) => setForm({ ...form, product_url: e.target.value })}
+          />
+          <input
+            className={input}
+            placeholder="كود الخصم (اختياري)"
+            value={form.coupon_code}
+            onChange={(e) => setForm({ ...form, coupon_code: e.target.value })}
+          />
           <label className="text-xs text-muted-foreground">
             يبدأ في
-            <input type="datetime-local" className={input} value={form.starts_at} onChange={(e) => setForm({ ...form, starts_at: e.target.value })} />
+            <input
+              type="datetime-local"
+              className={input}
+              value={form.starts_at}
+              onChange={(e) => setForm({ ...form, starts_at: e.target.value })}
+            />
           </label>
           <label className="text-xs text-muted-foreground">
             ينتهي في
-            <input type="datetime-local" className={input} value={form.expires_at} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} />
+            <input
+              type="datetime-local"
+              className={input}
+              value={form.expires_at}
+              onChange={(e) => setForm({ ...form, expires_at: e.target.value })}
+            />
           </label>
-          <textarea className={input + " sm:col-span-2"} rows={2} placeholder="وصف مختصر" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <textarea
+            className={input + " sm:col-span-2"}
+            rows={2}
+            placeholder="وصف مختصر"
+            value={form.description}
+            onChange={(e) => setForm({ ...form, description: e.target.value })}
+          />
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <select className={input + " max-w-[180px]"} value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as DealStatus })}>
+          <select
+            className={input + " max-w-[180px]"}
+            value={form.status}
+            onChange={(e) => setForm({ ...form, status: e.target.value as DealStatus })}
+          >
             {(["published", "pending", "draft"] as DealStatus[]).map((s) => (
-              <option key={s} value={s}>{DEAL_STATUS_LABEL[s]}</option>
+              <option key={s} value={s}>
+                {DEAL_STATUS_LABEL[s]}
+              </option>
             ))}
           </select>
           <button
@@ -210,7 +317,9 @@ function DealsAdminPage() {
           <CalendarClock className="w-4 h-4 text-primary" /> تعديل تواريخ العروض
         </h2>
         {dealsQ.isLoading ? (
-          <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-primary" /></div>
+          <div className="flex justify-center py-8">
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+          </div>
         ) : dealsQ.isError ? (
           <p className="text-sm text-destructive">تعذّر تحميل العروض.</p>
         ) : (dealsQ.data ?? []).length === 0 ? (
@@ -227,7 +336,9 @@ function DealsAdminPage() {
                 status={d.status}
                 startsAt={d.starts_at}
                 expiresAt={d.expires_at}
-                onSaveDates={(starts_at, expires_at) => datesM.mutate({ id: d.id, starts_at, expires_at })}
+                onSaveDates={(starts_at, expires_at) =>
+                  datesM.mutate({ id: d.id, starts_at, expires_at })
+                }
                 onStatus={(status) => statusM.mutate({ id: d.id, status })}
                 saving={datesM.isPending || statusM.isPending}
               />
@@ -260,18 +371,32 @@ function DealRow(props: {
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-bold text-sm truncate">{props.title}</p>
-          <p className="text-xs text-muted-foreground truncate">{props.merchant} · {props.price} ر.س</p>
+          <p className="text-xs text-muted-foreground truncate">
+            {props.merchant} · {props.price} ر.س
+          </p>
         </div>
         <span className="shrink-0 text-[11px] rounded-full bg-primary/10 text-primary px-2 py-0.5 font-bold">
           {DEAL_STATUS_LABEL[props.status]}
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2">
-        <label className="text-[11px] text-muted-foreground">يبدأ
-          <input type="datetime-local" className={input + " w-full"} value={starts} onChange={(e) => setStarts(e.target.value)} />
+        <label className="text-[11px] text-muted-foreground">
+          يبدأ
+          <input
+            type="datetime-local"
+            className={input + " w-full"}
+            value={starts}
+            onChange={(e) => setStarts(e.target.value)}
+          />
         </label>
-        <label className="text-[11px] text-muted-foreground">ينتهي
-          <input type="datetime-local" className={input + " w-full"} value={expires} onChange={(e) => setExpires(e.target.value)} />
+        <label className="text-[11px] text-muted-foreground">
+          ينتهي
+          <input
+            type="datetime-local"
+            className={input + " w-full"}
+            value={expires}
+            onChange={(e) => setExpires(e.target.value)}
+          />
         </label>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -283,10 +408,22 @@ function DealRow(props: {
           حفظ التواريخ
         </button>
         {props.status !== "published" && (
-          <button onClick={() => props.onStatus("published")} disabled={props.saving} className="rounded-lg bg-gradient-gold text-secondary px-3 py-1.5 text-xs font-bold disabled:opacity-60">نشر</button>
+          <button
+            onClick={() => props.onStatus("published")}
+            disabled={props.saving}
+            className="rounded-lg bg-gradient-gold text-secondary px-3 py-1.5 text-xs font-bold disabled:opacity-60"
+          >
+            نشر
+          </button>
         )}
         {props.status === "published" && (
-          <button onClick={() => props.onStatus("draft")} disabled={props.saving} className="rounded-lg bg-secondary/60 px-3 py-1.5 text-xs font-bold disabled:opacity-60">إيقاف</button>
+          <button
+            onClick={() => props.onStatus("draft")}
+            disabled={props.saving}
+            className="rounded-lg bg-secondary/60 px-3 py-1.5 text-xs font-bold disabled:opacity-60"
+          >
+            إيقاف
+          </button>
         )}
       </div>
     </li>

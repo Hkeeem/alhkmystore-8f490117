@@ -20,7 +20,9 @@ function readSeen(key: string): string[] {
 function writeSeen(key: string, ids: string[]) {
   try {
     localStorage.setItem(key, JSON.stringify(ids.slice(-200)));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 /**

@@ -14,7 +14,9 @@ vi.mock("@/lib/hkeeem-catalog.functions", () => ({
 import { HkeeemCatalogSection } from "./HkeeemCatalogSection";
 
 function renderSection() {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0, refetchOnWindowFocus: false } } });
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: 0, refetchOnWindowFocus: false } },
+  });
   return render(
     <QueryClientProvider client={client}>
       <HkeeemCatalogSection />
@@ -26,12 +28,50 @@ const catalog = {
   lastUpdatedAt: new Date().toISOString(),
   stale: false,
   offers: [
-    { id: "o1", title: "سماعة", purchaseUrl: "https://x.dev", imageUrl: null, storeId: "s1", storeName: "نون", price: 100, originalPrice: 200, discountPercent: 50, category: "إلكترونيات", updatedAt: null },
-    { id: "o2", title: "أرز", purchaseUrl: "https://y.dev", imageUrl: null, storeId: "s2", storeName: "أمازون", price: 30, originalPrice: 45, discountPercent: 33, category: "بقالة", updatedAt: null },
+    {
+      id: "o1",
+      title: "سماعة",
+      purchaseUrl: "https://x.dev",
+      imageUrl: null,
+      storeId: "s1",
+      storeName: "نون",
+      price: 100,
+      originalPrice: 200,
+      discountPercent: 50,
+      category: "إلكترونيات",
+      updatedAt: null,
+    },
+    {
+      id: "o2",
+      title: "أرز",
+      purchaseUrl: "https://y.dev",
+      imageUrl: null,
+      storeId: "s2",
+      storeName: "أمازون",
+      price: 30,
+      originalPrice: 45,
+      discountPercent: 33,
+      category: "بقالة",
+      updatedAt: null,
+    },
   ],
   stores: [
-    { id: "s1", name: "نون", description: "متجر", category: "تسوق", logoUrl: null, websiteUrl: "https://noon.com" },
-    { id: "s2", name: "أمازون", description: null, category: null, logoUrl: null, websiteUrl: null },
+    {
+      id: "s1",
+      name: "نون",
+      description: "متجر",
+      category: "تسوق",
+      logoUrl: null,
+      websiteUrl: "https://noon.com",
+    },
+    {
+      id: "s2",
+      name: "أمازون",
+      description: null,
+      category: null,
+      logoUrl: null,
+      websiteUrl: null,
+    },
   ],
 };
 
@@ -64,7 +104,9 @@ describe("قسم عروض HkeeemAI المعتمدة", () => {
     catalogFn.mockRejectedValue(new Error("upstream"));
     const { container } = renderSection();
     const retry = await screen.findByRole("button", { name: "إعادة المحاولة" }, { timeout: 5000 });
-    expect(screen.getByRole("alert")).toHaveTextContent("تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "تعذر تحديث عروض حكيم حاليًا، حاول لاحقًا.",
+    );
     expect(container.innerHTML).not.toContain("HKEEEM_INTEGRATION_KEY");
 
     catalogFn.mockResolvedValue(catalog);

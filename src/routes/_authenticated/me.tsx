@@ -4,8 +4,11 @@ import { useState } from "react";
 import { Heart, BellRing, Wallet, Trash2, Power } from "lucide-react";
 import { toast } from "sonner";
 import {
-  listFavorites, toggleFavorite,
-  listMyAlerts, toggleAlert, deleteAlert,
+  listFavorites,
+  toggleFavorite,
+  listMyAlerts,
+  toggleAlert,
+  deleteAlert,
   listMyCashback,
 } from "@/lib/user.functions";
 import { deals, getStore, discountPercent } from "@/data/deals";
@@ -41,7 +44,9 @@ function MePage() {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-2 px-4 py-3 text-sm whitespace-nowrap border-b-2 -mb-px transition ${
-                tab === t.id ? "border-primary text-primary font-bold" : "border-transparent text-muted-foreground hover:text-foreground"
+                tab === t.id
+                  ? "border-primary text-primary font-bold"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <t.icon className="w-4 h-4" />
@@ -62,7 +67,10 @@ function FavoritesPanel() {
   const q = useQuery({ queryKey: ["my-favorites"], queryFn: () => listFavorites() });
   const rm = useMutation({
     mutationFn: (v: { itemType: any; itemId: string }) => toggleFavorite({ data: v }),
-    onSuccess: () => { toast.success("تم"); qc.invalidateQueries({ queryKey: ["my-favorites"] }); },
+    onSuccess: () => {
+      toast.success("تم");
+      qc.invalidateQueries({ queryKey: ["my-favorites"] });
+    },
   });
   if (q.isLoading) return <ListSkeleton count={4} grid />;
   const items = q.data ?? [];
@@ -72,7 +80,9 @@ function FavoritesPanel() {
       <div className="text-center py-16 text-muted-foreground">
         <Heart className="w-12 h-12 mx-auto mb-3 opacity-40" />
         <p>لا توجد عروض في مفضلتك بعد.</p>
-        <Link to="/deals" className="inline-block mt-3 text-primary text-sm underline">تصفّح العروض</Link>
+        <Link to="/deals" className="inline-block mt-3 text-primary text-sm underline">
+          تصفّح العروض
+        </Link>
       </div>
     );
   }
@@ -80,26 +90,42 @@ function FavoritesPanel() {
     <div className="grid sm:grid-cols-2 gap-3 md:gap-4">
       {dealFavs.map((f: any) => {
         const deal = deals.find((d) => d.id === f.item_id);
-        if (!deal) return (
-          <div key={f.id} className="p-4 rounded-xl border border-border/50 bg-card text-sm text-muted-foreground flex justify-between">
-            <span>عرض غير متاح ({f.item_id})</span>
-            <button onClick={() => rm.mutate({ itemType: f.item_type, itemId: f.item_id })}>
-              <Trash2 className="w-4 h-4" />
-            </button>
-          </div>
-        );
+        if (!deal)
+          return (
+            <div
+              key={f.id}
+              className="p-4 rounded-xl border border-border/50 bg-card text-sm text-muted-foreground flex justify-between"
+            >
+              <span>عرض غير متاح ({f.item_id})</span>
+              <button onClick={() => rm.mutate({ itemType: f.item_type, itemId: f.item_id })}>
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          );
         const store = getStore(deal.storeId);
         return (
-          <div key={f.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-black" style={{ background: store.color }}>
+          <div
+            key={f.id}
+            className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3"
+          >
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-white font-black"
+              style={{ background: store.color }}
+            >
               {store.logo}
             </div>
             <div className="flex-1 min-w-0">
-              <Link to="/deals/$id" params={{ id: deal.id }} className="font-bold text-sm line-clamp-1 hover:text-primary">
+              <Link
+                to="/deals/$id"
+                params={{ id: deal.id }}
+                className="font-bold text-sm line-clamp-1 hover:text-primary"
+              >
                 {deal.title}
               </Link>
               <p className="text-xs text-muted-foreground">{store.name}</p>
-              <p className="text-primary font-bold text-sm mt-1">{deal.price} ر.س · −{discountPercent(deal)}٪</p>
+              <p className="text-primary font-bold text-sm mt-1">
+                {deal.price} ر.س · −{discountPercent(deal)}٪
+              </p>
             </div>
             <button
               onClick={() => rm.mutate({ itemType: "deal", itemId: deal.id })}
@@ -124,7 +150,10 @@ function AlertsPanel() {
   });
   const del = useMutation({
     mutationFn: (v: { id: string }) => deleteAlert({ data: v }),
-    onSuccess: () => { toast.success("حُذف"); qc.invalidateQueries({ queryKey: ["my-alerts"] }); },
+    onSuccess: () => {
+      toast.success("حُذف");
+      qc.invalidateQueries({ queryKey: ["my-alerts"] });
+    },
   });
   if (q.isLoading) return <ListSkeleton count={3} />;
   const items = q.data ?? [];
@@ -142,17 +171,27 @@ function AlertsPanel() {
       {items.map((a: any) => {
         const dropped = Number(a.current_price) > Number(a.target_price) && a.triggered_at;
         return (
-          <div key={a.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
+          <div
+            key={a.id}
+            className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap"
+          >
             <div className="flex-1 min-w-0">
-              <Link to="/deals/$id" params={{ id: a.deal_id }} className="font-bold text-sm line-clamp-1 hover:text-primary">
+              <Link
+                to="/deals/$id"
+                params={{ id: a.deal_id }}
+                className="font-bold text-sm line-clamp-1 hover:text-primary"
+              >
                 {a.title}
               </Link>
               <p className="text-xs text-muted-foreground mt-1">
-                الحالي: <b>{a.current_price} ر.س</b> · الهدف: <b className="text-primary">{a.target_price} ر.س</b>
+                الحالي: <b>{a.current_price} ر.س</b> · الهدف:{" "}
+                <b className="text-primary">{a.target_price} ر.س</b>
               </p>
               {dropped && <p className="text-xs text-green-500 mt-1">✓ نزل السعر — تحقّق الآن</p>}
             </div>
-            <span className={`text-xs px-2 py-1 rounded-full ${a.active ? "bg-green-500/15 text-green-500" : "bg-muted text-muted-foreground"}`}>
+            <span
+              className={`text-xs px-2 py-1 rounded-full ${a.active ? "bg-green-500/15 text-green-500" : "bg-muted text-muted-foreground"}`}
+            >
               {a.active ? "مفعّل" : "متوقف"}
             </span>
             <button
@@ -178,13 +217,17 @@ function AlertsPanel() {
 
 function CashbackPanel() {
   const q = useQuery({ queryKey: ["my-cashback"], queryFn: () => listMyCashback() });
-  if (q.isLoading) return (
-    <div className="space-y-4">
-      <StatsSkeleton />
-      <ListSkeleton count={3} />
-    </div>
-  );
-  const { transactions = [], totals } = q.data ?? { transactions: [], totals: { confirmed_total: 0, pending_total: 0, paid_total: 0, tx_count: 0 } };
+  if (q.isLoading)
+    return (
+      <div className="space-y-4">
+        <StatsSkeleton />
+        <ListSkeleton count={3} />
+      </div>
+    );
+  const { transactions = [], totals } = q.data ?? {
+    transactions: [],
+    totals: { confirmed_total: 0, pending_total: 0, paid_total: 0, tx_count: 0 },
+  };
   return (
     <div className="space-y-4">
       <div className="grid sm:grid-cols-3 gap-3">
@@ -203,24 +246,42 @@ function CashbackPanel() {
           {transactions.map((t: any) => {
             const store = getStore(t.store_id);
             return (
-              <div key={t.id} className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap">
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-black" style={{ background: store?.color ?? "#666" }}>
+              <div
+                key={t.id}
+                className="p-4 rounded-2xl border border-primary/20 bg-card shadow-card hover-lift flex items-center gap-3 flex-wrap"
+              >
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center text-white text-sm font-black"
+                  style={{ background: store?.color ?? "#666" }}
+                >
                   {store?.logo ?? "?"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-sm">{store?.name ?? t.store_id}</p>
                   <p className="text-xs text-muted-foreground">
-                    مبلغ الشراء: {t.purchase_amount} ر.س · {new Date(t.created_at).toLocaleDateString("ar-SA")}
+                    مبلغ الشراء: {t.purchase_amount} ر.س ·{" "}
+                    {new Date(t.created_at).toLocaleDateString("ar-SA")}
                   </p>
                 </div>
                 <div className="text-primary font-bold">+{t.cashback_amount} ر.س</div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  t.status === "confirmed" ? "bg-blue-500/15 text-blue-500"
-                  : t.status === "paid" ? "bg-green-500/15 text-green-500"
-                  : t.status === "rejected" ? "bg-red-500/15 text-red-500"
-                  : "bg-orange-500/15 text-orange-500"
-                }`}>
-                  {t.status === "confirmed" ? "مؤكد" : t.status === "paid" ? "مدفوع" : t.status === "rejected" ? "مرفوض" : "بانتظار"}
+                <span
+                  className={`text-xs px-2 py-1 rounded-full ${
+                    t.status === "confirmed"
+                      ? "bg-blue-500/15 text-blue-500"
+                      : t.status === "paid"
+                        ? "bg-green-500/15 text-green-500"
+                        : t.status === "rejected"
+                          ? "bg-red-500/15 text-red-500"
+                          : "bg-orange-500/15 text-orange-500"
+                  }`}
+                >
+                  {t.status === "confirmed"
+                    ? "مؤكد"
+                    : t.status === "paid"
+                      ? "مدفوع"
+                      : t.status === "rejected"
+                        ? "مرفوض"
+                        : "بانتظار"}
                 </span>
               </div>
             );
@@ -233,9 +294,13 @@ function CashbackPanel() {
 
 function StatBox({ label, value, gold }: { label: string; value: string; gold?: boolean }) {
   return (
-    <div className={`p-4 rounded-2xl border bg-card ${gold ? "border-primary/40 glow-gold" : "border-primary/20"}`}>
+    <div
+      className={`p-4 rounded-2xl border bg-card ${gold ? "border-primary/40 glow-gold" : "border-primary/20"}`}
+    >
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-2xl font-black mt-1 ${gold ? "text-gold-shine" : "text-primary"}`}>{value} <span className="text-xs">ر.س</span></p>
+      <p className={`text-2xl font-black mt-1 ${gold ? "text-gold-shine" : "text-primary"}`}>
+        {value} <span className="text-xs">ر.س</span>
+      </p>
     </div>
   );
 }

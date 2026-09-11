@@ -8,7 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getNoonCampaignStatus, verifyNoonPublisherId, runExternalSyncNow } from "@/lib/affiliate-setup.functions";
+import {
+  getNoonCampaignStatus,
+  verifyNoonPublisherId,
+  runExternalSyncNow,
+} from "@/lib/affiliate-setup.functions";
 import { saveIntegrationKeyValue } from "@/lib/integration-keys.functions";
 import { fetchLiveCoupons } from "@/lib/coupons-api";
 import { REAL_DEALS_KEY, useRealDeals } from "@/hooks/use-real-deals";
@@ -23,7 +27,10 @@ export function NoonSyncSettingsPanel() {
   const runSync = useServerFn(runExternalSyncNow);
   const [publisherId, setPublisherId] = useState("");
 
-  const statusQuery = useQuery({ queryKey: ["noon-campaign-status"], queryFn: () => fetchStatus() });
+  const statusQuery = useQuery({
+    queryKey: ["noon-campaign-status"],
+    queryFn: () => fetchStatus(),
+  });
   const status = statusQuery.data;
 
   // يتحدّث تلقائيًا مع كل مزامنة نون (نفس مفتاح العروض الحقيقية)
@@ -72,13 +79,16 @@ export function NoonSyncSettingsPanel() {
         /* المزامنة قد تكون متوقفة مؤقتًا — نكمل الجلب اليدوي */
       }
       const coupons = await fetchLiveCoupons();
-      return coupons.filter((c) => (c.storeName ?? "").includes("نون") || c.storeId === "noon").length;
+      return coupons.filter((c) => (c.storeName ?? "").includes("نون") || c.storeId === "noon")
+        .length;
     },
     onSuccess: (count) => {
       void queryClient.invalidateQueries({ queryKey: ["live-coupons"] });
       void queryClient.invalidateQueries({ queryKey: ["sync-events"] });
       void queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY });
-      toast.success(count > 0 ? `تم جلب ${count} كوبون من نون` : "لا توجد كوبونات نون فعّالة حاليًا");
+      toast.success(
+        count > 0 ? `تم جلب ${count} كوبون من نون` : "لا توجد كوبونات نون فعّالة حاليًا",
+      );
     },
     onError: () => toast.error("تعذّر جلب كوبونات نون"),
   });
@@ -90,11 +100,15 @@ export function NoonSyncSettingsPanel() {
           <ShieldCheck className="size-5 text-primary" aria-hidden="true" />
           إعدادات نون — واجهة الأفلييت الرسمية
           {status?.linked ? (
-            <Badge variant="default" className="gap-1"><BadgeCheck className="size-3" /> مربوطة فعليًا</Badge>
+            <Badge variant="default" className="gap-1">
+              <BadgeCheck className="size-3" /> مربوطة فعليًا
+            </Badge>
           ) : status?.configured ? (
             <Badge variant="secondary">المعرّف محفوظ</Badge>
           ) : (
-            <Badge variant="outline" className="gap-1"><XCircle className="size-3" /> غير مهيّأة</Badge>
+            <Badge variant="outline" className="gap-1">
+              <XCircle className="size-3" /> غير مهيّأة
+            </Badge>
           )}
         </CardTitle>
       </CardHeader>
@@ -127,13 +141,19 @@ export function NoonSyncSettingsPanel() {
 
             {status?.maskedPublisherId && (
               <p className="text-sm text-muted-foreground">
-                المعرّف الحالي: <span className="font-mono" dir="ltr">{status.maskedPublisherId}</span>
+                المعرّف الحالي:{" "}
+                <span className="font-mono" dir="ltr">
+                  {status.maskedPublisherId}
+                </span>
               </p>
             )}
 
             <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative flex-1">
-                <KeyRound className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+                <KeyRound
+                  className="absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
+                />
                 <Input
                   value={publisherId}
                   onChange={(e) => setPublisherId(e.target.value)}
@@ -157,7 +177,10 @@ export function NoonSyncSettingsPanel() {
                 onClick={() => syncMutation.mutate()}
                 disabled={syncMutation.isPending || !status?.configured}
               >
-                <RefreshCw className={`size-4 ${syncMutation.isPending ? "animate-spin" : ""}`} aria-hidden="true" />
+                <RefreshCw
+                  className={`size-4 ${syncMutation.isPending ? "animate-spin" : ""}`}
+                  aria-hidden="true"
+                />
                 {syncMutation.isPending ? "جارٍ المزامنة…" : "مزامنة عروض نون الآن"}
               </Button>
               <Button
@@ -165,16 +188,24 @@ export function NoonSyncSettingsPanel() {
                 onClick={() => couponsMutation.mutate()}
                 disabled={couponsMutation.isPending}
               >
-                <RefreshCw className={`size-4 ${couponsMutation.isPending ? "animate-spin" : ""}`} aria-hidden="true" />
+                <RefreshCw
+                  className={`size-4 ${couponsMutation.isPending ? "animate-spin" : ""}`}
+                  aria-hidden="true"
+                />
                 {couponsMutation.isPending ? "جارٍ الجلب…" : "جلب كوبونات نون يدويًا"}
               </Button>
               {!status?.configured && (
-                <p className="text-xs text-muted-foreground">احفظ معرّف الناشر أولًا حتى تعمل المزامنة بالربط الرسمي.</p>
+                <p className="text-xs text-muted-foreground">
+                  احفظ معرّف الناشر أولًا حتى تعمل المزامنة بالربط الرسمي.
+                </p>
               )}
             </div>
 
             {status?.sampleDeepLink && (
-              <p className="break-all rounded-md bg-muted p-2 text-xs text-muted-foreground" dir="ltr">
+              <p
+                className="break-all rounded-md bg-muted p-2 text-xs text-muted-foreground"
+                dir="ltr"
+              >
                 {status.sampleDeepLink}
               </p>
             )}

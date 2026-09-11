@@ -1,5 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BellRing, Crown, GitCompareArrows, Palette, Percent, Sparkles, Store, Map, Tag } from "lucide-react";
+import {
+  BellRing,
+  Crown,
+  GitCompareArrows,
+  Palette,
+  Percent,
+  Sparkles,
+  Store,
+  Map,
+  Tag,
+} from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
 
@@ -7,9 +17,17 @@ export const Route = createFileRoute("/pro")({
   head: () => ({
     meta: [
       { title: "حكيم برو — الذكاء الاقتصادي بلا حدود | HkeeemAI" },
-      { name: "description", content: "حكيم برو: تنبيهات انخفاض الأسعار الفورية، كاش باك وعروض حصرية، مقارنات وتحليلات متقدمة، وشارة وثيمات خاصة — قريباً." },
+      {
+        name: "description",
+        content:
+          "حكيم برو: تنبيهات انخفاض الأسعار الفورية، كاش باك وعروض حصرية، مقارنات وتحليلات متقدمة، وشارة وثيمات خاصة — قريباً.",
+      },
       { property: "og:title", content: "حكيم برو — الذكاء الاقتصادي بلا حدود" },
-      { property: "og:description", content: "تنبيهات انخفاض السعر، كاش باك وعروض حصرية، تحليلات متقدمة، وثيمات خاصة — قريباً على HkeeemAI." },
+      {
+        property: "og:description",
+        content:
+          "تنبيهات انخفاض السعر، كاش باك وعروض حصرية، تحليلات متقدمة، وثيمات خاصة — قريباً على HkeeemAI.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -84,7 +102,10 @@ function ProPage() {
 
       {/* المميزات */}
       <section aria-labelledby="pro-features">
-        <h2 id="pro-features" className="font-black text-2xl md:text-3xl leading-snug mb-6 text-center">
+        <h2
+          id="pro-features"
+          className="font-black text-2xl md:text-3xl leading-snug mb-6 text-center"
+        >
           ماذا تحصل مع برو؟
         </h2>
         <div className="grid sm:grid-cols-2 gap-4">
@@ -104,14 +125,21 @@ function ProPage() {
       </section>
 
       {/* بوابة التاجر */}
-      <section aria-labelledby="pro-merchant" className="hk-card p-6 md:p-8 space-y-5 border-primary/30">
+      <section
+        aria-labelledby="pro-merchant"
+        className="hk-card p-6 md:p-8 space-y-5 border-primary/30"
+      >
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-primary/12 text-primary flex items-center justify-center ring-1 ring-primary/30">
             <Store className="w-6 h-6" />
           </div>
           <div>
-            <h2 id="pro-merchant" className="font-black text-xl">بوابة التاجر</h2>
-            <p className="text-sm text-muted-foreground">أضف عروضك وكوبوناتك ووثّق حسابك للظهور في الخريطة.</p>
+            <h2 id="pro-merchant" className="font-black text-xl">
+              بوابة التاجر
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              أضف عروضك وكوبوناتك ووثّق حسابك للظهور في الخريطة.
+            </p>
           </div>
         </div>
         <div className="grid sm:grid-cols-3 gap-3">

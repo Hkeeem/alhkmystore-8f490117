@@ -82,7 +82,9 @@ export function DealAlertsPanel() {
         } else if (res.sent === 0) {
           toast.message("لا توجد عروض أو كوبونات تستحق التنبيه الآن");
         } else {
-          toast.success(`أُرسل ${res.sent} تنبيهًا (${res.expiringNotified} عرض • ${res.couponsNotified} كوبون)`);
+          toast.success(
+            `أُرسل ${res.sent} تنبيهًا (${res.expiringNotified} عرض • ${res.couponsNotified} كوبون)`,
+          );
         }
       }
     } catch (error) {
@@ -159,7 +161,11 @@ export function DealAlertsPanel() {
               <Label htmlFor="coupons-enabled" className="text-sm font-medium">
                 تنبيه عند إضافة كوبون جديد
               </Label>
-              <Switch id="coupons-enabled" checked={couponsEnabled} onCheckedChange={setCouponsEnabled} />
+              <Switch
+                id="coupons-enabled"
+                checked={couponsEnabled}
+                onCheckedChange={setCouponsEnabled}
+              />
             </div>
 
             <div className="flex flex-wrap gap-2">

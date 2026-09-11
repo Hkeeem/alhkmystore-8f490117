@@ -7,7 +7,12 @@ if (!sourcePath || !outputPath) {
   throw new Error("Usage: node scripts/build-saudi-locations.mjs <source-csv> <output-ts>");
 }
 
-const rows = fs.readFileSync(sourcePath, "utf8").replace(/^\uFEFF/, "").trim().split(/\r?\n/).slice(1);
+const rows = fs
+  .readFileSync(sourcePath, "utf8")
+  .replace(/^\uFEFF/, "")
+  .trim()
+  .split(/\r?\n/)
+  .slice(1);
 const hierarchy = new Map();
 
 for (const row of rows) {
@@ -27,7 +32,10 @@ const locations = Object.fromEntries(
       Object.fromEntries(
         [...cities.entries()]
           .sort(([a], [b]) => a.localeCompare(b, "ar"))
-          .map(([city, districts]) => [city, [...districts].sort((a, b) => a.localeCompare(b, "ar"))]),
+          .map(([city, districts]) => [
+            city,
+            [...districts].sort((a, b) => a.localeCompare(b, "ar")),
+          ]),
       ),
     ]),
 );

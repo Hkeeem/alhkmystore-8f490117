@@ -34,20 +34,22 @@ export const getDealAlertSettings = createServerFn({ method: "GET" })
 
 export const updateDealAlertSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: {
-    enabled: boolean;
-    lead_hours: number;
-    coupons_enabled: boolean;
-    coupon_window_hours: number;
-  }) => {
-    const clamp = (n: number) => Math.min(168, Math.max(1, Math.round(Number(n) || 24)));
-    return {
-      enabled: Boolean(input.enabled),
-      coupons_enabled: Boolean(input.coupons_enabled),
-      lead_hours: clamp(input.lead_hours),
-      coupon_window_hours: clamp(input.coupon_window_hours),
-    };
-  })
+  .inputValidator(
+    (input: {
+      enabled: boolean;
+      lead_hours: number;
+      coupons_enabled: boolean;
+      coupon_window_hours: number;
+    }) => {
+      const clamp = (n: number) => Math.min(168, Math.max(1, Math.round(Number(n) || 24)));
+      return {
+        enabled: Boolean(input.enabled),
+        coupons_enabled: Boolean(input.coupons_enabled),
+        lead_hours: clamp(input.lead_hours),
+        coupon_window_hours: clamp(input.coupon_window_hours),
+      };
+    },
+  )
   .handler(async ({ data, context }) => {
     await assertStaff(context as never);
     const { error } = await context.supabase

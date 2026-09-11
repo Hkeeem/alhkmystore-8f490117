@@ -15,7 +15,8 @@ export type DealShareMeta = {
   expiresIn: string;
 };
 
-export type SharePlatform = "whatsapp" | "telegram" | "x" | "snapchat" | "facebook" | "email" | "copy" | "default";
+export type SharePlatform =
+  "whatsapp" | "telegram" | "x" | "snapchat" | "facebook" | "email" | "copy" | "default";
 
 export function toDealShareMeta(deal: Deal, storeName: string, off: number): DealShareMeta {
   return {
@@ -57,14 +58,21 @@ export function buildDealShareText(deal: Deal, storeName: string, off: number) {
   return buildPlatformDealText(toDealShareMeta(deal, storeName, off), "default");
 }
 
-export function buildSmartListShareText(result: { total: number; saved: number; strategy: string; items: { requested: string; deal?: { title: string; price: number; originalPrice: number; storeId: string } | null }[] }) {
+export function buildSmartListShareText(result: {
+  total: number;
+  saved: number;
+  strategy: string;
+  items: {
+    requested: string;
+    deal?: { title: string; price: number; originalPrice: number; storeId: string } | null;
+  }[];
+}) {
   const lines = result.items.map((it, i) => {
     if (!it.deal) return `${i + 1}. ${it.requested} — ما لقينا عرض مطابق`;
     return `${i + 1}. ${it.deal.title} — ${it.deal.price} ر.س`;
   });
   return `🛒 قائمة تسوّق ذكية من وفّر\n\n${lines.join("\n")}\n\nالإجمالي: ${result.total} ر.س\nوفّرت: ${result.saved} ر.س\n\n💡 ${result.strategy}`;
 }
-
 
 type Props = {
   open: boolean;
@@ -79,7 +87,10 @@ function withUtm(rawUrl: string, platform: SharePlatform): string {
   if (!rawUrl) return rawUrl;
   try {
     const u = new URL(rawUrl);
-    u.searchParams.set("utm_source", platform === "default" || platform === "copy" ? "share" : platform);
+    u.searchParams.set(
+      "utm_source",
+      platform === "default" || platform === "copy" ? "share" : platform,
+    );
     u.searchParams.set("utm_medium", "social");
     u.searchParams.set("utm_campaign", "deal_share");
     if (!u.hash) u.hash = `src=${platform}`;
@@ -116,15 +127,56 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
   const payload = payloadFor("copy");
   const url = urlFor("copy");
 
-  const channels: { name: string; color: string; icon: string; platform: SharePlatform; href: string }[] = [
-    { name: "واتساب", color: "#25D366", icon: "💬", platform: "whatsapp", href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}` },
-    { name: "تيليجرام", color: "#229ED9", icon: "✈️", platform: "telegram", href: `https://t.me/share/url?url=${encodeURIComponent(urlFor("telegram"))}&text=${encodeURIComponent(textFor("telegram"))}` },
-    { name: "X", color: "#0f0f0f", icon: "𝕏", platform: "x", href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(textFor("x"))}&url=${encodeURIComponent(urlFor("x"))}` },
-    { name: "سناب شات", color: "#FFFC00", icon: "👻", platform: "snapchat", href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(urlFor("snapchat"))}` },
-    { name: "فيسبوك", color: "#1877F2", icon: "f", platform: "facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(urlFor("facebook"))}&quote=${encodeURIComponent(textFor("facebook"))}` },
-    { name: "بريد", color: "#6b7280", icon: "@", platform: "email", href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}` },
+  const channels: {
+    name: string;
+    color: string;
+    icon: string;
+    platform: SharePlatform;
+    href: string;
+  }[] = [
+    {
+      name: "واتساب",
+      color: "#25D366",
+      icon: "💬",
+      platform: "whatsapp",
+      href: `https://wa.me/?text=${encodeURIComponent(payloadFor("whatsapp"))}`,
+    },
+    {
+      name: "تيليجرام",
+      color: "#229ED9",
+      icon: "✈️",
+      platform: "telegram",
+      href: `https://t.me/share/url?url=${encodeURIComponent(urlFor("telegram"))}&text=${encodeURIComponent(textFor("telegram"))}`,
+    },
+    {
+      name: "X",
+      color: "#0f0f0f",
+      icon: "𝕏",
+      platform: "x",
+      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(textFor("x"))}&url=${encodeURIComponent(urlFor("x"))}`,
+    },
+    {
+      name: "سناب شات",
+      color: "#FFFC00",
+      icon: "👻",
+      platform: "snapchat",
+      href: `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(urlFor("snapchat"))}`,
+    },
+    {
+      name: "فيسبوك",
+      color: "#1877F2",
+      icon: "f",
+      platform: "facebook",
+      href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(urlFor("facebook"))}&quote=${encodeURIComponent(textFor("facebook"))}`,
+    },
+    {
+      name: "بريد",
+      color: "#6b7280",
+      icon: "@",
+      platform: "email",
+      href: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(payloadFor("email"))}`,
+    },
   ];
-
 
   async function nativeShare() {
     try {
@@ -153,7 +205,6 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
   }
 
   async function copyLink() {
-
     if (!url) {
       toast.error("ما فيه رابط للنسخ");
       return;
@@ -168,7 +219,6 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
     }
   }
 
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-foreground/40 backdrop-blur-sm"
@@ -180,7 +230,10 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
       >
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-display font-black text-lg">شارك مع أصحابك</h3>
-          <button onClick={onClose} className="w-8 h-8 rounded-full hover:bg-secondary flex items-center justify-center">
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full hover:bg-secondary flex items-center justify-center"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -193,7 +246,10 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
               href={c.href}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => { addPoints("share"); onClose(); }}
+              onClick={() => {
+                addPoints("share");
+                onClose();
+              }}
               className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-secondary hover:bg-primary/10 border border-transparent hover:border-primary transition"
             >
               <div
@@ -213,9 +269,16 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
             className="w-full mb-2 flex items-center gap-2 bg-secondary/60 hover:bg-secondary rounded-2xl px-3 py-2.5 text-xs font-bold transition text-right"
             title={url}
           >
-            {linkCopied ? <Check className="w-4 h-4 text-primary shrink-0" /> : <Link2 className="w-4 h-4 text-primary shrink-0" />}
+            {linkCopied ? (
+              <Check className="w-4 h-4 text-primary shrink-0" />
+            ) : (
+              <Link2 className="w-4 h-4 text-primary shrink-0" />
+            )}
             <span className="shrink-0">{linkCopied ? "تم نسخ الرابط" : "نسخ الرابط فقط"}</span>
-            <span className="flex-1 truncate text-muted-foreground font-normal ltr:text-left rtl:text-left" dir="ltr">
+            <span
+              className="flex-1 truncate text-muted-foreground font-normal ltr:text-left rtl:text-left"
+              dir="ltr"
+            >
               {url}
             </span>
           </button>
@@ -237,7 +300,6 @@ export function ShareSheet({ open, onClose, title, text, url: explicitUrl, deal 
             مشاركة
           </button>
         </div>
-
       </div>
     </div>
   );

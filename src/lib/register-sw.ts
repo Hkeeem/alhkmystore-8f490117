@@ -21,10 +21,14 @@ function isRefusedContext(): boolean {
   if (
     h.startsWith("id-preview--") ||
     h.startsWith("preview--") ||
-    h === "lovableproject.com" || h.endsWith(".lovableproject.com") ||
-    h === "lovableproject-dev.com" || h.endsWith(".lovableproject-dev.com") ||
-    h === "beta.lovable.dev" || h.endsWith(".beta.lovable.dev")
-  ) return true;
+    h === "lovableproject.com" ||
+    h.endsWith(".lovableproject.com") ||
+    h === "lovableproject-dev.com" ||
+    h.endsWith(".lovableproject-dev.com") ||
+    h === "beta.lovable.dev" ||
+    h.endsWith(".beta.lovable.dev")
+  )
+    return true;
   if (new URLSearchParams(window.location.search).get("sw") === "off") return true;
   return false;
 }
@@ -35,10 +39,16 @@ async function unregisterMatching() {
     const regs = await navigator.serviceWorker.getRegistrations();
     await Promise.allSettled(
       regs
-        .filter((r) => (r.active?.scriptURL || r.installing?.scriptURL || r.waiting?.scriptURL || "").endsWith(SW_PATH))
+        .filter((r) =>
+          (r.active?.scriptURL || r.installing?.scriptURL || r.waiting?.scriptURL || "").endsWith(
+            SW_PATH,
+          ),
+        )
         .map((r) => r.unregister()),
     );
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }
 
 async function purgeStaleCaches() {
@@ -46,7 +56,9 @@ async function purgeStaleCaches() {
     if (typeof caches === "undefined") return;
     const keys = await caches.keys();
     await Promise.allSettled(keys.map((k) => caches.delete(k)));
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }
 
 export async function registerSW() {
@@ -57,7 +69,9 @@ export async function registerSW() {
         await unregisterMatching();
         await purgeStaleCaches();
       }
-    } catch { /* noop */ }
+    } catch {
+      /* noop */
+    }
   }
   if (isRefusedContext()) {
     await unregisterMatching();
@@ -66,5 +80,7 @@ export async function registerSW() {
   if (!("serviceWorker" in navigator)) return;
   try {
     await navigator.serviceWorker.register(SW_PATH, { scope: "/" });
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }

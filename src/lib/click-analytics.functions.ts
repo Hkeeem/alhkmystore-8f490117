@@ -142,7 +142,12 @@ export const getClickAnalytics = createServerFn({ method: "GET" })
         }))
         .sort((a, b) => b.clicks - a.clicks)
         .slice(0, 100),
-      countryOptions: [...new Set((optionRows ?? []).map((r) => r.country).filter(Boolean) as Array<string>)].sort(),
-      referrerOptions: [...new Set((optionRows ?? []).map((r) => host(r.referrer)))].filter((r) => r !== "مباشر").slice(0, 20).sort(),
+      countryOptions: [
+        ...new Set((optionRows ?? []).map((r) => r.country).filter(Boolean) as Array<string>),
+      ].sort(),
+      referrerOptions: [...new Set((optionRows ?? []).map((r) => host(r.referrer)))]
+        .filter((r) => r !== "مباشر")
+        .slice(0, 20)
+        .sort(),
     };
   });

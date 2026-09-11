@@ -23,7 +23,6 @@ const SOURCE_LABELS: Record<string, string> = {
   hkeeem_catalog: "منصة حكيم (API)",
 };
 
-
 /**
  * إرسال التنبيه عبر قنوات خارجية: البريد الإلكتروني (Resend) وSlack.
  * أي قناة غير مهيّأة تُتجاوز بهدوء دون إفشال التنبيه الداخلي.
@@ -53,7 +52,12 @@ async function notifyExternalChannels(alert: { title: string; body: string }): P
         <p style="font-size:15px;line-height:1.8">${alert.body}</p>
         <p style="font-size:13px;color:#666">راجع سجل المزامنة داخل لوحة التحكم لمعرفة التفاصيل.</p>
       </div>`;
-      await sendReportEmail(emails, `[حكيم AI] ${alert.title}`, html, `${alert.title}\n${alert.body}`);
+      await sendReportEmail(
+        emails,
+        `[حكيم AI] ${alert.title}`,
+        html,
+        `${alert.title}\n${alert.body}`,
+      );
       out.email = `sent:${emails.length}`;
     }
   } catch (error) {
@@ -175,7 +179,6 @@ export async function maybeAlertSyncFailure(entry: {
     });
 
     return { alerted: true as const, failures, notified: recipients.length, channels };
-
   } catch (error) {
     console.error("maybeAlertSyncFailure failed", error);
     return { alerted: false as const, failures: 0 };

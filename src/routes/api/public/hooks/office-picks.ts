@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 async function run(request: Request) {
   const apikey = request.headers.get("apikey") ?? "";
-  const expected = process.env["SUPABASE_ANON_KEY"] ?? process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "";
+  const expected =
+    process.env["SUPABASE_ANON_KEY"] ?? process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "";
   if (!expected || apikey !== expected) {
     return Response.json({ error: "unauthorized" }, { status: 401 });
   }

@@ -1,6 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Trophy, Sparkles, Gift, Ticket, Share2, ListChecks, Eye, Crown, Medal, Award, Trash2, Filter, ChevronLeft } from "lucide-react";
+import {
+  Trophy,
+  Sparkles,
+  Gift,
+  Ticket,
+  Share2,
+  ListChecks,
+  Eye,
+  Crown,
+  Medal,
+  Award,
+  Trash2,
+  Filter,
+  ChevronLeft,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
@@ -18,7 +32,11 @@ export const Route = createFileRoute("/rewards")({
   head: () => ({
     meta: [
       { title: "الجوائز ولوحة المتصدرين — وفّر" },
-      { name: "description", content: "اكسب نقاطاً في وفّر كل ما نسخت كوبون أو شاركت عرض أو بنيت قائمة تسوّق ذكية — واستبدلها بجوائز." },
+      {
+        name: "description",
+        content:
+          "اكسب نقاطاً في وفّر كل ما نسخت كوبون أو شاركت عرض أو بنيت قائمة تسوّق ذكية — واستبدلها بجوائز.",
+      },
       { property: "og:title", content: "الجوائز ولوحة المتصدرين — وفّر" },
       { property: "og:description", content: "اجمع النقاط وتصدّر لوحة أفضل الموفّرين في المملكة." },
       { property: "og:type", content: "website" },
@@ -37,8 +55,10 @@ const ACTION_ICON: Record<RewardAction, typeof Ticket> = {
 };
 
 function tierFor(points: number) {
-  if (points >= 1000) return { name: "بلاتيني", color: "oklch(0.7 0.15 260)", next: null, icon: Crown };
-  if (points >= 500) return { name: "ذهبي", color: "oklch(0.75 0.16 85)", next: 1000, icon: Trophy };
+  if (points >= 1000)
+    return { name: "بلاتيني", color: "oklch(0.7 0.15 260)", next: null, icon: Crown };
+  if (points >= 500)
+    return { name: "ذهبي", color: "oklch(0.75 0.16 85)", next: 1000, icon: Trophy };
   if (points >= 200) return { name: "فضّي", color: "oklch(0.7 0.02 250)", next: 500, icon: Medal };
   return { name: "برونزي", color: "oklch(0.55 0.12 40)", next: 200, icon: Award };
 }
@@ -61,7 +81,10 @@ function RewardsPage() {
   const TierIcon = tier.icon;
   const progress = tier.next ? Math.min(100, Math.round((state.points / tier.next) * 100)) : 100;
 
-  const leaderboard = [...SEED_LEADERBOARD, { name: state.name || "أنت", points: state.points, isMe: true }]
+  const leaderboard = [
+    ...SEED_LEADERBOARD,
+    { name: state.name || "أنت", points: state.points, isMe: true },
+  ]
     .sort((a, b) => b.points - a.points)
     .slice(0, 10);
   const myRank = leaderboard.findIndex((r) => (r as any).isMe) + 1;
@@ -75,12 +98,9 @@ function RewardsPage() {
     toast.success("تم حفظ اسمك في لوحة المتصدرين");
   };
 
-
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
-      <h1 className="text-2xl md:text-3xl font-black text-foreground">
-        الجوائز ولوحة المتصدرين
-      </h1>
+      <h1 className="text-2xl md:text-3xl font-black text-foreground">الجوائز ولوحة المتصدرين</h1>
 
       {/* Hero card */}
 
@@ -100,9 +120,7 @@ function RewardsPage() {
             <div className="flex items-baseline gap-2">
               <span className="text-4xl md:text-5xl font-black tabular-nums">{state.points}</span>
               <span className="text-sm opacity-90">نقطة</span>
-              {myRank > 0 && (
-                <span className="mr-auto text-xs opacity-90">ترتيبك: #{myRank}</span>
-              )}
+              {myRank > 0 && <span className="mr-auto text-xs opacity-90">ترتيبك: #{myRank}</span>}
             </div>
             {tier.next ? (
               <>
@@ -187,7 +205,9 @@ function RewardsPage() {
                 </div>
                 <div
                   className={`px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-1 ${
-                    can ? "bg-primary text-primary-foreground group-hover:opacity-90" : "bg-secondary text-muted-foreground"
+                    can
+                      ? "bg-primary text-primary-foreground group-hover:opacity-90"
+                      : "bg-secondary text-muted-foreground"
                   }`}
                 >
                   التفاصيل <ChevronLeft className="w-4 h-4" />
@@ -196,7 +216,6 @@ function RewardsPage() {
             );
           })}
         </div>
-
       </section>
 
       {/* Leaderboard */}
@@ -219,10 +238,10 @@ function RewardsPage() {
                     i === 0
                       ? "bg-yellow-400 text-yellow-950"
                       : i === 1
-                      ? "bg-slate-300 text-slate-900"
-                      : i === 2
-                      ? "bg-amber-600 text-amber-50"
-                      : "bg-secondary text-muted-foreground"
+                        ? "bg-slate-300 text-slate-900"
+                        : i === 2
+                          ? "bg-amber-600 text-amber-50"
+                          : "bg-secondary text-muted-foreground"
                   }`}
                 >
                   {i + 1}
@@ -282,7 +301,10 @@ function HistorySection({
 
   const chips: { key: "all" | RewardAction | "redeem"; label: string }[] = [
     { key: "all", label: "الكل" },
-    ...(Object.keys(ACTION_POINTS) as RewardAction[]).map((a) => ({ key: a, label: ACTION_LABEL[a] })),
+    ...(Object.keys(ACTION_POINTS) as RewardAction[]).map((a) => ({
+      key: a,
+      label: ACTION_LABEL[a],
+    })),
     { key: "redeem" as const, label: "استبدال" },
   ];
 
@@ -329,7 +351,9 @@ function HistorySection({
               }`}
             >
               {c.label}
-              <span className={`mr-1.5 tabular-nums ${active ? "opacity-90" : "opacity-60"}`}>({n})</span>
+              <span className={`mr-1.5 tabular-nums ${active ? "opacity-90" : "opacity-60"}`}>
+                ({n})
+              </span>
             </button>
           );
         })}
@@ -337,13 +361,15 @@ function HistorySection({
 
       {filtered.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
-          {history.length === 0 ? "ما فيه نشاطات لسا — ابدأ اجمع نقاط!" : "لا توجد نشاطات ضمن هذا الفلتر"}
+          {history.length === 0
+            ? "ما فيه نشاطات لسا — ابدأ اجمع نقاط!"
+            : "لا توجد نشاطات ضمن هذا الفلتر"}
         </div>
       ) : (
         <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
           {filtered.map((h, i) => {
             const isRedeem = h.action === "redeem" || h.points < 0;
-            const Icon = isRedeem ? Gift : ACTION_ICON[h.action as RewardAction] ?? Sparkles;
+            const Icon = isRedeem ? Gift : (ACTION_ICON[h.action as RewardAction] ?? Sparkles);
             return (
               <div
                 key={i}
@@ -358,7 +384,9 @@ function HistorySection({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-sm truncate">
-                    {isRedeem ? h.label ?? "استبدال جائزة" : ACTION_LABEL[h.action as RewardAction]}
+                    {isRedeem
+                      ? (h.label ?? "استبدال جائزة")
+                      : ACTION_LABEL[h.action as RewardAction]}
                   </div>
                   <div className="text-[11px] text-muted-foreground">{fmt(h.at)}</div>
                 </div>

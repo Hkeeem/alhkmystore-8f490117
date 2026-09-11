@@ -2,7 +2,10 @@ import { BellRing, BellOff, Loader2, Send, ShieldAlert, Smartphone, Info } from 
 import { toast } from "sonner";
 import { usePush, type PushSupport } from "@/hooks/use-push";
 
-const UNSUPPORTED_COPY: Record<Exclude<PushSupport, "supported" | "checking">, { title: string; why: string }> = {
+const UNSUPPORTED_COPY: Record<
+  Exclude<PushSupport, "supported" | "checking">,
+  { title: string; why: string }
+> = {
   "insecure-context": {
     title: "الاتصال غير آمن",
     why: "إشعارات الويب تعمل فقط على روابط HTTPS. افتح الموقع عبر https://alhkmy.store ثم أعد المحاولة.",
@@ -38,8 +41,10 @@ export function PushSettings() {
       return;
     }
     if (res.reason === "denied") toast.error("رُفض الإذن — فعّله من إعدادات الموقع في المتصفح 🔒");
-    else if (res.reason === "server_not_configured") toast.error("خدمة الإشعارات غير مهيّأة على الخادم حاليًا.");
-    else if (res.reason === "no_sw") toast.error("تعذّر تشغيل عامل الخدمة — جرّب من الموقع المنشور.");
+    else if (res.reason === "server_not_configured")
+      toast.error("خدمة الإشعارات غير مهيّأة على الخادم حاليًا.");
+    else if (res.reason === "no_sw")
+      toast.error("تعذّر تشغيل عامل الخدمة — جرّب من الموقع المنشور.");
     else toast("لم يكتمل الاشتراك، حاول مرة أخرى.");
   };
 
@@ -97,7 +102,11 @@ export function PushSettings() {
                 disabled={busy}
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-60"
               >
-                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <BellRing className="w-4 h-4" />}
+                {busy ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <BellRing className="w-4 h-4" />
+                )}
                 تفعيل إشعارات العروض
               </button>
             ) : (
@@ -107,7 +116,11 @@ export function PushSettings() {
                   disabled={busy}
                   className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-transform hover:scale-[1.03] active:scale-95 disabled:opacity-60"
                 >
-                  {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {busy ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
                   إرسال إشعار تجريبي
                 </button>
                 <button
@@ -136,7 +149,9 @@ export function PushSettings() {
               <ShieldAlert className="w-4 h-4 text-amber-400" />
               {UNSUPPORTED_COPY[support].title}
             </p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{UNSUPPORTED_COPY[support].why}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {UNSUPPORTED_COPY[support].why}
+            </p>
           </div>
 
           <div className="space-y-2">

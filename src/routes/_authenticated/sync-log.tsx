@@ -18,7 +18,6 @@ import { DealAlertsPanel } from "@/components/admin/DealAlertsPanel";
 /** كل 5 دقائق: مزامنة تلقائية لعروض نون ودمجها مع عروض التجّار */
 const AUTO_SYNC_MS = 5 * 60 * 1000;
 
-
 export const Route = createFileRoute("/_authenticated/sync-log")({
   component: SyncLogPage,
   head: () => ({
@@ -84,7 +83,8 @@ function SyncLogPage() {
       try {
         const res = await runSync({ data: { source: "noon" } });
         if (!auto) {
-          if (res?.success) toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
+          if (res?.success)
+            toast.success(`تم دمج ${res.sources.noon} عرضًا من نون مع عروض التجّار`);
           else toast.message("تعذّر جلب عروض نون الآن — عُرضت آخر العروض المحفوظة");
         }
       } catch {
@@ -93,7 +93,10 @@ function SyncLogPage() {
       // refetchType: "all" حتى تتحدّث الخريطة وكل العروض فوراً ولو كانت صفحاتها غير مفتوحة
       await queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY, refetchType: "all" });
       await queryClient.invalidateQueries({ queryKey: ["merchant-deals"], refetchType: "all" });
-      await queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"], refetchType: "all" });
+      await queryClient.invalidateQueries({
+        queryKey: ["published-merchant-deals"],
+        refetchType: "all",
+      });
       await queryClient.invalidateQueries({ queryKey: ["live-coupons"], refetchType: "all" });
 
       await refetch();
@@ -118,7 +121,6 @@ function SyncLogPage() {
     return () => clearInterval(id);
   }, []);
 
-
   const events = data?.ok ? data.events : [];
   const failures = events.filter((e) => e.status === "failure").length;
 
@@ -135,7 +137,9 @@ function SyncLogPage() {
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
             المزامنة تلقائية كل 5 دقائق ودمج عروض نون مع عروض التجّار{" "}
-            {lastAutoSync ? `• آخر مزامنة تلقائية: ${formatDate(lastAutoSync.toISOString())}` : "• جارٍ التشغيل…"}
+            {lastAutoSync
+              ? `• آخر مزامنة تلقائية: ${formatDate(lastAutoSync.toISOString())}`
+              : "• جارٍ التشغيل…"}
           </p>
         </div>
 
@@ -145,7 +149,10 @@ function SyncLogPage() {
           disabled={isFetching || merging}
           aria-label="تحديث سجل المزامنة"
         >
-          <RefreshCw className={`ms-2 size-4 ${isFetching || merging ? "animate-spin" : ""}`} aria-hidden="true" />
+          <RefreshCw
+            className={`ms-2 size-4 ${isFetching || merging ? "animate-spin" : ""}`}
+            aria-hidden="true"
+          />
           تحديث
         </Button>
       </div>
@@ -192,7 +199,9 @@ function SyncLogPage() {
         </div>
       ) : data && !data.ok ? (
         <Card>
-          <CardContent className="py-10 text-center text-muted-foreground">{data.reason}</CardContent>
+          <CardContent className="py-10 text-center text-muted-foreground">
+            {data.reason}
+          </CardContent>
         </Card>
       ) : events.length === 0 ? (
         <Card>
@@ -224,10 +233,7 @@ function SyncLogPage() {
                         <Badge variant={failed ? "destructive" : "secondary"}>
                           {failed ? "فشلت" : "نجحت"}
                         </Badge>
-                        <time
-                          dateTime={e.created_at}
-                          className="text-xs text-muted-foreground"
-                        >
+                        <time dateTime={e.created_at} className="text-xs text-muted-foreground">
                           {formatDate(e.created_at)}
                         </time>
                       </div>

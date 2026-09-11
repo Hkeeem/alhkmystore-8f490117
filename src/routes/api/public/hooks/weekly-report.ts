@@ -24,7 +24,11 @@ async function run(request: Request) {
   try {
     const { runWeeklyReport } = await import("@/lib/weekly-report.server");
     const result = await runWeeklyReport({ days, triggeredBy: "cron" });
-    return Response.json({ success: result.sent, recipients: result.recipients, error: result.error ?? null });
+    return Response.json({
+      success: result.sent,
+      recipients: result.recipients,
+      error: result.error ?? null,
+    });
   } catch (error) {
     console.error("weekly report failed", error);
     return Response.json({ success: false, error: String(error) }, { status: 500 });

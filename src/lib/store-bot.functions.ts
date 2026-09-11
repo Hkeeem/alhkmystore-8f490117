@@ -20,25 +20,28 @@ export const listStoreFeeds = createServerFn({ method: "GET" })
 
 export const addStoreFeed = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: {
-    store_name: string;
-    feed_url: string;
-    feed_type?: string;
-    category?: string;
-    affiliate_param?: string | null;
-  }) => {
-    const name = input.store_name?.trim();
-    const url = input.feed_url?.trim();
-    if (!name || name.length > 80) throw new Error("اسم المتجر مطلوب");
-    if (!url || !/^https?:\/\//i.test(url)) throw new Error("رابط التغذية غير صالح");
-    return {
-      store_name: name,
-      feed_url: url,
-      feed_type: input.feed_type === "json" || input.feed_type === "xml" ? input.feed_type : "auto",
-      category: (input.category?.trim() || "عام").slice(0, 60),
-      affiliate_param: input.affiliate_param?.trim() || null,
-    };
-  })
+  .inputValidator(
+    (input: {
+      store_name: string;
+      feed_url: string;
+      feed_type?: string;
+      category?: string;
+      affiliate_param?: string | null;
+    }) => {
+      const name = input.store_name?.trim();
+      const url = input.feed_url?.trim();
+      if (!name || name.length > 80) throw new Error("اسم المتجر مطلوب");
+      if (!url || !/^https?:\/\//i.test(url)) throw new Error("رابط التغذية غير صالح");
+      return {
+        store_name: name,
+        feed_url: url,
+        feed_type:
+          input.feed_type === "json" || input.feed_type === "xml" ? input.feed_type : "auto",
+        category: (input.category?.trim() || "عام").slice(0, 60),
+        affiliate_param: input.affiliate_param?.trim() || null,
+      };
+    },
+  )
   .handler(async ({ data, context }) => {
     await assertStaff(context as never);
     const { error } = await context.supabase.from("store_feeds").insert(data);

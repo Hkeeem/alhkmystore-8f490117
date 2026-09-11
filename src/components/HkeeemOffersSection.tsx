@@ -1,8 +1,19 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sparkles, RefreshCw, ExternalLink, Store as StoreIcon, CheckCircle2, XCircle } from "lucide-react";
-import { getHkeeemOffers, getHkeeemStores, getHkeeemIntegrationStatus } from "@/lib/hkeeem-offers.functions";
+import {
+  Sparkles,
+  RefreshCw,
+  ExternalLink,
+  Store as StoreIcon,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import {
+  getHkeeemOffers,
+  getHkeeemStores,
+  getHkeeemIntegrationStatus,
+} from "@/lib/hkeeem-offers.functions";
 import { STORES_DIRECTORY } from "@/data/hkeeem-stores-directory";
 import { HkeeemStatusPanel } from "@/components/HkeeemStatusPanel";
 
@@ -43,15 +54,19 @@ export function HkeeemOffersSection() {
   const lastSuccess = status?.lastSuccessAt ? new Date(status.lastSuccessAt).getTime() : null;
   const lastFailure = status?.lastFailureAt ? new Date(status.lastFailureAt).getTime() : null;
   const isAvailable =
-    !offersQuery.isError && (offers.length > 0 || (lastSuccess !== null && (lastFailure === null || lastSuccess >= lastFailure)));
+    !offersQuery.isError &&
+    (offers.length > 0 ||
+      (lastSuccess !== null && (lastFailure === null || lastSuccess >= lastFailure)));
   const lastSuccessLabel =
     status?.lastSuccessAt && !Number.isNaN(new Date(status.lastSuccessAt).getTime())
-      ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" })
+      ? new Date(status.lastSuccessAt).toLocaleString("ar-SA", {
+          dateStyle: "short",
+          timeStyle: "short",
+        })
       : "لا يوجد";
   const statusAnnouncement = `حالة مزامنة عروض HkeeemAI: ${isAvailable ? "متاح" : "غير متاح"}. آخر مزامنة ناجحة: ${
     statusQuery.isPending ? "جارٍ التحقق" : lastSuccessLabel
   }`;
-
 
   const categories = useMemo(
     () => Array.from(new Set(offers.map((o) => o.category).filter(Boolean))) as string[],
@@ -68,7 +83,10 @@ export function HkeeemOffersSection() {
   return (
     <section dir="rtl" className="space-y-3" aria-labelledby="hkeeem-offers-title">
       <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h2 id="hkeeem-offers-title" className="font-display font-black text-lg flex items-center gap-2">
+        <h2
+          id="hkeeem-offers-title"
+          className="font-display font-black text-lg flex items-center gap-2"
+        >
           <Sparkles className="w-5 h-5 text-primary" /> عروض HkeeemAI الذكية
         </h2>
         <button
@@ -76,7 +94,8 @@ export function HkeeemOffersSection() {
           className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground font-bold press-ripple"
           aria-label="تحديث عروض HkeeemAI الذكية"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${offersQuery.isFetching ? "animate-spin" : ""}`} /> تحديث
+          <RefreshCw className={`w-3.5 h-3.5 ${offersQuery.isFetching ? "animate-spin" : ""}`} />{" "}
+          تحديث
         </button>
       </div>
 
@@ -106,33 +125,54 @@ export function HkeeemOffersSection() {
         </span>
       </div>
 
-
       {/* الفلاتر */}
       <div className="space-y-2">
         {categories.length > 0 && (
           <FilterRow label="الفئة">
             {categories.map((c) => (
-              <FilterChip key={c} active={filters.category === c} onClick={() => set("category", c)}>{c}</FilterChip>
+              <FilterChip
+                key={c}
+                active={filters.category === c}
+                onClick={() => set("category", c)}
+              >
+                {c}
+              </FilterChip>
             ))}
           </FilterRow>
         )}
         {platforms.length > 0 && (
           <FilterRow label="المنصة">
             {platforms.map((p) => (
-              <FilterChip key={p} active={filters.platform === p} onClick={() => set("platform", p)}>{p}</FilterChip>
+              <FilterChip
+                key={p}
+                active={filters.platform === p}
+                onClick={() => set("platform", p)}
+              >
+                {p}
+              </FilterChip>
             ))}
           </FilterRow>
         )}
         {(storesQuery.data?.length ?? 0) > 0 && (
           <FilterRow label="المتجر">
             {storesQuery.data!.map((s) => (
-              <FilterChip key={s.id} active={filters.storeId === s.id} onClick={() => set("storeId", s.id)}>{s.name}</FilterChip>
+              <FilterChip
+                key={s.id}
+                active={filters.storeId === s.id}
+                onClick={() => set("storeId", s.id)}
+              >
+                {s.name}
+              </FilterChip>
             ))}
           </FilterRow>
         )}
         <FilterRow label="نسبة الخصم">
           {DISCOUNT_STEPS.map((d) => (
-            <FilterChip key={d} active={filters.minDiscount === d} onClick={() => set("minDiscount", d)}>
+            <FilterChip
+              key={d}
+              active={filters.minDiscount === d}
+              onClick={() => set("minDiscount", d)}
+            >
               {d}%+
             </FilterChip>
           ))}
@@ -140,7 +180,10 @@ export function HkeeemOffersSection() {
       </div>
 
       {offersQuery.isPending ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4" aria-busy="true">
+        <div
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+          aria-busy="true"
+        >
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="bg-card border border-border rounded-3xl overflow-hidden">
               <div className="h-28 bg-muted animate-pulse" />
@@ -152,7 +195,10 @@ export function HkeeemOffersSection() {
           ))}
         </div>
       ) : offersQuery.isError ? (
-        <div role="alert" className="rounded-3xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3">
+        <div
+          role="alert"
+          className="rounded-3xl border border-destructive/30 bg-destructive/5 p-5 text-center space-y-3"
+        >
           <p className="text-sm font-bold text-destructive">تعذّر جلب عروض HkeeemAI الآن.</p>
           <button
             onClick={() => offersQuery.refetch()}
@@ -168,9 +214,17 @@ export function HkeeemOffersSection() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {offers.map((o) => (
-            <article key={o.id} className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift flex flex-col">
+            <article
+              key={o.id}
+              className="bg-card border border-border rounded-3xl overflow-hidden shadow-card hover-lift flex flex-col"
+            >
               {o.imageUrl && (
-                <img src={o.imageUrl} alt={o.title} loading="lazy" className="w-full h-28 object-cover" />
+                <img
+                  src={o.imageUrl}
+                  alt={o.title}
+                  loading="lazy"
+                  className="w-full h-28 object-cover"
+                />
               )}
               <div className="p-3 space-y-1 flex-1 flex flex-col">
                 <p className="font-bold text-sm line-clamp-2">{o.title}</p>
@@ -178,7 +232,9 @@ export function HkeeemOffersSection() {
                 <p className="text-sm font-black text-primary">
                   {o.price !== null ? `${o.price} ر.س` : ""}{" "}
                   {o.originalPrice !== null && (
-                    <span className="text-[11px] font-normal text-muted-foreground line-through">{o.originalPrice}</span>
+                    <span className="text-[11px] font-normal text-muted-foreground line-through">
+                      {o.originalPrice}
+                    </span>
                   )}
                 </p>
                 <div className="flex flex-wrap gap-1">
@@ -193,16 +249,25 @@ export function HkeeemOffersSection() {
                     </span>
                   )}
                   {o.category && (
-                    <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{o.category}</span>
+                    <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                      {o.category}
+                    </span>
                   )}
                   {o.platform && (
-                    <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">{o.platform}</span>
+                    <span className="text-[10px] bg-muted text-muted-foreground px-2 py-0.5 rounded-full">
+                      {o.platform}
+                    </span>
                   )}
                 </div>
                 {(o.sourceUrl || o.updatedAt) && (
                   <p className="text-[10px] text-muted-foreground">
                     {o.sourceUrl && (
-                      <a href={o.sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                      <a
+                        href={o.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:underline"
+                      >
                         المصدر الرسمي
                       </a>
                     )}
@@ -227,7 +292,6 @@ export function HkeeemOffersSection() {
       <HkeeemStatusPanel refreshKey={offersQuery.dataUpdatedAt + offersQuery.errorUpdatedAt} />
 
       <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
-
     </section>
   );
 }
@@ -265,11 +329,15 @@ export function StoresDirectory({ offerStoreNames = [] }: { offerStoreNames?: st
                 {s.name.trim().charAt(0)}
               </span>
               <span className="flex flex-col gap-0 min-w-0 flex-1">
-                <span className="font-bold text-[13px] leading-tight line-clamp-1 text-foreground">{s.name}</span>
+                <span className="font-bold text-[13px] leading-tight line-clamp-1 text-foreground">
+                  {s.name}
+                </span>
                 <span className="text-xs text-primary font-bold">{s.category}</span>
                 <span className="text-xs text-muted-foreground font-medium">{s.region}</span>
                 {!hasOffers && (
-                  <span className="text-xs text-muted-foreground font-medium">لا توجد عروض موثقة حاليًا</span>
+                  <span className="text-xs text-muted-foreground font-medium">
+                    لا توجد عروض موثقة حاليًا
+                  </span>
                 )}
               </span>
               <ExternalLink className="w-3.5 h-3.5 text-primary/70 shrink-0 self-center group-hover:text-primary transition-colors" />
@@ -277,7 +345,6 @@ export function StoresDirectory({ offerStoreNames = [] }: { offerStoreNames?: st
           );
         })}
       </div>
-
     </div>
   );
 }
@@ -291,7 +358,15 @@ function FilterRow({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
-function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
     <button
       onClick={onClick}

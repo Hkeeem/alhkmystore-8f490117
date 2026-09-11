@@ -10,9 +10,16 @@ export const Route = createFileRoute("/analysis")({
   head: () => ({
     meta: [
       { title: "تحليل المتاجر والمنافسين — حكيم AI" },
-      { name: "description", content: "تحليل SWOT متكامل للمتاجر السعودية: تموضع الأسعار، نقاط القوة والضعف، حساب هامش الربح، واستراتيجيات النمو وتخفيض تكلفة الشحن." },
+      {
+        name: "description",
+        content:
+          "تحليل SWOT متكامل للمتاجر السعودية: تموضع الأسعار، نقاط القوة والضعف، حساب هامش الربح، واستراتيجيات النمو وتخفيض تكلفة الشحن.",
+      },
       { property: "og:title", content: "تحليل المتاجر والمنافسين — حكيم AI" },
-      { property: "og:description", content: "تحليل عميق للمتاجر السعودية بالذكاء الاصطناعي مع حاسبة هامش الربح." },
+      {
+        property: "og:description",
+        content: "تحليل عميق للمتاجر السعودية بالذكاء الاصطناعي مع حاسبة هامش الربح.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -51,15 +58,21 @@ function AnalysisPage() {
             <BarChart3 className="w-3.5 h-3.5 text-primary" />
             تحليل عميق
           </div>
-          <h1 className="font-display text-2xl md:text-4xl font-black">الذكاء الاصطناعي لتحليل المتاجر والمنافسين</h1>
+          <h1 className="font-display text-2xl md:text-4xl font-black">
+            الذكاء الاصطناعي لتحليل المتاجر والمنافسين
+          </h1>
           <p className="mt-3 max-w-2xl text-sm md:text-base text-white/80 leading-relaxed">
-            تحليل SWOT متكامل للمتاجر السعودية: تموضع الأسعار، نقاط القوة والضعف، حساب هامش الربح، واستراتيجيات النمو وتخفيض تكلفة الشحن.
+            تحليل SWOT متكامل للمتاجر السعودية: تموضع الأسعار، نقاط القوة والضعف، حساب هامش الربح،
+            واستراتيجيات النمو وتخفيض تكلفة الشحن.
           </p>
         </div>
       </header>
 
       <div className="grid lg:grid-cols-[1.1fr_1fr] gap-5">
-        <form onSubmit={submit} className="bg-card rounded-3xl border border-border/60 shadow-card p-5 space-y-4">
+        <form
+          onSubmit={submit}
+          className="bg-card rounded-3xl border border-border/60 shadow-card p-5 space-y-4"
+        >
           <Field label="اسم المتجر">
             <input
               value={store}
@@ -69,7 +82,9 @@ function AnalysisPage() {
               className="w-full bg-secondary/40 rounded-xl px-3 py-2.5 text-sm outline-none border border-border/60 focus:border-primary/60"
             />
             <datalist id="hk-stores">
-              {stores.map((s) => <option key={s.id} value={s.name} />)}
+              {stores.map((s) => (
+                <option key={s.id} value={s.name} />
+              ))}
             </datalist>
           </Field>
           <Field label="المنافسون (اختياري)">
@@ -94,7 +109,11 @@ function AnalysisPage() {
             disabled={loading}
             className="w-full inline-flex items-center justify-center gap-2 bg-gradient-gold text-secondary font-bold px-5 py-3 rounded-2xl hover-lift press-ripple disabled:opacity-60"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )}
             {loading ? "جاري التحليل…" : "حلّل الآن"}
           </button>
         </form>
@@ -109,14 +128,34 @@ function AnalysisPage() {
             <p className="text-sm text-muted-foreground leading-relaxed">{result.positioning}</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
-            <SwotCard title="نقاط القوة" items={result.strengths} tone="bg-success/10 border-success/30" />
+            <SwotCard
+              title="نقاط القوة"
+              items={result.strengths}
+              tone="bg-success/10 border-success/30"
+            />
             <SwotCard title="نقاط الضعف" items={result.weaknesses} tone="bg-hot/10 border-hot/30" />
-            <SwotCard title="الفرص" items={result.opportunities} tone="bg-primary/10 border-primary/30" />
-            <SwotCard title="التهديدات" items={result.threats} tone="bg-accent/10 border-accent/30" />
+            <SwotCard
+              title="الفرص"
+              items={result.opportunities}
+              tone="bg-primary/10 border-primary/30"
+            />
+            <SwotCard
+              title="التهديدات"
+              items={result.threats}
+              tone="bg-accent/10 border-accent/30"
+            />
           </div>
           <div className="grid md:grid-cols-2 gap-4">
-            <SwotCard title="استراتيجيات النمو" items={result.growth} tone="bg-card border-border/60" />
-            <SwotCard title="تخفيض تكلفة الشحن" items={result.shipping} tone="bg-card border-border/60" />
+            <SwotCard
+              title="استراتيجيات النمو"
+              items={result.growth}
+              tone="bg-card border-border/60"
+            />
+            <SwotCard
+              title="تخفيض تكلفة الشحن"
+              items={result.shipping}
+              tone="bg-card border-border/60"
+            />
           </div>
         </section>
       )}
@@ -139,7 +178,10 @@ function SwotCard({ title, items, tone }: { title: string; items: string[]; tone
       <h3 className="font-black mb-2">{title}</h3>
       <ul className="space-y-1.5 text-sm text-muted-foreground">
         {items.map((t, i) => (
-          <li key={i} className="flex gap-2"><span className="text-primary">•</span><span>{t}</span></li>
+          <li key={i} className="flex gap-2">
+            <span className="text-primary">•</span>
+            <span>{t}</span>
+          </li>
         ))}
       </ul>
     </div>
@@ -174,7 +216,15 @@ function MarginCalculator() {
   );
 }
 
-function NumField({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function NumField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
   return (
     <label className="block">
       <span className="text-xs font-bold text-secondary-foreground/70 mb-1.5 block">{label}</span>

@@ -22,19 +22,17 @@ export const savePushSubscription = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => subscriptionSchema.parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
-      .from("push_subscriptions")
-      .upsert(
-        {
-          endpoint: data.endpoint,
-          p256dh: data.p256dh,
-          auth: data.auth,
-          user_agent: data.userAgent ?? null,
-          failure_count: 0,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "endpoint" },
-      );
+    const { error } = await supabaseAdmin.from("push_subscriptions").upsert(
+      {
+        endpoint: data.endpoint,
+        p256dh: data.p256dh,
+        auth: data.auth,
+        user_agent: data.userAgent ?? null,
+        failure_count: 0,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "endpoint" },
+    );
     if (error) throw new Error(error.message);
     return { saved: true };
   });
@@ -73,7 +71,8 @@ export const sendTestPush = createServerFn({ method: "POST" })
       await supabaseAdmin.from("push_subscriptions").delete().eq("endpoint", data.endpoint);
       return { sent: false, reason: "expired" as const };
     }
-    if (!result.ok) return { sent: false, reason: "push_service_error" as const, status: result.status };
+    if (!result.ok)
+      return { sent: false, reason: "push_service_error" as const, status: result.status };
 
     await supabaseAdmin
       .from("push_subscriptions")

@@ -105,7 +105,9 @@ describe("HkeeemOffersSection", () => {
     const chip = (await screen.findAllByRole("button", { name: "إلكترونيات" }))[0];
     await userEvent.click(chip);
     await waitFor(() =>
-      expect(offersFn).toHaveBeenCalledWith({ data: expect.objectContaining({ category: "إلكترونيات" }) }),
+      expect(offersFn).toHaveBeenCalledWith({
+        data: expect.objectContaining({ category: "إلكترونيات" }),
+      }),
     );
   });
   it("يعرض شارة الحالة مع تاريخ آخر نجاح", async () => {

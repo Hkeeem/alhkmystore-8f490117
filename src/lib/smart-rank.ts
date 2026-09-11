@@ -29,9 +29,7 @@ export function preferenceScore(deal: Deal, prefs: Prefs): number {
 export function smartScore(deal: Deal, prefs: Prefs): number {
   const discount = Math.min(1, discountPercent(deal) / 70);
   return (
-    discount * W_DISCOUNT +
-    urgencyScore(deal) * W_URGENCY +
-    preferenceScore(deal, prefs) * W_PREF
+    discount * W_DISCOUNT + urgencyScore(deal) * W_URGENCY + preferenceScore(deal, prefs) * W_PREF
   );
 }
 
@@ -72,4 +70,3 @@ export function smartExplanation(deal: Deal, prefs: Prefs): string {
 
   return `رُتّب هذا العرض بناءً على:\n• ${parts.join("\n• ")}`;
 }
-

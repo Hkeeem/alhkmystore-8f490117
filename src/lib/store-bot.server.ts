@@ -58,7 +58,9 @@ function tag(block: string, names: string[]): string | null {
 /** "1,299.00 SAR" → 1299 */
 function toPrice(raw: string | null | undefined): number | null {
   if (!raw) return null;
-  const cleaned = String(raw).replace(/[^\d.,]/g, "").replace(/,/g, "");
+  const cleaned = String(raw)
+    .replace(/[^\d.,]/g, "")
+    .replace(/,/g, "");
   const value = Number.parseFloat(cleaned);
   return Number.isFinite(value) && value > 0 ? value : null;
 }
@@ -115,9 +117,9 @@ function parseJsonFeed(body: string): RawItem[] {
   const list: unknown[] = Array.isArray(parsed)
     ? parsed
     : Array.isArray((parsed as { products?: unknown[] })?.products)
-      ? ((parsed as { products: unknown[] }).products)
+      ? (parsed as { products: unknown[] }).products
       : Array.isArray((parsed as { items?: unknown[] })?.items)
-        ? ((parsed as { items: unknown[] }).items)
+        ? (parsed as { items: unknown[] }).items
         : [];
 
   return list.slice(0, MAX_ITEMS_PER_FEED).map((entry) => {
@@ -130,7 +132,9 @@ function parseJsonFeed(body: string): RawItem[] {
       return null;
     };
     const sale = toPrice(pick("sale_price", "salePrice", "discounted_price", "price"));
-    const list2 = toPrice(pick("original_price", "originalPrice", "compare_at_price", "list_price", "was_price"));
+    const list2 = toPrice(
+      pick("original_price", "originalPrice", "compare_at_price", "list_price", "was_price"),
+    );
     return {
       title: pick("title", "name", "product_name"),
       link: pick("link", "url", "product_url"),
@@ -145,13 +149,18 @@ function parseJsonFeed(body: string): RawItem[] {
 
 export async function fetchStoreFeedOffers(feed: StoreFeed): Promise<BotOffer[]> {
   const response = await fetch(feed.feed_url, {
-    headers: { "User-Agent": "HkeeemAI-DealBot/1.0", Accept: "application/rss+xml, application/xml, application/json;q=0.9, */*;q=0.5" },
+    headers: {
+      "User-Agent": "HkeeemAI-DealBot/1.0",
+      Accept: "application/rss+xml, application/xml, application/json;q=0.9, */*;q=0.5",
+    },
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const body = await response.text();
 
-  const looksJson = feed.feed_type === "json" || (feed.feed_type === "auto" && body.trimStart().startsWith("["));
-  const items = looksJson || body.trimStart().startsWith("{") ? parseJsonFeed(body) : parseXmlFeed(body);
+  const looksJson =
+    feed.feed_type === "json" || (feed.feed_type === "auto" && body.trimStart().startsWith("["));
+  const items =
+    looksJson || body.trimStart().startsWith("{") ? parseJsonFeed(body) : parseXmlFeed(body);
 
   const offers: BotOffer[] = [];
   for (const item of items) {
@@ -204,12 +213,10 @@ export async function runStoreBot(feedId?: string): Promise<StoreBotResult> {
       const offers = await fetchStoreFeedOffers(feed);
       if (offers.length === 0) throw new Error("لم تُرجع التغذية أي منتجات صالحة");
 
-      const { error: upsertError } = await supabaseAdmin
-        .from("external_deals")
-        .upsert(
-          offers.map((offer) => ({ ...offer, fetched_at: now })),
-          { onConflict: "source,source_key" },
-        );
+      const { error: upsertError } = await supabaseAdmin.from("external_deals").upsert(
+        offers.map((offer) => ({ ...offer, fetched_at: now })),
+        { onConflict: "source,source_key" },
+      );
       if (upsertError) throw new Error(upsertError.message);
 
       // تعطيل عروض هذا المتجر التي لم تعد موجودة في التغذية
@@ -227,7 +234,12 @@ export async function runStoreBot(feedId?: string): Promise<StoreBotResult> {
 
       await supabaseAdmin
         .from("store_feeds")
-        .update({ last_run_at: now, last_status: "success", last_count: offers.length, updated_at: now })
+        .update({
+          last_run_at: now,
+          last_status: "success",
+          last_count: offers.length,
+          updated_at: now,
+        })
         .eq("id", feed.id);
       await recordSyncEvent({
         source: `store:${feed.store_name}`,
@@ -239,7 +251,11 @@ export async function runStoreBot(feedId?: string): Promise<StoreBotResult> {
       result.errors.push({ store: feed.store_name, message });
       await supabaseAdmin
         .from("store_feeds")
-        .update({ last_run_at: now, last_status: `failure: ${message.slice(0, 120)}`, updated_at: now })
+        .update({
+          last_run_at: now,
+          last_status: `failure: ${message.slice(0, 120)}`,
+          updated_at: now,
+        })
         .eq("id", feed.id);
       await recordSyncEvent({
         source: `store:${feed.store_name}`,

@@ -57,9 +57,15 @@ export const getAdminStats = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const [users, complaintsOpen, suggestions, premiumActive] = await Promise.all([
       supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1 }),
-      supabaseAdmin.from("complaints").select("id", { count: "exact", head: true }).eq("status", "open"),
+      supabaseAdmin
+        .from("complaints")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "open"),
       supabaseAdmin.from("suggestions").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("premium_subscriptions").select("id", { count: "exact", head: true }).eq("status", "active"),
+      supabaseAdmin
+        .from("premium_subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "active"),
     ]);
     return {
       users: (users.data as { total?: number } | null)?.total ?? users.data?.users?.length ?? 0,
@@ -85,11 +91,13 @@ export const listComplaints = createServerFn({ method: "GET" })
 export const updateComplaint = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      id: z.string().uuid(),
-      status: z.string().nullable(),
-      response: z.string().nullable(),
-    }).parse(d),
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.string().nullable(),
+        response: z.string().nullable(),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     await requireAny(context.supabase, context.userId, ["super_admin", "admin", "support"]);
@@ -117,11 +125,13 @@ export const listSuggestions = createServerFn({ method: "GET" })
 export const updateSuggestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      id: z.string().uuid(),
-      status: z.string().nullable(),
-      tag: z.string().nullable(),
-    }).parse(d),
+    z
+      .object({
+        id: z.string().uuid(),
+        status: z.string().nullable(),
+        tag: z.string().nullable(),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     await requireAny(context.supabase, context.userId, ["super_admin", "admin", "content_manager"]);
@@ -164,10 +174,12 @@ export const listUsersWithRoles = createServerFn({ method: "GET" })
 export const assignRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      userId: z.string().uuid(),
-      role: z.enum(["super_admin", "admin", "support", "content_manager", "user"]),
-    }).parse(d),
+    z
+      .object({
+        userId: z.string().uuid(),
+        role: z.enum(["super_admin", "admin", "support", "content_manager", "user"]),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     const { error } = await context.supabase.rpc("assign_user_role", {
@@ -181,10 +193,12 @@ export const assignRole = createServerFn({ method: "POST" })
 export const revokeRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      userId: z.string().uuid(),
-      role: z.enum(["super_admin", "admin", "support", "content_manager", "user"]),
-    }).parse(d),
+    z
+      .object({
+        userId: z.string().uuid(),
+        role: z.enum(["super_admin", "admin", "support", "content_manager", "user"]),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     const { error } = await context.supabase.rpc("revoke_user_role", {
@@ -211,12 +225,14 @@ export const listPremium = createServerFn({ method: "GET" })
 export const broadcastNotification = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      title: z.string().min(1).max(200),
-      body: z.string().max(1000).nullable(),
-      link: z.string().max(500).nullable(),
-      targetUserId: z.string().uuid().nullable(),
-    }).parse(d),
+    z
+      .object({
+        title: z.string().min(1).max(200),
+        body: z.string().max(1000).nullable(),
+        link: z.string().max(500).nullable(),
+        targetUserId: z.string().uuid().nullable(),
+      })
+      .parse(d),
   )
   .handler(async ({ context, data }) => {
     await requireAny(context.supabase, context.userId, ["super_admin", "admin", "content_manager"]);

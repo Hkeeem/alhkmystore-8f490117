@@ -1,6 +1,10 @@
 /** Server-only: scans for deals expiring within 24h and freshly added coupons,
     then pushes a notification once per item (deduped through push_dispatch_log). */
-import { sendPushBatch, type StoredSubscription, type PushNotificationPayload } from "./push.server";
+import {
+  sendPushBatch,
+  type StoredSubscription,
+  type PushNotificationPayload,
+} from "./push.server";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -41,7 +45,8 @@ export async function runDealPushSweep(): Promise<DealPushResult> {
   if (!enabled) return { ...empty, subscriptions: subs.length, reason: "alerts_disabled" };
   const leadMs = Math.min(168, Math.max(1, settings?.lead_hours ?? 24)) * 60 * 60 * 1000;
   const couponsEnabled = settings?.coupons_enabled ?? true;
-  const couponWindowMs = Math.min(168, Math.max(1, settings?.coupon_window_hours ?? 24)) * 60 * 60 * 1000;
+  const couponWindowMs =
+    Math.min(168, Math.max(1, settings?.coupon_window_hours ?? 24)) * 60 * 60 * 1000;
 
   const now = Date.now();
   const soonIso = new Date(now + leadMs).toISOString();
@@ -92,7 +97,15 @@ export async function runDealPushSweep(): Promise<DealPushResult> {
         .gte("created_at", new Date(now - couponWindowMs).toISOString())
         .order("created_at", { ascending: false })
         .limit(10)
-    : { data: [] as { id: string; store_name: string; code: string; title: string; created_at: string }[] };
+    : {
+        data: [] as {
+          id: string;
+          store_name: string;
+          code: string;
+          title: string;
+          created_at: string;
+        }[],
+      };
 
   const couponItems = (coupons ?? []).map((c) => ({
     key: `coupon:${c.id}`,
@@ -138,7 +151,10 @@ export async function runDealPushSweep(): Promise<DealPushResult> {
   }
 
   if (gone.size > 0) {
-    await supabaseAdmin.from("push_subscriptions").delete().in("endpoint", [...gone]);
+    await supabaseAdmin
+      .from("push_subscriptions")
+      .delete()
+      .in("endpoint", [...gone]);
   }
 
   return {

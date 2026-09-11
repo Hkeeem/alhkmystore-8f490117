@@ -2,7 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const clean = (v: unknown, max = 160) => String(v ?? "").trim().slice(0, max);
+const clean = (v: unknown, max = 160) =>
+  String(v ?? "")
+    .trim()
+    .slice(0, max);
 
 const SURFACES = ["list", "map", "detail", "coupon", "coupon-detail", "home"];
 
@@ -57,7 +60,9 @@ export const reportCouponIssue = createServerFn({ method: "POST" })
       storeName: clean(d.storeName, 120),
       siteUrl: clean(d.siteUrl, 500),
       offerUrl: clean(d.offerUrl, 500),
-      reason: ["not_working", "expired", "wrong_price", "other"].includes(reason) ? reason : "other",
+      reason: ["not_working", "expired", "wrong_price", "other"].includes(reason)
+        ? reason
+        : "other",
       note: clean(d.note, 400),
       session: clean(d.session, 64),
     };
@@ -128,7 +133,10 @@ export const adminOfferClickSummary = createServerFn({ method: "GET" })
     const sessions = new Set<string>();
     const surfaces = new Map<string, number>();
     const cities = new Map<string, number>();
-    const perOffer = new Map<string, { title: string; storeName: string; clicks: number; kind: string }>();
+    const perOffer = new Map<
+      string,
+      { title: string; storeName: string; clicks: number; kind: string }
+    >();
 
     for (const r of list) {
       if (r.session) sessions.add(r.session);
@@ -145,7 +153,7 @@ export const adminOfferClickSummary = createServerFn({ method: "GET" })
       perOffer.set(r.offer_id, cur);
     }
 
-    const sort = <T,>(m: Map<string, number>, f: (k: string, v: number) => T) =>
+    const sort = <T>(m: Map<string, number>, f: (k: string, v: number) => T) =>
       [...m.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => f(k, v));
 
     return {

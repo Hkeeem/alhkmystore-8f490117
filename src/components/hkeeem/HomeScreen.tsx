@@ -35,7 +35,9 @@ export default function HomeScreen() {
       <header className="flex items-center justify-between px-4 pt-3">
         <button className="relative text-2xl">
           🔔
-          <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">3</span>
+          <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-black text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+            3
+          </span>
         </button>
         <div className="text-center">
           <h1 className="text-2xl font-black hk-gold-text">hkeeemAI ✨</h1>
@@ -45,7 +47,9 @@ export default function HomeScreen() {
       </header>
 
       <div className="flex gap-2 px-4 mt-3">
-        <button className="hk-card px-3 hk-gold-text text-xl" title="مسح">▦</button>
+        <button className="hk-card px-3 hk-gold-text text-xl" title="مسح">
+          ▦
+        </button>
         <div className="hk-card flex-1 flex items-center gap-2 px-4 py-2">
           <span className="hk-gold-text">🔍</span>
           <input
@@ -67,8 +71,10 @@ export default function HomeScreen() {
       </div>
 
       <div className="px-4 mt-5">
-        <div className="hk-card relative overflow-hidden h-40"
-          style={{ background: "linear-gradient(135deg,#1A1408,#3A2E0A)" }}>
+        <div
+          className="hk-card relative overflow-hidden h-40"
+          style={{ background: "linear-gradient(135deg,#1A1408,#3A2E0A)" }}
+        >
           <div className="p-5">
             <h2 className="text-xl font-black hk-gold-text">{banners[banner].title}</h2>
             <p className="text-sm hk-dim-text mt-1">{banners[banner].sub}</p>
@@ -78,12 +84,14 @@ export default function HomeScreen() {
         </div>
         <div className="flex justify-center gap-1.5 mt-2">
           {banners.map((_, i) => (
-            <span key={i}
+            <span
+              key={i}
               className="h-1.5 rounded-full transition-all"
               style={{
                 width: i === banner ? 18 : 6,
                 background: i === banner ? "#D4AF37" : "rgba(212,175,55,0.3)",
-              }} />
+              }}
+            />
           ))}
         </div>
       </div>
@@ -95,8 +103,11 @@ export default function HomeScreen() {
         </div>
         <div className="flex gap-3 overflow-x-auto px-4 mt-3 pb-2">
           {products.map((p) => (
-            <Link to="/hkeeem/product" key={p.id}
-              className="bg-white rounded-2xl p-3 w-40 shrink-0 text-black block">
+            <Link
+              to="/hkeeem/product"
+              key={p.id}
+              className="bg-white rounded-2xl p-3 w-40 shrink-0 text-black block"
+            >
               <div className="relative bg-gray-100 rounded-xl h-24 flex items-center justify-center text-4xl">
                 📱
                 <span className="absolute top-1.5 right-1.5 bg-[#D4AF37] text-[10px] font-bold px-1.5 py-0.5 rounded-lg">
@@ -129,9 +140,11 @@ export default function HomeScreen() {
         <span className="hk-gold-text">‹</span>
       </Link>
 
-      <Link to="/hkeeem/chat"
+      <Link
+        to="/hkeeem/chat"
         className="hk-assistant-float fixed bottom-24 left-4 w-14 h-14 rounded-full flex items-center justify-center text-2xl z-50"
-        style={{ background: "linear-gradient(135deg,#D4AF37,#FFD700)" }}>
+        style={{ background: "linear-gradient(135deg,#D4AF37,#FFD700)" }}
+      >
         🤖
       </Link>
 
@@ -144,8 +157,11 @@ export default function HomeScreen() {
           ["المفضلة", "♥", "/hkeeem"],
           ["حسابي", "👤", "/hkeeem"],
         ].map(([label, icon, to], i) => (
-          <Link to={to as string} key={label as string}
-            className={`flex flex-col items-center text-[10px] ${i === 0 ? "hk-gold-text" : "hk-dim-text"}`}>
+          <Link
+            to={to as string}
+            key={label as string}
+            className={`flex flex-col items-center text-[10px] ${i === 0 ? "hk-gold-text" : "hk-dim-text"}`}
+          >
             <span className="text-lg">{icon}</span>
             {label}
           </Link>

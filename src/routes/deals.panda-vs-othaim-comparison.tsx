@@ -69,7 +69,12 @@ function ComparisonPage() {
   const headToHead = keys.map((k) => {
     const p = pandaDeals.find((d) => d.productKey === k)!;
     const o = othaimDeals.find((d) => d.productKey === k)!;
-    return { key: k, panda: p, othaim: o, winner: p.price === o.price ? "tie" : p.price < o.price ? "panda" : "othaim" };
+    return {
+      key: k,
+      panda: p,
+      othaim: o,
+      winner: p.price === o.price ? "tie" : p.price < o.price ? "panda" : "othaim",
+    };
   });
 
   const avg = (arr: typeof deals) =>
@@ -81,9 +86,13 @@ function ComparisonPage() {
   return (
     <main className="max-w-4xl mx-auto px-4 py-6 pb-24 md:pb-12 space-y-8">
       <nav className="text-xs text-muted-foreground flex items-center gap-2">
-        <Link to="/" className="hover:text-primary">الرئيسية</Link>
+        <Link to="/" className="hover:text-primary">
+          الرئيسية
+        </Link>
         <span>/</span>
-        <Link to="/deals" className="hover:text-primary">العروض</Link>
+        <Link to="/deals" className="hover:text-primary">
+          العروض
+        </Link>
         <span>/</span>
         <span>بنده مقابل العثيم</span>
       </nav>
@@ -104,7 +113,10 @@ function ComparisonPage() {
           { store: panda, avgOff: pandaAvg, count: pandaDeals.length },
           { store: othaim, avgOff: othaimAvg, count: othaimDeals.length },
         ].map(({ store, avgOff, count }) => (
-          <div key={store?.id} className="rounded-3xl border border-border/60 bg-card p-5 space-y-2">
+          <div
+            key={store?.id}
+            className="rounded-3xl border border-border/60 bg-card p-5 space-y-2"
+          >
             <div className="flex items-center gap-2">
               <span
                 className="w-9 h-9 rounded-2xl flex items-center justify-center font-black text-white"
@@ -131,10 +143,18 @@ function ComparisonPage() {
             <caption className="sr-only">مقارنة أسعار نفس المنتج بين بنده والعثيم</caption>
             <thead className="bg-muted/40 text-xs">
               <tr>
-                <th scope="col" className="text-right p-3 font-black">المنتج</th>
-                <th scope="col" className="text-right p-3 font-black">بنده</th>
-                <th scope="col" className="text-right p-3 font-black">العثيم</th>
-                <th scope="col" className="text-right p-3 font-black">الأوفر</th>
+                <th scope="col" className="text-right p-3 font-black">
+                  المنتج
+                </th>
+                <th scope="col" className="text-right p-3 font-black">
+                  بنده
+                </th>
+                <th scope="col" className="text-right p-3 font-black">
+                  العثيم
+                </th>
+                <th scope="col" className="text-right p-3 font-black">
+                  الأوفر
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -142,7 +162,9 @@ function ComparisonPage() {
                 <tr key={row.key} className="border-t border-border/50">
                   <th scope="row" className="p-3 text-right font-bold">
                     {row.panda.title}
-                    <span className="block text-[11px] font-normal text-muted-foreground">{row.panda.unit}</span>
+                    <span className="block text-[11px] font-normal text-muted-foreground">
+                      {row.panda.unit}
+                    </span>
                   </th>
                   <td className="p-3 tabular-nums">{row.panda.price} ر.س</td>
                   <td className="p-3 tabular-nums">{row.othaim.price} ر.س</td>
@@ -175,7 +197,10 @@ function ComparisonPage() {
           { store: panda, list: pandaDeals },
           { store: othaim, list: othaimDeals },
         ].map(({ store, list }) => (
-          <div key={store?.id} className="rounded-3xl border border-border/60 bg-card p-5 space-y-3">
+          <div
+            key={store?.id}
+            className="rounded-3xl border border-border/60 bg-card p-5 space-y-3"
+          >
             <h2 className="font-black flex items-center gap-2">
               <Flame className="w-4 h-4 text-primary" />
               أبرز عروض {store?.name}

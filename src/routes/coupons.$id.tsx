@@ -21,7 +21,17 @@ function useCountdown(expiresAt?: string) {
   return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 }
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Check, Copy, Share2, Store as StoreIcon, Ticket, Clock, Tag, Loader2 } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Copy,
+  Share2,
+  Store as StoreIcon,
+  Ticket,
+  Clock,
+  Tag,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { fetchLiveCoupons } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
@@ -32,7 +42,10 @@ export const Route = createFileRoute("/coupons/$id")({
   head: () => ({
     meta: [
       { title: "تفاصيل الكوبون — حكيم AI" },
-      { name: "description", content: "تفاصيل كود الخصم الموثّق: نسبة الخصم، الحد الأدنى للطلب، وتاريخ الانتهاء." },
+      {
+        name: "description",
+        content: "تفاصيل كود الخصم الموثّق: نسبة الخصم، الحد الأدنى للطلب، وتاريخ الانتهاء.",
+      },
       { property: "og:title", content: "تفاصيل الكوبون — حكيم AI" },
       { property: "og:description", content: "كود خصم موثّق من تاجر معتمد داخل تطبيق حكيم AI." },
       { property: "og:type", content: "article" },
@@ -59,8 +72,6 @@ function CouponDetail() {
   const coupon = (couponsQ.data ?? []).find((c) => c.id === id);
   const remaining = useCountdown(coupon?.expiresAt) ?? coupon?.expiresIn ?? "غير محدد";
 
-
-
   if (couponsQ.isLoading) {
     return (
       <div className="flex items-center justify-center gap-2 text-muted-foreground py-24">
@@ -76,12 +87,16 @@ function CouponDetail() {
         icon="🎟️"
         title="الكوبون غير متوفر"
         message="يمكن الكوبون انتهى أو تغيّر الكود. جربّ هذا الكوبون المتاح حالياً."
-        suggestion={nearest ? {
-          to: `/coupons/${nearest.id}`,
-          label: `${nearest.title} — ${nearest.storeName}`,
-          hint: `الكود: ${nearest.code} · ${nearest.discount}`,
-          emoji: nearest.logo ?? "🎟️",
-        } : undefined}
+        suggestion={
+          nearest
+            ? {
+                to: `/coupons/${nearest.id}`,
+                label: `${nearest.title} — ${nearest.storeName}`,
+                hint: `الكود: ${nearest.code} · ${nearest.discount}`,
+                emoji: nearest.logo ?? "🎟️",
+              }
+            : undefined
+        }
         backTo={{ to: "/coupons", label: "كل الكوبونات" }}
       />
     );
@@ -168,8 +183,8 @@ function CouponDetail() {
               </div>
             )}
             <p className="text-xs text-muted-foreground">
-              الخصم المتبقي: <span className="font-bold text-foreground">{coupon.discount}</span> · ينتهي خلال{" "}
-              <span className="font-bold text-foreground">{remaining}</span>
+              الخصم المتبقي: <span className="font-bold text-foreground">{coupon.discount}</span> ·
+              ينتهي خلال <span className="font-bold text-foreground">{remaining}</span>
             </p>
             {coupon.storeUrl && (
               <a
@@ -185,8 +200,6 @@ function CouponDetail() {
         </section>
       )}
 
-
-
       <section className="rounded-3xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center">
         <div className="text-xs text-muted-foreground mb-2">كود الخصم</div>
         <div className="font-mono text-3xl md:text-4xl font-black tracking-widest text-primary mb-4">
@@ -195,10 +208,20 @@ function CouponDetail() {
         <button
           onClick={copy}
           className={`inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm transition ${
-            copied ? "bg-green-600 text-white" : "bg-primary text-primary-foreground hover:opacity-90"
+            copied
+              ? "bg-green-600 text-white"
+              : "bg-primary text-primary-foreground hover:opacity-90"
           }`}
         >
-          {copied ? <><Check className="w-4 h-4" /> تم النسخ</> : <><Copy className="w-4 h-4" /> انسخ الكود</>}
+          {copied ? (
+            <>
+              <Check className="w-4 h-4" /> تم النسخ
+            </>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" /> انسخ الكود
+            </>
+          )}
         </button>
       </section>
 
@@ -211,7 +234,11 @@ function CouponDetail() {
           <InfoTile icon={<Tag className="w-4 h-4" />} label="الخصم" value={coupon.discount} />
           <InfoTile icon={<Clock className="w-4 h-4" />} label="ينتهي خلال" value={remaining} />
           {coupon.minOrder && (
-            <InfoTile icon={<Ticket className="w-4 h-4" />} label="حد أدنى للطلب" value={`${coupon.minOrder} ر.س`} />
+            <InfoTile
+              icon={<Ticket className="w-4 h-4" />}
+              label="حد أدنى للطلب"
+              value={`${coupon.minOrder} ر.س`}
+            />
           )}
         </div>
         <p className="text-[11px] text-muted-foreground">المصدر: {coupon.source}</p>
@@ -234,7 +261,6 @@ function CouponDetail() {
       >
         <Share2 className="w-5 h-5" /> شارك الكوبون مع صحابك
       </button>
-
 
       <ShareSheet
         open={shareOpen}

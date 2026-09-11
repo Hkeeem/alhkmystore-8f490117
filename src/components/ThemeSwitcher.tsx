@@ -53,7 +53,6 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
       onMouseLeave={restore}
       onBlur={onGroupBlur}
     >
-
       {themes.map((t) => (
         <button
           key={t.id}
@@ -104,6 +103,5 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
         </button>
       )}
     </div>
-
   );
 }

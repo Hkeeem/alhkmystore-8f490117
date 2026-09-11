@@ -19,10 +19,12 @@ const Schema = z.object({
 export const buildSmartList = createServerFn({ method: "POST" })
   .inputValidator((v: unknown) => Input.parse(v))
   .handler(async ({ data }) => {
-    const catalog = deals.map((d) => {
-      const s = stores.find((x) => x.id === d.storeId)!;
-      return `id=${d.id} | ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s.name} | سعر: ${d.price} ر.س`;
-    }).join("\n");
+    const catalog = deals
+      .map((d) => {
+        const s = stores.find((x) => x.id === d.storeId)!;
+        return `id=${d.id} | ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s.name} | سعر: ${d.price} ر.س`;
+      })
+      .join("\n");
 
     const prompt = `المستخدم كتب قائمة تسوّق (كل سطر أو فاصلة = منتج):
 """
@@ -48,7 +50,7 @@ ${catalog}
       });
       const items = output.items.map((it) => ({
         requested: it.requested,
-        deal: it.dealId ? deals.find((d) => d.id === it.dealId) ?? null : null,
+        deal: it.dealId ? (deals.find((d) => d.id === it.dealId) ?? null) : null,
         note: it.note,
       }));
       const total = items.reduce((s, it) => s + (it.deal?.price ?? 0), 0);

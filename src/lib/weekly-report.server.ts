@@ -34,7 +34,9 @@ const pct = (current: number, previous: number) => {
 const tally = (items: Array<string>) => {
   const map = new Map<string, number>();
   for (const i of items) map.set(i, (map.get(i) ?? 0) + 1);
-  return [...map.entries()].map(([key, clicks]) => ({ key, clicks })).sort((a, b) => b.clicks - a.clicks);
+  return [...map.entries()]
+    .map(([key, clicks]) => ({ key, clicks }))
+    .sort((a, b) => b.clicks - a.clicks);
 };
 
 export async function buildWeeklyReport(days = 7, endAt = new Date()): Promise<ReportSummary> {
@@ -87,15 +89,28 @@ export async function buildWeeklyReport(days = 7, endAt = new Date()): Promise<R
   const inCurrent = (ts: string | null) => !!ts && new Date(ts) >= start;
   const split = <T extends { created_at: string | null }>(rows: Array<T> | null) => {
     const all = rows ?? [];
-    return { cur: all.filter((r) => inCurrent(r.created_at)), prev: all.filter((r) => !inCurrent(r.created_at)) };
+    return {
+      cur: all.filter((r) => inCurrent(r.created_at)),
+      prev: all.filter((r) => !inCurrent(r.created_at)),
+    };
   };
 
-  const clicks = split(clicksRes.data as Array<{ created_at: string; deal_id: string; country: string | null }> | null);
+  const clicks = split(
+    clicksRes.data as Array<{ created_at: string; deal_id: string; country: string | null }> | null,
+  );
   const conv = split(
-    convRes.data as Array<{ created_at: string; deal_id: string | null; amount: number | null; commission: number | null; status: string | null }> | null,
+    convRes.data as Array<{
+      created_at: string;
+      deal_id: string | null;
+      amount: number | null;
+      commission: number | null;
+      status: string | null;
+    }> | null,
   );
   const deals = split(dealsRes.data as Array<{ created_at: string; title: string | null }> | null);
-  const mDeals = split(merchantDealsRes.data as Array<{ created_at: string; status: string | null }> | null);
+  const mDeals = split(
+    merchantDealsRes.data as Array<{ created_at: string; status: string | null }> | null,
+  );
   const users = split(usersRes.data as Array<{ created_at: string }> | null);
   const alerts = split(alertsRes.data as Array<{ created_at: string }> | null);
 
@@ -104,8 +119,19 @@ export async function buildWeeklyReport(days = 7, endAt = new Date()): Promise<R
   const sumAmount = (rows: Array<{ amount: number | null }>) =>
     Math.round(rows.reduce((t, r) => t + Number(r.amount ?? 0), 0) * 100) / 100;
 
-  const metric = (key: string, label: string, current: number, previous: number, format: Metric["format"] = "number"): Metric => ({
-    key, label, current, previous, change: pct(current, previous), format,
+  const metric = (
+    key: string,
+    label: string,
+    current: number,
+    previous: number,
+    format: Metric["format"] = "number",
+  ): Metric => ({
+    key,
+    label,
+    current,
+    previous,
+    change: pct(current, previous),
+    format,
   });
 
   const cr = (c: number, k: number) => (k === 0 ? 0 : Math.round((c / k) * 1000) / 10);
@@ -115,7 +141,12 @@ export async function buildWeeklyReport(days = 7, endAt = new Date()): Promise<R
     metric("conversions", "التحويلات المؤكدة", conv.cur.length, conv.prev.length),
     metric("commission", "العمولات", sum(conv.cur), sum(conv.prev), "currency"),
     metric("sales", "قيمة المبيعات", sumAmount(conv.cur), sumAmount(conv.prev), "currency"),
-    metric("cr", "معدل التحويل %", cr(conv.cur.length, clicks.cur.length), cr(conv.prev.length, clicks.prev.length)),
+    metric(
+      "cr",
+      "معدل التحويل %",
+      cr(conv.cur.length, clicks.cur.length),
+      cr(conv.prev.length, clicks.prev.length),
+    ),
     metric("deals", "عروض خارجية جديدة", deals.cur.length, deals.prev.length),
     metric("merchant_deals", "عروض التجار الجديدة", mDeals.cur.length, mDeals.prev.length),
     metric("users", "مستخدمون جدد", users.cur.length, users.prev.length),
@@ -142,7 +173,10 @@ export async function buildWeeklyReport(days = 7, endAt = new Date()): Promise<R
     const { data: dealRows } = await supabaseAdmin
       .from("external_deals")
       .select("id, title")
-      .in("id", topIds.map(([id]) => id));
+      .in(
+        "id",
+        topIds.map(([id]) => id),
+      );
     titles = new Map((dealRows ?? []).map((d) => [d.id as string, (d.title as string) ?? ""]));
   }
 
@@ -179,7 +213,11 @@ const changeChip = (change: number) => {
   return `<span style="color:${color};font-size:13px;white-space:nowrap">${arrow} ${Math.abs(change)}%</span>`;
 };
 
-export function renderReportEmail(summary: ReportSummary): { subject: string; html: string; text: string } {
+export function renderReportEmail(summary: ReportSummary): {
+  subject: string;
+  html: string;
+  text: string;
+} {
   const rows = summary.metrics
     .map(
       (m) => `<tr>
@@ -241,7 +279,9 @@ export function renderReportEmail(summary: ReportSummary): { subject: string; ht
 
   const text = [
     subject,
-    ...summary.metrics.map((m) => `${m.label}: ${fmtValue(m)} (السابق ${m.previous}، التغير ${m.change}%)`),
+    ...summary.metrics.map(
+      (m) => `${m.label}: ${fmtValue(m)} (السابق ${m.previous}، التغير ${m.change}%)`,
+    ),
   ].join("\n");
 
   return { subject, html, text };
@@ -291,7 +331,10 @@ export async function runWeeklyReport(options: {
   if (options.testEmail) {
     recipients = [options.testEmail];
   } else {
-    const { data } = await supabaseAdmin.from("report_recipients").select("email").eq("active", true);
+    const { data } = await supabaseAdmin
+      .from("report_recipients")
+      .select("email")
+      .eq("active", true);
     recipients = (data ?? []).map((r) => r.email as string);
   }
 
@@ -300,8 +343,12 @@ export async function runWeeklyReport(options: {
 
   if (!recipients.length) {
     await supabaseAdmin.from("report_runs").insert({
-      period_start: periodStart, period_end: periodEnd, days,
-      status: "skipped", recipients: 0, error: "لا يوجد مستلمون مفعّلون",
+      period_start: periodStart,
+      period_end: periodEnd,
+      days,
+      status: "skipped",
+      recipients: 0,
+      error: "لا يوجد مستلمون مفعّلون",
       summary: JSON.parse(JSON.stringify(summary)),
       triggered_by: options.triggeredBy ?? "cron",
     });
@@ -313,8 +360,12 @@ export async function runWeeklyReport(options: {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     await supabaseAdmin.from("report_runs").insert({
-      period_start: periodStart, period_end: periodEnd, days,
-      status: "failed", recipients: recipients.length, error: message.slice(0, 800),
+      period_start: periodStart,
+      period_end: periodEnd,
+      days,
+      status: "failed",
+      recipients: recipients.length,
+      error: message.slice(0, 800),
       summary: JSON.parse(JSON.stringify(summary)),
       triggered_by: options.triggeredBy ?? "cron",
     });
@@ -322,8 +373,11 @@ export async function runWeeklyReport(options: {
   }
 
   await supabaseAdmin.from("report_runs").insert({
-    period_start: periodStart, period_end: periodEnd, days,
-    status: options.testEmail ? "test" : "sent", recipients: recipients.length,
+    period_start: periodStart,
+    period_end: periodEnd,
+    days,
+    status: options.testEmail ? "test" : "sent",
+    recipients: recipients.length,
     summary: JSON.parse(JSON.stringify(summary)),
     triggered_by: options.triggeredBy ?? "cron",
   });

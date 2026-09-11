@@ -13,9 +13,7 @@ export function trackEvent(event: string, payload: Record<string, unknown> = {})
       payload: payload as Json,
       path: typeof window !== "undefined" ? window.location.pathname : null,
     };
-    void Promise.resolve(
-      supabase.from("analytics_events").insert(row),
-    ).catch(() => {
+    void Promise.resolve(supabase.from("analytics_events").insert(row)).catch(() => {
       /* تجاهل — التحليلات لا توقف التطبيق */
     });
   } catch {

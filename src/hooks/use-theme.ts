@@ -5,7 +5,11 @@ export type Theme = "gold" | "silver" | "bronze";
 export const THEMES: { id: Theme; label: string; swatch: string }[] = [
   { id: "gold", label: "الوضع الذهبي", swatch: "linear-gradient(135deg,#F6DE7A,#D4AF37,#8A5A00)" },
   { id: "silver", label: "الوضع الفضي", swatch: "linear-gradient(135deg,#F4F6F8,#C0C6CC,#7C858E)" },
-  { id: "bronze", label: "الوضع البرونزي", swatch: "linear-gradient(135deg,#E8B98A,#B87333,#6B3F1D)" },
+  {
+    id: "bronze",
+    label: "الوضع البرونزي",
+    swatch: "linear-gradient(135deg,#E8B98A,#B87333,#6B3F1D)",
+  },
 ];
 
 const KEY = "hkeeem-theme";
@@ -91,7 +95,6 @@ export function useTheme() {
       if (timer) clearTimeout(timer);
     };
   }, [theme, auto, systemDark, ready]);
-
 
   const persist = (next: { theme?: Theme; auto?: boolean }) => {
     try {

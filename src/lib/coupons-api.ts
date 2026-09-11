@@ -119,7 +119,6 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       storeUrl: withPromo(storeLink(row.store_id), row.code),
       source: row.source,
     });
-
   }
 
   for (const row of dealsRes.data ?? []) {
@@ -148,7 +147,6 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       originalPrice: Number(row.original_price) || undefined,
       price: Number(row.price) || undefined,
       source: "تاجر موثّق",
-
     });
   }
 

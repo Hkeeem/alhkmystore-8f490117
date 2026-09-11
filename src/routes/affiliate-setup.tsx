@@ -6,15 +6,48 @@ import { SyncSchedulePanel } from "@/components/admin/SyncSchedulePanel";
 import { logNoonCampaignEvent } from "@/lib/noon-audit.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { Check, CircleDashed, ExternalLink, KeyRound, Link2, RefreshCw, ShoppingCart, Copy, PlugZap, PlayCircle, AlertTriangle, Receipt, ShieldCheck, Lock, Wifi, XCircle, ArrowLeftRight, LifeBuoy } from "lucide-react";
+import {
+  Check,
+  CircleDashed,
+  ExternalLink,
+  KeyRound,
+  Link2,
+  RefreshCw,
+  ShoppingCart,
+  Copy,
+  PlugZap,
+  PlayCircle,
+  AlertTriangle,
+  Receipt,
+  ShieldCheck,
+  Lock,
+  Wifi,
+  XCircle,
+  ArrowLeftRight,
+  LifeBuoy,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { getSyncFailures, getAffiliateKeyStatus, getSyncOverview, runExternalSyncNow, getConversionsOverview, getPostbackStatus, getNoonCampaignStatus, verifyNoonPublisherId } from "@/lib/affiliate-setup.functions";
-import { getIntegrationKeysStatus, saveIntegrationKeyValue, removeIntegrationKeyValue, testAmazonConnection } from "@/lib/integration-keys.functions";
+import {
+  getSyncFailures,
+  getAffiliateKeyStatus,
+  getSyncOverview,
+  runExternalSyncNow,
+  getConversionsOverview,
+  getPostbackStatus,
+  getNoonCampaignStatus,
+  verifyNoonPublisherId,
+} from "@/lib/affiliate-setup.functions";
+import {
+  getIntegrationKeysStatus,
+  saveIntegrationKeyValue,
+  removeIntegrationKeyValue,
+  testAmazonConnection,
+} from "@/lib/integration-keys.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { buildNoonDeepLinkPreview } from "@/lib/noon-deeplink-preview";
 import {
@@ -28,14 +61,20 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-
 export const Route = createFileRoute("/affiliate-setup")({
   head: () => ({
     meta: [
       { title: "دليل تفعيل أمازون ونون — HkeeemAI" },
-      { name: "description", content: "دليل خطوة بخطوة لتفعيل Amazon PA-API وتهيئة حملة noon وربط المفاتيح بتطبيق حكيم AI لتشغيل العروض الحقيقية." },
+      {
+        name: "description",
+        content:
+          "دليل خطوة بخطوة لتفعيل Amazon PA-API وتهيئة حملة noon وربط المفاتيح بتطبيق حكيم AI لتشغيل العروض الحقيقية.",
+      },
       { property: "og:title", content: "دليل تفعيل أمازون ونون — HkeeemAI" },
-      { property: "og:description", content: "خطوات مرتبة لتفعيل واجهة أمازون للشركاء وحملة نون ثم ربطها بالتطبيق." },
+      {
+        property: "og:description",
+        content: "خطوات مرتبة لتفعيل واجهة أمازون للشركاء وحملة نون ثم ربطها بالتطبيق.",
+      },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -78,7 +117,10 @@ const AMAZON_STEPS: Step[] = [
       "اضغط Add Credentials وستحصل على Access Key و Secret Key (يظهر السر مرة واحدة فقط — احفظه فورًا).",
       "المنطقة الصحيحة لسوق السعودية: eu-west-1 والمضيف webservices.amazon.sa.",
     ],
-    link: { href: "https://webservices.amazon.com/paapi5/documentation/", label: "توثيق PA-API 5.0" },
+    link: {
+      href: "https://webservices.amazon.com/paapi5/documentation/",
+      label: "توثيق PA-API 5.0",
+    },
   },
   {
     id: "az-4",
@@ -122,10 +164,7 @@ const NOON_STEPS: Step[] = [
   {
     id: "noon-4",
     title: "٤) سلّمني معرّف الحملة",
-    body: [
-      "أخبرني «جاهز معرّف نون» لأفتح نموذج إدخال آمن للمفتاح:",
-      "NOON_AFFILIATE_ID",
-    ],
+    body: ["أخبرني «جاهز معرّف نون» لأفتح نموذج إدخال آمن للمفتاح:", "NOON_AFFILIATE_ID"],
     copy: "NOON_AFFILIATE_ID",
   },
 ];
@@ -163,7 +202,12 @@ const ALL_STEPS = [...AMAZON_STEPS, ...NOON_STEPS, ...LINK_STEPS];
 function AffiliateSetupPage() {
   const [done, setDone] = useState<Record<string, boolean>>({});
   const fetchStatus = useServerFn(getAffiliateKeyStatus);
-  const { data: status, isLoading, refetch, isFetching } = useQuery({
+  const {
+    data: status,
+    isLoading,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: ["affiliate-key-status"],
     queryFn: () => fetchStatus({}),
   });
@@ -172,13 +216,19 @@ function AffiliateSetupPage() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setDone(JSON.parse(raw));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   const toggle = (id: string) => {
     setDone((prev) => {
       const next = { ...prev, [id]: !prev[id] };
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch { /* ignore */ }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
       return next;
     });
   };
@@ -205,16 +255,20 @@ function AffiliateSetupPage() {
   return (
     <main className="container mx-auto px-4 py-8 max-w-3xl space-y-8">
       <header id="top" className="space-y-3 scroll-mt-24">
-        <Badge variant="secondary" className="gap-1"><Link2 className="size-3" /> ربط المصادر الحقيقية</Badge>
+        <Badge variant="secondary" className="gap-1">
+          <Link2 className="size-3" /> ربط المصادر الحقيقية
+        </Badge>
         <h1 className="text-3xl font-bold">دليل تفعيل أمازون ونون خطوة بخطوة</h1>
         <p className="text-muted-foreground">
-          اتبع الخطوات بالترتيب لتفعيل واجهة أمازون للشركاء (PA-API) وتهيئة حملة نون، ثم ربطهما بتطبيق حكيم AI
-          ليبدأ سحب العروض والأسعار الحقيقية تلقائيًا.
+          اتبع الخطوات بالترتيب لتفعيل واجهة أمازون للشركاء (PA-API) وتهيئة حملة نون، ثم ربطهما
+          بتطبيق حكيم AI ليبدأ سحب العروض والأسعار الحقيقية تلقائيًا.
         </p>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="text-muted-foreground">تقدّمك</span>
-            <span className="font-semibold">{completed} / {ALL_STEPS.length}</span>
+            <span className="font-semibold">
+              {completed} / {ALL_STEPS.length}
+            </span>
           </div>
           <Progress value={percent} />
         </div>
@@ -232,11 +286,9 @@ function AffiliateSetupPage() {
             سجل الزحف والفهرسة من Search Console ←
           </Link>
         </div>
-
       </div>
 
       <SyncFailuresPanel />
-
 
       <ConversionsPanel />
 
@@ -252,32 +304,47 @@ function AffiliateSetupPage() {
         <SecureKeysPanel />
       </div>
 
-
       <Card className="hover-lift">
-
-
         <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-          <CardTitle className="flex items-center gap-2 text-lg"><KeyRound className="size-5" /> حالة المفاتيح</CardTitle>
-          <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <KeyRound className="size-5" /> حالة المفاتيح
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="press-ripple"
+          >
             <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} />
             تحديث
           </Button>
         </CardHeader>
         <CardContent className="space-y-2">
           {keyRows.map((row) => (
-            <div key={row.label} className="flex items-center justify-between rounded-lg border px-3 py-2">
-              <code className="text-xs sm:text-sm" dir="ltr">{row.label}</code>
+            <div
+              key={row.label}
+              className="flex items-center justify-between rounded-lg border px-3 py-2"
+            >
+              <code className="text-xs sm:text-sm" dir="ltr">
+                {row.label}
+              </code>
               {isLoading ? (
                 <span className="text-xs text-muted-foreground">جارٍ الفحص…</span>
               ) : row.ok ? (
-                <Badge className="gap-1"><Check className="size-3" /> مُفعّل</Badge>
+                <Badge className="gap-1">
+                  <Check className="size-3" /> مُفعّل
+                </Badge>
               ) : (
-                <Badge variant="outline" className="gap-1 text-muted-foreground"><CircleDashed className="size-3" /> غير مُضاف</Badge>
+                <Badge variant="outline" className="gap-1 text-muted-foreground">
+                  <CircleDashed className="size-3" /> غير مُضاف
+                </Badge>
               )}
             </div>
           ))}
           <p className="text-xs text-muted-foreground pt-1">
-            القيم مخزّنة مشفّرة داخل قاعدة البيانات ولا تُعرض هنا إطلاقًا — تظهر الحالة فقط. استخدم بطاقة «تخزين آمن ومشفّر للمفاتيح» بالأعلى للإدخال أو التحديث.
+            القيم مخزّنة مشفّرة داخل قاعدة البيانات ولا تُعرض هنا إطلاقًا — تظهر الحالة فقط. استخدم
+            بطاقة «تخزين آمن ومشفّر للمفاتيح» بالأعلى للإدخال أو التحديث.
           </p>
         </CardContent>
       </Card>
@@ -315,7 +382,12 @@ function AffiliateSetupPage() {
 }
 
 function StepSection({
-  icon, title, steps, done, toggle, copyText,
+  icon,
+  title,
+  steps,
+  done,
+  toggle,
+  copyText,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -326,28 +398,39 @@ function StepSection({
 }) {
   return (
     <section className="space-y-4">
-      <h2 className="flex items-center gap-2 text-xl font-semibold">{icon}{title}</h2>
+      <h2 className="flex items-center gap-2 text-xl font-semibold">
+        {icon}
+        {title}
+      </h2>
       <ol className="space-y-3">
         {steps.map((step) => {
           const isDone = Boolean(done[step.id]);
           return (
             <li key={step.id}>
-              <Card className={`hover-lift transition-colors ${isDone ? "border-primary/60 bg-primary/5" : ""}`}>
+              <Card
+                className={`hover-lift transition-colors ${isDone ? "border-primary/60 bg-primary/5" : ""}`}
+              >
                 <CardContent className="p-4 space-y-3">
                   <div className="flex items-start gap-3">
                     <button
                       type="button"
                       onClick={() => toggle(step.id)}
                       aria-pressed={isDone}
-                      aria-label={isDone ? `إلغاء إتمام: ${step.title}` : `تعليم كمنجَز: ${step.title}`}
+                      aria-label={
+                        isDone ? `إلغاء إتمام: ${step.title}` : `تعليم كمنجَز: ${step.title}`
+                      }
                       className={`mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full border press-ripple ${isDone ? "bg-primary text-primary-foreground border-primary" : "border-muted-foreground/40"}`}
                     >
                       {isDone ? <Check className="size-4" /> : null}
                     </button>
                     <div className="space-y-2">
-                      <h3 className={`font-semibold ${isDone ? "line-through opacity-70" : ""}`}>{step.title}</h3>
+                      <h3 className={`font-semibold ${isDone ? "line-through opacity-70" : ""}`}>
+                        {step.title}
+                      </h3>
                       <ul className="space-y-1 text-sm text-muted-foreground list-disc pr-4">
-                        {step.body.map((line) => <li key={line}>{line}</li>)}
+                        {step.body.map((line) => (
+                          <li key={line}>{line}</li>
+                        ))}
                       </ul>
                     </div>
                   </div>
@@ -361,7 +444,12 @@ function StepSection({
                         </Button>
                       )}
                       {step.copy && (
-                        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => copyText(step.copy!)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="press-ripple"
+                          onClick={() => copyText(step.copy!)}
+                        >
                           <Copy className="size-4" /> نسخ
                         </Button>
                       )}
@@ -399,7 +487,11 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const fetchOverview = useServerFn(getSyncOverview);
   const startSync = useServerFn(runExternalSyncNow);
   const runAmazonTest = useServerFn(testAmazonConnection);
-  const [amazonTest, setAmazonTest] = useState<{ ok: boolean; message: string; testedAt: string } | null>(null);
+  const [amazonTest, setAmazonTest] = useState<{
+    ok: boolean;
+    message: string;
+    testedAt: string;
+  } | null>(null);
 
   const amazonCheck = useMutation({
     mutationFn: () => runAmazonTest({}),
@@ -409,18 +501,28 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
       else toast.error(res.message);
     },
     onError: () => {
-      setAmazonTest({ ok: false, message: "غير مصرّح — اختبار الاتصال متاح للمشرفين فقط.", testedAt: new Date().toISOString() });
+      setAmazonTest({
+        ok: false,
+        message: "غير مصرّح — اختبار الاتصال متاح للمشرفين فقط.",
+        testedAt: new Date().toISOString(),
+      });
       toast.error("غير مصرّح لك بإجراء الاختبار");
     },
   });
 
-  const { data: overview, refetch: refetchOverview, isFetching: overviewFetching } = useQuery({
+  const {
+    data: overview,
+    refetch: refetchOverview,
+    isFetching: overviewFetching,
+  } = useQuery({
     queryKey: ["external-sync-overview"],
     queryFn: () => fetchOverview({}),
   });
 
   type SyncKey = "amazon" | "noon" | "all";
-  const [progress, setProgress] = useState<Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>>({
+  const [progress, setProgress] = useState<
+    Record<SyncKey, { value: number; stage: string; done?: "ok" | "fail" | "cancelled" } | null>
+  >({
     amazon: null,
     noon: null,
     all: null,
@@ -429,15 +531,18 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const cancelledRef = useRef<Record<string, boolean>>({});
   const [cancelled, setCancelled] = useState<Record<string, boolean>>({});
 
-  useEffect(() => () => {
-    Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
-  }, []);
+  useEffect(
+    () => () => {
+      Object.values(timersRef.current).forEach((t) => t && clearInterval(t));
+    },
+    [],
+  );
 
   const startProgress = (key: SyncKey) => {
     const stages = ["الاتصال بالمصدر…", "سحب العروض…", "تحليل الأسعار…", "حفظ التحديثات…"];
     let value = 6;
     setProgress((p) => ({ ...p, [key]: { value, stage: stages[0]! } }));
-    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    if (timersRef.current[key]) clearInterval(timersRef.current[key]!);
     timersRef.current[key] = setInterval(() => {
       value = Math.min(92, value + Math.random() * 9);
       const stage = stages[Math.min(stages.length - 1, Math.floor(value / 25))]!;
@@ -446,20 +551,22 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   };
 
   const endProgress = (key: SyncKey, ok: boolean, stage: string) => {
-    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    if (timersRef.current[key]) clearInterval(timersRef.current[key]!);
     setProgress((p) => ({ ...p, [key]: { value: 100, stage, done: ok ? "ok" : "fail" } }));
   };
 
   const cancelSync = (key: SyncKey) => {
     cancelledRef.current[key] = true;
     setCancelled((c) => ({ ...c, [key]: true }));
-    timersRef.current[key] && clearInterval(timersRef.current[key]!);
+    if (timersRef.current[key]) clearInterval(timersRef.current[key]!);
     setProgress((p) => ({
       ...p,
       [key]: { value: p[key]?.value ?? 0, stage: "أُلغيت المزامنة", done: "cancelled" },
     }));
     toast.info(
-      key === "all" ? "تم إلغاء مزامنة كل المصادر" : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
+      key === "all"
+        ? "تم إلغاء مزامنة كل المصادر"
+        : `تم إلغاء مزامنة ${key === "amazon" ? "أمازون" : "نون"}`,
     );
   };
 
@@ -473,7 +580,12 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
     onSuccess: (res, source) => {
       if (cancelledRef.current[source]) return;
       if (res.success) {
-        const count = source === "amazon" ? res.sources.amazon : source === "noon" ? res.sources.noon : res.upserted;
+        const count =
+          source === "amazon"
+            ? res.sources.amazon
+            : source === "noon"
+              ? res.sources.noon
+              : res.upserted;
         endProgress(source, true, `اكتملت المزامنة — ${count} عرضًا`);
         toast.success(
           source === "all"
@@ -496,8 +608,9 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   const pendingKey = sync.isPending ? (sync.variables as SyncKey) : null;
   const runningKey = pendingKey && !cancelled[pendingKey] ? pendingKey : null;
 
-
-  const amazonReady = Boolean(status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag);
+  const amazonReady = Boolean(
+    status?.amazonAccessKey && status?.amazonSecretKey && status?.amazonPartnerTag,
+  );
   const noonReady = Boolean(status?.noonAffiliateId);
   const anyReady = amazonReady || noonReady;
 
@@ -527,8 +640,16 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
   return (
     <Card className="hover-lift border-primary/30">
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-        <CardTitle className="flex items-center gap-2 text-lg"><PlugZap className="size-5" /> جاهزية الربط</CardTitle>
-        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetchOverview()} disabled={overviewFetching}>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <PlugZap className="size-5" /> جاهزية الربط
+        </CardTitle>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="press-ripple"
+          onClick={() => refetchOverview()}
+          disabled={overviewFetching}
+        >
           <RefreshCw className={`size-4 ${overviewFetching ? "animate-spin" : ""}`} /> تحديث الحالة
         </Button>
       </CardHeader>
@@ -537,20 +658,30 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
           {sources.map((s) => (
             <div key={s.name} className="rounded-xl border p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="font-semibold" dir="ltr">{s.name}</span>
+                <span className="font-semibold" dir="ltr">
+                  {s.name}
+                </span>
                 {statusLoading ? (
                   <span className="text-xs text-muted-foreground">جارٍ الفحص…</span>
                 ) : s.ready ? (
-                  <Badge className="gap-1"><Check className="size-3" /> جاهز</Badge>
+                  <Badge className="gap-1">
+                    <Check className="size-3" /> جاهز
+                  </Badge>
                 ) : (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> ناقص</Badge>
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <AlertTriangle className="size-3" /> ناقص
+                  </Badge>
                 )}
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>عروض نشطة: <span className="font-semibold text-foreground">{s.active}</span></p>
+                <p>
+                  عروض نشطة: <span className="font-semibold text-foreground">{s.active}</span>
+                </p>
                 <p>آخر تحديث: {formatWhen(s.last)}</p>
                 {s.missing.length > 0 && (
-                  <p dir="ltr" className="text-[11px]">ينقص: {s.missing.join(" · ")}</p>
+                  <p dir="ltr" className="text-[11px]">
+                    ينقص: {s.missing.join(" · ")}
+                  </p>
                 )}
               </div>
 
@@ -562,7 +693,11 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                   disabled={!user || !s.ready || runningKey !== null}
                   onClick={() => sync.mutate(s.key)}
                 >
-                  {runningKey === s.key ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+                  {runningKey === s.key ? (
+                    <RefreshCw className="size-4 animate-spin" />
+                  ) : (
+                    <PlayCircle className="size-4" />
+                  )}
                   {runningKey === s.key ? "جارٍ التحديث…" : `تحديث ${s.name} الآن`}
                 </Button>
                 {runningKey === s.key && (
@@ -578,7 +713,10 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                 )}
                 {progress[s.key] && (
                   <div className="space-y-1" role="status" aria-live="polite">
-                    <Progress value={progress[s.key]!.value} aria-label={`تقدّم مزامنة ${s.name}`} />
+                    <Progress
+                      value={progress[s.key]!.value}
+                      aria-label={`تقدّم مزامنة ${s.name}`}
+                    />
                     <p
                       className={`text-[11px] ${
                         progress[s.key]!.done === "fail" || progress[s.key]!.done === "cancelled"
@@ -625,12 +763,16 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
                       )}
                       <span>
                         {amazonTest.message}
-                        <span className="block text-muted-foreground">آخر اختبار: {formatWhen(amazonTest.testedAt)}</span>
+                        <span className="block text-muted-foreground">
+                          آخر اختبار: {formatWhen(amazonTest.testedAt)}
+                        </span>
                       </span>
                     </div>
                   )}
                   {!user && (
-                    <p className="text-[11px] text-muted-foreground">سجّل الدخول بحساب مشرف لتشغيل الاختبار.</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      سجّل الدخول بحساب مشرف لتشغيل الاختبار.
+                    </p>
                   )}
                 </div>
               )}
@@ -639,9 +781,13 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         </div>
 
         {!user ? (
-          <p className="text-xs text-muted-foreground">سجّل الدخول بحساب إداري لتشغيل التحديثات يدويًا.</p>
+          <p className="text-xs text-muted-foreground">
+            سجّل الدخول بحساب إداري لتشغيل التحديثات يدويًا.
+          </p>
         ) : !anyReady ? (
-          <p className="text-xs text-muted-foreground">أكمل إضافة مفاتيح مصدر واحد على الأقل ليُفعَّل زر بدء التحديثات.</p>
+          <p className="text-xs text-muted-foreground">
+            أكمل إضافة مفاتيح مصدر واحد على الأقل ليُفعَّل زر بدء التحديثات.
+          </p>
         ) : null}
 
         <Button
@@ -649,7 +795,11 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
           disabled={!anyReady || !user || runningKey !== null}
           onClick={() => sync.mutate("all")}
         >
-          {runningKey === "all" ? <RefreshCw className="size-4 animate-spin" /> : <PlayCircle className="size-4" />}
+          {runningKey === "all" ? (
+            <RefreshCw className="size-4 animate-spin" />
+          ) : (
+            <PlayCircle className="size-4" />
+          )}
           {runningKey === "all" ? "جارٍ سحب العروض…" : "تحديث كل المصادر الآن"}
         </Button>
         {runningKey === "all" && (
@@ -665,7 +815,9 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
         {progress.all && (
           <div className="space-y-1" role="status" aria-live="polite">
             <Progress value={progress.all.value} aria-label="تقدّم مزامنة كل المصادر" />
-            <p className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}>
+            <p
+              className={`text-[11px] text-center ${progress.all.done === "fail" || progress.all.done === "cancelled" ? "text-destructive" : "text-muted-foreground"}`}
+            >
               {progress.all.stage}
             </p>
           </div>
@@ -680,7 +832,10 @@ function ReadinessPanel({ status, statusLoading }: { status?: KeyStatus; statusL
 
 /* ------------------- أسباب آخر فشل للتحديث لكل مصدر ------------------- */
 
-const FAILURE_GUIDE: Record<string, { title: string; hint: string; fixes: Array<{ label: string; href: string; external?: boolean }> }> = {
+const FAILURE_GUIDE: Record<
+  string,
+  { title: string; hint: string; fixes: Array<{ label: string; href: string; external?: boolean }> }
+> = {
   missing_keys: {
     title: "إعدادات ناقصة",
     hint: "لم تُحفظ كل المفاتيح المطلوبة، لذلك تخطّى النظام هذا المصدر.",
@@ -694,7 +849,11 @@ const FAILURE_GUIDE: Record<string, { title: string; hint: string; fixes: Array<
     hint: "رفضت أمازون الطلب: تأكد من Access Key و Secret Key وأنهما لنفس الحساب.",
     fixes: [
       { label: "حدّث المفاتيح", href: "#secure-keys" },
-      { label: "لوحة مفاتيح أمازون", href: "https://affiliate-program.amazon.sa/assoc_credentials/home", external: true },
+      {
+        label: "لوحة مفاتيح أمازون",
+        href: "https://affiliate-program.amazon.sa/assoc_credentials/home",
+        external: true,
+      },
     ],
   },
   partner_tag_invalid: {
@@ -702,7 +861,11 @@ const FAILURE_GUIDE: Record<string, { title: string; hint: string; fixes: Array<
     hint: "وسم الشريك غير مرتبط بحساب PA-API أو مكتوب بشكل خاطئ.",
     fixes: [
       { label: "صحّح Partner Tag", href: "#secure-keys" },
-      { label: "إدارة أوسمة التتبع", href: "https://affiliate-program.amazon.sa/home/tags", external: true },
+      {
+        label: "إدارة أوسمة التتبع",
+        href: "https://affiliate-program.amazon.sa/home/tags",
+        external: true,
+      },
     ],
   },
   throttled: {
@@ -756,13 +919,19 @@ function SyncFailuresPanel() {
         <CardTitle className="flex items-center gap-2 text-lg">
           <LifeBuoy className="size-5" /> أسباب آخر فشل للتحديث
         </CardTitle>
-        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetch()} disabled={isFetching}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="press-ripple"
+          onClick={() => refetch()}
+          disabled={isFetching}
+        >
           <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> تحديث
         </Button>
       </CardHeader>
       <CardContent className="grid gap-3 sm:grid-cols-2">
         {rows.map(({ key, label, info }) => {
-          const guide = info ? FAILURE_GUIDE[info.code] ?? FAILURE_GUIDE["http_error"]! : null;
+          const guide = info ? (FAILURE_GUIDE[info.code] ?? FAILURE_GUIDE["http_error"]!) : null;
           const recovered = Boolean(info?.recoveredAt);
           return (
             <div
@@ -772,30 +941,48 @@ function SyncFailuresPanel() {
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold" dir="ltr">{label}</span>
+                <span className="font-semibold" dir="ltr">
+                  {label}
+                </span>
                 {!info ? (
-                  <Badge variant="outline" className="gap-1 text-muted-foreground"><Check className="size-3" /> لا فشل مسجّل</Badge>
+                  <Badge variant="outline" className="gap-1 text-muted-foreground">
+                    <Check className="size-3" /> لا فشل مسجّل
+                  </Badge>
                 ) : recovered ? (
-                  <Badge variant="outline" className="gap-1"><Check className="size-3" /> عاد للعمل</Badge>
+                  <Badge variant="outline" className="gap-1">
+                    <Check className="size-3" /> عاد للعمل
+                  </Badge>
                 ) : (
-                  <Badge variant="destructive" className="gap-1"><XCircle className="size-3" /> يحتاج إصلاح</Badge>
+                  <Badge variant="destructive" className="gap-1">
+                    <XCircle className="size-3" /> يحتاج إصلاح
+                  </Badge>
                 )}
               </div>
 
               {!info || !guide ? (
-                <p className="text-xs text-muted-foreground">لم يُسجَّل أي فشل لهذا المصدر حتى الآن.</p>
+                <p className="text-xs text-muted-foreground">
+                  لم يُسجَّل أي فشل لهذا المصدر حتى الآن.
+                </p>
               ) : (
                 <div className="space-y-2">
                   <p className="text-sm font-medium">{guide.title}</p>
                   <p className="text-xs text-muted-foreground">{guide.hint}</p>
                   {info.message && (
-                    <p className="text-[11px] text-muted-foreground rounded-md bg-muted/50 p-2" dir="auto">
-                      {info.message}{info.keyword ? ` — أثناء البحث عن «${info.keyword}»` : ""}
+                    <p
+                      className="text-[11px] text-muted-foreground rounded-md bg-muted/50 p-2"
+                      dir="auto"
+                    >
+                      {info.message}
+                      {info.keyword ? ` — أثناء البحث عن «${info.keyword}»` : ""}
                     </p>
                   )}
-                  <p className="text-[11px] text-muted-foreground">وقت الفشل: {formatWhen(info.at)}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    وقت الفشل: {formatWhen(info.at)}
+                  </p>
                   {recovered && (
-                    <p className="text-[11px] text-muted-foreground">آخر نجاح بعده: {formatWhen(info.recoveredAt)}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      آخر نجاح بعده: {formatWhen(info.recoveredAt)}
+                    </p>
                   )}
                   <div className="flex flex-wrap gap-2 pt-1">
                     {guide.fixes.map((fix) => (
@@ -808,9 +995,15 @@ function SyncFailuresPanel() {
                       >
                         <a
                           href={fix.href}
-                          {...(fix.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                          {...(fix.external
+                            ? { target: "_blank", rel: "noopener noreferrer" }
+                            : {})}
                         >
-                          {fix.external ? <ExternalLink className="size-3.5" /> : <ArrowLeftRight className="size-3.5" />}
+                          {fix.external ? (
+                            <ExternalLink className="size-3.5" />
+                          ) : (
+                            <ArrowLeftRight className="size-3.5" />
+                          )}
                           {fix.label}
                         </a>
                       </Button>
@@ -856,23 +1049,39 @@ function ConversionsPanel() {
   return (
     <Card className="hover-lift border-primary/20">
       <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
-        <CardTitle className="flex items-center gap-2 text-lg"><Receipt className="size-5" /> تتبّع المبيعات (Postback)</CardTitle>
-        <Button variant="ghost" size="sm" className="press-ripple" onClick={() => refetch()} disabled={isFetching || !user}>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Receipt className="size-5" /> تتبّع المبيعات (Postback)
+        </CardTitle>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="press-ripple"
+          onClick={() => refetch()}
+          disabled={isFetching || !user}
+        >
           <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} /> تحديث
         </Button>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center gap-2 text-xs">
           {postback?.configured ? (
-            <Badge className="gap-1"><Check className="size-3" /> مفتاح الـ Postback مُفعّل</Badge>
+            <Badge className="gap-1">
+              <Check className="size-3" /> مفتاح الـ Postback مُفعّل
+            </Badge>
           ) : (
-            <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> يلزم إضافة AFFILIATE_POSTBACK_SECRET</Badge>
+            <Badge variant="outline" className="gap-1 text-muted-foreground">
+              <AlertTriangle className="size-3" /> يلزم إضافة AFFILIATE_POSTBACK_SECRET
+            </Badge>
           )}
         </div>
 
         <div className="rounded-xl border bg-muted/40 p-3 space-y-2">
-          <p className="text-xs text-muted-foreground">الصق هذا الرابط في إعدادات Postback لدى الشبكة (استبدل الوسوم بمتغيّرات الشبكة):</p>
-          <code dir="ltr" className="block break-all text-[11px] leading-relaxed">{postbackUrl}</code>
+          <p className="text-xs text-muted-foreground">
+            الصق هذا الرابط في إعدادات Postback لدى الشبكة (استبدل الوسوم بمتغيّرات الشبكة):
+          </p>
+          <code dir="ltr" className="block break-all text-[11px] leading-relaxed">
+            {postbackUrl}
+          </code>
           <Button
             variant="secondary"
             size="sm"
@@ -885,13 +1094,16 @@ function ConversionsPanel() {
             <Copy className="size-4" /> نسخ الرابط
           </Button>
           <p className="text-[11px] text-muted-foreground">
-            نمرّر معرّف النقرة تلقائيًا للشبكة عبر <span dir="ltr">subid</span> (وأمازون عبر <span dir="ltr">ascsubtag</span>)، فتُرجعه الشبكة لنا لنربط كل عملية بيع بنقرتها.
+            نمرّر معرّف النقرة تلقائيًا للشبكة عبر <span dir="ltr">subid</span> (وأمازون عبر{" "}
+            <span dir="ltr">ascsubtag</span>)، فتُرجعه الشبكة لنا لنربط كل عملية بيع بنقرتها.
           </p>
         </div>
 
         {!user ? (
-          <p className="text-xs text-muted-foreground">سجّل الدخول بحساب إداري لعرض إحصائيات التحويلات.</p>
-        ) : isError ? (
+          <p className="text-xs text-muted-foreground">
+            سجّل الدخول بحساب إداري لعرض إحصائيات التحويلات.
+          </p>
+        ) : isError || data?.authorized === false ? (
           <p className="text-xs text-muted-foreground">هذه الإحصائيات متاحة للمشرفين فقط.</p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-3">
@@ -899,12 +1111,30 @@ function ConversionsPanel() {
               const s = data?.[n.key];
               return (
                 <div key={n.key} className="rounded-xl border p-3 space-y-1">
-                  <span className="font-semibold" dir="ltr">{n.label}</span>
+                  <span className="font-semibold" dir="ltr">
+                    {n.label}
+                  </span>
                   <div className="text-xs text-muted-foreground space-y-1">
-                    <p>عمليات (٣٠ يومًا): <span className="font-semibold text-foreground">{s?.count ?? 0}</span></p>
-                    <p>مؤكدة: <span className="font-semibold text-foreground">{s?.approved ?? 0}</span></p>
-                    <p>المبيعات: <span className="font-semibold text-foreground">{(s?.sales ?? 0).toFixed(2)} ر.س</span></p>
-                    <p>العمولة: <span className="font-semibold text-foreground">{(s?.commission ?? 0).toFixed(2)} ر.س</span></p>
+                    <p>
+                      عمليات (٣٠ يومًا):{" "}
+                      <span className="font-semibold text-foreground">{s?.count ?? 0}</span>
+                    </p>
+                    <p>
+                      مؤكدة:{" "}
+                      <span className="font-semibold text-foreground">{s?.approved ?? 0}</span>
+                    </p>
+                    <p>
+                      المبيعات:{" "}
+                      <span className="font-semibold text-foreground">
+                        {(s?.sales ?? 0).toFixed(2)} ر.س
+                      </span>
+                    </p>
+                    <p>
+                      العمولة:{" "}
+                      <span className="font-semibold text-foreground">
+                        {(s?.commission ?? 0).toFixed(2)} ر.س
+                      </span>
+                    </p>
                     <p>آخر عملية: {formatWhen(s?.lastAt ?? null)}</p>
                   </div>
                 </div>
@@ -935,7 +1165,9 @@ function NoonCampaignPanel() {
   }) => {
     void logEvent({ data: payload })
       .then(() => queryClient.invalidateQueries({ queryKey: ["noon-audit-log"] }))
-      .catch(() => { /* التسجيل لا يعطّل العملية */ });
+      .catch(() => {
+        /* التسجيل لا يعطّل العملية */
+      });
   };
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ["noon-campaign-status"],
@@ -945,10 +1177,13 @@ function NoonCampaignPanel() {
   const [selected, setSelected] = useState<string | null>(null);
   const [publisherId, setPublisherId] = useState("");
   const [previewOpen, setPreviewOpen] = useState(false);
-  const [result, setResult] = useState<null | { ok: boolean; text: string; tone: "ok" | "warn" | "bad" }>(null);
+  const [result, setResult] = useState<null | {
+    ok: boolean;
+    text: string;
+    tone: "ok" | "warn" | "bad";
+  }>(null);
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const preview = buildNoonDeepLinkPreview({ publisherId, origin });
-
 
   useEffect(() => {
     try {
@@ -958,7 +1193,9 @@ function NoonCampaignPanel() {
         if (parsed.campaignId) setSelected(parsed.campaignId);
         if (parsed.publisherId) setPublisherId(parsed.publisherId);
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }, []);
 
   // اختيار تلقائي للحملة الموصى بها عند أول تحميل
@@ -981,20 +1218,39 @@ function NoonCampaignPanel() {
         campaignName: res.campaignName,
         network: res.network,
         publisherId,
-        result: res.matchesStored === true ? "مطابق للمعرّف المحفوظ" : res.matchesStored === false ? "غير مطابق للمعرّف المحفوظ" : "تحقق من الصيغة فقط",
+        result:
+          res.matchesStored === true
+            ? "مطابق للمعرّف المحفوظ"
+            : res.matchesStored === false
+              ? "غير مطابق للمعرّف المحفوظ"
+              : "تحقق من الصيغة فقط",
       });
       setSelected(auto);
       try {
         localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: auto, publisherId }));
-      } catch { /* ignore */ }
+      } catch {
+        /* ignore */
+      }
       if (res.matchesStored === true) {
-        setResult({ ok: true, text: `مطابق للمعرّف المحفوظ داخل التطبيق — الحملة: ${res.campaignName}.`, tone: "ok" });
+        setResult({
+          ok: true,
+          text: `مطابق للمعرّف المحفوظ داخل التطبيق — الحملة: ${res.campaignName}.`,
+          tone: "ok",
+        });
         toast.success("تم تأكيد Publisher ID ✓");
       } else if (res.matchesStored === false) {
-        setResult({ ok: false, text: `الصيغة صحيحة لكنه لا يطابق المعرّف المحفوظ حاليًا. حدّث NOON_AFFILIATE_ID إن كان هذا هو الصحيح. الحملة المقترحة: ${res.campaignName}.`, tone: "warn" });
+        setResult({
+          ok: false,
+          text: `الصيغة صحيحة لكنه لا يطابق المعرّف المحفوظ حاليًا. حدّث NOON_AFFILIATE_ID إن كان هذا هو الصحيح. الحملة المقترحة: ${res.campaignName}.`,
+          tone: "warn",
+        });
         toast.warning("المعرّف لا يطابق المحفوظ");
       } else {
-        setResult({ ok: true, text: `الصيغة صحيحة. الحملة المقترحة تلقائيًا: ${res.campaignName} (${res.network}). احفظ المعرّف داخل التطبيق لتفعيل الربط.`, tone: "warn" });
+        setResult({
+          ok: true,
+          text: `الصيغة صحيحة. الحملة المقترحة تلقائيًا: ${res.campaignName} (${res.network}). احفظ المعرّف داخل التطبيق لتفعيل الربط.`,
+          tone: "warn",
+        });
         toast.success("تم التحقق من الصيغة");
       }
     },
@@ -1011,13 +1267,25 @@ function NoonCampaignPanel() {
         </CardTitle>
         <div className="flex items-center gap-2">
           {isLoading ? null : data?.linked ? (
-            <Badge className="gap-1"><Check className="size-3" /> مربوطة بالفعل</Badge>
+            <Badge className="gap-1">
+              <Check className="size-3" /> مربوطة بالفعل
+            </Badge>
           ) : data?.configured ? (
-            <Badge variant="secondary" className="gap-1"><CircleDashed className="size-3" /> بانتظار أول نقرة</Badge>
+            <Badge variant="secondary" className="gap-1">
+              <CircleDashed className="size-3" /> بانتظار أول نقرة
+            </Badge>
           ) : (
-            <Badge variant="outline" className="gap-1 text-muted-foreground"><AlertTriangle className="size-3" /> غير مربوطة</Badge>
+            <Badge variant="outline" className="gap-1 text-muted-foreground">
+              <AlertTriangle className="size-3" /> غير مربوطة
+            </Badge>
           )}
-          <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="press-ripple"
+          >
             <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
         </div>
@@ -1059,14 +1327,25 @@ function NoonCampaignPanel() {
                       });
                     }
                     setSelected(c.id);
-                    try { localStorage.setItem(NOON_CHOICE_KEY, JSON.stringify({ campaignId: c.id, publisherId })); } catch { /* ignore */ }
+                    try {
+                      localStorage.setItem(
+                        NOON_CHOICE_KEY,
+                        JSON.stringify({ campaignId: c.id, publisherId }),
+                      );
+                    } catch {
+                      /* ignore */
+                    }
                   }}
                   className={`text-right rounded-xl border p-3 transition ${active ? "border-primary bg-primary/5" : "hover:bg-muted/50"}`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold text-sm">{c.name}</span>
                     <span className="flex items-center gap-1">
-                      {c.id === data?.recommended && <Badge variant="secondary" className="text-[10px]">موصى بها</Badge>}
+                      {c.id === data?.recommended && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          موصى بها
+                        </Badge>
+                      )}
                       {active && <Check className="size-4 text-primary" />}
                     </span>
                   </div>
@@ -1103,7 +1382,11 @@ function NoonCampaignPanel() {
               disabled={confirmMutation.isPending || !publisherId.trim()}
               className="press-ripple"
             >
-              {confirmMutation.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
+              {confirmMutation.isPending ? (
+                <RefreshCw className="size-4 animate-spin" />
+              ) : (
+                <Check className="size-4" />
+              )}
               تأكيد
             </Button>
 
@@ -1119,7 +1402,11 @@ function NoonCampaignPanel() {
                   result: "فك ربط الحملة من لوحة الإعدادات",
                 });
                 setSelected(null);
-                try { localStorage.removeItem(NOON_CHOICE_KEY); } catch { /* ignore */ }
+                try {
+                  localStorage.removeItem(NOON_CHOICE_KEY);
+                } catch {
+                  /* ignore */
+                }
                 setResult(null);
                 toast.success("تم فك ربط الحملة وتسجيل العملية");
               }}
@@ -1129,19 +1416,23 @@ function NoonCampaignPanel() {
             </Button>
           </div>
           {result && (
-            <p className={`text-xs ${result.tone === "ok" ? "text-primary" : result.tone === "warn" ? "text-amber-500" : "text-destructive"}`}>
+            <p
+              className={`text-xs ${result.tone === "ok" ? "text-primary" : result.tone === "warn" ? "text-amber-500" : "text-destructive"}`}
+            >
               {result.text}
             </p>
           )}
           <p className="text-[11px] text-muted-foreground">
-            التأكيد يتحقق من الصيغة ويطابقها مع المعرّف المحفوظ دون كشفه، ويختار الحملة المناسبة تلقائيًا.
+            التأكيد يتحقق من الصيغة ويطابقها مع المعرّف المحفوظ دون كشفه، ويختار الحملة المناسبة
+            تلقائيًا.
           </p>
         </div>
 
         <div className="rounded-lg border bg-muted/40 p-3 space-y-2">
           <p className="text-xs font-semibold">معاينة الرابط العميق المتوقّع</p>
           <p className="text-[11px] text-muted-foreground">
-            هذا شكل الرابط الذي سيفتحه الزبون بعد المرور على <code dir="ltr">/api/public/go/:dealId</code> بمعرّف نقرة تجريبي.
+            هذا شكل الرابط الذي سيفتحه الزبون بعد المرور على{" "}
+            <code dir="ltr">/api/public/go/:dealId</code> بمعرّف نقرة تجريبي.
           </p>
           <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">
             {publisherId.trim() ? preview.url : (data?.sampleDeepLink ?? preview.url)}
@@ -1153,7 +1444,8 @@ function NoonCampaignPanel() {
             <AlertDialogHeader>
               <AlertDialogTitle>تأكيد الحفظ — معاينة الوجهة</AlertDialogTitle>
               <AlertDialogDescription>
-                راجع الرابط ووسوم التتبع قبل الحفظ. الوجهة: <span dir="ltr">{preview.destinationHost}</span>
+                راجع الرابط ووسوم التتبع قبل الحفظ. الوجهة:{" "}
+                <span dir="ltr">{preview.destinationHost}</span>
               </AlertDialogDescription>
             </AlertDialogHeader>
 
@@ -1165,20 +1457,31 @@ function NoonCampaignPanel() {
               )}
               <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
                 <p className="text-[11px] font-semibold">رابط التحويل داخل التطبيق</p>
-                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{preview.redirectUrl}</code>
+                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">
+                  {preview.redirectUrl}
+                </code>
               </div>
               <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
                 <p className="text-[11px] font-semibold">الرابط النهائي على نون</p>
-                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">{preview.url}</code>
+                <code className="block text-[10px] break-all text-muted-foreground" dir="ltr">
+                  {preview.url}
+                </code>
               </div>
               <div className="rounded-lg border divide-y">
                 {preview.params.map((p) => (
                   <div key={p.key} className="flex items-start justify-between gap-3 px-3 py-2">
                     <div className="min-w-0">
-                      <code className="text-[11px] font-semibold" dir="ltr">{p.key}</code>
+                      <code className="text-[11px] font-semibold" dir="ltr">
+                        {p.key}
+                      </code>
                       <p className="text-[10px] text-muted-foreground">{p.label}</p>
                     </div>
-                    <code className="text-[10px] text-muted-foreground break-all max-w-[50%]" dir="ltr">{p.value}</code>
+                    <code
+                      className="text-[10px] text-muted-foreground break-all max-w-[50%]"
+                      dir="ltr"
+                    >
+                      {p.value}
+                    </code>
                   </div>
                 ))}
               </div>
@@ -1214,7 +1517,6 @@ function NoonCampaignPanel() {
           </AlertDialogContent>
         </AlertDialog>
       </CardContent>
-
     </Card>
   );
 }
@@ -1222,8 +1524,16 @@ function NoonCampaignPanel() {
 /* --------------------- تخزين آمن ومشفّر للمفاتيح --------------------- */
 
 const SECURE_KEY_FIELDS: Array<{ name: string; label: string; hint: string }> = [
-  { name: "AMAZON_ACCESS_KEY", label: "أمازون — Access Key", hint: "من لوحة Amazon Associates / PA-API" },
-  { name: "AMAZON_SECRET_KEY", label: "أمازون — Secret Key", hint: "يُعرض مرة واحدة فقط عند الإنشاء" },
+  {
+    name: "AMAZON_ACCESS_KEY",
+    label: "أمازون — Access Key",
+    hint: "من لوحة Amazon Associates / PA-API",
+  },
+  {
+    name: "AMAZON_SECRET_KEY",
+    label: "أمازون — Secret Key",
+    hint: "يُعرض مرة واحدة فقط عند الإنشاء",
+  },
   { name: "AMAZON_PARTNER_TAG", label: "أمازون — Partner Tag", hint: "مثال: hkeeem-21" },
   { name: "NOON_AFFILIATE_ID", label: "نون — Publisher ID", hint: "معرّف الناشر في حملة نون" },
 ];
@@ -1243,7 +1553,10 @@ function SecureKeysPanel() {
   const save = useMutation({
     mutationFn: (vars: { name: string; value: string }) => saveKey({ data: vars }),
     onSuccess: (res, vars) => {
-      if (!res?.ok) { toast.error(res?.reason ?? "تعذّر الحفظ"); return; }
+      if (!res?.ok) {
+        toast.error(res?.reason ?? "تعذّر الحفظ");
+        return;
+      }
       setDrafts((p) => ({ ...p, [vars.name]: "" }));
       toast.success("تم الحفظ مشفّرًا داخل قاعدة البيانات");
       refetch();
@@ -1253,7 +1566,10 @@ function SecureKeysPanel() {
 
   const remove = useMutation({
     mutationFn: (name: string) => removeKey({ data: { name } }),
-    onSuccess: () => { toast.success("تم حذف المفتاح"); refetch(); },
+    onSuccess: () => {
+      toast.success("تم حذف المفتاح");
+      refetch();
+    },
     onError: () => toast.error("غير مصرّح — هذه الخطوة للمشرفين فقط"),
   });
 
@@ -1263,12 +1579,15 @@ function SecureKeysPanel() {
         <CardTitle className="flex items-center gap-2 text-lg">
           <ShieldCheck className="size-5" /> تخزين آمن ومشفّر للمفاتيح
         </CardTitle>
-        <Badge variant="secondary" className="gap-1"><Lock className="size-3" /> AES-256</Badge>
+        <Badge variant="secondary" className="gap-1">
+          <Lock className="size-3" /> AES-256
+        </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-muted-foreground">
-          تُشفَّر القيم قبل حفظها في قاعدة البيانات ولا يمكن استرجاعها من الواجهة أبدًا — تظهر الحالة فقط:
-          «مفعّل» أو «غير مُضاف». تُستعمل القيم داخل الخادم فقط عند سحب العروض وتوليد روابط الشراء.
+          تُشفَّر القيم قبل حفظها في قاعدة البيانات ولا يمكن استرجاعها من الواجهة أبدًا — تظهر
+          الحالة فقط: «مفعّل» أو «غير مُضاف». تُستعمل القيم داخل الخادم فقط عند سحب العروض وتوليد
+          روابط الشراء.
         </p>
 
         {SECURE_KEY_FIELDS.map((field) => {
@@ -1284,7 +1603,9 @@ function SecureKeysPanel() {
                 {isLoading ? (
                   <span className="text-xs text-muted-foreground">جارٍ الفحص…</span>
                 ) : configured ? (
-                  <Badge className="gap-1"><Check className="size-3" /> مفعّل</Badge>
+                  <Badge className="gap-1">
+                    <Check className="size-3" /> مفعّل
+                  </Badge>
                 ) : (
                   <Badge variant="outline" className="gap-1 text-muted-foreground">
                     <CircleDashed className="size-3" /> غير مُضاف
@@ -1309,7 +1630,9 @@ function SecureKeysPanel() {
                       size="sm"
                       className="press-ripple"
                       disabled={save.isPending || (drafts[field.name] ?? "").trim().length < 3}
-                      onClick={() => save.mutate({ name: field.name, value: (drafts[field.name] ?? "").trim() })}
+                      onClick={() =>
+                        save.mutate({ name: field.name, value: (drafts[field.name] ?? "").trim() })
+                      }
                     >
                       حفظ مشفّر
                     </Button>
@@ -1326,7 +1649,9 @@ function SecureKeysPanel() {
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">سجّل الدخول بحساب مشرف لإدخال أو تحديث المفاتيح.</p>
+                <p className="text-xs text-muted-foreground">
+                  سجّل الدخول بحساب مشرف لإدخال أو تحديث المفاتيح.
+                </p>
               )}
             </div>
           );

@@ -20,7 +20,9 @@ declare global {
 
 export function reportLovableError(error: unknown, context: Record<string, unknown> = {}) {
   if (typeof window === "undefined") return;
-  void import("./preview-errors").then((m) => m.recordPreviewError(error, "boundary")).catch(() => {});
+  void import("./preview-errors")
+    .then((m) => m.recordPreviewError(error, "boundary"))
+    .catch(() => {});
   window.__lovableEvents?.captureException?.(
     error,
     {

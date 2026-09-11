@@ -44,8 +44,13 @@ export function SyncSchedulePanel() {
   const save = useMutation({
     mutationFn: (vars: { schedule: string; active: boolean }) => saveSchedule({ data: vars }),
     onSuccess: (res) => {
-      if (!res?.ok) { toast.error(res?.reason ?? "تعذّر الحفظ"); return; }
-      toast.success(`تم ضبط المزامنة: ${describeCron(res.schedule)}${res.active ? "" : " (موقوفة)"}`);
+      if (!res?.ok) {
+        toast.error(res?.reason ?? "تعذّر الحفظ");
+        return;
+      }
+      toast.success(
+        `تم ضبط المزامنة: ${describeCron(res.schedule)}${res.active ? "" : " (موقوفة)"}`,
+      );
       refetch();
     },
     onError: () => toast.error("غير مصرّح — هذه الخطوة للمشرفين فقط"),
@@ -62,14 +67,26 @@ export function SyncSchedulePanel() {
         <div className="flex items-center gap-2">
           {isLoading ? null : current?.exists ? (
             current.active ? (
-              <Badge className="gap-1"><PlayCircle className="size-3" /> تعمل</Badge>
+              <Badge className="gap-1">
+                <PlayCircle className="size-3" /> تعمل
+              </Badge>
             ) : (
-              <Badge variant="outline" className="gap-1 text-muted-foreground"><PauseCircle className="size-3" /> موقوفة</Badge>
+              <Badge variant="outline" className="gap-1 text-muted-foreground">
+                <PauseCircle className="size-3" /> موقوفة
+              </Badge>
             )
           ) : (
-            <Badge variant="outline" className="text-muted-foreground">غير مهيّأة</Badge>
+            <Badge variant="outline" className="text-muted-foreground">
+              غير مهيّأة
+            </Badge>
           )}
-          <Button variant="ghost" size="sm" onClick={() => refetch()} disabled={isFetching} className="press-ripple">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="press-ripple"
+          >
             <RefreshCw className={`size-4 ${isFetching ? "animate-spin" : ""}`} />
           </Button>
         </div>
@@ -77,13 +94,16 @@ export function SyncSchedulePanel() {
 
       <CardContent className="space-y-4">
         <p className="text-xs text-muted-foreground">
-          تسحب المهمة عروض أمازون ونون وأسعارها وتوفّرها وتحدّثها داخل قاعدة البيانات تلقائيًا حسب الفترة المختارة.
+          تسحب المهمة عروض أمازون ونون وأسعارها وتوفّرها وتحدّثها داخل قاعدة البيانات تلقائيًا حسب
+          الفترة المختارة.
         </p>
 
         {current?.exists && (
           <div className="grid grid-cols-2 gap-2 text-center">
             <div className="rounded-lg border px-2 py-3">
-              <p className="text-sm font-bold text-primary">{describeCron(current.schedule ?? "")}</p>
+              <p className="text-sm font-bold text-primary">
+                {describeCron(current.schedule ?? "")}
+              </p>
               <p className="text-[11px] text-muted-foreground">الفترة الحالية</p>
             </div>
             <div className="rounded-lg border px-2 py-3">
@@ -127,9 +147,15 @@ export function SyncSchedulePanel() {
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div>
             <p className="text-sm font-semibold">تفعيل المزامنة التلقائية</p>
-            <p className="text-[11px] text-muted-foreground">عند الإيقاف تبقى الإعدادات محفوظة دون تشغيل.</p>
+            <p className="text-[11px] text-muted-foreground">
+              عند الإيقاف تبقى الإعدادات محفوظة دون تشغيل.
+            </p>
           </div>
-          <Switch checked={active} onCheckedChange={setActive} aria-label="تفعيل المزامنة التلقائية" />
+          <Switch
+            checked={active}
+            onCheckedChange={setActive}
+            aria-label="تفعيل المزامنة التلقائية"
+          />
         </div>
 
         <Button
@@ -137,7 +163,11 @@ export function SyncSchedulePanel() {
           disabled={save.isPending || !dirty || !current?.exists}
           onClick={() => save.mutate({ schedule: cron.trim(), active })}
         >
-          {save.isPending ? <RefreshCw className="size-4 animate-spin" /> : <Check className="size-4" />}
+          {save.isPending ? (
+            <RefreshCw className="size-4 animate-spin" />
+          ) : (
+            <Check className="size-4" />
+          )}
           حفظ الجدولة
         </Button>
       </CardContent>

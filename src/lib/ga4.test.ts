@@ -18,11 +18,7 @@ describe("Google Analytics 4", () => {
     expect(document.querySelectorAll('script[src*="googletagmanager.com/gtag/js"]').length).toBe(1);
     expect(window.dataLayer).toHaveLength(2);
     expect(window.dataLayer?.[0]).toEqual(["js", expect.any(Date)]);
-    expect(window.dataLayer?.[1]).toEqual([
-      "config",
-      "G-MYXCEL469D",
-      { send_page_view: false },
-    ]);
+    expect(window.dataLayer?.[1]).toEqual(["config", "G-MYXCEL469D", { send_page_view: false }]);
   });
 
   it("sends an explicit page_view with the current SPA path", () => {

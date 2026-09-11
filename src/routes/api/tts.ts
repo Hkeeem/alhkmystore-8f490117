@@ -18,7 +18,8 @@ export const Route = createFileRoute("/api/tts")({
             input: text,
             voice: "onyx",
             response_format: "mp3",
-            instructions: "تحدث باللغة العربية الفصحى المعاصرة فقط، بصوت ثقيل وعميق وواضح، وبوتيرة معتدلة. لا تستخدم اللهجة العامية أو الكلمات العامية أبداً.",
+            instructions:
+              "تحدث باللغة العربية الفصحى المعاصرة فقط، بصوت ثقيل وعميق وواضح، وبوتيرة معتدلة. لا تستخدم اللهجة العامية أو الكلمات العامية أبداً.",
           }),
         });
         if (!r.ok) return new Response(await r.text(), { status: r.status });

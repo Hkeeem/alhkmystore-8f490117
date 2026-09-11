@@ -2,7 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const clean = (v: unknown, max = 160) => String(v ?? "").trim().slice(0, max);
+const clean = (v: unknown, max = 160) =>
+  String(v ?? "")
+    .trim()
+    .slice(0, max);
 
 /** تسجيل نقرة/زيارة على عرض (عام) — يُستخدم في الخريطة وقائمة العروض */
 export const recordDealClick = createServerFn({ method: "POST" })
@@ -99,7 +102,15 @@ export const getDealClickStats = createServerFn({ method: "GET" })
     const sessions = new Set<string>();
     const perDeal = new Map<
       string,
-      { title: string; storeName: string; clicks: number; map: number; list: number; lastAt: string; city: string }
+      {
+        title: string;
+        storeName: string;
+        clicks: number;
+        map: number;
+        list: number;
+        lastAt: string;
+        city: string;
+      }
     >();
 
     for (const r of list) {

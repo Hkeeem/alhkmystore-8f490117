@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { fetchHkeeemCatalog, __resetCatalogCache, normalizeOffer, normalizeStore } from "./hkeeem-catalog.server";
+import {
+  fetchHkeeemCatalog,
+  __resetCatalogCache,
+  normalizeOffer,
+  normalizeStore,
+} from "./hkeeem-catalog.server";
 
 const KEY = "test-build-secret-key";
 
@@ -23,12 +28,31 @@ function mockRoutes(handler: (url: string) => { ok: boolean; status?: number; bo
   return spy;
 }
 
-const OFFERS = { data: { offers: [{ id: "o1", title: "عرض", purchaseUrl: "https://x.dev", storeId: "s1", price: 10, originalPrice: 20, discount: 50 }] } };
-const STORES = { data: { stores: [{ id: "s1", name: "نون", website: "https://noon.com", category: "تسوق" }] } };
+const OFFERS = {
+  data: {
+    offers: [
+      {
+        id: "o1",
+        title: "عرض",
+        purchaseUrl: "https://x.dev",
+        storeId: "s1",
+        price: 10,
+        originalPrice: 20,
+        discount: 50,
+      },
+    ],
+  },
+};
+const STORES = {
+  data: { stores: [{ id: "s1", name: "نون", website: "https://noon.com", category: "تسوق" }] },
+};
 
 describe("كتالوج HkeeemAI الخادمي", () => {
   it("يجلب العروض والمتاجر ويرسل ترويسة التكامل من الخادم فقط", async () => {
-    const spy = mockRoutes((url) => ({ ok: true, body: url.includes("/offers") ? OFFERS : STORES }));
+    const spy = mockRoutes((url) => ({
+      ok: true,
+      body: url.includes("/offers") ? OFFERS : STORES,
+    }));
     const catalog = await fetchHkeeemCatalog(24);
     expect(catalog.offers[0]?.title).toBe("عرض");
     expect(catalog.stores[0]?.name).toBe("نون");
@@ -66,7 +90,10 @@ describe("كتالوج HkeeemAI الخادمي", () => {
   });
 
   it("يعيد قائمة فارغة عندما لا توجد عروض", async () => {
-    mockRoutes((url) => ({ ok: true, body: url.includes("/offers") ? { data: { offers: [] } } : STORES }));
+    mockRoutes((url) => ({
+      ok: true,
+      body: url.includes("/offers") ? { data: { offers: [] } } : STORES,
+    }));
     const catalog = await fetchHkeeemCatalog();
     expect(catalog.offers).toEqual([]);
   });

@@ -8,7 +8,10 @@ export const getHkeeemOffers = createServerFn({ method: "GET" })
       storeId?: unknown;
       minDiscount?: unknown;
     };
-    const clean = (v: unknown) => String(v ?? "").trim().slice(0, 80) || undefined;
+    const clean = (v: unknown) =>
+      String(v ?? "")
+        .trim()
+        .slice(0, 80) || undefined;
     const n = Number(d.minDiscount);
     return {
       category: clean(d.category),
@@ -40,4 +43,3 @@ export const getHkeeemIntegrationStatus = createServerFn({ method: "GET" }).hand
   const { getHkeeemStatus } = await import("@/lib/hkeeem-offers.server");
   return getHkeeemStatus();
 });
-

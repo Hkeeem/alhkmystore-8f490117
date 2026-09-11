@@ -26,7 +26,11 @@ export async function recordHkeeemSuccess(count: number) {
 }
 
 /** يسجّل فشلًا ويطلق التنبيه الداخلي عند تكرار الإخفاق */
-export async function recordHkeeemFailure(input: { path: string; status: number | null; reason: string }) {
+export async function recordHkeeemFailure(input: {
+  path: string;
+  status: number | null;
+  reason: string;
+}) {
   hadFailure = true;
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

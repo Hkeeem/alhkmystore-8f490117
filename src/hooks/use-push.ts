@@ -164,7 +164,17 @@ export function usePush(): PushState {
     }
   }, [endpoint]);
 
-  return { support, subscribed, busy, endpoint, serverConfigured, subscribe, unsubscribe, test, refresh };
+  return {
+    support,
+    subscribed,
+    busy,
+    endpoint,
+    serverConfigured,
+    subscribe,
+    unsubscribe,
+    test,
+    refresh,
+  };
 }
 
 async function savePushRemoval(ep: string) {

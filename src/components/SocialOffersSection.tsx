@@ -61,9 +61,28 @@ const PLATFORMS: Platform[] = [
 
 /** المتاجر الأقوى نشاطاً في السوشال ميديا (حسب حضورها الرسمي في السعودية) */
 const TOP_SOCIAL_STORE_IDS = [
-  "noon", "amazon-sa", "extra", "jarir", "shein", "namshi", "nice-one", "nahdi",
-  "panda", "othaim", "carrefour-sa", "lulu", "jahez", "hungerstation", "styli",
-  "trendyol", "sephora-sa", "golden-scent", "ikea-sa", "home-centre", "floward", "almosafer",
+  "noon",
+  "amazon-sa",
+  "extra",
+  "jarir",
+  "shein",
+  "namshi",
+  "nice-one",
+  "nahdi",
+  "panda",
+  "othaim",
+  "carrefour-sa",
+  "lulu",
+  "jahez",
+  "hungerstation",
+  "styli",
+  "trendyol",
+  "sephora-sa",
+  "golden-scent",
+  "ikea-sa",
+  "home-centre",
+  "floward",
+  "almosafer",
 ];
 
 const EMPTY_PREFS: SocialPrefs = { storeClicks: {}, platformClicks: {}, favoriteCategories: [] };
@@ -102,9 +121,9 @@ export function SocialOffersSection() {
 
   const basePool = useMemo(
     () =>
-      TOP_SOCIAL_STORE_IDS
-        .map((id) => STORES_DIRECTORY.find((s) => s.id === id))
-        .filter(Boolean) as typeof STORES_DIRECTORY,
+      TOP_SOCIAL_STORE_IDS.map((id) => STORES_DIRECTORY.find((s) => s.id === id)).filter(
+        Boolean,
+      ) as typeof STORES_DIRECTORY,
     [],
   );
 
@@ -141,14 +160,16 @@ export function SocialOffersSection() {
     setTiming("all");
   };
 
-
   return (
     <section aria-labelledby="social-offers-title">
       <div className="flex items-end justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 text-primary">
             <Megaphone className="w-5 h-5" />
-            <h2 id="social-offers-title" className="font-black text-2xl md:text-3xl leading-snug text-foreground">
+            <h2
+              id="social-offers-title"
+              className="font-black text-2xl md:text-3xl leading-snug text-foreground"
+            >
               عروض السوشال ميديا الأقوى
             </h2>
           </div>
@@ -171,7 +192,10 @@ export function SocialOffersSection() {
                 : "bg-card text-foreground border-border/60 hover:border-primary/60"
             }`}
           >
-            <span className="inline-block w-2 h-2 rounded-full ml-2 align-middle" style={{ background: p.color }} />
+            <span
+              className="inline-block w-2 h-2 rounded-full ml-2 align-middle"
+              style={{ background: p.color }}
+            />
             {p.label}
           </button>
         ))}
@@ -187,7 +211,11 @@ export function SocialOffersSection() {
           className="flex-1 bg-transparent outline-none text-sm py-1"
         />
         {(q || region !== "الكل" || category !== "الكل" || timing !== "all") && (
-          <button type="button" onClick={resetFilters} className="text-[11px] font-bold text-primary shrink-0">
+          <button
+            type="button"
+            onClick={resetFilters}
+            className="text-[11px] font-bold text-primary shrink-0"
+          >
             مسح الفلاتر
           </button>
         )}
@@ -204,7 +232,9 @@ export function SocialOffersSection() {
             className="flex-1 bg-transparent outline-none text-[13px] font-bold"
           >
             {REGIONS.map((r) => (
-              <option key={r} value={r} className="bg-card text-foreground">{r}</option>
+              <option key={r} value={r} className="bg-card text-foreground">
+                {r}
+              </option>
             ))}
           </select>
         </label>
@@ -219,7 +249,9 @@ export function SocialOffersSection() {
             className="flex-1 bg-transparent outline-none text-[13px] font-bold"
           >
             {categories.map((c) => (
-              <option key={c} value={c} className="bg-card text-foreground">{c}</option>
+              <option key={c} value={c} className="bg-card text-foreground">
+                {c}
+              </option>
             ))}
           </select>
         </label>
@@ -262,27 +294,28 @@ export function SocialOffersSection() {
           <Sparkles className="w-3.5 h-3.5" />
           ترتيب ذكي مخصص لي
         </button>
-        {categories.filter((c) => c !== "الكل").map((c) => {
-          const on = prefs.favoriteCategories.includes(c);
-          return (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setPrefs((prev) => toggleFavoriteCategory(prev, c))}
-              aria-pressed={on}
-              className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition inline-flex items-center gap-1 ${
-                on
-                  ? "bg-primary/15 text-primary border-primary/70"
-                  : "bg-card text-muted-foreground border-border/60 hover:border-primary/50"
-              }`}
-            >
-              <Star className={`w-3 h-3 ${on ? "fill-current" : ""}`} />
-              {c}
-            </button>
-          );
-        })}
+        {categories
+          .filter((c) => c !== "الكل")
+          .map((c) => {
+            const on = prefs.favoriteCategories.includes(c);
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setPrefs((prev) => toggleFavoriteCategory(prev, c))}
+                aria-pressed={on}
+                className={`text-[12px] font-bold px-3 py-1.5 rounded-full border transition inline-flex items-center gap-1 ${
+                  on
+                    ? "bg-primary/15 text-primary border-primary/70"
+                    : "bg-card text-muted-foreground border-border/60 hover:border-primary/50"
+                }`}
+              >
+                <Star className={`w-3 h-3 ${on ? "fill-current" : ""}`} />
+                {c}
+              </button>
+            );
+          })}
       </div>
-
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-3">
         {ranked.map(({ store: s, score, reasons }, i) => (
@@ -312,7 +345,10 @@ export function SocialOffersSection() {
                 <div className="text-[11px] text-muted-foreground truncate leading-normal">
                   {reasons[0] ?? `عروض ${s.name} الرسمية`}
                 </div>
-                <div className="text-[10px] text-primary/80 mt-0.5" aria-label={`درجة القوة ${score} من 100`}>
+                <div
+                  className="text-[10px] text-primary/80 mt-0.5"
+                  aria-label={`درجة القوة ${score} من 100`}
+                >
                   قوة العرض {Math.round(score)}٪
                 </div>
               </div>
@@ -341,7 +377,8 @@ export function SocialOffersSection() {
       )}
 
       <p className="text-[11px] text-muted-foreground mt-3 leading-relaxed">
-        الترتيب يعتمد على قوة المتجر (40٪) وتفاعله على المنصة (30٪) وتفضيلاتك المحفوظة على جهازك (30٪) — لا نعرض أي عرض أو كوبون غير موثّق.
+        الترتيب يعتمد على قوة المتجر (40٪) وتفاعله على المنصة (30٪) وتفضيلاتك المحفوظة على جهازك
+        (30٪) — لا نعرض أي عرض أو كوبون غير موثّق.
       </p>
     </section>
   );

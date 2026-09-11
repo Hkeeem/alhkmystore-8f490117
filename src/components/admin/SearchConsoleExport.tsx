@@ -36,7 +36,9 @@ function fmt(value: string) {
 }
 
 function mode(s: Snapshot) {
-  return (s.details as { mode?: string } | null)?.mode === "url_inspection" ? "فحص URL" : "فحص شامل";
+  return (s.details as { mode?: string } | null)?.mode === "url_inspection"
+    ? "فحص URL"
+    : "فحص شامل";
 }
 
 function toRow(s: Snapshot) {
@@ -65,7 +67,10 @@ function downloadCsv(rows: Snapshot[]) {
   URL.revokeObjectURL(url);
 }
 
-function openPdf(rows: Snapshot[], trend: { day: string; indexedUrls: number; crawled: number; submitted: number }[]) {
+function openPdf(
+  rows: Snapshot[],
+  trend: { day: string; indexedUrls: number; crawled: number; submitted: number }[],
+) {
   const win = window.open("", "_blank", "width=1024,height=768");
   if (!win) {
     toast.error("تعذّر فتح نافذة التقرير — يرجى السماح بالنوافذ المنبثقة.");
@@ -112,8 +117,14 @@ export function SearchConsoleExport() {
   const fetchSnapshots = useServerFn(listCrawlSnapshots);
   const fetchTrend = useServerFn(getIndexingTrend);
 
-  const snapshots = useQuery({ queryKey: ["sc-snapshots"], queryFn: () => fetchSnapshots({ data: undefined }) });
-  const trend = useQuery({ queryKey: ["sc-trend"], queryFn: () => fetchTrend({ data: undefined }) });
+  const snapshots = useQuery({
+    queryKey: ["sc-snapshots"],
+    queryFn: () => fetchSnapshots({ data: undefined }),
+  });
+  const trend = useQuery({
+    queryKey: ["sc-trend"],
+    queryFn: () => fetchTrend({ data: undefined }),
+  });
 
   const rows = (snapshots.data ?? []) as unknown as Snapshot[];
   const busy = snapshots.isLoading || trend.isLoading;
@@ -128,8 +139,8 @@ export function SearchConsoleExport() {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          يولّد التقرير ملفاً يجمع سجل الفحوصات السابقة وبيانات الفهرسة واتجاهها خلال آخر 30 يوماً، جاهزاً للحفظ أو
-          المشاركة مع الفريق.
+          يولّد التقرير ملفاً يجمع سجل الفحوصات السابقة وبيانات الفهرسة واتجاهها خلال آخر 30 يوماً،
+          جاهزاً للحفظ أو المشاركة مع الفريق.
         </p>
         <div className="flex flex-wrap gap-2">
           <Button
@@ -148,7 +159,12 @@ export function SearchConsoleExport() {
             onClick={() =>
               openPdf(
                 rows,
-                (trend.data ?? []) as { day: string; indexedUrls: number; crawled: number; submitted: number }[],
+                (trend.data ?? []) as {
+                  day: string;
+                  indexedUrls: number;
+                  crawled: number;
+                  submitted: number;
+                }[],
               )
             }
           >
@@ -157,7 +173,8 @@ export function SearchConsoleExport() {
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">
-          عند اختيار PDF تُفتح نافذة التقرير مباشرة مع مربع الطباعة — اختر «حفظ كـ PDF» لتنزيل الملف.
+          عند اختيار PDF تُفتح نافذة التقرير مباشرة مع مربع الطباعة — اختر «حفظ كـ PDF» لتنزيل
+          الملف.
         </p>
       </CardContent>
     </Card>

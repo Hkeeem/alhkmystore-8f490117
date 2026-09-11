@@ -2,7 +2,24 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { useState, useRef, useEffect, Fragment } from "react";
-import { Send, Sparkles, Loader2, Mic, Square, Volume2, VolumeX, Share2, ExternalLink, Bot, Zap, TrendingDown, ShoppingCart, Star, AlertTriangle, RotateCcw } from "lucide-react";
+import {
+  Send,
+  Sparkles,
+  Loader2,
+  Mic,
+  Square,
+  Volume2,
+  VolumeX,
+  Share2,
+  ExternalLink,
+  Bot,
+  Zap,
+  TrendingDown,
+  ShoppingCart,
+  Star,
+  AlertTriangle,
+  RotateCcw,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ShareSheet } from "@/components/ShareSheet";
 import { deals } from "@/data/deals";
@@ -10,15 +27,20 @@ import { deals } from "@/data/deals";
 const DEAL_TOKEN = /\{\{deal:([a-zA-Z0-9_-]+)\}\}/g;
 
 function stripDealTokens(text: string): string {
-  return text.replace(DEAL_TOKEN, "").replace(/\s{2,}/g, " ").trim();
+  return text
+    .replace(DEAL_TOKEN, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 function buildShareText(text: string, origin: string): string {
-  return text.replace(DEAL_TOKEN, (_, id) => {
-    const d = deals.find((x) => x.id === id);
-    if (!d) return "";
-    return `\n🔗 ${d.title} — ${d.price} ر.س: ${origin}/deals/${id}?utm_source=hkeeem&utm_medium=chat&utm_campaign=recommendation`;
-  }).trim();
+  return text
+    .replace(DEAL_TOKEN, (_, id) => {
+      const d = deals.find((x) => x.id === id);
+      if (!d) return "";
+      return `\n🔗 ${d.title} — ${d.price} ر.س: ${origin}/deals/${id}?utm_source=hkeeem&utm_medium=chat&utm_campaign=recommendation`;
+    })
+    .trim();
 }
 
 function RenderWithDealLinks({ text }: { text: string }) {
@@ -62,7 +84,10 @@ export const Route = createFileRoute("/chat")({
       { title: "حكيم - المساعد الذكي لعروض المملكة" },
       { name: "description", content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية." },
       { property: "og:title", content: "حكيم — المساعد الذكي لعروض المملكة" },
-      { property: "og:description", content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية." },
+      {
+        property: "og:description",
+        content: "تكلّم أو اكتب مع حكيم، مساعدك الذكي لأفضل عروض السعودية.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://alhkmystore.lovable.app/chat" },
     ],
@@ -89,7 +114,9 @@ function ChatPage() {
   const spokenRef = useRef<Set<string>>(new Set());
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const [failure, setFailure] = useState<{ kind: "chat" | "tts" | "stt"; msg: string } | null>(null);
+  const [failure, setFailure] = useState<{ kind: "chat" | "tts" | "stt"; msg: string } | null>(
+    null,
+  );
   const lastSentRef = useRef<string>("");
   const lastSpokenRef = useRef<string>("");
 
@@ -126,7 +153,10 @@ function ChatPage() {
     if (!voiceOn || status === "streaming" || status === "submitted") return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== "assistant" || spokenRef.current.has(last.id)) return;
-    const raw = last.parts.map((p) => (p.type === "text" ? p.text : "")).join("").trim();
+    const raw = last.parts
+      .map((p) => (p.type === "text" ? p.text : ""))
+      .join("")
+      .trim();
     const text = stripDealTokens(raw);
     if (!text) return;
     spokenRef.current.add(last.id);
@@ -174,7 +204,6 @@ function ChatPage() {
     }
     if (lastSentRef.current) void sendMessage({ text: lastSentRef.current });
   }
-
 
   const isLoading = status === "submitted" || status === "streaming";
 
@@ -229,7 +258,6 @@ function ChatPage() {
       setFailure({ kind: "stt", msg });
       toast.error(msg);
     }
-
   }
 
   return (
@@ -312,10 +340,13 @@ function ChatPage() {
                   <span className="text-[11px] text-muted-foreground font-bold">حكيم</span>
                 </div>
               )}
-              <div className={`max-w-[85%] ${mine
-                ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg"
-                : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"
-              } px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}>
+              <div
+                className={`max-w-[85%] ${
+                  mine
+                    ? "bg-primary text-primary-foreground rounded-3xl rounded-br-lg"
+                    : "bg-card border border-border/50 rounded-3xl rounded-bl-lg"
+                } px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-card`}
+              >
                 {mine ? text : <RenderWithDealLinks text={text} />}
               </div>
               {!mine && text && (
@@ -343,13 +374,24 @@ function ChatPage() {
             </div>
             <div className="bg-card border border-border/50 rounded-3xl rounded-bl-lg px-4 py-3 text-sm text-muted-foreground flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              {transcribing ? "يسمعك..." : (
+              {transcribing ? (
+                "يسمعك..."
+              ) : (
                 <span className="flex items-center gap-1">
                   يفكّر
                   <span className="flex gap-0.5">
-                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="w-1 h-1 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                    <span
+                      className="w-1 h-1 bg-primary rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-1 h-1 bg-primary rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-1 h-1 bg-primary rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
                   </span>
                 </span>
               )}
@@ -375,7 +417,10 @@ function ChatPage() {
 
       {/* شريط الإدخال */}
       <form
-        onSubmit={(e) => { e.preventDefault(); send(input); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          send(input);
+        }}
         className="mt-4 flex gap-2 sticky bottom-20 md:bottom-0 bg-background/95 backdrop-blur py-2"
       >
         <button

@@ -13,7 +13,13 @@ export const Route = createFileRoute("/api/stt")({
         if (file.size > 5 * 1024 * 1024) return new Response("audio too large", { status: 400 });
 
         const type = file.type || "audio/webm";
-        const ext = type.includes("mp4") ? "mp4" : type.includes("wav") ? "wav" : type.includes("mpeg") ? "mp3" : "webm";
+        const ext = type.includes("mp4")
+          ? "mp4"
+          : type.includes("wav")
+            ? "wav"
+            : type.includes("mpeg")
+              ? "mp3"
+              : "webm";
 
         const fd = new FormData();
         fd.append("model", "openai/gpt-4o-transcribe");
@@ -25,7 +31,10 @@ export const Route = createFileRoute("/api/stt")({
           body: fd,
         });
         const body = await r.text();
-        return new Response(body, { status: r.status, headers: { "Content-Type": "application/json" } });
+        return new Response(body, {
+          status: r.status,
+          headers: { "Content-Type": "application/json" },
+        });
       },
     },
   },

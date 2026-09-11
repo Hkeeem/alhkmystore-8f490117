@@ -1,10 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import { MapPin, Navigation, Tag, Clock, ChevronLeft, Locate, Store as StoreIcon, Search, X, Filter, Loader2, AlertTriangle } from "lucide-react";
+import {
+  MapPin,
+  Navigation,
+  Tag,
+  Clock,
+  ChevronLeft,
+  Locate,
+  Store as StoreIcon,
+  Search,
+  X,
+  Filter,
+  Loader2,
+  AlertTriangle,
+} from "lucide-react";
 import { stores, getStore } from "@/data/deals";
 import { trackDealClick } from "@/lib/track-deal";
 import { useRealDeals } from "@/hooks/use-real-deals";
-import { nearestBranch, nearestCity, distanceKm, branches, CITIES, type Branch } from "@/data/store-branches";
+import {
+  nearestBranch,
+  nearestCity,
+  distanceKm,
+  branches,
+  CITIES,
+  type Branch,
+} from "@/data/store-branches";
 import { useLiveDeals } from "@/hooks/use-live-deals";
 import { useSocialOffers } from "@/hooks/use-social-offers";
 import type * as Leaflet from "leaflet";
@@ -43,7 +63,6 @@ const GROUPS: { id: string; label: string; icon: string; categories: string[] }[
   { id: "متاجر", label: "متاجر", icon: "🛍️", categories: ["سوبرماركت", "إلكترونيات", "أزياء"] },
   { id: "خدمات", label: "خدمات", icon: "🧾", categories: ["صيدلية"] },
 ];
-
 
 function MapsPage() {
   const { deal: focusDealId } = Route.useSearch();
@@ -100,7 +119,9 @@ function MapsPage() {
       (err) => {
         if (err.code === err.PERMISSION_DENIED) {
           setLocStatus("denied");
-          setError("تم رفض إذن الموقع. فعّل الإذن من إعدادات المتصفح، أو ابحث يدويًا عن المتجر أو الحي.");
+          setError(
+            "تم رفض إذن الموقع. فعّل الإذن من إعدادات المتصفح، أو ابحث يدويًا عن المتجر أو الحي.",
+          );
         } else if (err.code === err.TIMEOUT) {
           setLocStatus("timeout");
           setError("انتهت مهلة تحديد موقعك. حاول مرة أخرى، أو ابحث يدويًا عن المتجر أو الحي.");
@@ -111,11 +132,9 @@ function MapsPage() {
         setLoading(false);
         setUserLocation({ lat: 24.7136, lng: 46.6753 });
       },
-      { timeout: 8000, enableHighAccuracy: true }
+      { timeout: 8000, enableHighAccuracy: true },
     );
   }, []);
-
-
 
   useEffect(() => {
     requestLocation();
@@ -136,20 +155,20 @@ function MapsPage() {
         const matched =
           cityFilter === "الكل"
             ? nearestBranch(deal.storeId, userLocation)
-            : branches
+            : (branches
                 .filter((b) => b.storeId === deal.storeId && b.city === cityFilter)
                 .sort(
                   (a, b) =>
                     distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
-                    distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng)
-                )[0] ?? null;
+                    distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng),
+                )[0] ?? null);
         // متاجر غير مسجّلة في دليل الفروع (تجّار ومصادر خارجية): نضعها في مركز المدينة
         let branch: Branch | null = matched;
         if (!branch) {
           const fallbackCity =
             cityFilter === "الكل"
               ? nearestCity(userLocation)
-              : CITIES.find((c) => c.name === cityFilter) ?? null;
+              : (CITIES.find((c) => c.name === cityFilter) ?? null);
           if (fallbackCity) {
             branch = {
               id: `${deal.storeId}-${fallbackCity.name}-city`,
@@ -215,9 +234,9 @@ function MapsPage() {
           : sortBy === "distance-desc"
             ? b.km - a.km
             : (b.deal.originalPrice - b.deal.price) / b.deal.originalPrice -
-              (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice
+              (a.deal.originalPrice - a.deal.price) / a.deal.originalPrice,
       ),
-    [mapped, sortBy]
+    [mapped, sortBy],
   );
 
   const city = userLocation ? nearestCity(userLocation) : null;
@@ -234,7 +253,6 @@ function MapsPage() {
     (categoryFilter !== "الكل" ? 1 : 0) +
     (storeFilter !== "الكل" ? 1 : 0) +
     (radiusKm !== "الكل" ? 1 : 0);
-
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -282,8 +300,6 @@ function MapsPage() {
     return out.slice(0, 8);
   }, [query, nearbyDeals]);
 
-
-
   /** إنشاء الخريطة مرة واحدة فقط — لا تُدمَّر عند تغيير الفلاتر */
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
@@ -328,7 +344,9 @@ function MapsPage() {
         iconSize: [20, 20],
         iconAnchor: [10, 10],
       });
-      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(map).bindPopup("<b>موقعك الحالي</b>");
+      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
+        .addTo(map)
+        .bindPopup("<b>موقعك الحالي</b>");
 
       L.circle([userLocation.lat, userLocation.lng], {
         radius: 3000,
@@ -395,7 +413,7 @@ function MapsPage() {
         return db > da ? b : a;
       });
       const bestOff = Math.round(
-        ((best.deal.originalPrice - best.deal.price) / best.deal.originalPrice) * 100
+        ((best.deal.originalPrice - best.deal.price) / best.deal.originalPrice) * 100,
       );
 
       const icon = L.divIcon({
@@ -423,7 +441,7 @@ function MapsPage() {
           <a href="/deals/${r.deal.id}" style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eee;text-decoration:none;color:#111;">
             <span style="font-size:11px;font-weight:700;">${r.deal.title}</span>
             <span style="font-size:11px;font-weight:900;color:#B8860B;white-space:nowrap;">${r.deal.price} ر.س</span>
-          </a>`
+          </a>`,
         )
         .join("");
 
@@ -481,7 +499,8 @@ function MapsPage() {
       const lat = city.lat + Math.sin(angle) * r;
       const lng = city.lng + Math.cos(angle) * r;
 
-      const off = d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100);
+      const off =
+        d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100);
       const icon = L.divIcon({
         className: "",
         html: `
@@ -528,9 +547,11 @@ function MapsPage() {
     if (!socialOffers || socialOffers.length === 0) return;
 
     for (const offer of socialOffers) {
-      const base = offer.lat != null && offer.lng != null
-        ? { lat: offer.lat, lng: offer.lng }
-        : CITIES.find((c) => c.name === offer.city) ?? (userLocation ? nearestCity(userLocation) : null);
+      const base =
+        offer.lat != null && offer.lng != null
+          ? { lat: offer.lat, lng: offer.lng }
+          : (CITIES.find((c) => c.name === offer.city) ??
+            (userLocation ? nearestCity(userLocation) : null));
       if (!base) continue;
 
       const h = [...offer.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 11);
@@ -584,8 +605,6 @@ function MapsPage() {
     }
   }, [mapReady, socialOffers, userLocation]);
 
-
-
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
     const marker = markersRef.current[dealId];
@@ -600,10 +619,19 @@ function MapsPage() {
   /** خيارات لوحة المفاتيح: الاقتراحات ثم النتائج */
   const options = useMemo(
     () => [
-      ...suggestions.map((s, i) => ({ id: `map-opt-sug-${i}`, type: "suggestion" as const, label: s.label })),
-      ...searchResults.map((r, i) => ({ id: `map-opt-res-${i}`, type: "result" as const, dealId: r.deal.id, label: r.deal.title })),
+      ...suggestions.map((s, i) => ({
+        id: `map-opt-sug-${i}`,
+        type: "suggestion" as const,
+        label: s.label,
+      })),
+      ...searchResults.map((r, i) => ({
+        id: `map-opt-res-${i}`,
+        type: "result" as const,
+        dealId: r.deal.id,
+        label: r.deal.title,
+      })),
     ],
-    [suggestions, searchResults]
+    [suggestions, searchResults],
   );
 
   const listboxOpen = (searchFocused || query.trim().length > 0) && options.length > 0;
@@ -617,7 +645,7 @@ function MapsPage() {
     setAnnouncement(
       query.trim().length > 0
         ? `${searchResults.length} نتيجة و${suggestions.length} اقتراح متاحة. استخدم الأسهم للتنقل.`
-        : `${suggestions.length} اقتراح متاح. استخدم الأسهم للتنقل.`
+        : `${suggestions.length} اقتراح متاح. استخدم الأسهم للتنقل.`,
     );
   }, [listboxOpen, searchResults.length, suggestions.length, query]);
 
@@ -663,7 +691,6 @@ function MapsPage() {
     }
   };
 
-
   /** بعد تحديد الموقع عبر زر "استخدم موقعي": ركّز على أقرب فرع/عرض */
   useEffect(() => {
     if (!focusNearestRef.current) return;
@@ -671,7 +698,6 @@ function MapsPage() {
     if (!nearest || !markersRef.current[nearest.deal.id]) return;
     focusNearestRef.current = false;
     focusOnMap(nearest.deal.id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nearbyDeals, mapped]);
 
   return (
@@ -710,7 +736,6 @@ function MapsPage() {
         </div>
       </header>
 
-
       {locStatus === "loading" && (
         <div
           role="status"
@@ -729,7 +754,10 @@ function MapsPage() {
           className="rounded-2xl bg-card border border-destructive/40 p-4 text-sm space-y-3"
         >
           <div className="flex items-start gap-2">
-            <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" aria-hidden="true" />
+            <AlertTriangle
+              className="w-4 h-4 text-destructive shrink-0 mt-0.5"
+              aria-hidden="true"
+            />
             <div className="space-y-1">
               <p className="font-bold text-foreground">
                 {locStatus === "denied" ? "إذن الموقع مرفوض" : "تعذّر تحديد موقعك"}
@@ -767,7 +795,6 @@ function MapsPage() {
           </div>
         </div>
       )}
-
 
       <div className="relative">
         <div
@@ -849,7 +876,9 @@ function MapsPage() {
             {query.trim().length > 0 && (
               <div className="absolute z-[1000] mt-2 w-full max-h-72 overflow-y-auto bg-card border border-primary/20 rounded-2xl shadow-glow divide-y divide-border/50">
                 {searchResults.length === 0 && (
-                  <div className="p-4 text-sm text-muted-foreground text-center">لا توجد نتائج مطابقة</div>
+                  <div className="p-4 text-sm text-muted-foreground text-center">
+                    لا توجد نتائج مطابقة
+                  </div>
                 )}
                 {searchResults.map(({ deal, branch, km }, i) => {
                   const idx = suggestions.length + i;
@@ -873,7 +902,9 @@ function MapsPage() {
                           {getStore(deal.storeId).name} · {branch.name}
                         </span>
                       </span>
-                      <span className="text-[11px] font-black text-primary shrink-0">{km.toFixed(1)} كم</span>
+                      <span className="text-[11px] font-black text-primary shrink-0">
+                        {km.toFixed(1)} كم
+                      </span>
                     </button>
                   );
                 })}
@@ -883,9 +914,11 @@ function MapsPage() {
         )}
       </div>
 
-
       {/* تصفية نتائج الخريطة */}
-      <section className="bg-card border border-border/60 rounded-2xl p-3 space-y-3" aria-label="تصفية نتائج الخريطة">
+      <section
+        className="bg-card border border-border/60 rounded-2xl p-3 space-y-3"
+        aria-label="تصفية نتائج الخريطة"
+      >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 text-xs font-black">
             <Filter className="w-4 h-4 text-primary" />
@@ -954,7 +987,9 @@ function MapsPage() {
             <span className="block text-[10px] text-muted-foreground mb-1">نطاق المسافة</span>
             <select
               value={String(radiusKm)}
-              onChange={(e) => setRadiusKm(e.target.value === "الكل" ? "الكل" : Number(e.target.value))}
+              onChange={(e) =>
+                setRadiusKm(e.target.value === "الكل" ? "الكل" : Number(e.target.value))
+              }
               className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
             >
               <option value="الكل">كل المسافات</option>
@@ -969,7 +1004,9 @@ function MapsPage() {
             <span className="block text-[10px] text-muted-foreground mb-1">ترتيب النتائج</span>
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as "distance" | "distance-desc" | "discount")}
+              onChange={(e) =>
+                setSortBy(e.target.value as "distance" | "distance-desc" | "discount")
+              }
               className="w-full bg-secondary/40 border border-primary/20 rounded-xl px-2 py-2 text-xs font-bold outline-none focus:border-primary"
             >
               <option value="distance">الأقرب لموقعي</option>
@@ -1002,7 +1039,6 @@ function MapsPage() {
           ))}
         </div>
 
-
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => (
             <button
@@ -1032,8 +1068,6 @@ function MapsPage() {
               : "جارٍ تحديد أقرب عرض لك…"}
         </div>
       </section>
-
-
 
       <div className="relative">
         <div
@@ -1071,14 +1105,14 @@ function MapsPage() {
             </div>
           </div>
         )}
-
-
       </div>
 
       {userLocation && (
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
-            <div className="text-2xl font-black text-primary">{mapped.length + (liveDeals?.length ?? 0)}</div>
+            <div className="text-2xl font-black text-primary">
+              {mapped.length + (liveDeals?.length ?? 0)}
+            </div>
             <div className="text-[11px] text-muted-foreground mt-0.5">عرض على الخريطة</div>
           </div>
           <div className="bg-card border border-border/60 rounded-2xl p-3 text-center">
@@ -1103,7 +1137,9 @@ function MapsPage() {
           <div className="space-y-3">
             {nearbyDeals.slice(0, 12).map(({ deal, branch, km }) => {
               const store = getStore(deal.storeId);
-              const discount = Math.round(((deal.originalPrice - deal.price) / deal.originalPrice) * 100);
+              const discount = Math.round(
+                ((deal.originalPrice - deal.price) / deal.originalPrice) * 100,
+              );
               const isSelected = selectedDeal === deal.id;
               return (
                 <div
@@ -1136,7 +1172,9 @@ function MapsPage() {
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-2xl">{deal.image}</div>
+                      <div className="w-full h-full flex items-center justify-center text-2xl">
+                        {deal.image}
+                      </div>
                     )}
                   </button>
 
@@ -1146,7 +1184,9 @@ function MapsPage() {
                       <StoreIcon className="w-3 h-3" />
                       {store.name}
                     </div>
-                    <div className="text-[10px] text-muted-foreground truncate mt-0.5">{branch.name}</div>
+                    <div className="text-[10px] text-muted-foreground truncate mt-0.5">
+                      {branch.name}
+                    </div>
                     <div className="flex items-center gap-2 mt-1">
                       <Clock className="w-3 h-3 text-muted-foreground" />
                       <span className="text-[10px] text-muted-foreground">{deal.expiresIn}</span>
@@ -1160,7 +1200,9 @@ function MapsPage() {
                     <div className="text-base font-black text-primary">
                       {deal.price} <span className="text-[10px]">ر.س</span>
                     </div>
-                    <div className="text-[10px] line-through text-muted-foreground">{deal.originalPrice} ر.س</div>
+                    <div className="text-[10px] line-through text-muted-foreground">
+                      {deal.originalPrice} ر.س
+                    </div>
                     <div className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold text-center mt-1">
                       -{discount}%
                     </div>
@@ -1170,14 +1212,14 @@ function MapsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                      trackDealClick({
-                        dealId: deal.id,
-                        title: deal.title,
-                        storeName: store.name,
-                        surface: "map",
-                      });
-                      focusOnMap(deal.id);
-                    }}
+                        trackDealClick({
+                          dealId: deal.id,
+                          title: deal.title,
+                          storeName: store.name,
+                          surface: "map",
+                        });
+                        focusOnMap(deal.id);
+                      }}
                       className="flex items-center gap-1 bg-secondary/60 text-primary text-[10px] font-black px-2 py-1 rounded-xl hover:bg-secondary transition"
                     >
                       <MapPin className="w-3 h-3" />

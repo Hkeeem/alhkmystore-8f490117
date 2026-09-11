@@ -32,7 +32,9 @@ export default defineConfig({
           runtimeCaching: [
             {
               urlPattern: ({ request, url }) =>
-                request.mode === "navigate" && !url.pathname.startsWith("/api/") && !url.pathname.startsWith("/~oauth"),
+                request.mode === "navigate" &&
+                !url.pathname.startsWith("/api/") &&
+                !url.pathname.startsWith("/~oauth"),
               handler: "NetworkFirst",
               options: {
                 cacheName: "waffer-pages-v2",
@@ -49,7 +51,8 @@ export default defineConfig({
               },
             },
             {
-              urlPattern: ({ url, sameOrigin }) => sameOrigin && /\.(?:woff2|svg|png|ico)$/.test(url.pathname),
+              urlPattern: ({ url, sameOrigin }) =>
+                sameOrigin && /\.(?:woff2|svg|png|ico)$/.test(url.pathname),
               handler: "CacheFirst",
               options: {
                 cacheName: "waffer-assets-v2",
@@ -58,7 +61,6 @@ export default defineConfig({
             },
           ],
         },
-
       }),
     ],
   },

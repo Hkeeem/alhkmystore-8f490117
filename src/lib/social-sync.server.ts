@@ -65,7 +65,9 @@ function hashKey(input: string) {
 
 function toPrice(raw: string | null | undefined): number | null {
   if (!raw) return null;
-  const cleaned = String(raw).replace(/[^\d.,]/g, "").replace(/,/g, "");
+  const cleaned = String(raw)
+    .replace(/[^\d.,]/g, "")
+    .replace(/,/g, "");
   const value = Number.parseFloat(cleaned);
   return Number.isFinite(value) && value > 0 ? value : null;
 }
@@ -79,19 +81,24 @@ export function extractOfferFacts(text: string) {
   const price = prices.length ? Math.min(...prices) : null;
   const originalPrice = prices.length > 1 ? Math.max(...prices) : null;
 
-  const percentMatch = text.match(/(?:خصم|discount|off)\D{0,8}(\d{1,2})\s*%|(\d{1,2})\s*%\s*(?:خصم|off)/i);
+  const percentMatch = text.match(
+    /(?:خصم|discount|off)\D{0,8}(\d{1,2})\s*%|(\d{1,2})\s*%\s*(?:خصم|off)/i,
+  );
   const discountPercent = percentMatch ? Number(percentMatch[1] ?? percentMatch[2]) : null;
 
-  const codeMatch = text.match(/(?:كود|الكود|كوبون|code|coupon)\s*[:：\-]?\s*([A-Za-z0-9]{3,20})/i);
+  const codeMatch = text.match(/(?:كود|الكود|كوبون|code|coupon)\s*[:：-]?\s*([A-Za-z0-9]{3,20})/i);
   const couponCode = codeMatch?.[1]?.toUpperCase() ?? null;
 
   // "ينتهي 2026-09-20" أو "حتى 20/09/2026"
-  const dateMatch = text.match(/(?:ينتهي|حتى|until|ends)\D{0,10}(\d{4}-\d{2}-\d{2}|\d{1,2}[/-]\d{1,2}[/-]\d{4})/i);
+  const dateMatch = text.match(
+    /(?:ينتهي|حتى|until|ends)\D{0,10}(\d{4}-\d{2}-\d{2}|\d{1,2}[/-]\d{1,2}[/-]\d{4})/i,
+  );
   let expiresAt: string | null = null;
   if (dateMatch?.[1]) {
-    const raw = dateMatch[1].includes("-") && dateMatch[1].length === 10
-      ? dateMatch[1]
-      : dateMatch[1].replace(/[/-]/g, "/").split("/").reverse().join("-");
+    const raw =
+      dateMatch[1].includes("-") && dateMatch[1].length === 10
+        ? dateMatch[1]
+        : dateMatch[1].replace(/[/-]/g, "/").split("/").reverse().join("-");
     const parsed = new Date(raw);
     if (!Number.isNaN(parsed.getTime())) expiresAt = parsed.toISOString();
   }
@@ -107,14 +114,22 @@ export function extractOfferFacts(text: string) {
   return { price, originalPrice, discountPercent, couponCode, expiresAt };
 }
 
-type RawPost = { title: string | null; body: string | null; link: string | null; image: string | null; id: string | null; date: string | null };
+type RawPost = {
+  title: string | null;
+  body: string | null;
+  link: string | null;
+  image: string | null;
+  id: string | null;
+  date: string | null;
+};
 
 function parseXmlPosts(body: string): RawPost[] {
   const blocks = body.match(/<(item|entry)[\s>][\s\S]*?<\/(item|entry)>/gi) ?? [];
   return blocks.slice(0, MAX_ITEMS).map((block) => {
-    const imgMatch = block.match(/<media:content[^>]*url=["']([^"']+)["']/i)
-      ?? block.match(/<enclosure[^>]*url=["']([^"']+)["']/i)
-      ?? block.match(/src=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i);
+    const imgMatch =
+      block.match(/<media:content[^>]*url=["']([^"']+)["']/i) ??
+      block.match(/<enclosure[^>]*url=["']([^"']+)["']/i) ??
+      block.match(/src=["'](https?:\/\/[^"']+\.(?:jpg|jpeg|png|webp)[^"']*)["']/i);
     return {
       title: tag(block, ["title"]),
       body: tag(block, ["description", "content:encoded", "content", "summary"]),
@@ -169,7 +184,9 @@ export async function fetchAccountPosts(account: SocialAccount): Promise<RawPost
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const body = await response.text();
   const trimmed = body.trimStart();
-  return trimmed.startsWith("{") || trimmed.startsWith("[") ? parseJsonPosts(body) : parseXmlPosts(body);
+  return trimmed.startsWith("{") || trimmed.startsWith("[")
+    ? parseJsonPosts(body)
+    : parseXmlPosts(body);
 }
 
 /** يشغّل المزامنة على كل الحسابات المفعّلة ويحدّث social_offers */
@@ -182,7 +199,12 @@ export async function runSocialSync(accountId?: string): Promise<SocialSyncResul
   if (error) throw new Error(error.message);
 
   const accounts = (data ?? []) as SocialAccount[];
-  const result: SocialSyncResult = { accounts: accounts.length, upserted: 0, expired: 0, errors: [] };
+  const result: SocialSyncResult = {
+    accounts: accounts.length,
+    upserted: 0,
+    expired: 0,
+    errors: [],
+  };
 
   const now = new Date().toISOString();
 

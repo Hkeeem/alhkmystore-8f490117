@@ -6,7 +6,8 @@ export const getSearchConsoleProperties = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
-    const { listVerifiedProperties, SITE_TARGET } = await import("@/lib/search-console-config.server");
+    const { listVerifiedProperties, SITE_TARGET } =
+      await import("@/lib/search-console-config.server");
     try {
       return { ok: true as const, properties: await listVerifiedProperties(SITE_TARGET) };
     } catch (error) {
@@ -40,7 +41,9 @@ export const inspectPages = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => {
     const raw = input as { siteUrl?: unknown; paths?: unknown };
     const paths = Array.isArray(raw?.paths)
-      ? raw.paths.filter((p): p is string => typeof p === "string" && p.trim().length > 0).slice(0, 25)
+      ? raw.paths
+          .filter((p): p is string => typeof p === "string" && p.trim().length > 0)
+          .slice(0, 25)
       : [];
     return {
       siteUrl: typeof raw?.siteUrl === "string" && raw.siteUrl ? raw.siteUrl : null,
@@ -62,20 +65,23 @@ export const listCrawlSnapshots = createServerFn({ method: "POST" })
     if (!isStaff) throw new Error("forbidden");
     const { data } = await context.supabase
       .from("search_console_snapshots")
-      .select("id, site_url, submitted, indexed, sitemap_errors, sitemap_warnings, inspected_urls, indexed_urls, details, created_at")
+      .select(
+        "id, site_url, submitted, indexed, sitemap_errors, sitemap_warnings, inspected_urls, indexed_urls, details, created_at",
+      )
       .order("created_at", { ascending: false })
       .limit(30);
     return data ?? [];
   });
 
-
 /** حالة المهمة المجدولة لتحديث لقطات Search Console — للفريق الإداري */
 export const getSnapshotSchedule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data, error } = await (context.supabase.rpc as unknown as (
-      fn: string,
-    ) => Promise<{ data: unknown; error: { message: string } | null }>)("get_search_console_schedule");
+    const { data, error } = await (
+      context.supabase.rpc as unknown as (
+        fn: string,
+      ) => Promise<{ data: unknown; error: { message: string } | null }>
+    )("get_search_console_schedule");
     if (error) return { ok: false as const, reason: "غير مصرّح أو تعذّر قراءة الجدولة" };
     return {
       ok: true as const,
@@ -95,16 +101,23 @@ export const setSnapshotSchedule = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => {
     const d = (input ?? {}) as { schedule?: unknown; active?: unknown };
-    return { schedule: String(d.schedule ?? "").trim().slice(0, 40), active: d.active !== false };
+    return {
+      schedule: String(d.schedule ?? "")
+        .trim()
+        .slice(0, 40),
+      active: d.active !== false,
+    };
   })
   .handler(async ({ data, context }) => {
     if (!/^[0-9*/,\- ]{5,40}$/.test(data.schedule)) {
       return { ok: false as const, reason: "صيغة الجدولة غير صحيحة" };
     }
-    const { error } = await (context.supabase.rpc as unknown as (
-      fn: string,
-      args: Record<string, unknown>,
-    ) => Promise<{ error: { message: string } | null }>)("set_search_console_schedule", {
+    const { error } = await (
+      context.supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ error: { message: string } | null }>
+    )("set_search_console_schedule", {
       _schedule: data.schedule,
       _active: data.active,
     });
@@ -117,9 +130,12 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => {
     const raw = (input ?? {}) as { scope?: unknown; paths?: unknown };
-    const scope = typeof raw.scope === "string" && raw.scope.trim() ? raw.scope.trim().slice(0, 60) : "all";
+    const scope =
+      typeof raw.scope === "string" && raw.scope.trim() ? raw.scope.trim().slice(0, 60) : "all";
     const paths = Array.isArray(raw.paths)
-      ? raw.paths.filter((p): p is string => typeof p === "string" && p.trim().length > 0).slice(0, 25)
+      ? raw.paths
+          .filter((p): p is string => typeof p === "string" && p.trim().length > 0)
+          .slice(0, 25)
       : [];
     return { scope, paths };
   })
@@ -129,7 +145,9 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
     const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
     const { data: rows } = await context.supabase
       .from("search_console_snapshots")
-      .select("submitted, indexed, inspected_urls, indexed_urls, sitemap_errors, details, created_at")
+      .select(
+        "submitted, indexed, inspected_urls, indexed_urls, sitemap_errors, details, created_at",
+      )
       .gte("created_at", since)
       .order("created_at", { ascending: true })
       .limit(500);
@@ -149,7 +167,14 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
 
     const byDay = new Map<
       string,
-      { day: string; indexedUrls: number; inspected: number; crawled: number; submitted: number; errors: number }
+      {
+        day: string;
+        indexedUrls: number;
+        inspected: number;
+        crawled: number;
+        submitted: number;
+        errors: number;
+      }
     >();
     for (const row of rows ?? []) {
       const day = String(row.created_at).slice(0, 10);
@@ -157,7 +182,8 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
       let inspected = row.inspected_urls ?? 0;
       if (filtered) {
         const inspections =
-          (row.details as { inspections?: { url?: string; isIndexed?: boolean }[] } | null)?.inspections ?? [];
+          (row.details as { inspections?: { url?: string; isIndexed?: boolean }[] } | null)
+            ?.inspections ?? [];
         const scoped = inspections.filter((i) => typeof i.url === "string" && matches(i.url));
         inspected = scoped.length;
         indexedUrls = scoped.filter((i) => i.isIndexed).length;
@@ -173,7 +199,6 @@ export const getIndexingTrend = createServerFn({ method: "POST" })
     }
     return Array.from(byDay.values());
   });
-
 
 /** تنبيهات الهبوط الملحوظ خلال آخر 24–48 ساعة — للفريق الإداري */
 export const getRecentDropAlerts = createServerFn({ method: "POST" })

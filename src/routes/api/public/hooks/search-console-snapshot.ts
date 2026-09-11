@@ -10,7 +10,8 @@ async function runSnapshot(request: Request) {
     const raw = await request.text();
     if (raw.trim()) {
       const parsed = JSON.parse(raw) as { siteUrl?: unknown };
-      if (typeof parsed?.siteUrl === "string" && parsed.siteUrl.trim()) siteUrl = parsed.siteUrl.trim();
+      if (typeof parsed?.siteUrl === "string" && parsed.siteUrl.trim())
+        siteUrl = parsed.siteUrl.trim();
     }
   } catch {
     return Response.json({ error: "invalid body" }, { status: 400 });

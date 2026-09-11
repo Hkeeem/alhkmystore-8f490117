@@ -10,15 +10,19 @@ export default function ProductDetail() {
   return (
     <div dir="rtl" className="min-h-screen pb-28" style={{ background: "var(--hkeeem-bg)" }}>
       <header className="flex items-center justify-between px-4 pt-3">
-        <Link to="/hkeeem" className="hk-gold-text text-xl">→</Link>
+        <Link to="/hkeeem" className="hk-gold-text text-xl">
+          →
+        </Link>
         <div className="flex gap-4 hk-gold-text text-xl">
           <button>↗</button>
           <button>♥</button>
         </div>
       </header>
 
-      <div className="hk-card relative mx-4 mt-4 h-64 flex items-center justify-center text-8xl"
-        style={{ boxShadow: "0 0 24px rgba(212,175,55,0.25)" }}>
+      <div
+        className="hk-card relative mx-4 mt-4 h-64 flex items-center justify-center text-8xl"
+        style={{ boxShadow: "0 0 24px rgba(212,175,55,0.25)" }}
+      >
         📱
         <span className="hk-ai-badge absolute top-4 right-4">رشحه AI ✨</span>
       </div>
@@ -35,17 +39,24 @@ export default function ProductDetail() {
         <h3 className="font-bold mb-3">💰 مقارنة الأسعار من {stores.length} متاجر</h3>
         <div className="space-y-2.5">
           {stores.map((s) => (
-            <div key={s.name} className="hk-card p-4 flex items-center justify-between"
-              style={s.best ? { borderColor: "rgba(212,175,55,0.8)" } : undefined}>
+            <div
+              key={s.name}
+              className="hk-card p-4 flex items-center justify-between"
+              style={s.best ? { borderColor: "rgba(212,175,55,0.8)" } : undefined}
+            >
               <div className="flex items-center gap-2">
                 <span className="font-bold">{s.name}</span>
                 {s.best && (
-                  <span className="bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-0.5 rounded-lg">الأفضل</span>
+                  <span className="bg-[#D4AF37] text-black text-[10px] font-bold px-2 py-0.5 rounded-lg">
+                    الأفضل
+                  </span>
                 )}
               </div>
               <div className="text-left">
                 <p className="font-black hk-gold-text">{s.price.toLocaleString()} ر.س</p>
-                <p className="text-xs" style={{ color: "var(--hkeeem-success)" }}>⬇ خصم {s.discount}%</p>
+                <p className="text-xs" style={{ color: "var(--hkeeem-success)" }}>
+                  ⬇ خصم {s.discount}%
+                </p>
               </div>
             </div>
           ))}
@@ -62,9 +73,11 @@ export default function ProductDetail() {
         <button className="hk-btn-outline flex-1">♥ مفضلة</button>
       </div>
 
-      <Link to="/hkeeem/chat"
+      <Link
+        to="/hkeeem/chat"
         className="hk-assistant-float fixed bottom-24 left-4 w-14 h-14 rounded-full flex items-center justify-center text-2xl z-50"
-        style={{ background: "linear-gradient(135deg,#D4AF37,#FFD700)" }}>
+        style={{ background: "linear-gradient(135deg,#D4AF37,#FFD700)" }}
+      >
         🤖
       </Link>
     </div>

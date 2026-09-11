@@ -51,7 +51,8 @@ export function SocialSyncPanel() {
   };
 
   const addMutation = useMutation({
-    mutationFn: () => add({ data: { platform, handle, feed_url: feedUrl || null, city: city || null } }),
+    mutationFn: () =>
+      add({ data: { platform, handle, feed_url: feedUrl || null, city: city || null } }),
     onSuccess: () => {
       toast.success("تمت إضافة الحساب");
       setPlatform("");
@@ -65,8 +66,13 @@ export function SocialSyncPanel() {
 
   const syncMutation = useMutation({
     mutationFn: () => runSync({ data: {} }),
-    onSuccess: (result: { accounts: number; upserted: number; errors: Array<{ message: string }> }) => {
-      if (result.upserted > 0) toast.success(`تم جلب ${result.upserted} عرضًا من ${result.accounts} حساب`);
+    onSuccess: (result: {
+      accounts: number;
+      upserted: number;
+      errors: Array<{ message: string }>;
+    }) => {
+      if (result.upserted > 0)
+        toast.success(`تم جلب ${result.upserted} عرضًا من ${result.accounts} حساب`);
       else if (result.errors.length > 0) toast.error(result.errors[0]!.message);
       else toast.info("لا توجد حسابات مفعّلة للمزامنة");
       invalidate();
@@ -90,22 +96,45 @@ export function SocialSyncPanel() {
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-[12px] text-muted-foreground leading-relaxed">
-          أضف حساباتك الشخصية مع رابط تغذية عام (RSS/Atom/JSON) لمنشوراتك. تُقرأ المنشورات تلقائيًا كل ساعة،
-          ويُستخرج منها السعر والخصم وكود الكوبون وتاريخ الانتهاء، ثم تظهر على الخريطة وفي صفحة عروض السوشال.
+          أضف حساباتك الشخصية مع رابط تغذية عام (RSS/Atom/JSON) لمنشوراتك. تُقرأ المنشورات تلقائيًا
+          كل ساعة، ويُستخرج منها السعر والخصم وكود الكوبون وتاريخ الانتهاء، ثم تظهر على الخريطة وفي
+          صفحة عروض السوشال.
         </p>
 
         <div className="grid grid-cols-2 gap-2">
-          <Input placeholder="المنصة (instagram / tiktok / telegram)" value={platform} onChange={(e) => setPlatform(e.target.value)} />
-          <Input placeholder="اسم الحساب @" value={handle} onChange={(e) => setHandle(e.target.value)} />
-          <Input className="col-span-2" placeholder="رابط التغذية العام (اختياري)" value={feedUrl} onChange={(e) => setFeedUrl(e.target.value)} />
-          <Input placeholder="المدينة (لعرضه على الخريطة)" value={city} onChange={(e) => setCity(e.target.value)} />
-          <Button onClick={() => addMutation.mutate()} disabled={addMutation.isPending || !platform || !handle}>
+          <Input
+            placeholder="المنصة (instagram / tiktok / telegram)"
+            value={platform}
+            onChange={(e) => setPlatform(e.target.value)}
+          />
+          <Input
+            placeholder="اسم الحساب @"
+            value={handle}
+            onChange={(e) => setHandle(e.target.value)}
+          />
+          <Input
+            className="col-span-2"
+            placeholder="رابط التغذية العام (اختياري)"
+            value={feedUrl}
+            onChange={(e) => setFeedUrl(e.target.value)}
+          />
+          <Input
+            placeholder="المدينة (لعرضه على الخريطة)"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          />
+          <Button
+            onClick={() => addMutation.mutate()}
+            disabled={addMutation.isPending || !platform || !handle}
+          >
             <Plus className="w-4 h-4 ml-1" />
             إضافة حساب
           </Button>
         </div>
 
-        {accounts.isLoading && <p className="text-[12px] text-muted-foreground">جارٍ تحميل الحسابات…</p>}
+        {accounts.isLoading && (
+          <p className="text-[12px] text-muted-foreground">جارٍ تحميل الحسابات…</p>
+        )}
         {accounts.isError && <p className="text-[12px] text-destructive">تعذّر تحميل الحسابات</p>}
         {accounts.data?.length === 0 && (
           <p className="text-[12px] text-muted-foreground">لا توجد حسابات مضافة بعد.</p>
@@ -113,7 +142,10 @@ export function SocialSyncPanel() {
 
         <ul className="space-y-2">
           {(accounts.data ?? []).map((a) => (
-            <li key={a.id} className="flex items-center gap-2 border border-border/60 rounded-xl p-2">
+            <li
+              key={a.id}
+              className="flex items-center gap-2 border border-border/60 rounded-xl p-2"
+            >
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-bold truncate">
                   {a.platform} · @{a.handle}
@@ -130,7 +162,9 @@ export function SocialSyncPanel() {
                 size="sm"
                 variant="ghost"
                 onClick={() =>
-                  toggle({ data: { id: a.id, active: !a.active } }).then(invalidate).catch((e: Error) => toast.error(e.message))
+                  toggle({ data: { id: a.id, active: !a.active } })
+                    .then(invalidate)
+                    .catch((e: Error) => toast.error(e.message))
                 }
               >
                 {a.active ? "إيقاف" : "تفعيل"}
@@ -139,7 +173,11 @@ export function SocialSyncPanel() {
                 size="sm"
                 variant="ghost"
                 aria-label="حذف الحساب"
-                onClick={() => remove({ data: { id: a.id } }).then(invalidate).catch((e: Error) => toast.error(e.message))}
+                onClick={() =>
+                  remove({ data: { id: a.id } })
+                    .then(invalidate)
+                    .catch((e: Error) => toast.error(e.message))
+                }
               >
                 <Trash2 className="w-4 h-4 text-destructive" />
               </Button>

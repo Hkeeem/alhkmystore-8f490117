@@ -2,7 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const clean = (v: unknown, max = 160) => String(v ?? "").trim().slice(0, max);
+const clean = (v: unknown, max = 160) =>
+  String(v ?? "")
+    .trim()
+    .slice(0, max);
 
 /** تسجيل زيارة صفحة (عام) — بدون بيانات شخصية، فقط المسار والمدينة التقريبية */
 export const recordVisit = createServerFn({ method: "POST" })
@@ -64,7 +67,10 @@ export const getVisitorStats = createServerFn({ method: "GET" })
     const list = rows ?? [];
     const pathCount = new Map<string, number>();
     const cityCount = new Map<string, number>();
-    const bySession = new Map<string, { city: string | null; steps: { path: string; at: string }[] }>();
+    const bySession = new Map<
+      string,
+      { city: string | null; steps: { path: string; at: string }[] }
+    >();
 
     for (const r of list) {
       const p = r.path ?? "/";
@@ -78,7 +84,7 @@ export const getVisitorStats = createServerFn({ method: "GET" })
       bySession.set(session, entry);
     }
 
-    const sortDesc = <T,>(m: Map<string, number>, key: (k: string, v: number) => T) =>
+    const sortDesc = <T>(m: Map<string, number>, key: (k: string, v: number) => T) =>
       [...m.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => key(k, v));
 
     return {

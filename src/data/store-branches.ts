@@ -84,6 +84,7 @@ export function nearestBranch(storeId: string, from: { lat: number; lng: number 
 /** أقرب مدينة لموقع المستخدم */
 export function nearestCity(from: { lat: number; lng: number }) {
   return [...CITIES].sort(
-    (a, b) => distanceKm(from.lat, from.lng, a.lat, a.lng) - distanceKm(from.lat, from.lng, b.lat, b.lng)
+    (a, b) =>
+      distanceKm(from.lat, from.lng, a.lat, a.lng) - distanceKm(from.lat, from.lng, b.lat, b.lng),
   )[0];
 }

@@ -33,7 +33,11 @@ export const MERCHANT_CATEGORIES = [
 ];
 
 export function slugify(name: string) {
-  const base = name.trim().toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
+  const base = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-|-$/g, "");
   return `${base || "store"}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
@@ -125,7 +129,13 @@ export async function fetchPublishedDeals(limit = 60) {
     .limit(limit);
   if (error) throw error;
   return (data ?? []) as (MerchantDeal & {
-    merchants: { id: string; name: string; logo_url: string | null; city: string | null; slug: string };
+    merchants: {
+      id: string;
+      name: string;
+      logo_url: string | null;
+      city: string | null;
+      slug: string;
+    };
   })[];
 }
 
@@ -174,7 +184,10 @@ export async function staffCreateDeal(input: {
 }
 
 /** تعديل تواريخ العرض من لوحة الإدارة */
-export async function staffUpdateDealDates(id: string, patch: { starts_at?: string | null; expires_at?: string | null }) {
+export async function staffUpdateDealDates(
+  id: string,
+  patch: { starts_at?: string | null; expires_at?: string | null },
+) {
   const update: { starts_at?: string; expires_at?: string | null } = {};
   if (patch.starts_at) update.starts_at = patch.starts_at;
   if (patch.expires_at !== undefined) update.expires_at = patch.expires_at;

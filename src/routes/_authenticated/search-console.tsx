@@ -2,7 +2,15 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { AlertTriangle, CheckCircle2, Clock, Globe, RefreshCw, Search, TrendingDown } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Globe,
+  RefreshCw,
+  Search,
+  TrendingDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +27,6 @@ import { MONITORED_PATHS } from "@/lib/search-console-paths";
 import { DropAlerts } from "@/components/admin/DropAlerts";
 import { IndexingTrendCharts } from "@/components/admin/IndexingTrendCharts";
 import { SearchConsoleExport } from "@/components/admin/SearchConsoleExport";
-
 
 export const Route = createFileRoute("/_authenticated/search-console")({
   component: SearchConsolePage,
@@ -112,8 +119,12 @@ function SnapshotSchedulePanel() {
         ) : (
           <>
             <div className="flex flex-wrap items-center gap-2 text-sm">
-              <Badge variant={active ? "default" : "secondary"}>{active ? "مُفعّلة" : "متوقفة"}</Badge>
-              <span className="text-muted-foreground">آخر تشغيل: {formatDate(info.lastRunAt ?? null)}</span>
+              <Badge variant={active ? "default" : "secondary"}>
+                {active ? "مُفعّلة" : "متوقفة"}
+              </Badge>
+              <span className="text-muted-foreground">
+                آخر تشغيل: {formatDate(info.lastRunAt ?? null)}
+              </span>
               {info.lastStatus && <Badge variant="outline">{info.lastStatus}</Badge>}
             </div>
             <div className="flex flex-wrap gap-2">
@@ -138,8 +149,8 @@ function SnapshotSchedulePanel() {
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              تجلب المهمة أحدث بيانات الفهرسة وخرائط الموقع وتحفظها تلقائياً كلقطة جديدة في السجل، مع تنبيه الفريق عند
-              انخفاض عدد الصفحات المفهرسة.
+              تجلب المهمة أحدث بيانات الفهرسة وخرائط الموقع وتحفظها تلقائياً كلقطة جديدة في السجل،
+              مع تنبيه الفريق عند انخفاض عدد الصفحات المفهرسة.
             </p>
           </>
         )}
@@ -182,7 +193,6 @@ function SearchConsolePage() {
 
   const data = report.data;
 
-
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
@@ -216,11 +226,11 @@ function SearchConsolePage() {
             </Button>
           ))}
           <span className="w-full text-xs text-muted-foreground">
-            «تلقائي» يقارن بمتوسط آخر 7 فحوصات عند توفّر 3 لقطات أو أكثر، وإلا يقارن بآخر لقطة سابقة.
+            «تلقائي» يقارن بمتوسط آخر 7 فحوصات عند توفّر 3 لقطات أو أكثر، وإلا يقارن بآخر لقطة
+            سابقة.
           </span>
         </CardContent>
       </Card>
-
 
       {report.isPending && <Skeleton className="h-40 w-full rounded-2xl" />}
 
@@ -280,8 +290,8 @@ function SearchConsolePage() {
                 {data.previous && (
                   <div className="mt-1 text-xs text-muted-foreground">
                     محور المقارنة: {data.baseline.label} ({data.baseline.samples} لقطة، أحدثها{" "}
-                    {formatDate(data.previous.createdAt)}) — {data.previous.indexedUrls} صفحة مفهرسة من الصفحات
-                    المراقبة.
+                    {formatDate(data.previous.createdAt)}) — {data.previous.indexedUrls} صفحة مفهرسة
+                    من الصفحات المراقبة.
                   </div>
                 )}
               </div>
@@ -292,7 +302,10 @@ function SearchConsolePage() {
             {[
               { label: "روابط مُرسلة بالخريطة", value: data.totals.submitted },
               { label: "روابط مفهرسة (الخريطة)", value: data.totals.indexed },
-              { label: "صفحات مراقبة مفهرسة", value: `${data.totals.indexedUrls}/${data.totals.inspected}` },
+              {
+                label: "صفحات مراقبة مفهرسة",
+                value: `${data.totals.indexedUrls}/${data.totals.inspected}`,
+              },
               { label: "أخطاء الخريطة", value: data.totals.errors },
             ].map((s) => (
               <Card key={s.label}>
@@ -349,7 +362,9 @@ function SearchConsolePage() {
                       {COVERAGE_LABEL[i.verdict] ?? i.verdict}
                     </Badge>
                     <span className="text-muted-foreground">{i.coverageState}</span>
-                    <span className="text-muted-foreground">آخر زحف: {formatDate(i.lastCrawlTime)}</span>
+                    <span className="text-muted-foreground">
+                      آخر زحف: {formatDate(i.lastCrawlTime)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -367,7 +382,6 @@ function SearchConsolePage() {
       <SnapshotSchedulePanel />
 
       <Card className="mt-6">
-
         <CardHeader>
           <CardTitle className="text-base">طلب فحص URL بعد تحديث العروض</CardTitle>
         </CardHeader>
@@ -406,7 +420,8 @@ function SearchConsolePage() {
           {inspection.data?.status === "error" && (
             <div className="flex items-center gap-2 rounded-2xl border border-destructive/40 p-3 text-sm text-destructive">
               <AlertTriangle className="h-4 w-4" />
-              {ERROR_LABEL[inspection.data.error] ?? `تعذّر تنفيذ الفحص (${inspection.data.error}).`}
+              {ERROR_LABEL[inspection.data.error] ??
+                `تعذّر تنفيذ الفحص (${inspection.data.error}).`}
             </div>
           )}
 
@@ -431,8 +446,8 @@ function SearchConsolePage() {
           {inspection.data?.status === "ok" && (
             <div className="space-y-2">
               <div className="text-xs text-muted-foreground">
-                نتيجة الفحص: {inspection.data.totals.indexedUrls}/{inspection.data.totals.inspected} صفحة
-                مفهرسة.
+                نتيجة الفحص: {inspection.data.totals.indexedUrls}/{inspection.data.totals.inspected}{" "}
+                صفحة مفهرسة.
               </div>
               {inspection.data.inspections.map((i) => (
                 <div
@@ -445,7 +460,9 @@ function SearchConsolePage() {
                       {COVERAGE_LABEL[i.verdict] ?? i.verdict}
                     </Badge>
                     <span className="text-muted-foreground">{i.coverageState}</span>
-                    <span className="text-muted-foreground">آخر زحف: {formatDate(i.lastCrawlTime)}</span>
+                    <span className="text-muted-foreground">
+                      آخر زحف: {formatDate(i.lastCrawlTime)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -484,8 +501,8 @@ function SearchConsolePage() {
                     </>
                   ) : (
                     <>
-                      مفهرسة: {s.indexed_urls}/{s.inspected_urls} — خريطة: {s.indexed}/{s.submitted} —
-                      أخطاء: {s.sitemap_errors}
+                      مفهرسة: {s.indexed_urls}/{s.inspected_urls} — خريطة: {s.indexed}/{s.submitted}{" "}
+                      — أخطاء: {s.sitemap_errors}
                     </>
                   )}
                 </span>
@@ -494,7 +511,6 @@ function SearchConsolePage() {
           })}
         </CardContent>
       </Card>
-
     </main>
   );
 }

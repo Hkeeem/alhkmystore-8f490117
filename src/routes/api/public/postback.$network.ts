@@ -59,10 +59,7 @@ async function handle(request: Request, networkParam: string) {
   if (!secret) return json({ error: "postback_not_configured" }, 503);
 
   const url = new URL(request.url);
-  const provided =
-    request.headers.get("x-postback-secret") ??
-    url.searchParams.get("key") ??
-    "";
+  const provided = request.headers.get("x-postback-secret") ?? url.searchParams.get("key") ?? "";
   if (!timingSafeEqual(provided, secret)) return json({ error: "unauthorized" }, 401);
 
   const network = (NETWORKS as readonly string[]).includes(networkParam) ? networkParam : "other";
@@ -70,7 +67,13 @@ async function handle(request: Request, networkParam: string) {
   const raw = await readPayload(request);
   const parsed = payloadSchema.safeParse({
     order_id: raw["order_id"] ?? raw["orderId"] ?? raw["order"] ?? raw["transaction_id"],
-    click_id: raw["click_id"] ?? raw["clickId"] ?? raw["subid"] ?? raw["sub_id"] ?? raw["ascsubtag"] ?? undefined,
+    click_id:
+      raw["click_id"] ??
+      raw["clickId"] ??
+      raw["subid"] ??
+      raw["sub_id"] ??
+      raw["ascsubtag"] ??
+      undefined,
     deal_id: raw["deal_id"] ?? raw["dealId"] ?? undefined,
     amount: raw["amount"] ?? raw["sale_amount"] ?? raw["value"] ?? 0,
     commission: raw["commission"] ?? raw["payout"] ?? 0,

@@ -26,7 +26,9 @@ export function IntroVideo() {
     const el = sectionRef.current;
     if (!el) return;
     // احترام وضع توفير البيانات والشبكات البطيئة: لا تحميل مسبق
-    const conn = (navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
+    const conn = (
+      navigator as unknown as { connection?: { saveData?: boolean; effectiveType?: string } }
+    ).connection;
     if (conn?.saveData || (conn?.effectiveType && /2g/.test(conn.effectiveType))) return;
     if (typeof IntersectionObserver === "undefined") {
       setNearby(true);
@@ -57,7 +59,6 @@ export function IntroVideo() {
       link.remove();
     };
   }, [nearby, prefetched]);
-
 
   // استرجاع تفضيل الصوت المحفوظ بعد التحميل (تفاديًا لتعارض SSR)
   useEffect(() => {
@@ -163,7 +164,13 @@ export function IntroVideo() {
         />
       )}
 
-      <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) setPlaying(false); }}>
+      <Dialog
+        open={open}
+        onOpenChange={(o) => {
+          setOpen(o);
+          if (!o) setPlaying(false);
+        }}
+      >
         <DialogContent className="max-w-3xl p-0 overflow-hidden bg-secondary border-primary/30">
           <DialogTitle className="sr-only">الفيديو التعريفي لحكيم AI</DialogTitle>
           <DialogDescription className="sr-only">فيديو قصير يشرح فكرة حكيم AI</DialogDescription>
@@ -182,8 +189,14 @@ export function IntroVideo() {
               loop
               muted={muted}
               preload="auto"
-              onLoadedData={() => { setLoading(false); setFailed(false); }}
-              onError={() => { setLoading(false); setFailed(true); }}
+              onLoadedData={() => {
+                setLoading(false);
+                setFailed(false);
+              }}
+              onError={() => {
+                setLoading(false);
+                setFailed(true);
+              }}
               onPlay={() => setPlaying(true)}
               onPause={() => setPlaying(false)}
               className="w-full max-h-[70vh] bg-black"
@@ -199,7 +212,14 @@ export function IntroVideo() {
                   الفيديو ما تحمّل للتو… لكن الفكرة كاملة بين إيديك من صفحات التطبيق.
                 </p>
                 <button
-                  onClick={() => { setFailed(false); setLoading(true); if (videoRef.current) { videoRef.current.load(); void videoRef.current.play().catch(() => undefined); } }}
+                  onClick={() => {
+                    setFailed(false);
+                    setLoading(true);
+                    if (videoRef.current) {
+                      videoRef.current.load();
+                      void videoRef.current.play().catch(() => undefined);
+                    }
+                  }}
                   className="inline-flex items-center gap-2 rounded-2xl bg-gradient-gold text-secondary font-bold px-5 py-2.5 text-sm hover-lift press-ripple"
                   aria-label="إعادة محاولة تشغيل الفيديو"
                 >

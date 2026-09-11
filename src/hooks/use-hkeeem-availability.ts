@@ -24,7 +24,9 @@ export function useHkeeemAvailability() {
   const lastSuccess = status?.lastSuccessAt ? new Date(status.lastSuccessAt).getTime() : null;
   const lastFailure = status?.lastFailureAt ? new Date(status.lastFailureAt).getTime() : null;
   const available = Boolean(
-    status?.configured && lastSuccess !== null && (lastFailure === null || lastSuccess >= lastFailure),
+    status?.configured &&
+    lastSuccess !== null &&
+    (lastFailure === null || lastSuccess >= lastFailure),
   );
 
   const prev = useRef<boolean | null>(null);
@@ -41,7 +43,10 @@ export function useHkeeemAvailability() {
         void queryClient.invalidateQueries({ queryKey: REAL_DEALS_KEY, refetchType: "all" });
         void queryClient.invalidateQueries({ queryKey: ["hkeeem-offers"], refetchType: "all" });
         void queryClient.invalidateQueries({ queryKey: ["hkeeem-catalog"], refetchType: "all" });
-        void queryClient.invalidateQueries({ queryKey: ["published-merchant-deals"], refetchType: "all" });
+        void queryClient.invalidateQueries({
+          queryKey: ["published-merchant-deals"],
+          refetchType: "all",
+        });
       }
     }
   }, [available, statusQuery.isPending, queryClient]);

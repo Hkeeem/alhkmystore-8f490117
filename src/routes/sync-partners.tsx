@@ -8,9 +8,16 @@ export const Route = createFileRoute("/sync-partners")({
   head: () => ({
     meta: [
       { title: "سجل المزامنة والمتاجر الشريكة — حكيم AI" },
-      { name: "description", content: "شرح لكل متجر في سجل المزامنة: رابط التسجيل في برنامج الأفلييت، اسم الشريك أو الشبكة، وتكلفة الإحالة (نسبة العمولة)." },
+      {
+        name: "description",
+        content:
+          "شرح لكل متجر في سجل المزامنة: رابط التسجيل في برنامج الأفلييت، اسم الشريك أو الشبكة، وتكلفة الإحالة (نسبة العمولة).",
+      },
       { property: "og:title", content: "سجل المزامنة والمتاجر الشريكة — حكيم AI" },
-      { property: "og:description", content: "دليل المتاجر المرتبطة بالمزامنة: روابط التسجيل، الشركاء، ونسب العمولة." },
+      {
+        property: "og:description",
+        content: "دليل المتاجر المرتبطة بالمزامنة: روابط التسجيل، الشركاء، ونسب العمولة.",
+      },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -103,8 +110,8 @@ function SyncPartnersPage() {
           سجل المزامنة — المتاجر الشريكة
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          شرح لكل متجر مرتبط بالمزامنة: رابط التسجيل في برنامج الأفلييت، اسم الشريك أو الشبكة الوسيطة،
-          وتكلفة الإحالة (نسبة العمولة) وطريقة جلب العروض.
+          شرح لكل متجر مرتبط بالمزامنة: رابط التسجيل في برنامج الأفلييت، اسم الشريك أو الشبكة
+          الوسيطة، وتكلفة الإحالة (نسبة العمولة) وطريقة جلب العروض.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           <Button asChild size="sm" variant="secondary">
@@ -155,7 +162,8 @@ function SyncPartnersPage() {
       </ul>
 
       <p className="text-[12px] text-muted-foreground leading-relaxed">
-        النسب المذكورة تقديرية وتتغير حسب التصنيف والحملة؛ النسبة النهائية تظهر في لوحة الشريك بعد اعتماد الحساب.
+        النسب المذكورة تقديرية وتتغير حسب التصنيف والحملة؛ النسبة النهائية تظهر في لوحة الشريك بعد
+        اعتماد الحساب.
       </p>
     </main>
   );

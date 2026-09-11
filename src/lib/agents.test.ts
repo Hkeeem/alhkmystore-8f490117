@@ -30,8 +30,12 @@ describe("وكلاء حكيم", () => {
   });
 
   it("الحارس يحجب المنتهي والرابط غير الآمن والسعر الخاطئ", () => {
-    expect(guardInspect(deal({ expires_at: "2026-01-01T00:00:00Z" }), NOW).issues).toContain("expired");
-    expect(guardInspect(deal({ product_url: "http://x.com" }), NOW).issues).toContain("insecure-url");
+    expect(guardInspect(deal({ expires_at: "2026-01-01T00:00:00Z" }), NOW).issues).toContain(
+      "expired",
+    );
+    expect(guardInspect(deal({ product_url: "http://x.com" }), NOW).issues).toContain(
+      "insecure-url",
+    );
     expect(guardInspect(deal({ product_url: "" }), NOW).issues).toContain("no-url");
     expect(guardInspect(deal({ price: 300 }), NOW).issues).toContain("bad-price");
     expect(guardInspect(deal({ price: 1, original_price: 100 }), NOW).issues).toContain(
@@ -47,7 +51,13 @@ describe("وكلاء حكيم", () => {
 
   it("الصياد يرفع العرض الأقوى والأقرب انتهاءً", () => {
     const weak = deal({ id: "weak", price: 190, original_price: 200, expires_at: null, clicks: 0 });
-    const strong = deal({ id: "strong", price: 60, original_price: 200, expires_at: "2026-01-10T10:00:00Z", clicks: 50 });
+    const strong = deal({
+      id: "strong",
+      price: 60,
+      original_price: 200,
+      expires_at: "2026-01-10T10:00:00Z",
+      clicks: 50,
+    });
     const out = hunt([weak, strong], 2, NOW);
     expect(out[0].deal.id).toBe("strong");
     expect(out[0].reason).toBe("ينتهي خلال ٢٤ ساعة");

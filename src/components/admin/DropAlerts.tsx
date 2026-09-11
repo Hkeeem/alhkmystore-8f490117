@@ -26,7 +26,8 @@ export function DropAlerts() {
             تنبيهات الهبوط (آخر 24–48 ساعة)
           </CardTitle>
           <CardDescription>
-            مقارنة تلقائية بين متوسط آخر 24 ساعة ومتوسط الـ24 ساعة التي سبقتها للصفحات المفهرسة وزحف Google.
+            مقارنة تلقائية بين متوسط آخر 24 ساعة ومتوسط الـ24 ساعة التي سبقتها للصفحات المفهرسة وزحف
+            Google.
           </CardDescription>
         </div>
         <Button
@@ -79,7 +80,8 @@ export function DropAlerts() {
         )}
         {data?.samples && (
           <p className="text-xs text-muted-foreground">
-            عدد اللقطات المستخدمة: آخر 24 ساعة {data.samples.last24} — الـ24 ساعة السابقة {data.samples.prev24}
+            عدد اللقطات المستخدمة: آخر 24 ساعة {data.samples.last24} — الـ24 ساعة السابقة{" "}
+            {data.samples.prev24}
           </p>
         )}
       </CardContent>

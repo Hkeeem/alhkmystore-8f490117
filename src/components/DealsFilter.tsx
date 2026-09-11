@@ -1,6 +1,12 @@
 import { Cpu, ShoppingBag } from "lucide-react";
 
-export const DEAL_FILTERS = ["الكل", "إلكترونيات", "سوبرماركت", "أرخص اليوم", "أكبر توفير"] as const;
+export const DEAL_FILTERS = [
+  "الكل",
+  "إلكترونيات",
+  "سوبرماركت",
+  "أرخص اليوم",
+  "أكبر توفير",
+] as const;
 export type DealFilter = (typeof DEAL_FILTERS)[number];
 
 export function DealsFilter({
@@ -11,7 +17,12 @@ export function DealsFilter({
   onChange: (f: DealFilter) => void;
 }) {
   return (
-    <div dir="rtl" className="flex gap-2 overflow-x-auto scrollbar-hide py-2 px-1" role="group" aria-label="تصفية العروض">
+    <div
+      dir="rtl"
+      className="flex gap-2 overflow-x-auto scrollbar-hide py-2 px-1"
+      role="group"
+      aria-label="تصفية العروض"
+    >
       {DEAL_FILTERS.map((f) => {
         const active = activeFilter === f;
         return (
@@ -49,7 +60,12 @@ export function InterestToggle({
   ];
 
   return (
-    <div dir="rtl" className="bg-zinc-100 rounded-full p-1 flex w-fit" role="group" aria-label="اهتماماتي">
+    <div
+      dir="rtl"
+      className="bg-zinc-100 rounded-full p-1 flex w-fit"
+      role="group"
+      aria-label="اهتماماتي"
+    >
       {options.map(({ key, label, Icon }) => {
         const active = interest === key;
         return (

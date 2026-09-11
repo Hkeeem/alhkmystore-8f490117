@@ -42,10 +42,7 @@ export function DemoDataBanner({
         background: "color-mix(in oklab, #D4AF37 10%, transparent)",
       }}
     >
-      <Info
-        className="mt-0.5 h-4 w-4 shrink-0"
-        style={{ color: "#D4AF37" }}
-      />
+      <Info className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#D4AF37" }} />
 
       <div className="min-w-0 flex-1 leading-relaxed">
         <p className="font-bold" style={{ color: "#D4AF37" }}>
@@ -88,9 +85,7 @@ export function DemoDataBanner({
             disabled={isRefreshing}
             className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4AF37]/50 px-3 py-1.5 text-xs font-semibold text-[#B8911D] transition hover:bg-[#D4AF37]/10 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <RefreshCw
-              className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`}
-            />
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
             {isRefreshing ? "جارٍ التحديث..." : "تحديث العروض"}
           </button>
         </div>

@@ -31,7 +31,12 @@ export function MapButton() {
           >
             <div className="flex items-center justify-between">
               <h3 className="font-black text-base text-zinc-900">العروض على الخريطة</h3>
-              <button type="button" onClick={() => setOpen(false)} aria-label="إغلاق" className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="إغلاق"
+                className="w-8 h-8 rounded-full bg-zinc-100 flex items-center justify-center"
+              >
                 <X className="w-4 h-4 text-zinc-700" />
               </button>
             </div>

@@ -1,4 +1,8 @@
-import { buildPushPayload, type PushSubscription, type VapidKeys } from "@block65/webcrypto-web-push";
+import {
+  buildPushPayload,
+  type PushSubscription,
+  type VapidKeys,
+} from "@block65/webcrypto-web-push";
 
 export interface StoredSubscription {
   id: string;

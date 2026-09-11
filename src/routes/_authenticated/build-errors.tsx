@@ -13,7 +13,11 @@ export const Route = createFileRoute("/_authenticated/build-errors")({
   head: () => ({
     meta: [
       { title: "سجل أخطاء المعاينة — HkeeemAI" },
-      { name: "description", content: "آخر أخطاء البناء والتشغيل التي ظهرت أثناء المعاينة مع وقتها والرسالة المعروضة للمستخدم." },
+      {
+        name: "description",
+        content:
+          "آخر أخطاء البناء والتشغيل التي ظهرت أثناء المعاينة مع وقتها والرسالة المعروضة للمستخدم.",
+      },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -42,7 +46,9 @@ function BuildErrorsPage() {
           <Bug className="w-6 h-6 text-secondary" />
         </div>
         <div className="min-w-0">
-          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">{t("errors.title")}</h1>
+          <h1 className="font-display font-black text-2xl md:text-3xl text-gold-shine">
+            {t("errors.title")}
+          </h1>
           <p className="text-sm text-muted-foreground">{t("errors.subtitle")}</p>
         </div>
       </header>
@@ -84,15 +90,21 @@ function BuildErrorsPage() {
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
                     <time dateTime={new Date(e.at).toISOString()}>{fmt(e.at)}</time>
-                    <span className="rounded-full bg-secondary/70 px-2 py-0.5 font-bold">{e.source}</span>
+                    <span className="rounded-full bg-secondary/70 px-2 py-0.5 font-bold">
+                      {e.source}
+                    </span>
                     <span className="truncate font-mono">{e.route}</span>
                   </div>
                   <p className="text-sm font-bold">{e.userMessage}</p>
                   <p className="break-words font-mono text-xs text-muted-foreground">{e.message}</p>
                   {e.stack && (
                     <details>
-                      <summary className="cursor-pointer text-[11px] text-primary">{t("errors.details")}</summary>
-                      <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words text-[11px] text-muted-foreground">{e.stack}</pre>
+                      <summary className="cursor-pointer text-[11px] text-primary">
+                        {t("errors.details")}
+                      </summary>
+                      <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words text-[11px] text-muted-foreground">
+                        {e.stack}
+                      </pre>
                     </details>
                   )}
                 </div>

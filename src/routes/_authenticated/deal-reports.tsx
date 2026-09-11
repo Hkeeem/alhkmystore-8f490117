@@ -17,7 +17,10 @@ export const Route = createFileRoute("/_authenticated/deal-reports")({
         content: "تقارير زيارات العروض ونسبة التحويل إلى طلبات، مع تصفية حسب المدينة.",
       },
       { property: "og:title", content: "تقارير العروض | حكيم AI" },
-      { property: "og:description", content: "من يضغط على العروض، من أي مدينة، وكم منها يتحول لطلب." },
+      {
+        property: "og:description",
+        content: "من يضغط على العروض، من أي مدينة، وكم منها يتحول لطلب.",
+      },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -98,7 +101,9 @@ function DealReportsPage() {
                     type="button"
                     onClick={() => setCity(c)}
                     className={`px-3 py-1.5 rounded-full text-[13px] font-bold border ${
-                      city === c ? "bg-primary text-primary-foreground border-primary" : "border-border"
+                      city === c
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "border-border"
                     }`}
                   >
                     {c}
@@ -106,7 +111,9 @@ function DealReportsPage() {
                 ))}
               </div>
               {data.cities.length === 0 ? (
-                <p className="text-sm text-muted-foreground">لا توجد زيارات مسجّلة بعد في هذه الفترة.</p>
+                <p className="text-sm text-muted-foreground">
+                  لا توجد زيارات مسجّلة بعد في هذه الفترة.
+                </p>
               ) : (
                 <ul className="text-sm divide-y divide-border/60">
                   {data.cities.map((c) => (

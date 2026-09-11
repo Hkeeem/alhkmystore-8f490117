@@ -83,8 +83,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 2,
     district: "النزهة",
     city: "جدة",
-    lat: 21.5700,
-    lng: 39.1500,
+    lat: 21.57,
+    lng: 39.15,
     finish: "سوبر لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "حدائق"],
     features: ["مجلس مستقل", "مطبخ راكب", "موقف سيارتين", "تراس"],
@@ -104,8 +104,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 7,
     district: "الخمرة",
     city: "جدة",
-    lat: 21.5200,
-    lng: 39.2100,
+    lat: 21.52,
+    lng: 39.21,
     finish: "عادي",
     services: ["مسجد", "سوبرماركت", "صيدلية", "مدارس"],
     features: ["موقف سيارة", "مصعد"],
@@ -126,11 +126,20 @@ export const realEstateListings: RealEstateListing[] = [
     age: 1,
     district: "الزهراء",
     city: "جدة",
-    lat: 21.5900,
-    lng: 39.1300,
+    lat: 21.59,
+    lng: 39.13,
     finish: "سوبر لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "مول", "نادي رياضي"],
-    features: ["مسبح", "مجلس مستقل", "غرفة سائق", "غرفة خادمة", "مطبخ راكب", "حديقة", "موقف 4 سيارات", "مصعد"],
+    features: [
+      "مسبح",
+      "مجلس مستقل",
+      "غرفة سائق",
+      "غرفة خادمة",
+      "مطبخ راكب",
+      "حديقة",
+      "موقف 4 سيارات",
+      "مصعد",
+    ],
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
     phone: "0555000005",
     available: true,
@@ -147,8 +156,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 10,
     district: "السلامة",
     city: "جدة",
-    lat: 21.5600,
-    lng: 39.1900,
+    lat: 21.56,
+    lng: 39.19,
     finish: "عادي",
     services: ["مسجد", "سوبرماركت"],
     features: ["موقف سيارة"],
@@ -168,8 +177,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 0,
     district: "العزيزية",
     city: "جدة",
-    lat: 21.5100,
-    lng: 39.2300,
+    lat: 21.51,
+    lng: 39.23,
     finish: "نظام",
     services: ["طريق رئيسي", "كهرباء", "ماء"],
     features: ["واجهة تجارية", "مخطط معتمد", "صك"],
@@ -190,8 +199,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 4,
     district: "الصفا",
     city: "جدة",
-    lat: 21.5800,
-    lng: 39.1600,
+    lat: 21.58,
+    lng: 39.16,
     finish: "لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "مول"],
     features: ["مجلس مستقل", "مطبخ راكب", "موقف سيارتين", "تراس", "مصعد"],
@@ -212,8 +221,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 6,
     district: "الحمراء",
     city: "جدة",
-    lat: 21.5500,
-    lng: 39.1800,
+    lat: 21.55,
+    lng: 39.18,
     finish: "لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "سوبرماركت", "نادي"],
     features: ["مسبح", "مجلس مستقل", "غرفة سائق", "حديقة", "موقف 3 سيارات"],
@@ -233,8 +242,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 3,
     district: "الربوة",
     city: "جدة",
-    lat: 21.5650,
-    lng: 39.1450,
+    lat: 21.565,
+    lng: 39.145,
     finish: "سوبر لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "مول", "حدائق"],
     features: ["مطبخ راكب", "غرفة خادمة", "موقف سيارتين", "مصعد", "تراس"],
@@ -276,8 +285,8 @@ export const realEstateListings: RealEstateListing[] = [
     age: 8,
     district: "الفيصلية",
     city: "جدة",
-    lat: 21.5350,
-    lng: 39.1650,
+    lat: 21.535,
+    lng: 39.165,
     finish: "لوكس",
     services: ["مسجد", "مدارس", "مستشفى", "سوبرماركت"],
     features: ["مجلس مستقل", "غرفة سائق", "مطبخ راكب", "حديقة", "موقف 3 سيارات"],
@@ -317,14 +326,14 @@ export interface MatchResult {
 }
 
 const WEIGHTS = {
-  purpose: 25,    // الغرض (بيع/إيجار) - إلزامي
-  price: 20,      // السعر
-  area: 15,       // المساحة
-  rooms: 15,      // عدد الغرف
-  location: 10,   // الموقع/الحي
-  services: 8,    // الخدمات
-  features: 5,    // المميزات
-  finish: 2,      // التشطيب
+  purpose: 25, // الغرض (بيع/إيجار) - إلزامي
+  price: 20, // السعر
+  area: 15, // المساحة
+  rooms: 15, // عدد الغرف
+  location: 10, // الموقع/الحي
+  services: 8, // الخدمات
+  features: 5, // المميزات
+  finish: 2, // التشطيب
 };
 
 export function calculateMatch(request: PropertyRequest, listing: RealEstateListing): MatchResult {
@@ -336,7 +345,10 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "الغرض",
     score: purposeMatch,
     weight: WEIGHTS.purpose,
-    detail: purposeMatch === 100 ? `✓ ${listing.purpose}` : `✗ العقار للـ${listing.purpose} وليس ${request.purpose}`,
+    detail:
+      purposeMatch === 100
+        ? `✓ ${listing.purpose}`
+        : `✗ العقار للـ${listing.purpose} وليس ${request.purpose}`,
   });
 
   // 2. نوع العقار (ضمن السعر)
@@ -358,7 +370,10 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "السعر",
     score: priceScore,
     weight: WEIGHTS.price,
-    detail: priceScore >= 90 ? `✓ ${formattedPrice} ر.س — ضمن الميزانية` : `${formattedPrice} ر.س — ${listing.price > request.maxPrice ? "أعلى من الميزانية" : "أقل من المتوقع"}`,
+    detail:
+      priceScore >= 90
+        ? `✓ ${formattedPrice} ر.س — ضمن الميزانية`
+        : `${formattedPrice} ر.س — ${listing.price > request.maxPrice ? "أعلى من الميزانية" : "أقل من المتوقع"}`,
   });
 
   // 4. المساحة (15%)
@@ -376,7 +391,10 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "المساحة",
     score: areaScore,
     weight: WEIGHTS.area,
-    detail: areaScore >= 90 ? `✓ ${listing.area} م² — مناسبة` : `${listing.area} م² — ${listing.area < request.minArea ? "أصغر من المطلوب" : "أكبر من المطلوب"}`,
+    detail:
+      areaScore >= 90
+        ? `✓ ${listing.area} م² — مناسبة`
+        : `${listing.area} م² — ${listing.area < request.minArea ? "أصغر من المطلوب" : "أكبر من المطلوب"}`,
   });
 
   // 5. عدد الغرف (15%)
@@ -391,7 +409,10 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "عدد الغرف",
     score: roomsScore,
     weight: WEIGHTS.rooms,
-    detail: roomsScore >= 90 ? `✓ ${listing.rooms} غرف — مطابق` : `${listing.rooms} غرف (المطلوب ${request.rooms}+)`,
+    detail:
+      roomsScore >= 90
+        ? `✓ ${listing.rooms} غرف — مطابق`
+        : `${listing.rooms} غرف (المطلوب ${request.rooms}+)`,
   });
 
   // 6. الموقع/الحي (10%)
@@ -415,8 +436,8 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
   // 7. الخدمات (8%)
   let servicesScore = 100;
   if (request.requiredServices.length > 0) {
-    const matched = request.requiredServices.filter(s =>
-      listing.services.some(ls => ls.includes(s) || s.includes(ls))
+    const matched = request.requiredServices.filter((s) =>
+      listing.services.some((ls) => ls.includes(s) || s.includes(ls)),
     ).length;
     servicesScore = Math.round((matched / request.requiredServices.length) * 100);
   }
@@ -424,14 +445,17 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "الخدمات",
     score: servicesScore,
     weight: WEIGHTS.services,
-    detail: servicesScore === 100 ? `✓ جميع الخدمات متوفرة` : `${Math.round(servicesScore / 100 * request.requiredServices.length)}/${request.requiredServices.length} خدمات متوفرة`,
+    detail:
+      servicesScore === 100
+        ? `✓ جميع الخدمات متوفرة`
+        : `${Math.round((servicesScore / 100) * request.requiredServices.length)}/${request.requiredServices.length} خدمات متوفرة`,
   });
 
   // 8. المميزات (5%)
   let featuresScore = 100;
   if (request.requiredFeatures.length > 0) {
-    const matched = request.requiredFeatures.filter(f =>
-      listing.features.some(lf => lf.includes(f) || f.includes(lf))
+    const matched = request.requiredFeatures.filter((f) =>
+      listing.features.some((lf) => lf.includes(f) || f.includes(lf)),
     ).length;
     featuresScore = Math.round((matched / request.requiredFeatures.length) * 100);
   }
@@ -439,22 +463,33 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
     label: "المميزات",
     score: featuresScore,
     weight: WEIGHTS.features,
-    detail: featuresScore === 100 ? `✓ جميع المميزات متوفرة` : `${Math.round(featuresScore / 100 * request.requiredFeatures.length)}/${request.requiredFeatures.length} مميزات متوفرة`,
+    detail:
+      featuresScore === 100
+        ? `✓ جميع المميزات متوفرة`
+        : `${Math.round((featuresScore / 100) * request.requiredFeatures.length)}/${request.requiredFeatures.length} مميزات متوفرة`,
   });
 
   // 9. التشطيب (2%)
-  const finishScore = !request.finish || listing.finish === request.finish ? 100 :
-    (request.finish === "سوبر لوكس" && listing.finish === "لوكس") ? 70 : 40;
+  const finishScore =
+    !request.finish || listing.finish === request.finish
+      ? 100
+      : request.finish === "سوبر لوكس" && listing.finish === "لوكس"
+        ? 70
+        : 40;
   breakdown.push({
     label: "التشطيب",
     score: finishScore,
     weight: WEIGHTS.finish,
-    detail: finishScore === 100 ? `✓ ${listing.finish}` : `${listing.finish} (المطلوب ${request.finish ?? "أي"})`,
+    detail:
+      finishScore === 100
+        ? `✓ ${listing.finish}`
+        : `${listing.finish} (المطلوب ${request.finish ?? "أي"})`,
   });
 
   // حساب النسبة الإجمالية مع مراعاة نوع العقار
   const totalWeight = Object.values(WEIGHTS).reduce((a, b) => a + b, 0);
-  const weightedScore = breakdown.reduce((sum, item) => sum + (item.score * item.weight), 0) / totalWeight;
+  const weightedScore =
+    breakdown.reduce((sum, item) => sum + item.score * item.weight, 0) / totalWeight;
   const finalScore = Math.round(weightedScore * (typeBonus / 100));
 
   // إذا كان الغرض غير مطابق، النسبة لا تتجاوز 30%
@@ -469,26 +504,65 @@ export function calculateMatch(request: PropertyRequest, listing: RealEstateList
 
 export function findMatches(request: PropertyRequest): MatchResult[] {
   return realEstateListings
-    .filter(l => l.available)
-    .map(l => calculateMatch(request, l))
-    .filter(r => r.score >= 50) // فقط النتائج ذات الصلة
+    .filter((l) => l.available)
+    .map((l) => calculateMatch(request, l))
+    .filter((r) => r.score >= 50) // فقط النتائج ذات الصلة
     .sort((a, b) => b.score - a.score);
 }
 
 export const DISTRICTS_JEDDAH = [
-  "الشاطئ", "الروضة", "النزهة", "الخمرة", "الزهراء", "السلامة",
-  "العزيزية", "الصفا", "الحمراء", "الربوة", "البلد", "الفيصلية",
-  "الأندلس", "المروة", "الرحاب", "الواحة", "الريان", "الفيحاء",
-  "الجوهرة", "الكندرة", "الثغر", "الورود", "المحمدية", "الزمرد",
+  "الشاطئ",
+  "الروضة",
+  "النزهة",
+  "الخمرة",
+  "الزهراء",
+  "السلامة",
+  "العزيزية",
+  "الصفا",
+  "الحمراء",
+  "الربوة",
+  "البلد",
+  "الفيصلية",
+  "الأندلس",
+  "المروة",
+  "الرحاب",
+  "الواحة",
+  "الريان",
+  "الفيحاء",
+  "الجوهرة",
+  "الكندرة",
+  "الثغر",
+  "الورود",
+  "المحمدية",
+  "الزمرد",
 ];
 
 export const SERVICES_LIST = [
-  "مسجد", "مدارس", "مستشفى", "سوبرماركت", "مول", "صيدلية",
-  "حدائق", "نادي رياضي", "كورنيش", "أمن", "طريق رئيسي",
+  "مسجد",
+  "مدارس",
+  "مستشفى",
+  "سوبرماركت",
+  "مول",
+  "صيدلية",
+  "حدائق",
+  "نادي رياضي",
+  "كورنيش",
+  "أمن",
+  "طريق رئيسي",
 ];
 
 export const FEATURES_LIST = [
-  "مسبح", "مجلس مستقل", "غرفة سائق", "غرفة خادمة", "مطبخ راكب",
-  "حديقة", "موقف سيارة", "موقف سيارتين", "موقف 3 سيارات",
-  "مصعد", "تراس", "مفروش", "مفروش جزئياً",
+  "مسبح",
+  "مجلس مستقل",
+  "غرفة سائق",
+  "غرفة خادمة",
+  "مطبخ راكب",
+  "حديقة",
+  "موقف سيارة",
+  "موقف سيارتين",
+  "موقف 3 سيارات",
+  "مصعد",
+  "تراس",
+  "مفروش",
+  "مفروش جزئياً",
 ];

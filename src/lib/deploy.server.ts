@@ -63,9 +63,14 @@ export async function fetchLastDeployment(): Promise<DeployStatus> {
     durationMs: created && ready ? ready - created : null,
     target: d.target ?? null,
     url: d.url ? `https://${d.url}` : null,
-    commitSha: (meta.githubCommitSha ?? meta.gitlabCommitSha ?? meta.bitbucketCommitSha ?? null) as string | null,
-    commitMessage: (meta.githubCommitMessage ?? meta.gitlabCommitMessage ?? meta.bitbucketCommitMessage ?? null) as string | null,
-    branch: (meta.githubCommitRef ?? meta.gitlabCommitRef ?? meta.bitbucketCommitRef ?? null) as string | null,
+    commitSha: (meta.githubCommitSha ?? meta.gitlabCommitSha ?? meta.bitbucketCommitSha ?? null) as
+      string | null,
+    commitMessage: (meta.githubCommitMessage ??
+      meta.gitlabCommitMessage ??
+      meta.bitbucketCommitMessage ??
+      null) as string | null,
+    branch: (meta.githubCommitRef ?? meta.gitlabCommitRef ?? meta.bitbucketCommitRef ?? null) as
+      string | null,
     errorMessage: d.errorMessage ?? null,
     inspectorUrl: d.inspectorUrl ?? (d.url ? `https://${d.url}/_logs` : null),
     dashboardUrl,

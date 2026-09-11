@@ -1,9 +1,33 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  ShoppingBasket, Wheat, Milk, Egg, Coffee, Beef, Fish, Apple, Cookie,
-  Utensils, Pizza, Sandwich, IceCream,
-  Smartphone, Laptop, Headphones, Tv, Monitor, Camera, Watch, Gamepad2,
-  Shirt, Pill, Stethoscope, Store, ShoppingBag, ShoppingCart, Package,
+  ShoppingBasket,
+  Wheat,
+  Milk,
+  Egg,
+  Coffee,
+  Beef,
+  Fish,
+  Apple,
+  Cookie,
+  Utensils,
+  Pizza,
+  Sandwich,
+  IceCream,
+  Smartphone,
+  Laptop,
+  Headphones,
+  Tv,
+  Monitor,
+  Camera,
+  Watch,
+  Gamepad2,
+  Shirt,
+  Pill,
+  Stethoscope,
+  Store,
+  ShoppingBag,
+  ShoppingCart,
+  Package,
 } from "lucide-react";
 import type { Deal, Store as StoreT } from "@/data/deals";
 
@@ -39,22 +63,34 @@ export function getDealIcon(deal: Pick<Deal, "title" | "category">): LucideIcon 
     if (rx.test(deal.title)) return icon;
   }
   switch (deal.category) {
-    case "سوبرماركت": return ShoppingBasket;
-    case "مطاعم": return Utensils;
-    case "إلكترونيات": return Smartphone;
-    case "أزياء": return Shirt;
-    case "صيدلية": return Pill;
-    default: return Package;
+    case "سوبرماركت":
+      return ShoppingBasket;
+    case "مطاعم":
+      return Utensils;
+    case "إلكترونيات":
+      return Smartphone;
+    case "أزياء":
+      return Shirt;
+    case "صيدلية":
+      return Pill;
+    default:
+      return Package;
   }
 }
 
 export function getStoreIcon(store: Pick<StoreT, "category">): LucideIcon {
   switch (store.category) {
-    case "سوبرماركت": return ShoppingCart;
-    case "مطاعم": return Utensils;
-    case "إلكترونيات": return Smartphone;
-    case "أزياء": return ShoppingBag;
-    case "صيدلية": return Pill;
-    default: return Store;
+    case "سوبرماركت":
+      return ShoppingCart;
+    case "مطاعم":
+      return Utensils;
+    case "إلكترونيات":
+      return Smartphone;
+    case "أزياء":
+      return ShoppingBag;
+    case "صيدلية":
+      return Pill;
+    default:
+      return Store;
   }
 }

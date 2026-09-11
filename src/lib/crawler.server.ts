@@ -46,7 +46,7 @@ const crawlers = {
         if (titleEl && priceEl) {
           const price = parseFloat(priceEl.textContent?.replace(/[^\d.]/g, "") || "0");
           const originalPrice = parseFloat(
-            originalPriceEl?.textContent?.replace(/[^\d.]/g, "") || String(price * 1.5)
+            originalPriceEl?.textContent?.replace(/[^\d.]/g, "") || String(price * 1.5),
           );
 
           offers.push({

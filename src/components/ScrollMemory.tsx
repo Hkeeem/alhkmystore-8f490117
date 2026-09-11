@@ -20,7 +20,9 @@ export function ScrollMemory() {
     let target = 0;
     try {
       target = Number(sessionStorage.getItem(PREFIX + key) ?? 0) || 0;
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
 
     let ready = false;
     let raf = 0;
@@ -30,7 +32,9 @@ export function ScrollMemory() {
         raf = 0;
         try {
           sessionStorage.setItem(PREFIX + keyRef.current, String(Math.round(window.scrollY)));
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       });
     };
 

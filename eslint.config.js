@@ -34,6 +34,9 @@ export default tseslint.config(
       ],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // Third-party and Supabase payloads are intentionally dynamic at these
+      // integration boundaries; do not make this a repository-wide error.
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   eslintPluginPrettier,

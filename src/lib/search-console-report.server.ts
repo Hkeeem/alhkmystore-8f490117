@@ -28,7 +28,6 @@ export async function buildCrawlReport(
   selectedSiteUrl: string | null,
   baselineMode: BaselineMode = "auto",
 ): Promise<CrawlReport> {
-
   let siteUrl = selectedSiteUrl;
   try {
     const properties = await listVerifiedProperties(SITE_TARGET);
@@ -74,7 +73,9 @@ export async function buildCrawlReport(
       ? {
           indexed: Math.round(avgRows.reduce((s, r) => s + (r.indexed ?? 0), 0) / avgRows.length),
           indexedUrls:
-            Math.round((avgRows.reduce((s, r) => s + (r.indexed_urls ?? 0), 0) / avgRows.length) * 10) / 10,
+            Math.round(
+              (avgRows.reduce((s, r) => s + (r.indexed_urls ?? 0), 0) / avgRows.length) * 10,
+            ) / 10,
           createdAt: avgRows[0]!.created_at,
         }
       : null;
@@ -105,7 +106,6 @@ export async function buildCrawlReport(
         delta,
       };
     }
-
 
     await supabaseAdmin.from("search_console_snapshots").insert({
       site_url: siteUrl,
@@ -177,7 +177,9 @@ export async function inspectSelectedPaths(
     }
 
     const origin = new URL(SITE_TARGET).origin;
-    const urls = paths.map((p) => (p.startsWith("http") ? p : `${origin}${p.startsWith("/") ? p : `/${p}`}`));
+    const urls = paths.map((p) =>
+      p.startsWith("http") ? p : `${origin}${p.startsWith("/") ? p : `/${p}`}`,
+    );
     const inspections = await inspectUrls(siteUrl, urls);
     const totals = {
       inspected: inspections.length,

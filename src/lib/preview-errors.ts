@@ -61,7 +61,11 @@ function messageOf(error: unknown): { message: string; stack?: string } {
 /** الرسالة المباشرة التي يراها المستخدم على الشاشة عند هذا النوع من الخطأ */
 function userLineFor(message: string, source: PreviewErrorEntry["source"]): string {
   const m = message.toLowerCase();
-  if (source === "build" || m.includes("failed to fetch dynamically imported module") || m.includes("importing a module script")) {
+  if (
+    source === "build" ||
+    m.includes("failed to fetch dynamically imported module") ||
+    m.includes("importing a module script")
+  ) {
     return "صار خطأ غير متوقع — جرّب تحدّث الصفحة.";
   }
   if (m.includes("networkerror") || m.includes("failed to fetch")) {
@@ -73,7 +77,10 @@ function userLineFor(message: string, source: PreviewErrorEntry["source"]): stri
   return "صار خطأ غير متوقع — جرّب تحدّث الصفحة.";
 }
 
-export function recordPreviewError(error: unknown, source: PreviewErrorEntry["source"] = "runtime") {
+export function recordPreviewError(
+  error: unknown,
+  source: PreviewErrorEntry["source"] = "runtime",
+) {
   if (typeof window === "undefined") return;
   const { message, stack } = messageOf(error);
   if (!message) return;

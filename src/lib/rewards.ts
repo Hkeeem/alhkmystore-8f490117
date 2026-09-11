@@ -3,11 +3,7 @@
 
 const KEY = "waffer_rewards_v1";
 
-export type RewardAction =
-  | "copy_coupon"
-  | "share"
-  | "visit_deal"
-  | "smart_list";
+export type RewardAction = "copy_coupon" | "share" | "visit_deal" | "smart_list";
 
 export const ACTION_POINTS: Record<RewardAction, number> = {
   copy_coupon: 10,
@@ -68,9 +64,7 @@ export function addPoints(action: RewardAction): RewardState {
   return next;
 }
 
-export type RedeemResult =
-  | { ok: true; state: RewardState }
-  | { ok: false; missing: number };
+export type RedeemResult = { ok: true; state: RewardState } | { ok: false; missing: number };
 
 export function redeemReward(rewardId: string, cost: number, label: string): RedeemResult {
   const s = loadRewards();
@@ -128,11 +122,7 @@ export const REWARDS_CATALOG: RewardItem[] = [
     desc: "قسيمة إلكترونيات من نون",
     icon: "🛒",
     details: "قسيمة خصم 25 ريال على مشترياتك من قسم الإلكترونيات في نون.",
-    terms: [
-      "الحد الأدنى للطلب 150 ر.س",
-      "غير قابل للاستخدام مع عروض أخرى",
-      "صالح لمدة 30 يوم",
-    ],
+    terms: ["الحد الأدنى للطلب 150 ر.س", "غير قابل للاستخدام مع عروض أخرى", "صالح لمدة 30 يوم"],
   },
   {
     id: "r3",
@@ -141,11 +131,7 @@ export const REWARDS_CATALOG: RewardItem[] = [
     desc: "قسيمة شراء إلكترونية",
     icon: "🎁",
     details: "بطاقة هدايا إلكترونية بقيمة 50 ريال قابلة للاستخدام في فروع جرير وموقعهم.",
-    terms: [
-      "يتم إرسال الكود عبر البريد",
-      "صالحة لمدة 6 أشهر",
-      "غير قابلة للاسترداد نقداً",
-    ],
+    terms: ["يتم إرسال الكود عبر البريد", "صالحة لمدة 6 أشهر", "غير قابلة للاسترداد نقداً"],
   },
   {
     id: "r4",
@@ -154,14 +140,9 @@ export const REWARDS_CATALOG: RewardItem[] = [
     desc: "لأي متجر من متاجر وفّر",
     icon: "💎",
     details: "بطاقة هدايا مرنة بقيمة 100 ريال تختار المتجر اللي تبيها فيه.",
-    terms: [
-      "تختار المتجر بعد الاستبدال",
-      "صالحة لمدة سنة كاملة",
-      "قابلة للإهداء",
-    ],
+    terms: ["تختار المتجر بعد الاستبدال", "صالحة لمدة سنة كاملة", "قابلة للإهداء"],
   },
 ];
-
 
 // Fake leaderboard "seed" so a fresh user sees a populated board.
 export const SEED_LEADERBOARD: { name: string; points: number }[] = [

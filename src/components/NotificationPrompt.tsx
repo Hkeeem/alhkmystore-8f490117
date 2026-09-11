@@ -72,7 +72,10 @@ export function NotificationPrompt() {
                 تفعيل الإشعارات
               </button>
               <button
-                onClick={() => { dismiss(); setVisible(false); }}
+                onClick={() => {
+                  dismiss();
+                  setVisible(false);
+                }}
                 className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-muted transition-colors"
               >
                 لاحقًا
@@ -80,7 +83,10 @@ export function NotificationPrompt() {
             </div>
           </div>
           <button
-            onClick={() => { dismiss(); setVisible(false); }}
+            onClick={() => {
+              dismiss();
+              setVisible(false);
+            }}
             aria-label="إغلاق"
             className="shrink-0 -mt-1 -mr-1 p-1.5 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           >

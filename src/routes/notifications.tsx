@@ -1,5 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, BellOff, BellRing, RotateCcw, TestTube2, ShieldAlert, ArrowRight } from "lucide-react";
+import {
+  Bell,
+  BellOff,
+  BellRing,
+  RotateCcw,
+  TestTube2,
+  ShieldAlert,
+  ArrowRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useNotifications } from "@/hooks/use-notifications";
 
@@ -47,7 +55,7 @@ const STATUS_META: Record<string, { label: Bi; tone: string; desc: Bi }> = {
     tone: "border-amber-500/40 bg-amber-500/10 text-amber-400",
     desc: {
       ar: "اضغط «تفعيل الإشعارات» وسيظهر لك طلب الإذن من المتصفح.",
-      en: "Tap \"Enable notifications\" and the browser will ask for permission.",
+      en: 'Tap "Enable notifications" and the browser will ask for permission.',
     },
   },
   unsupported: {
@@ -141,7 +149,9 @@ function NotificationSettingsPage() {
         aria-labelledby="controls-h"
         className="rounded-2xl border border-border bg-card p-5 space-y-4"
       >
-        <h2 id="controls-h" className="font-bold">التحكم</h2>
+        <h2 id="controls-h" className="font-bold">
+          التحكم
+        </h2>
         <div className="flex flex-wrap gap-3">
           {permission !== "granted" && permission !== "unsupported" && (
             <button
@@ -164,9 +174,9 @@ function NotificationSettingsPage() {
               <div className="w-full rounded-xl border border-border bg-muted/30 p-4 text-sm text-muted-foreground leading-relaxed flex gap-2">
                 <ShieldAlert className="w-5 h-5 shrink-0 text-amber-400" />
                 <span>
-                  <strong className="text-foreground">لإيقاف الإشعارات نهائيًا:</strong>{" "}
-                  المتصفحات لا تسمح للمواقع بإلغاء الإذن برمجيًا. افتح إعدادات الموقع
-                  (أيقونة القفل 🔒 بجانب الرابط) ← الإشعارات ← حظر.
+                  <strong className="text-foreground">لإيقاف الإشعارات نهائيًا:</strong> المتصفحات
+                  لا تسمح للمواقع بإلغاء الإذن برمجيًا. افتح إعدادات الموقع (أيقونة القفل 🔒 بجانب
+                  الرابط) ← الإشعارات ← حظر.
                 </span>
               </div>
             </>

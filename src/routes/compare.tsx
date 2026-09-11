@@ -3,7 +3,12 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Search, TrendingDown, RefreshCw, Copy, Check, ShieldCheck, Truck } from "lucide-react";
 import {
-  bestOffer, finalPrice, getRetailer, priceCategories, searchProducts, sortedOffers,
+  bestOffer,
+  finalPrice,
+  getRetailer,
+  priceCategories,
+  searchProducts,
+  sortedOffers,
   type PriceCategory,
 } from "@/data/price-index";
 
@@ -11,9 +16,16 @@ export const Route = createFileRoute("/compare")({
   head: () => ({
     meta: [
       { title: "محرك مقارنة الأسعار — حكيم AI" },
-      { name: "description", content: "مقارنة لحظية لأسعار الأجهزة والإلكترونيات والمنتجات الوطنية بين نون وأمازون وجرير وإكسترا ومتجر حكيم المباشر مع أكواد خصم إضافية." },
+      {
+        name: "description",
+        content:
+          "مقارنة لحظية لأسعار الأجهزة والإلكترونيات والمنتجات الوطنية بين نون وأمازون وجرير وإكسترا ومتجر حكيم المباشر مع أكواد خصم إضافية.",
+      },
       { property: "og:title", content: "محرك مقارنة الأسعار — حكيم AI" },
-      { property: "og:description", content: "قارن الأسعار شاملة الضريبة بين أكبر المتاجر السعودية واحصل على كود خصم إضافي." },
+      {
+        property: "og:description",
+        content: "قارن الأسعار شاملة الضريبة بين أكبر المتاجر السعودية واحصل على كود خصم إضافي.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -47,11 +59,15 @@ function ComparePage() {
         <div className="relative">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-primary/30 text-xs font-bold mb-4">
             <RefreshCw className="w-3.5 h-3.5 text-primary" />
-            محدث لحظياً · {updatedAt.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" })}
+            محدث لحظياً ·{" "}
+            {updatedAt.toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" })}
           </div>
-          <h1 className="font-display text-2xl md:text-4xl font-black">محرك مقارنة الأسعار والعروض</h1>
+          <h1 className="font-display text-2xl md:text-4xl font-black">
+            محرك مقارنة الأسعار والعروض
+          </h1>
           <p className="mt-3 max-w-2xl text-sm md:text-base text-white/80 leading-relaxed">
-            مقارنة لحظية لأسعار الأجهزة، الإلكترونيات والمنتجات الوطنية بين نون، أمازون، جرير، إكسترا ومتجر حكيم المباشر مع توفير كود خصم إضافي.
+            مقارنة لحظية لأسعار الأجهزة، الإلكترونيات والمنتجات الوطنية بين نون، أمازون، جرير،
+            إكسترا ومتجر حكيم المباشر مع توفير كود خصم إضافي.
           </p>
 
           <div className="mt-6 flex items-center gap-2 bg-white/95 rounded-2xl p-2 border border-primary/20">
@@ -81,14 +97,21 @@ function ComparePage() {
             key={c}
             onClick={() => setCat(c)}
             className={`text-xs font-bold px-3 py-1.5 rounded-full border transition ${
-              cat === c ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/60 text-muted-foreground hover:border-primary/50"
+              cat === c
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card border-border/60 text-muted-foreground hover:border-primary/50"
             }`}
           >
             {c}
           </button>
         ))}
         <label className="ms-auto flex items-center gap-2 text-xs font-bold text-muted-foreground cursor-pointer">
-          <input type="checkbox" checked={stockOnly} onChange={(e) => setStockOnly(e.target.checked)} className="accent-primary w-4 h-4" />
+          <input
+            type="checkbox"
+            checked={stockOnly}
+            onChange={(e) => setStockOnly(e.target.checked)}
+            className="accent-primary w-4 h-4"
+          />
           المتوفر فقط
         </label>
       </div>
@@ -100,7 +123,9 @@ function ComparePage() {
       </div>
 
       {results.length === 0 && (
-        <p className="text-center text-sm text-muted-foreground py-16">لا يوجد حالياً منتج مطابق لبحثك.</p>
+        <p className="text-center text-sm text-muted-foreground py-16">
+          لا يوجد حالياً منتج مطابق لبحثك.
+        </p>
       )}
 
       <div className="space-y-4">
@@ -109,15 +134,23 @@ function ComparePage() {
           const best = bestOffer(p);
           const bestFinal = finalPrice(best);
           return (
-            <article key={p.id} className="bg-card rounded-3xl border border-border/60 shadow-card overflow-hidden">
+            <article
+              key={p.id}
+              className="bg-card rounded-3xl border border-border/60 shadow-card overflow-hidden"
+            >
               <div className="p-4 bg-gradient-to-l from-primary/10 to-transparent flex items-center gap-3">
                 <div className="flex-1 min-w-0">
                   <h2 className="font-bold truncate">{p.name}</h2>
-                  <p className="text-xs text-muted-foreground">{p.brand}{p.unit ? ` · ${p.unit}` : ""} · {p.category}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {p.brand}
+                    {p.unit ? ` · ${p.unit}` : ""} · {p.category}
+                  </p>
                 </div>
                 <div className="text-left shrink-0">
                   <div className="text-[10px] text-muted-foreground">أفضل سعر بعد الكود</div>
-                  <div className="font-display font-black text-lg text-gold-shine">{bestFinal} ر.س</div>
+                  <div className="font-display font-black text-lg text-gold-shine">
+                    {bestFinal} ر.س
+                  </div>
                 </div>
               </div>
 
@@ -128,10 +161,15 @@ function ComparePage() {
                   const diff = fp - bestFinal;
                   return (
                     <div key={o.retailerId} className="flex flex-wrap items-center gap-3 px-4 py-3">
-                      <span className="w-2.5 h-8 rounded-full shrink-0" style={{ background: r.color }} />
+                      <span
+                        className="w-2.5 h-8 rounded-full shrink-0"
+                        style={{ background: r.color }}
+                      />
                       <div className="min-w-0">
                         <div className="text-sm font-bold truncate">{r.name}</div>
-                        <div className="text-[11px] text-muted-foreground">{o.inStock ? r.shipping : "غير متوفر حالياً"}</div>
+                        <div className="text-[11px] text-muted-foreground">
+                          {o.inStock ? r.shipping : "غير متوفر حالياً"}
+                        </div>
                       </div>
 
                       {o.coupon && (
@@ -139,20 +177,36 @@ function ComparePage() {
                           onClick={() => copyCode(o.coupon!.code)}
                           className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
                         >
-                          {copied === o.coupon.code ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                          {copied === o.coupon.code ? (
+                            <Check className="w-3 h-3" />
+                          ) : (
+                            <Copy className="w-3 h-3" />
+                          )}
                           {o.coupon.code} · خصم {o.coupon.percent}%
                         </button>
                       )}
 
                       <div className="ms-auto flex items-center gap-3">
                         {i === 0 && o.inStock ? (
-                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">الأفضل</span>
+                          <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-success text-success-foreground">
+                            الأفضل
+                          </span>
                         ) : (
-                          diff > 0 && <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
+                          diff > 0 && (
+                            <span className="text-xs text-hot font-bold">+{diff} ر.س</span>
+                          )
                         )}
                         <div className="text-left">
-                          {o.coupon && <div className="text-[10px] text-muted-foreground line-through">{o.price} ر.س</div>}
-                          <div className={`font-display font-black ${o.inStock ? "" : "opacity-50"}`}>{fp} ر.س</div>
+                          {o.coupon && (
+                            <div className="text-[10px] text-muted-foreground line-through">
+                              {o.price} ر.س
+                            </div>
+                          )}
+                          <div
+                            className={`font-display font-black ${o.inStock ? "" : "opacity-50"}`}
+                          >
+                            {fp} ر.س
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -24,14 +24,7 @@ const AMAZON_HOST = "webservices.amazon.sa";
 const AMAZON_REGION = "eu-west-1";
 
 /** كلمات البحث الافتراضية التي تُسحب دورياً */
-export const DEFAULT_KEYWORDS = [
-  "لابتوب",
-  "جوال",
-  "سماعات",
-  "شاشة تلفزيون",
-  "مكيف",
-  "عطور",
-];
+export const DEFAULT_KEYWORDS = ["لابتوب", "جوال", "سماعات", "شاشة تلفزيون", "مكيف", "عطور"];
 
 function pct(original: number, price: number) {
   if (!original || original <= price) return 0;
@@ -80,10 +73,14 @@ export async function recordSyncEvent(entry: {
   }
 }
 
-
 function amazonHttpCode(status: number, body: string): SyncFailureCode {
   if (status === 429) return "throttled";
-  if (status === 401 || status === 403 || /Signature|UnrecognizedClient|InvalidSignature/i.test(body)) return "auth_error";
+  if (
+    status === 401 ||
+    status === 403 ||
+    /Signature|UnrecognizedClient|InvalidSignature/i.test(body)
+  )
+    return "auth_error";
   if (/PartnerTag|InvalidPartnerTag|AssociateValidation/i.test(body)) return "partner_tag_invalid";
   return "http_error";
 }
@@ -137,8 +134,16 @@ async function amazonSearch(keyword: string): Promise<ExternalOffer[]> {
       !accessKey && "AMAZON_ACCESS_KEY",
       !secretKey && "AMAZON_SECRET_KEY",
       !partnerTag && "AMAZON_PARTNER_TAG",
-    ].filter(Boolean).join(" · ");
-    await recordSyncEvent({ source: "amazon", status: "failure", code: "missing_keys", message: `مفاتيح ناقصة: ${missing}`, keyword });
+    ]
+      .filter(Boolean)
+      .join(" · ");
+    await recordSyncEvent({
+      source: "amazon",
+      status: "failure",
+      code: "missing_keys",
+      message: `مفاتيح ناقصة: ${missing}`,
+      keyword,
+    });
     return [];
   }
 
@@ -333,7 +338,8 @@ async function fetchNoonOffersViaAffiliateApi(
       const sku = item.sku ?? item.product_id;
       const price = item.sale_price ?? item.offer_price ?? item.price;
       if (!sku || !price) continue;
-      const original = item.list_price && item.list_price > price ? item.list_price : (item.price ?? price);
+      const original =
+        item.list_price && item.list_price > price ? item.list_price : (item.price ?? price);
       const link =
         item.deeplink ??
         item.product_url ??
@@ -400,7 +406,6 @@ export async function fetchNoonOffers(keyword: string): Promise<ExternalOffer[]>
       },
       signal: AbortSignal.timeout(12_000),
     });
-
 
     if (!response.ok) {
       console.error(`noon catalog failed [${response.status}]`);
@@ -481,21 +486,29 @@ export async function syncExternalDeals(
 
   if (offers.length === 0) {
     for (const t of targets) {
-      await recordSyncEvent({ source: t, status: "failure", code: "empty_result", message: "لم تُرجع الدورة أي عروض" });
+      await recordSyncEvent({
+        source: t,
+        status: "failure",
+        code: "empty_result",
+        message: "لم تُرجع الدورة أي عروض",
+      });
     }
     return { upserted: 0, deactivated: 0, sources: { amazon: 0, noon: 0 } };
   }
 
   const now = new Date().toISOString();
-  const { error } = await supabaseAdmin
-    .from("external_deals")
-    .upsert(
-      offers.map((offer) => ({ ...offer, fetched_at: now })),
-      { onConflict: "source,source_key" },
-    );
+  const { error } = await supabaseAdmin.from("external_deals").upsert(
+    offers.map((offer) => ({ ...offer, fetched_at: now })),
+    { onConflict: "source,source_key" },
+  );
   if (error) {
     for (const t of targets) {
-      await recordSyncEvent({ source: t, status: "failure", code: "upsert_failed", message: error.message });
+      await recordSyncEvent({
+        source: t,
+        status: "failure",
+        code: "upsert_failed",
+        message: error.message,
+      });
     }
     throw new Error(`upsert failed: ${error.message}`);
   }
@@ -505,9 +518,7 @@ export async function syncExternalDeals(
   // إلى تعطيل كل عروضه الموجودة
   const amazonCount = offers.filter((o) => o.source === "amazon").length;
   const noonCount = offers.filter((o) => o.source === "noon").length;
-  const succeededTargets = targets.filter(
-    (t) => (t === "amazon" ? amazonCount : noonCount) > 0,
-  );
+  const succeededTargets = targets.filter((t) => (t === "amazon" ? amazonCount : noonCount) > 0);
 
   let deactivated = 0;
   if (succeededTargets.length > 0) {
@@ -522,8 +533,10 @@ export async function syncExternalDeals(
     deactivated = stale?.length ?? 0;
   }
 
-  if (amazonCount > 0) await recordSyncEvent({ source: "amazon", status: "success", message: `${amazonCount} عرضًا` });
-  if (noonCount > 0) await recordSyncEvent({ source: "noon", status: "success", message: `${noonCount} عرضًا` });
+  if (amazonCount > 0)
+    await recordSyncEvent({ source: "amazon", status: "success", message: `${amazonCount} عرضًا` });
+  if (noonCount > 0)
+    await recordSyncEvent({ source: "noon", status: "success", message: `${noonCount} عرضًا` });
 
   return {
     upserted: offers.length,
@@ -531,7 +544,6 @@ export async function syncExternalDeals(
     sources: { amazon: amazonCount, noon: noonCount },
   };
 }
-
 
 /** اختبار مباشر لمفاتيح Amazon PA-API — يُرجع نتيجة مفهومة دون كشف أي قيمة */
 export type AmazonTestResult = {
@@ -601,13 +613,22 @@ export async function testAmazonCredentials(): Promise<AmazonTestResult> {
     });
   } catch (error) {
     console.error("amazon test request failed", error);
-    return { ok: false, code: "network", message: "تعذّر الوصول إلى خوادم أمازون (انتهت المهلة أو خطأ شبكة)." };
+    return {
+      ok: false,
+      code: "network",
+      message: "تعذّر الوصول إلى خوادم أمازون (انتهت المهلة أو خطأ شبكة).",
+    };
   }
 
   if (response.ok) {
     const json = (await response.json()) as { SearchResult?: { Items?: unknown[] } };
     const items = json.SearchResult?.Items?.length ?? 0;
-    return { ok: true, code: "ok", items, message: `الاتصال ناجح — أمازون ردّت بـ ${items} نتيجة تجريبية.` };
+    return {
+      ok: true,
+      code: "ok",
+      items,
+      message: `الاتصال ناجح — أمازون ردّت بـ ${items} نتيجة تجريبية.`,
+    };
   }
 
   const text = (await response.text()).slice(0, 400);

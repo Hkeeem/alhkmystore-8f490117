@@ -2,13 +2,32 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Store, Loader2, Plus, Trash2, Send, BadgeCheck, Clock, Ban, PencilLine, Shield, Sparkles } from "lucide-react";
+import {
+  Store,
+  Loader2,
+  Plus,
+  Trash2,
+  Send,
+  BadgeCheck,
+  Clock,
+  Ban,
+  PencilLine,
+  Shield,
+  Sparkles,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminContext } from "@/lib/admin.functions";
 import {
-  MERCHANT_CATEGORIES, MERCHANT_STATUS_LABEL, DEAL_STATUS_LABEL,
-  createDeal, createMerchant, deleteDeal, fetchMerchantDeals, fetchMyMerchant, updateDeal,
+  MERCHANT_CATEGORIES,
+  MERCHANT_STATUS_LABEL,
+  DEAL_STATUS_LABEL,
+  createDeal,
+  createMerchant,
+  deleteDeal,
+  fetchMerchantDeals,
+  fetchMyMerchant,
+  updateDeal,
   type Merchant,
 } from "@/lib/merchant-api";
 
@@ -16,7 +35,10 @@ export const Route = createFileRoute("/_authenticated/merchant")({
   head: () => ({
     meta: [
       { title: "بوابة التاجر — Hkeeem AI" },
-      { name: "description", content: "سجّل متجرك في حكيم AI وأضف عروضك الحقيقية ليشاهدها آلاف المتسوقين." },
+      {
+        name: "description",
+        content: "سجّل متجرك في حكيم AI وأضف عروضك الحقيقية ليشاهدها آلاف المتسوقين.",
+      },
       { property: "og:title", content: "بوابة التاجر — Hkeeem AI" },
       { property: "og:description", content: "أضف عروض متجرك الحقيقية في حكيم AI." },
       { property: "og:type", content: "website" },
@@ -45,7 +67,11 @@ function MerchantPortal() {
   });
 
   if (loading || merchantQ.isLoading) {
-    return <div className="min-h-[60vh] grid place-items-center"><Loader2 className="w-7 h-7 animate-spin text-primary" /></div>;
+    return (
+      <div className="min-h-[60vh] grid place-items-center">
+        <Loader2 className="w-7 h-7 animate-spin text-primary" />
+      </div>
+    );
   }
 
   const merchant = merchantQ.data;
@@ -110,22 +136,28 @@ function MerchantPortal() {
 }
 
 function MerchantCard({ merchant }: { merchant: Merchant }) {
-  const Icon = merchant.status === "verified" ? BadgeCheck : merchant.status === "pending" ? Clock : Ban;
+  const Icon =
+    merchant.status === "verified" ? BadgeCheck : merchant.status === "pending" ? Clock : Ban;
   const tone =
-    merchant.status === "verified" ? "text-green-600 bg-green-500/10"
-      : merchant.status === "pending" ? "text-primary bg-primary/10"
+    merchant.status === "verified"
+      ? "text-green-600 bg-green-500/10"
+      : merchant.status === "pending"
+        ? "text-primary bg-primary/10"
         : "text-destructive bg-destructive/10";
   return (
     <div className="bg-card border border-border rounded-3xl p-5 space-y-2 shadow-card">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-bold text-lg">{merchant.name}</h2>
-        <span className={`text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 ${tone}`}>
+        <span
+          className={`text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 ${tone}`}
+        >
           <Icon className="w-3.5 h-3.5" /> {MERCHANT_STATUS_LABEL[merchant.status]}
         </span>
       </div>
       <p className="text-sm text-muted-foreground">{merchant.description || "بدون وصف"}</p>
       <p className="text-xs text-muted-foreground">
-        {merchant.category}{merchant.city ? ` — ${merchant.city}` : ""}
+        {merchant.category}
+        {merchant.city ? ` — ${merchant.city}` : ""}
       </p>
       {merchant.review_note && (
         <p className="text-xs text-destructive">ملاحظة الإدارة: {merchant.review_note}</p>
@@ -136,21 +168,37 @@ function MerchantCard({ merchant }: { merchant: Merchant }) {
 
 function RegisterForm({ userId, onDone }: { userId: string; onDone: () => void }) {
   const [form, setForm] = useState({
-    name: "", description: "", category: MERCHANT_CATEGORIES[0], city: "", cr_number: "", website: "", phone: "",
+    name: "",
+    description: "",
+    category: MERCHANT_CATEGORIES[0],
+    city: "",
+    cr_number: "",
+    website: "",
+    phone: "",
   });
   const m = useMutation({
     mutationFn: () => createMerchant({ owner_id: userId, ...form }),
-    onSuccess: () => { toast.success("تم إرسال طلب التسجيل للمراجعة"); onDone(); },
+    onSuccess: () => {
+      toast.success("تم إرسال طلب التسجيل للمراجعة");
+      onDone();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   return (
     <form
-      onSubmit={(e) => { e.preventDefault(); if (form.name.trim()) m.mutate(); }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (form.name.trim()) m.mutate();
+      }}
       className="bg-card border border-border rounded-3xl p-5 space-y-3 shadow-card"
     >
       <h2 className="font-bold">سجّل متجرك</h2>
-      <Field label="اسم المتجر *" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+      <Field
+        label="اسم المتجر *"
+        value={form.name}
+        onChange={(v) => setForm({ ...form, name: v })}
+      />
       <div>
         <label className="text-xs font-bold text-muted-foreground">الفئة</label>
         <select
@@ -158,14 +206,35 @@ function RegisterForm({ userId, onDone }: { userId: string; onDone: () => void }
           onChange={(e) => setForm({ ...form, category: e.target.value })}
           className="w-full mt-1 bg-background border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary"
         >
-          {MERCHANT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          {MERCHANT_CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
         </select>
       </div>
       <Field label="المدينة" value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
-      <Field label="السجل التجاري" value={form.cr_number} onChange={(v) => setForm({ ...form, cr_number: v })} />
-      <Field label="رقم التواصل" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
-      <Field label="الموقع الإلكتروني" value={form.website} onChange={(v) => setForm({ ...form, website: v })} />
-      <Field label="نبذة عن المتجر" value={form.description} onChange={(v) => setForm({ ...form, description: v })} textarea />
+      <Field
+        label="السجل التجاري"
+        value={form.cr_number}
+        onChange={(v) => setForm({ ...form, cr_number: v })}
+      />
+      <Field
+        label="رقم التواصل"
+        value={form.phone}
+        onChange={(v) => setForm({ ...form, phone: v })}
+      />
+      <Field
+        label="الموقع الإلكتروني"
+        value={form.website}
+        onChange={(v) => setForm({ ...form, website: v })}
+      />
+      <Field
+        label="نبذة عن المتجر"
+        value={form.description}
+        onChange={(v) => setForm({ ...form, description: v })}
+        textarea
+      />
       <button
         type="submit"
         disabled={m.isPending || !form.name.trim()}
@@ -179,8 +248,16 @@ function RegisterForm({ userId, onDone }: { userId: string; onDone: () => void }
 }
 
 const emptyDeal = {
-  title: "", description: "", image_url: "", category: MERCHANT_CATEGORIES[0], unit: "",
-  original_price: "", price: "", product_url: "", expires_at: "", coupon_code: "",
+  title: "",
+  description: "",
+  image_url: "",
+  category: MERCHANT_CATEGORIES[0],
+  unit: "",
+  original_price: "",
+  price: "",
+  product_url: "",
+  expires_at: "",
+  coupon_code: "",
 };
 
 function DealsManager({ merchantId }: { merchantId: string }) {
@@ -196,33 +273,45 @@ function DealsManager({ merchantId }: { merchantId: string }) {
   const refresh = () => qc.invalidateQueries({ queryKey: ["merchant-deals", merchantId] });
 
   const add = useMutation({
-    mutationFn: (submit: boolean) => createDeal({
-      merchant_id: merchantId,
-      title: form.title.trim(),
-      description: form.description || undefined,
-      image_url: form.image_url || undefined,
-      category: form.category,
-      unit: form.unit || undefined,
-      original_price: Number(form.original_price),
-      price: Number(form.price),
-      product_url: form.product_url || undefined,
-      coupon_code: form.coupon_code.trim().toUpperCase() || undefined,
-      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
-      submit,
-    }),
-    onSuccess: () => { toast.success("تم حفظ العرض"); setForm(emptyDeal); setOpen(false); refresh(); },
+    mutationFn: (submit: boolean) =>
+      createDeal({
+        merchant_id: merchantId,
+        title: form.title.trim(),
+        description: form.description || undefined,
+        image_url: form.image_url || undefined,
+        category: form.category,
+        unit: form.unit || undefined,
+        original_price: Number(form.original_price),
+        price: Number(form.price),
+        product_url: form.product_url || undefined,
+        coupon_code: form.coupon_code.trim().toUpperCase() || undefined,
+        expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+        submit,
+      }),
+    onSuccess: () => {
+      toast.success("تم حفظ العرض");
+      setForm(emptyDeal);
+      setOpen(false);
+      refresh();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const submitForReview = useMutation({
     mutationFn: (id: string) => updateDeal(id, { status: "pending" }),
-    onSuccess: () => { toast.success("أرسلناه للمراجعة"); refresh(); },
+    onSuccess: () => {
+      toast.success("أرسلناه للمراجعة");
+      refresh();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => deleteDeal(id),
-    onSuccess: () => { toast.success("تم الحذف"); refresh(); },
+    onSuccess: () => {
+      toast.success("تم الحذف");
+      refresh();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -242,13 +331,30 @@ function DealsManager({ merchantId }: { merchantId: string }) {
 
       {open && (
         <form
-          onSubmit={(e) => { e.preventDefault(); if (valid) add.mutate(true); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (valid) add.mutate(true);
+          }}
           className="bg-card border border-border rounded-3xl p-5 space-y-3 shadow-card"
         >
-          <Field label="اسم المنتج / العرض *" value={form.title} onChange={(v) => setForm({ ...form, title: v })} />
+          <Field
+            label="اسم المنتج / العرض *"
+            value={form.title}
+            onChange={(v) => setForm({ ...form, title: v })}
+          />
           <div className="grid grid-cols-2 gap-3">
-            <Field label="السعر قبل الخصم *" value={form.original_price} onChange={(v) => setForm({ ...form, original_price: v })} type="number" />
-            <Field label="السعر بعد الخصم *" value={form.price} onChange={(v) => setForm({ ...form, price: v })} type="number" />
+            <Field
+              label="السعر قبل الخصم *"
+              value={form.original_price}
+              onChange={(v) => setForm({ ...form, original_price: v })}
+              type="number"
+            />
+            <Field
+              label="السعر بعد الخصم *"
+              value={form.price}
+              onChange={(v) => setForm({ ...form, price: v })}
+              type="number"
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -258,26 +364,62 @@ function DealsManager({ merchantId }: { merchantId: string }) {
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
                 className="w-full mt-1 bg-background border border-border rounded-2xl px-4 py-3 text-sm outline-none focus:border-primary"
               >
-                {MERCHANT_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                {MERCHANT_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
               </select>
             </div>
-            <Field label="الوحدة (كيلو، حبة...)" value={form.unit} onChange={(v) => setForm({ ...form, unit: v })} />
+            <Field
+              label="الوحدة (كيلو، حبة...)"
+              value={form.unit}
+              onChange={(v) => setForm({ ...form, unit: v })}
+            />
           </div>
-          <Field label="ينتهي في" value={form.expires_at} onChange={(v) => setForm({ ...form, expires_at: v })} type="date" />
-          <Field label="رابط صورة المنتج" value={form.image_url} onChange={(v) => setForm({ ...form, image_url: v })} />
+          <Field
+            label="ينتهي في"
+            value={form.expires_at}
+            onChange={(v) => setForm({ ...form, expires_at: v })}
+            type="date"
+          />
+          <Field
+            label="رابط صورة المنتج"
+            value={form.image_url}
+            onChange={(v) => setForm({ ...form, image_url: v })}
+          />
           <div>
-            <Field label="كود خصم (اختياري)" value={form.coupon_code} onChange={(v) => setForm({ ...form, coupon_code: v.toUpperCase() })} />
-            <p className="text-[11px] text-muted-foreground mt-1">إذا أضفت كوداً، سيظهر عرضك في صفحة الكوبونات بعد موافقة المراجعة.</p>
+            <Field
+              label="كود خصم (اختياري)"
+              value={form.coupon_code}
+              onChange={(v) => setForm({ ...form, coupon_code: v.toUpperCase() })}
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">
+              إذا أضفت كوداً، سيظهر عرضك في صفحة الكوبونات بعد موافقة المراجعة.
+            </p>
           </div>
-          <Field label="رابط الشراء" value={form.product_url} onChange={(v) => setForm({ ...form, product_url: v })} />
-          <Field label="وصف مختصر" value={form.description} onChange={(v) => setForm({ ...form, description: v })} textarea />
+          <Field
+            label="رابط الشراء"
+            value={form.product_url}
+            onChange={(v) => setForm({ ...form, product_url: v })}
+          />
+          <Field
+            label="وصف مختصر"
+            value={form.description}
+            onChange={(v) => setForm({ ...form, description: v })}
+            textarea
+          />
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={!valid || add.isPending}
               className="flex-1 bg-gradient-hero text-primary-foreground rounded-2xl py-3 font-bold shadow-glow disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {add.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              {add.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
               إرسال للمراجعة
             </button>
             <button
@@ -293,21 +435,38 @@ function DealsManager({ merchantId }: { merchantId: string }) {
       )}
 
       {dealsQ.isLoading ? (
-        <div className="py-10 grid place-items-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+        <div className="py-10 grid place-items-center">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+        </div>
       ) : (dealsQ.data ?? []).length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-10">ما أضفت أي عرض بعد.</p>
       ) : (
         <ul className="space-y-2">
           {dealsQ.data!.map((d) => (
-            <li key={d.id} className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
-              {d.image_url && <img src={d.image_url} alt={d.title} loading="lazy" className="w-12 h-12 rounded-xl object-cover" />}
+            <li
+              key={d.id}
+              className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3"
+            >
+              {d.image_url && (
+                <img
+                  src={d.image_url}
+                  alt={d.title}
+                  loading="lazy"
+                  className="w-12 h-12 rounded-xl object-cover"
+                />
+              )}
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-sm truncate">{d.title}</p>
                 <p className="text-xs text-muted-foreground">
-                  {d.price} ر.س <span className="line-through opacity-60">{d.original_price}</span> · وفّر {d.discount_percent}%
+                  {d.price} ر.س <span className="line-through opacity-60">{d.original_price}</span>{" "}
+                  · وفّر {d.discount_percent}%
                 </p>
-                <span className="text-[11px] font-bold text-primary">{DEAL_STATUS_LABEL[d.status]}</span>
-                {d.review_note && <span className="block text-[11px] text-destructive">{d.review_note}</span>}
+                <span className="text-[11px] font-bold text-primary">
+                  {DEAL_STATUS_LABEL[d.status]}
+                </span>
+                {d.review_note && (
+                  <span className="block text-[11px] text-destructive">{d.review_note}</span>
+                )}
               </div>
               {(d.status === "draft" || d.status === "rejected") && (
                 <button
@@ -334,8 +493,18 @@ function DealsManager({ merchantId }: { merchantId: string }) {
 }
 
 function Field({
-  label, value, onChange, type = "text", textarea,
-}: { label: string; value: string; onChange: (v: string) => void; type?: string; textarea?: boolean }) {
+  label,
+  value,
+  onChange,
+  type = "text",
+  textarea,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+  textarea?: boolean;
+}) {
   return (
     <div>
       <label className="text-xs font-bold text-muted-foreground">{label}</label>

@@ -48,7 +48,9 @@ export function InvalidLinkFallback({
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md text-center space-y-6">
-        <div className="text-6xl" aria-hidden>{icon}</div>
+        <div className="text-6xl" aria-hidden>
+          {icon}
+        </div>
         <div className="space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs font-bold">
             <AlertTriangle className="w-3.5 h-3.5" /> رابط غير صالح
@@ -72,7 +74,9 @@ export function InvalidLinkFallback({
               <div className="flex-1 min-w-0">
                 <div className="font-black text-sm truncate">{suggestion.label}</div>
                 {suggestion.hint && (
-                  <div className="text-[11px] text-muted-foreground truncate">{suggestion.hint}</div>
+                  <div className="text-[11px] text-muted-foreground truncate">
+                    {suggestion.hint}
+                  </div>
                 )}
               </div>
               <ArrowRight className="w-4 h-4 text-muted-foreground rotate-180" />
@@ -86,9 +90,7 @@ export function InvalidLinkFallback({
                 />
               </div>
               <div className="flex items-center justify-between mt-2 text-[11px] text-muted-foreground">
-                <span>
-                  {paused ? "تم إيقاف التحويل" : `تحويل تلقائي خلال ${remaining} ث`}
-                </span>
+                <span>{paused ? "تم إيقاف التحويل" : `تحويل تلقائي خلال ${remaining} ث`}</span>
                 {!paused ? (
                   <button
                     onClick={() => setPaused(true)}

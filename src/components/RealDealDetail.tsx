@@ -59,7 +59,11 @@ export function RealDealDetail({ id }: { id: string }) {
 
       <div className="rounded-3xl overflow-hidden border border-border/60 bg-gradient-to-br from-secondary to-muted aspect-[4/3] sm:aspect-[16/9] flex items-center justify-center relative">
         {hasImage ? (
-          <img src={deal.image} alt={deal.title} className="w-full h-full object-contain bg-white" />
+          <img
+            src={deal.image}
+            alt={deal.title}
+            className="w-full h-full object-contain bg-white"
+          />
         ) : (
           <span className="text-7xl">{deal.image}</span>
         )}
@@ -86,7 +90,9 @@ export function RealDealDetail({ id }: { id: string }) {
           </div>
           <div className="text-left">
             <p className="text-xs text-muted-foreground mb-1">سعره في {storeLabel}</p>
-            <span className="text-lg text-muted-foreground line-through">{deal.originalPrice} ر.س</span>
+            <span className="text-lg text-muted-foreground line-through">
+              {deal.originalPrice} ر.س
+            </span>
           </div>
         </div>
         {saving > 0 && (
@@ -97,7 +103,9 @@ export function RealDealDetail({ id }: { id: string }) {
             <Clock className="w-3.5 h-3.5" /> ينتهي خلال {deal.expiresIn}
           </span>
           {deal.unit && (
-            <span className="px-3 py-1.5 rounded-full bg-secondary text-xs font-medium">{deal.unit}</span>
+            <span className="px-3 py-1.5 rounded-full bg-secondary text-xs font-medium">
+              {deal.unit}
+            </span>
           )}
           {deal.couponCode && (
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-black">

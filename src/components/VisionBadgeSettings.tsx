@@ -19,7 +19,10 @@ export function VisionBadgeSettings({ className = "" }: { className?: string }) 
         </button>
       </PopoverTrigger>
 
-      <PopoverContent align="end" className="w-72 rounded-2xl border-border bg-popover p-4 space-y-4">
+      <PopoverContent
+        align="end"
+        className="w-72 rounded-2xl border-border bg-popover p-4 space-y-4"
+      >
         <div className="flex items-center justify-between">
           <div>
             <div className="font-display font-black text-sm">خلفية 2030</div>
@@ -32,11 +35,15 @@ export function VisionBadgeSettings({ className = "" }: { className?: string }) 
           />
         </div>
 
-        <div className={settings.visible ? "space-y-4" : "space-y-4 opacity-50 pointer-events-none"}>
+        <div
+          className={settings.visible ? "space-y-4" : "space-y-4 opacity-50 pointer-events-none"}
+        >
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-bold">مستوى الشفافية</label>
-              <span className="text-xs tabular-nums text-muted-foreground">{settings.opacity}%</span>
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {settings.opacity}%
+              </span>
             </div>
             <Slider
               value={[settings.opacity]}

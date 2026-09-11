@@ -13,20 +13,26 @@ export const saveIntegrationKeyValue = createServerFn({ method: "POST" })
     const d = data as { name?: unknown; value?: unknown };
     return {
       name: String(d?.name ?? "").trim(),
-      value: String(d?.value ?? "").trim().slice(0, 512),
+      value: String(d?.value ?? "")
+        .trim()
+        .slice(0, 512),
     };
   })
   .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
 
-    const { isIntegrationKeyName, saveIntegrationKey } = await import("@/lib/integration-keys.server");
+    const { isIntegrationKeyName, saveIntegrationKey } =
+      await import("@/lib/integration-keys.server");
     if (!isIntegrationKeyName(data.name)) return { ok: false as const, reason: "مفتاح غير معروف." };
     if (data.value.length < 3) return { ok: false as const, reason: "القيمة قصيرة جدًا." };
 
-    const previous = data.name === "NOON_AFFILIATE_ID"
-      ? ((await (await import("@/lib/integration-keys.server")).getIntegrationKey("NOON_AFFILIATE_ID")) ?? "")
-      : "";
+    const previous =
+      data.name === "NOON_AFFILIATE_ID"
+        ? ((await (
+            await import("@/lib/integration-keys.server")
+          ).getIntegrationKey("NOON_AFFILIATE_ID")) ?? "")
+        : "";
 
     await saveIntegrationKey(data.name, data.value, context.userId);
 
@@ -51,17 +57,23 @@ export const saveIntegrationKeyValue = createServerFn({ method: "POST" })
 
 export const removeIntegrationKeyValue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => ({ name: String((data as { name?: unknown })?.name ?? "").trim() }))
+  .inputValidator((data: unknown) => ({
+    name: String((data as { name?: unknown })?.name ?? "").trim(),
+  }))
   .handler(async ({ data, context }) => {
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
 
-    const { isIntegrationKeyName, deleteIntegrationKey } = await import("@/lib/integration-keys.server");
+    const { isIntegrationKeyName, deleteIntegrationKey } =
+      await import("@/lib/integration-keys.server");
     if (!isIntegrationKeyName(data.name)) return { ok: false as const, reason: "مفتاح غير معروف." };
 
-    const previous = data.name === "NOON_AFFILIATE_ID"
-      ? ((await (await import("@/lib/integration-keys.server")).getIntegrationKey("NOON_AFFILIATE_ID")) ?? "")
-      : "";
+    const previous =
+      data.name === "NOON_AFFILIATE_ID"
+        ? ((await (
+            await import("@/lib/integration-keys.server")
+          ).getIntegrationKey("NOON_AFFILIATE_ID")) ?? "")
+        : "";
 
     await deleteIntegrationKey(data.name);
 

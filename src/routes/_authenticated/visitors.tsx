@@ -15,10 +15,14 @@ export const Route = createFileRoute("/_authenticated/visitors")({
       { title: "تعداد الزوار ومساراتهم | حكيم AI" },
       {
         name: "description",
-        content: "لوحة إدارية تعرض عدد الزوار، المدن التي يزورون منها، ومسار تنقلهم بين صفحات العروض.",
+        content:
+          "لوحة إدارية تعرض عدد الزوار، المدن التي يزورون منها، ومسار تنقلهم بين صفحات العروض.",
       },
       { property: "og:title", content: "تعداد الزوار ومساراتهم | حكيم AI" },
-      { property: "og:description", content: "تابع من يزور العروض ومن أي مدينة وأي الصفحات يتصفحها." },
+      {
+        property: "og:description",
+        content: "تابع من يزور العروض ومن أي مدينة وأي الصفحات يتصفحها.",
+      },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -48,7 +52,9 @@ function VisitorsPage() {
     <main className="max-w-5xl mx-auto px-4 pt-5 pb-14 space-y-4">
       <header>
         <h1 className="font-display font-black text-xl sm:text-2xl">تعداد الزوار ومساراتهم</h1>
-        <p className="text-sm text-muted-foreground mt-1">آخر 7 أيام — من يزور العروض ومن أي مدينة.</p>
+        <p className="text-sm text-muted-foreground mt-1">
+          آخر 7 أيام — من يزور العروض ومن أي مدينة.
+        </p>
       </header>
 
       {isError && (
@@ -92,7 +98,9 @@ function VisitorsPage() {
             </CardHeader>
             <CardContent>
               {cityPoints.length === 0 ? (
-                <p className="text-sm text-muted-foreground">لا توجد مدن معروفة بعد للزوار الحاليين.</p>
+                <p className="text-sm text-muted-foreground">
+                  لا توجد مدن معروفة بعد للزوار الحاليين.
+                </p>
               ) : (
                 <div className="relative w-full rounded-2xl border border-border/60 bg-muted/40 overflow-hidden aspect-[4/3] sm:aspect-[16/9]">
                   {cityPoints.map((p) => {
@@ -118,7 +126,10 @@ function VisitorsPage() {
               )}
               <ul className="mt-3 flex flex-wrap gap-2">
                 {data.byCity.slice(0, 10).map((c) => (
-                  <li key={c.city} className="px-3 py-1.5 rounded-full bg-secondary text-xs font-bold">
+                  <li
+                    key={c.city}
+                    className="px-3 py-1.5 rounded-full bg-secondary text-xs font-bold"
+                  >
                     {c.city} · {c.count}
                   </li>
                 ))}
@@ -136,7 +147,9 @@ function VisitorsPage() {
               ) : (
                 data.byPath.map((p) => (
                   <div key={p.path} className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate" dir="ltr">{p.path}</span>
+                    <span className="truncate" dir="ltr">
+                      {p.path}
+                    </span>
                     <span className="font-black text-primary shrink-0">{p.count}</span>
                   </div>
                 ))
@@ -161,7 +174,10 @@ function VisitorsPage() {
                     </p>
                     <div className="flex flex-wrap items-center gap-1.5 text-xs" dir="ltr">
                       {j.steps.map((s, i) => (
-                        <span key={`${s.at}-${i}`} className="px-2 py-1 rounded-lg bg-secondary font-medium">
+                        <span
+                          key={`${s.at}-${i}`}
+                          className="px-2 py-1 rounded-lg bg-secondary font-medium"
+                        >
                           {s.path}
                         </span>
                       ))}

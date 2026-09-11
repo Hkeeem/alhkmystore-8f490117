@@ -16,7 +16,7 @@ function isStandalone() {
 
   return (
     window.matchMedia?.("(display-mode: standalone)").matches ||
-    // @ts-expect-error
+    // @ts-expect-error Safari exposes this non-standard standalone property.
     window.navigator.standalone === true
   );
 }
@@ -38,7 +38,9 @@ export function InstallHandler() {
     if (path !== "/" && !path.startsWith("/?")) {
       try {
         localStorage.setItem(PENDING_KEY, path);
-      } catch {}
+      } catch {
+        // Storage may be unavailable in private browsing contexts.
+      }
     }
   }, [location.pathname, location.search]);
 
@@ -47,16 +49,16 @@ export function InstallHandler() {
     if (typeof window === "undefined" || !isStandalone()) return;
 
     try {
-      const current =
-        window.location.pathname + window.location.search;
-
+      const current = window.location.pathname + window.location.search;
       const target = localStorage.getItem(PENDING_KEY);
 
       if (target && target !== current) {
         localStorage.removeItem(PENDING_KEY);
         router.navigate({ to: target });
       }
-    } catch {}
+    } catch {
+      // Storage may be unavailable in private browsing contexts.
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -70,12 +72,10 @@ export function InstallHandler() {
   useEffect(() => {
     if (typeof window === "undefined" || isStandalone()) return;
 
-    const dismissed =
-      localStorage.getItem(DISMISS_KEY) === "true";
+    const dismissed = localStorage.getItem(DISMISS_KEY) === "true";
 
     const onBIP = (e: Event) => {
       e.preventDefault();
-
       setBip(e as BIPEvent);
 
       if (!dismissed) {
@@ -89,21 +89,18 @@ export function InstallHandler() {
 
       try {
         localStorage.setItem(DISMISS_KEY, "true");
-      } catch {}
+      } catch {
+        // Storage may be unavailable in private browsing contexts.
+      }
     };
 
     window.addEventListener("beforeinstallprompt", onBIP);
     window.addEventListener("appinstalled", onInstalled);
 
     const ua = window.navigator.userAgent;
-
-    const isIos =
-      /iPad|iPhone|iPod/.test(ua) &&
-      !/CriOS|FxiOS/.test(ua);
-
+    const isIos = /iPad|iPhone|iPod/.test(ua) && !/CriOS|FxiOS/.test(ua);
     const onDeepLink =
-      location.pathname.startsWith("/deals/") ||
-      location.pathname === "/smart-list";
+      location.pathname.startsWith("/deals/") || location.pathname === "/smart-list";
 
     if (isIos && onDeepLink && !dismissed) {
       setIosHint(true);
@@ -111,15 +108,8 @@ export function InstallHandler() {
     }
 
     return () => {
-      window.removeEventListener(
-        "beforeinstallprompt",
-        onBIP
-      );
-
-      window.removeEventListener(
-        "appinstalled",
-        onInstalled
-      );
+      window.removeEventListener("beforeinstallprompt", onBIP);
+      window.removeEventListener("appinstalled", onInstalled);
     };
   }, [location.pathname]);
 
@@ -127,7 +117,6 @@ export function InstallHandler() {
     if (!bip) return;
 
     await bip.prompt();
-
     const choice = await bip.userChoice;
 
     if (choice.outcome === "accepted") {
@@ -135,7 +124,9 @@ export function InstallHandler() {
 
       try {
         localStorage.setItem(DISMISS_KEY, "true");
-      } catch {}
+      } catch {
+        // Storage may be unavailable in private browsing contexts.
+      }
     } else {
       dismiss();
     }
@@ -146,14 +137,15 @@ export function InstallHandler() {
 
     try {
       localStorage.setItem(DISMISS_KEY, "true");
-    } catch {}
+    } catch {
+      // Storage may be unavailable in private browsing contexts.
+    }
   }
 
   if (!visible) return null;
 
   return (
     <div className="fixed bottom-24 md:bottom-6 inset-x-3 md:inset-x-auto md:right-6 md:max-w-sm z-40 bg-card border border-primary/40 shadow-xl rounded-3xl p-4 text-card-foreground animate-in slide-in-from-bottom">
-
       <button
         onClick={dismiss}
         aria-label="إغلاق"
@@ -163,13 +155,11 @@ export function InstallHandler() {
       </button>
 
       <div className="flex items-start gap-3">
-
         <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#f3e5ab] via-[#d4af37] to-[#aa771c] text-black flex items-center justify-center shrink-0 shadow-md">
           <Smartphone className="w-5 h-5 text-black" />
         </div>
 
         <div className="flex-1 min-w-0 pr-1">
-
           <div className="font-display font-black text-sm tracking-wide text-foreground">
             ثبّت Hkeeem AI على جوّالك
           </div>
@@ -189,9 +179,7 @@ export function InstallHandler() {
               تثبيت الآن
             </button>
           )}
-
         </div>
-
       </div>
     </div>
   );

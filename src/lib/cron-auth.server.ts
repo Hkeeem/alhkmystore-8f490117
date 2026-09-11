@@ -16,13 +16,20 @@ export async function assertCronRequest(request: Request): Promise<Response | nu
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await (supabaseAdmin as unknown as {
-      from: (t: string) => {
-        select: (c: string) => {
-          eq: (k: string, v: string) => { maybeSingle: () => Promise<{ data: { secret?: string } | null; error: unknown }> };
+    const { data, error } = await (
+      supabaseAdmin as unknown as {
+        from: (t: string) => {
+          select: (c: string) => {
+            eq: (
+              k: string,
+              v: string,
+            ) => {
+              maybeSingle: () => Promise<{ data: { secret?: string } | null; error: unknown }>;
+            };
+          };
         };
-      };
-    })
+      }
+    )
       .from("cron_secrets")
       .select("secret")
       .eq("name", "webhook")

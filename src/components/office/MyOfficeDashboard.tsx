@@ -1,12 +1,12 @@
-import React from 'react';
-import { Building2, TrendingUp, Users, DollarSign, Plus } from 'lucide-react';
+import React from "react";
+import { Building2, TrendingUp, Users, DollarSign, Plus } from "lucide-react";
 
 export const MyOfficeDashboard: React.FC = () => {
   const stats = [
-    { title: 'إجمالي العقارات', value: '12', icon: Building2, color: 'bg-blue-500' },
-    { title: 'العروض النشطة', value: '8', icon: TrendingUp, color: 'bg-green-500' },
-    { title: 'طلبات المعاينة', value: '24', icon: Users, color: 'bg-purple-500' },
-    { title: 'إجمالي المبيعات', value: '1.2M ر.س', icon: DollarSign, color: 'bg-amber-500' },
+    { title: "إجمالي العقارات", value: "12", icon: Building2, color: "bg-blue-500" },
+    { title: "العروض النشطة", value: "8", icon: TrendingUp, color: "bg-green-500" },
+    { title: "طلبات المعاينة", value: "24", icon: Users, color: "bg-purple-500" },
+    { title: "إجمالي المبيعات", value: "1.2M ر.س", icon: DollarSign, color: "bg-amber-500" },
   ];
 
   return (
@@ -25,7 +25,10 @@ export const MyOfficeDashboard: React.FC = () => {
       {/* بطاقات الإحصائيات */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between">
+          <div
+            key={i}
+            className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between"
+          >
             <div>
               <p className="text-sm text-gray-500">{stat.title}</p>
               <h3 className="text-xl font-bold text-gray-800 mt-1">{stat.value}</h3>
@@ -39,4 +42,3 @@ export const MyOfficeDashboard: React.FC = () => {
     </div>
   );
 };
-

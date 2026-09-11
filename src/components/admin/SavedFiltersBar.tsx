@@ -3,7 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Star, StarOff, Trash2, Save, Loader2, Bookmark } from "lucide-react";
 import {
-  listSavedFilters, saveFilter, deleteSavedFilter, setDefaultFilter,
+  listSavedFilters,
+  saveFilter,
+  deleteSavedFilter,
+  setDefaultFilter,
   type SavedFilter,
 } from "@/lib/saved-filters.functions";
 
@@ -40,17 +43,28 @@ export function SavedFiltersBar({
   const saveM = useMutation({
     mutationFn: (isDefault: boolean) =>
       saveFilter({ data: { scope, name, filters: current, isDefault } }),
-    onSuccess: () => { setName(""); toast.success("تم حفظ الفلتر"); invalidate(); },
-    onError: (e: Error) => toast.error(e.message === "forbidden" ? "هذه الميزة للمشرفين فقط" : e.message),
+    onSuccess: () => {
+      setName("");
+      toast.success("تم حفظ الفلتر");
+      invalidate();
+    },
+    onError: (e: Error) =>
+      toast.error(e.message === "forbidden" ? "هذه الميزة للمشرفين فقط" : e.message),
   });
   const delM = useMutation({
     mutationFn: (id: string) => deleteSavedFilter({ data: { id } }),
-    onSuccess: () => { toast.success("تم حذف الفلتر"); invalidate(); },
+    onSuccess: () => {
+      toast.success("تم حذف الفلتر");
+      invalidate();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
   const defM = useMutation({
     mutationFn: (id: string) => setDefaultFilter({ data: { id, scope } }),
-    onSuccess: () => { toast.success("تم تعيين الفلتر الافتراضي"); invalidate(); },
+    onSuccess: () => {
+      toast.success("تم تعيين الفلتر الافتراضي");
+      invalidate();
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -74,7 +88,11 @@ export function SavedFiltersBar({
           disabled={!name.trim() || saveM.isPending}
           className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm disabled:opacity-50"
         >
-          {saveM.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {saveM.isPending ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
           حفظ الحالي
         </button>
         <button
@@ -89,7 +107,9 @@ export function SavedFiltersBar({
       {q.isLoading ? (
         <p className="text-xs text-muted-foreground">جارٍ التحميل…</p>
       ) : items.length === 0 ? (
-        <p className="text-xs text-muted-foreground">لا توجد فلاتر محفوظة بعد — اضبط الفلاتر ثم احفظها لاستخدامها لاحقًا.</p>
+        <p className="text-xs text-muted-foreground">
+          لا توجد فلاتر محفوظة بعد — اضبط الفلاتر ثم احفظها لاستخدامها لاحقًا.
+        </p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {items.map((f) => (
@@ -99,7 +119,10 @@ export function SavedFiltersBar({
                 f.is_default ? "border-primary/50 bg-primary/10" : "border-border"
               }`}
             >
-              <button onClick={() => onApply(f.filters)} className="px-1 font-medium hover:text-primary">
+              <button
+                onClick={() => onApply(f.filters)}
+                className="px-1 font-medium hover:text-primary"
+              >
                 {f.name}
               </button>
               <span className="text-muted-foreground">
@@ -110,9 +133,16 @@ export function SavedFiltersBar({
                 title={f.is_default ? "الفلتر الافتراضي" : "تعيين كافتراضي"}
                 className="text-primary/80 hover:text-primary"
               >
-                {f.is_default ? <Star className="w-3.5 h-3.5 fill-current" /> : <StarOff className="w-3.5 h-3.5" />}
+                {f.is_default ? (
+                  <Star className="w-3.5 h-3.5 fill-current" />
+                ) : (
+                  <StarOff className="w-3.5 h-3.5" />
+                )}
               </button>
-              <button onClick={() => delM.mutate(f.id)} className="text-destructive/80 hover:text-destructive">
+              <button
+                onClick={() => delM.mutate(f.id)}
+                className="text-destructive/80 hover:text-destructive"
+              >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
             </div>
