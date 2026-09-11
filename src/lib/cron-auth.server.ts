@@ -11,8 +11,15 @@ function timingSafeEqual(a: string, b: string) {
 
 /** يعيد Response بحالة 401 عند فشل التحقق، أو null عند النجاح. */
 export async function assertCronRequest(request: Request): Promise<Response | null> {
-  const provided = (request.headers.get("x-cron-secret") ?? "").trim();
+  const bearer =
+    request.headers
+      .get("authorization")
+      ?.replace(/^Bearer\s+/i, "")
+      .trim() ?? "";
+  const provided = (request.headers.get("x-cron-secret") ?? bearer).trim();
   if (!provided) return Response.json({ error: "unauthorized" }, { status: 401 });
+  const deploymentSecret = (process.env["CRON_SECRET"] ?? "").trim();
+  if (deploymentSecret && timingSafeEqual(provided, deploymentSecret)) return null;
 
   try {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

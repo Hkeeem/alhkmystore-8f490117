@@ -79,9 +79,20 @@ const groups: Group[] = [
     ],
   },
   {
+    key: "group.showroom",
+    icon: Sparkles,
+    items: [
+      { to: "/hkeeem-showroom", key: "item.showroom", icon: Sparkles },
+      { to: "/hkeeem-shopping", key: "item.shopping", icon: ShoppingBag, badgeKey: "nav.new" },
+    ],
+  },
+  {
     key: "group.office",
     icon: Building2,
-    items: [{ to: "/real-estate", key: "item.realEstate", icon: Building2 }],
+    items: [
+      { to: "/office", key: "item.office", icon: Building2, badgeKey: "nav.new" },
+      { to: "/real-estate", key: "item.realEstate", icon: Building2 },
+    ],
   },
   {
     key: "group.intelligence",
