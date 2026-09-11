@@ -267,3 +267,96 @@ export const adminUpdateCouponReport = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+export type ClickBreakdown = {
+  total: number;
+  sessions: number;
+  byStore: { storeId: string; storeName: string; clicks: number }[];
+  byEvent: { eventType: string; count: number }[];
+  byDay: { day: string; count: number }[];
+  storeOptions: { storeId: string; storeName: string }[];
+  recent: {
+    id: string;
+    eventType: string;
+    offerTitle: string;
+    storeName: string;
+    surface: string;
+    occurredAt: string;
+  }[];
+};
+
+/** تفصيل النقرات حسب المتجر ونوع الحدث والفترة الزمنية (شاشة الإدارة) */
+export const adminClickBreakdown = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => {
+    const d = (data ?? {}) as Record<string, unknown>;
+    const n = Number(d.days);
+    const ev = clean(d.eventType, 24);
+    return {
+      days: Number.isFinite(n) && n > 0 ? Math.min(n, 90) : 7,
+      eventType: ["coupon_copy", "store_click", "detail_view", "share", "favorite", "click"].includes(ev)
+        ? ev
+        : "",
+      storeId: clean(d.storeId, 80),
+    };
+  })
+  .handler(async ({ data, context }): Promise<ClickBreakdown> => {
+    const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!isStaff) throw new Error("Forbidden");
+
+    const since = new Date(Date.now() - data.days * 86_400_000).toISOString();
+    let q = context.supabase
+      .from("offer_clicks")
+      .select("id, event_type, offer_title, store_id, store_name, surface, session, occurred_at")
+      .gte("occurred_at", since)
+      .order("occurred_at", { ascending: false })
+      .limit(5000);
+    if (data.eventType) q = q.eq("event_type", data.eventType);
+    if (data.storeId) q = q.eq("store_id", data.storeId);
+    const { data: rows, error } = await q;
+    if (error) throw new Error(error.message);
+
+    const list = rows ?? [];
+    const sessions = new Set<string>();
+    const stores = new Map<string, { name: string; clicks: number }>();
+    const events = new Map<string, number>();
+    const days = new Map<string, number>();
+
+    for (const r of list) {
+      if (r.session) sessions.add(r.session);
+      const sid = r.store_id || "unknown";
+      const cur = stores.get(sid) ?? { name: r.store_name || "غير محدد", clicks: 0 };
+      cur.clicks += 1;
+      stores.set(sid, cur);
+      const ev = r.event_type || "click";
+      events.set(ev, (events.get(ev) ?? 0) + 1);
+      const day = String(r.occurred_at).slice(0, 10);
+      days.set(day, (days.get(day) ?? 0) + 1);
+    }
+
+    return {
+      total: list.length,
+      sessions: sessions.size,
+      byStore: [...stores.entries()]
+        .map(([storeId, v]) => ({ storeId, storeName: v.name, clicks: v.clicks }))
+        .sort((a, b) => b.clicks - a.clicks)
+        .slice(0, 40),
+      byEvent: [...events.entries()]
+        .map(([eventType, count]) => ({ eventType, count }))
+        .sort((a, b) => b.count - a.count),
+      byDay: [...days.entries()]
+        .map(([day, count]) => ({ day, count }))
+        .sort((a, b) => a.day.localeCompare(b.day)),
+      storeOptions: [...stores.entries()]
+        .map(([storeId, v]) => ({ storeId, storeName: v.name }))
+        .sort((a, b) => a.storeName.localeCompare(b.storeName)),
+      recent: list.slice(0, 60).map((r) => ({
+        id: r.id,
+        eventType: r.event_type || "click",
+        offerTitle: r.offer_title ?? "عرض",
+        storeName: r.store_name ?? "—",
+        surface: r.surface,
+        occurredAt: r.occurred_at,
+      })),
+    };
+  });
