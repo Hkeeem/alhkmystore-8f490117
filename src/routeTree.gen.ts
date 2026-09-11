@@ -63,7 +63,10 @@ import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
 import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/hooks/store-bot'
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
+import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
+import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
+import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
 import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
@@ -346,12 +349,29 @@ const ApiPublicHooksSocialSyncRoute =
     path: '/api/public/hooks/social-sync',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksShowroomSyncRoute =
+  ApiPublicHooksShowroomSyncRouteImport.update({
+    id: '/api/public/hooks/showroom-sync',
+    path: '/api/public/hooks/showroom-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksSearchConsoleSnapshotRoute =
   ApiPublicHooksSearchConsoleSnapshotRouteImport.update({
     id: '/api/public/hooks/search-console-snapshot',
     path: '/api/public/hooks/search-console-snapshot',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksOfficePicksRoute =
+  ApiPublicHooksOfficePicksRouteImport.update({
+    id: '/api/public/hooks/office-picks',
+    path: '/api/public/hooks/office-picks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksHarajSyncRoute = ApiPublicHooksHarajSyncRouteImport.update({
+  id: '/api/public/hooks/haraj-sync',
+  path: '/api/public/hooks/haraj-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
   id: '/api/public/hooks/deal-push',
   path: '/api/public/hooks/deal-push',
@@ -414,7 +434,10 @@ export interface FileRoutesByFullPath {
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
+  '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
+  '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -472,7 +495,10 @@ export interface FileRoutesByTo {
   '/hkeeem': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
+  '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
+  '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -532,7 +558,10 @@ export interface FileRoutesById {
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
+  '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
+  '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
   '/api/public/hooks/store-bot': typeof ApiPublicHooksStoreBotRoute
   '/api/public/hooks/sync-external-deals': typeof ApiPublicHooksSyncExternalDealsRoute
@@ -592,7 +621,10 @@ export interface FileRouteTypes {
     | '/hkeeem/'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
+    | '/api/public/hooks/haraj-sync'
+    | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
     | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
@@ -650,7 +682,10 @@ export interface FileRouteTypes {
     | '/hkeeem'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
+    | '/api/public/hooks/haraj-sync'
+    | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
     | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
@@ -709,7 +744,10 @@ export interface FileRouteTypes {
     | '/hkeeem/'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/deal-push'
+    | '/api/public/hooks/haraj-sync'
+    | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
+    | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
     | '/api/public/hooks/store-bot'
     | '/api/public/hooks/sync-external-deals'
@@ -754,7 +792,10 @@ export interface RootRouteChildren {
   HkeeemIndexRoute: typeof HkeeemIndexRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
+  ApiPublicHooksHarajSyncRoute: typeof ApiPublicHooksHarajSyncRoute
+  ApiPublicHooksOfficePicksRoute: typeof ApiPublicHooksOfficePicksRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
+  ApiPublicHooksShowroomSyncRoute: typeof ApiPublicHooksShowroomSyncRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
   ApiPublicHooksStoreBotRoute: typeof ApiPublicHooksStoreBotRoute
   ApiPublicHooksSyncExternalDealsRoute: typeof ApiPublicHooksSyncExternalDealsRoute
@@ -1142,11 +1183,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSocialSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/showroom-sync': {
+      id: '/api/public/hooks/showroom-sync'
+      path: '/api/public/hooks/showroom-sync'
+      fullPath: '/api/public/hooks/showroom-sync'
+      preLoaderRoute: typeof ApiPublicHooksShowroomSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/search-console-snapshot': {
       id: '/api/public/hooks/search-console-snapshot'
       path: '/api/public/hooks/search-console-snapshot'
       fullPath: '/api/public/hooks/search-console-snapshot'
       preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/office-picks': {
+      id: '/api/public/hooks/office-picks'
+      path: '/api/public/hooks/office-picks'
+      fullPath: '/api/public/hooks/office-picks'
+      preLoaderRoute: typeof ApiPublicHooksOfficePicksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/haraj-sync': {
+      id: '/api/public/hooks/haraj-sync'
+      path: '/api/public/hooks/haraj-sync'
+      fullPath: '/api/public/hooks/haraj-sync'
+      preLoaderRoute: typeof ApiPublicHooksHarajSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/deal-push': {
@@ -1268,8 +1330,11 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemIndexRoute: HkeeemIndexRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
   ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
+  ApiPublicHooksHarajSyncRoute: ApiPublicHooksHarajSyncRoute,
+  ApiPublicHooksOfficePicksRoute: ApiPublicHooksOfficePicksRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
+  ApiPublicHooksShowroomSyncRoute: ApiPublicHooksShowroomSyncRoute,
   ApiPublicHooksSocialSyncRoute: ApiPublicHooksSocialSyncRoute,
   ApiPublicHooksStoreBotRoute: ApiPublicHooksStoreBotRoute,
   ApiPublicHooksSyncExternalDealsRoute: ApiPublicHooksSyncExternalDealsRoute,
