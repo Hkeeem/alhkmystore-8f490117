@@ -8,6 +8,14 @@ const clean = (v: unknown, max = 160) =>
     .slice(0, max);
 
 const SURFACES = ["list", "map", "detail", "coupon", "coupon-detail", "home"];
+const EVENT_TYPES = [
+  "click",
+  "coupon_copy",
+  "store_click",
+  "detail_view",
+  "share",
+  "favorite",
+] as const;
 
 /** تسجيل نقرة عرض أو كوبون في جدول offer_clicks (عام، بدون بيانات شخصية) */
 export const recordOfferClick = createServerFn({ method: "POST" })
@@ -15,8 +23,10 @@ export const recordOfferClick = createServerFn({ method: "POST" })
     const d = (data ?? {}) as Record<string, unknown>;
     const surface = clean(d.surface, 24) || "list";
     const kind = clean(d.kind, 16) || "offer";
+    const eventType = clean(d.eventType, 24) || "click";
     return {
       kind: ["offer", "coupon"].includes(kind) ? kind : "offer",
+      eventType: (EVENT_TYPES as readonly string[]).includes(eventType) ? eventType : "click",
       offerId: clean(d.offerId, 80),
       offerTitle: clean(d.offerTitle, 200),
       storeId: clean(d.storeId, 80),
@@ -34,6 +44,8 @@ export const recordOfferClick = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("offer_clicks").insert({
       kind: data.kind,
+      event_type: data.eventType,
+      occurred_at: new Date().toISOString(),
       offer_id: data.offerId,
       offer_title: data.offerTitle || null,
       store_id: data.storeId || null,
@@ -47,6 +59,7 @@ export const recordOfferClick = createServerFn({ method: "POST" })
     });
     return { ok: true };
   });
+
 
 /** بلاغ «الكوبون لا يعمل» من الواجهة العامة */
 export const reportCouponIssue = createServerFn({ method: "POST" })
