@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import { fetchLiveCoupons, type LiveCoupon } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
+import { trackOfferEvent } from "@/lib/track-deal";
+
 
 export const Route = createFileRoute("/coupons")({
   head: () => ({
@@ -56,17 +58,28 @@ function CouponsPage() {
     });
   }, [all, q, cat]);
 
-  const handleCopy = async (code: string) => {
+  const handleCopy = async (c: LiveCoupon) => {
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(code);
+      await navigator.clipboard.writeText(c.code);
+      setCopied(c.code);
+      trackOfferEvent({
+        eventType: "coupon_copy",
+        kind: "coupon",
+        offerId: c.id,
+        offerTitle: c.title,
+        couponCode: c.code,
+        storeId: c.storeId,
+        storeName: c.storeName,
+        surface: "coupon",
+      });
       const s = addPoints("copy_coupon");
-      toast.success(`تم نسخ الكود ${code} · +10 نقاط (المجموع ${s.points})`);
+      toast.success(`تم نسخ الكود ${c.code} · +10 نقاط (المجموع ${s.points})`);
       setTimeout(() => setCopied(null), 1800);
     } catch {
       toast.error("تعذّر نسخ الكود");
     }
   };
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10">
