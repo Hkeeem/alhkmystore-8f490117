@@ -102,7 +102,7 @@ ${couponsBlock}
 
         const gateway = createLovableAiGateway();
         const result = streamText({
-          model: gateway("openai/gpt-5.5"),
+          model: gateway("google/gemini-2.5-flash"),
           system,
           messages: await convertToModelMessages(messages),
         });
