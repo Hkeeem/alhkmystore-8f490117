@@ -1,3 +1,5 @@
+import { fetchStorePrices, fetchActiveCoupons } from "@/integrations/hkeeem-prices";
+
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
