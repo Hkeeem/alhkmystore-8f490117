@@ -30,7 +30,10 @@ function BuildErrorsPage() {
 
   useEffect(() => {
     setEntries(readPreviewErrors());
-    return subscribePreviewErrors((next) => setEntries([...next]));
+    const unsubscribe = subscribePreviewErrors((next) => setEntries([...next]));
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const fmt = (at: number) =>
