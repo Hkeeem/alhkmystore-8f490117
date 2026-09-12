@@ -51,6 +51,8 @@ export const dict = {
   "item.analysis": { ar: "تحليل المتاجر", en: "Store analysis" },
   "item.ads": { ar: "مولد الإعلانات", en: "Ad generator" },
   "item.market": { ar: "سوق حكيم الموحد", en: "Unified market" },
+  "item.showroom": { ar: "معرض حكيم", en: "Hkeeem Showroom" },
+  "item.shop": { ar: "تسوّق حكيم", en: "Shop HkeeemAI" },
   "item.affiliate": { ar: "ربط أمازون ونون", en: "Amazon & noon setup" },
   "item.agents": { ar: "وكلاء حكيم", en: "Hkeeem agents" },
   "item.settings": { ar: "تخصيص المظهر", en: "Appearance" },

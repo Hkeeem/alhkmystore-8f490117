@@ -40,6 +40,7 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://alhkmystore.lovable.app/" },
+      { name: "mitgo-verification", content: "bdc14335-4072-45e4-9a91-d4924c8d0715" },
     ],
     links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/" }],
   }),

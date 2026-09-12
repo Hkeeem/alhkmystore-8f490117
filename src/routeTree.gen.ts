@@ -9,208 +9,72 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as AdsRouteImport } from './routes/ads'
-import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
-import { Route as AgentsRouteImport } from './routes/agents'
-import { Route as AnalysisRouteImport } from './routes/analysis'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as CarsRouteImport } from './routes/cars'
-import { Route as ChatRouteImport } from './routes/chat'
-import { Route as CompareRouteImport } from './routes/compare'
-import { Route as CouponsRouteImport } from './routes/coupons'
-import { Route as DealsRouteImport } from './routes/deals'
-import { Route as DeleteAccountRouteImport } from './routes/delete-account'
-import { Route as HkeeemShoppingRouteImport } from './routes/hkeeem-shopping'
-import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
-import { Route as MapsRouteImport } from './routes/maps'
-import { Route as MarketRouteImport } from './routes/market'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as OfficeRouteImport } from './routes/office'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as ProRouteImport } from './routes/pro'
-import { Route as RealEstateRouteImport } from './routes/real-estate'
-import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SmartListRouteImport } from './routes/smart-list'
-import { Route as SocialOffersRouteImport } from './routes/social-offers'
-import { Route as StoresRouteImport } from './routes/stores'
-import { Route as SyncPartnersRouteImport } from './routes/sync-partners'
 import { Route as TermsRouteImport } from './routes/terms'
-import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
-import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenticated/build-errors'
-import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenticated/deal-reports'
-import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
-import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
-import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
-import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
-import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
-import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
-import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
-import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
-import { Route as ApiChatRouteImport } from './routes/api/chat'
-import { Route as ApiSttRouteImport } from './routes/api/stt'
-import { Route as ApiTtsRouteImport } from './routes/api/tts'
-import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
-import { Route as DealsIdRouteImport } from './routes/deals.$id'
-import { Route as DealsPandaVsOthaimComparisonRouteImport } from './routes/deals.panda-vs-othaim-comparison'
+import { Route as SyncPartnersRouteImport } from './routes/sync-partners'
+import { Route as StoresRouteImport } from './routes/stores'
+import { Route as SocialOffersRouteImport } from './routes/social-offers'
+import { Route as SmartListRouteImport } from './routes/smart-list'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShowroomRouteImport } from './routes/showroom'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as RealEstateRouteImport } from './routes/real-estate'
+import { Route as ProRouteImport } from './routes/pro'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as MarketRouteImport } from './routes/market'
+import { Route as MapsRouteImport } from './routes/maps'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
+import { Route as DealsRouteImport } from './routes/deals'
+import { Route as CouponsRouteImport } from './routes/coupons'
+import { Route as CompareRouteImport } from './routes/compare'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as CarsRouteImport } from './routes/cars'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as AgentsRouteImport } from './routes/agents'
+import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
+import { Route as AdsRouteImport } from './routes/ads'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
-import { Route as HkeeemChatRouteImport } from './routes/hkeeem.chat'
-import { Route as HkeeemNearbyRouteImport } from './routes/hkeeem.nearby'
-import { Route as HkeeemProductRouteImport } from './routes/hkeeem.product'
 import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
-import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
-import { Route as ApiPublicHooksDailyContentSyncRouteImport } from './routes/api/public/hooks/daily-content-sync'
-import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
-import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
-import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
-import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
-import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
-import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
-import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/hooks/store-bot'
-import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
-import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
+import { Route as HkeeemProductRouteImport } from './routes/hkeeem.product'
+import { Route as HkeeemNearbyRouteImport } from './routes/hkeeem.nearby'
+import { Route as HkeeemChatRouteImport } from './routes/hkeeem.chat'
+import { Route as DealsPandaVsOthaimComparisonRouteImport } from './routes/deals.panda-vs-othaim-comparison'
+import { Route as DealsIdRouteImport } from './routes/deals.$id'
+import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
+import { Route as ApiTtsRouteImport } from './routes/api/tts'
+import { Route as ApiSttRouteImport } from './routes/api/stt'
+import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
+import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
+import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
+import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
+import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
+import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
+import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authenticated/deals-admin'
+import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenticated/deal-reports'
+import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenticated/build-errors'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicPostbackNetworkRouteImport } from './routes/api/public/postback.$network'
+import { Route as ApiPublicHooksWeeklyReportRouteImport } from './routes/api/public/hooks/weekly-report'
+import { Route as ApiPublicHooksSyncExternalDealsRouteImport } from './routes/api/public/hooks/sync-external-deals'
+import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/hooks/store-bot'
+import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
+import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
+import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
+import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
+import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
+import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
+import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdsRoute = AdsRouteImport.update({
-  id: '/ads',
-  path: '/ads',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
-  id: '/affiliate-setup',
-  path: '/affiliate-setup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AgentsRoute = AgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnalysisRoute = AnalysisRouteImport.update({
-  id: '/analysis',
-  path: '/analysis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CarsRoute = CarsRouteImport.update({
-  id: '/cars',
-  path: '/cars',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CompareRoute = CompareRouteImport.update({
-  id: '/compare',
-  path: '/compare',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CouponsRoute = CouponsRouteImport.update({
-  id: '/coupons',
-  path: '/coupons',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DealsRoute = DealsRouteImport.update({
-  id: '/deals',
-  path: '/deals',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DeleteAccountRoute = DeleteAccountRouteImport.update({
-  id: '/delete-account',
-  path: '/delete-account',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HkeeemShoppingRoute = HkeeemShoppingRouteImport.update({
-  id: '/hkeeem-shopping',
-  path: '/hkeeem-shopping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HkeeemShowroomRoute = HkeeemShowroomRouteImport.update({
-  id: '/hkeeem-showroom',
-  path: '/hkeeem-showroom',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapsRoute = MapsRouteImport.update({
-  id: '/maps',
-  path: '/maps',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MarketRoute = MarketRouteImport.update({
-  id: '/market',
-  path: '/market',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OfficeRoute = OfficeRouteImport.update({
-  id: '/office',
-  path: '/office',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProRoute = ProRouteImport.update({
-  id: '/pro',
-  path: '/pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RealEstateRoute = RealEstateRouteImport.update({
-  id: '/real-estate',
-  path: '/real-estate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RewardsRoute = RewardsRouteImport.update({
-  id: '/rewards',
-  path: '/rewards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SmartListRoute = SmartListRouteImport.update({
-  id: '/smart-list',
-  path: '/smart-list',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SocialOffersRoute = SocialOffersRouteImport.update({
-  id: '/social-offers',
-  path: '/social-offers',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StoresRoute = StoresRouteImport.update({
-  id: '/stores',
-  path: '/stores',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SyncPartnersRoute = SyncPartnersRouteImport.update({
@@ -218,120 +82,143 @@ const SyncPartnersRoute = SyncPartnersRouteImport.update({
   path: '/sync-partners',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
+const StoresRoute = StoresRouteImport.update({
+  id: '/stores',
+  path: '/stores',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedBuildErrorsRoute =
-  AuthenticatedBuildErrorsRouteImport.update({
-    id: '/build-errors',
-    path: '/build-errors',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDealReportsRoute =
-  AuthenticatedDealReportsRouteImport.update({
-    id: '/deal-reports',
-    path: '/deal-reports',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDealsAdminRoute = AuthenticatedDealsAdminRouteImport.update({
-  id: '/deals-admin',
-  path: '/deals-admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
-  id: '/me',
-  path: '/me',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMerchantRoute = AuthenticatedMerchantRouteImport.update({
-  id: '/merchant',
-  path: '/merchant',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedMerchantReviewRoute =
-  AuthenticatedMerchantReviewRouteImport.update({
-    id: '/merchant-review',
-    path: '/merchant-review',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedNoonSettingsRoute =
-  AuthenticatedNoonSettingsRouteImport.update({
-    id: '/noon-settings',
-    path: '/noon-settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSearchConsoleRoute =
-  AuthenticatedSearchConsoleRouteImport.update({
-    id: '/search-console',
-    path: '/search-console',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedSyncLogRoute = AuthenticatedSyncLogRouteImport.update({
-  id: '/sync-log',
-  path: '/sync-log',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedVisitorsRoute = AuthenticatedVisitorsRouteImport.update({
-  id: '/visitors',
-  path: '/visitors',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const ApiChatRoute = ApiChatRouteImport.update({
-  id: '/api/chat',
-  path: '/api/chat',
+const SocialOffersRoute = SocialOffersRouteImport.update({
+  id: '/social-offers',
+  path: '/social-offers',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSttRoute = ApiSttRouteImport.update({
-  id: '/api/stt',
-  path: '/api/stt',
+const SmartListRoute = SmartListRouteImport.update({
+  id: '/smart-list',
+  path: '/smart-list',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTtsRoute = ApiTtsRouteImport.update({
-  id: '/api/tts',
-  path: '/api/tts',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CouponsIdRoute = CouponsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => CouponsRoute,
+const ShowroomRoute = ShowroomRouteImport.update({
+  id: '/showroom',
+  path: '/showroom',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DealsIdRoute = DealsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => DealsRoute,
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DealsPandaVsOthaimComparisonRoute =
-  DealsPandaVsOthaimComparisonRouteImport.update({
-    id: '/panda-vs-othaim-comparison',
-    path: '/panda-vs-othaim-comparison',
-    getParentRoute: () => DealsRoute,
-  } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RealEstateRoute = RealEstateRouteImport.update({
+  id: '/real-estate',
+  path: '/real-estate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProRoute = ProRouteImport.update({
+  id: '/pro',
+  path: '/pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketRoute = MarketRouteImport.update({
+  id: '/market',
+  path: '/market',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapsRoute = MapsRouteImport.update({
+  id: '/maps',
+  path: '/maps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsRoute = DealsRouteImport.update({
+  id: '/deals',
+  path: '/deals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CouponsRoute = CouponsRouteImport.update({
+  id: '/coupons',
+  path: '/coupons',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareRoute = CompareRouteImport.update({
+  id: '/compare',
+  path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarsRoute = CarsRouteImport.update({
+  id: '/cars',
+  path: '/cars',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalysisRoute = AnalysisRouteImport.update({
+  id: '/analysis',
+  path: '/analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AgentsRoute = AgentsRouteImport.update({
+  id: '/agents',
+  path: '/agents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
+  id: '/affiliate-setup',
+  path: '/affiliate-setup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdsRoute = AdsRouteImport.update({
+  id: '/ads',
+  path: '/ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HkeeemIndexRoute = HkeeemIndexRouteImport.update({
   id: '/hkeeem/',
   path: '/hkeeem/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HkeeemChatRoute = HkeeemChatRouteImport.update({
-  id: '/hkeeem/chat',
-  path: '/hkeeem/chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HkeeemNearbyRoute = HkeeemNearbyRouteImport.update({
-  id: '/hkeeem/nearby',
-  path: '/hkeeem/nearby',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HkeeemProductRoute = HkeeemProductRouteImport.update({
-  id: '/hkeeem/product',
-  path: '/hkeeem/product',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsIdRoute = RewardsIdRouteImport.update({
@@ -339,9 +226,40 @@ const RewardsIdRoute = RewardsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => RewardsRoute,
 } as any)
-const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
-  id: '/api/public/go/$dealId',
-  path: '/api/public/go/$dealId',
+const HkeeemProductRoute = HkeeemProductRouteImport.update({
+  id: '/hkeeem/product',
+  path: '/hkeeem/product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemNearbyRoute = HkeeemNearbyRouteImport.update({
+  id: '/hkeeem/nearby',
+  path: '/hkeeem/nearby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemChatRoute = HkeeemChatRouteImport.update({
+  id: '/hkeeem/chat',
+  path: '/hkeeem/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DealsPandaVsOthaimComparisonRoute =
+  DealsPandaVsOthaimComparisonRouteImport.update({
+    id: '/panda-vs-othaim-comparison',
+    path: '/panda-vs-othaim-comparison',
+    getParentRoute: () => DealsRoute,
+  } as any)
+const DealsIdRoute = DealsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DealsRoute,
+} as any)
+const CouponsIdRoute = CouponsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CouponsRoute,
+} as any)
+const ApiTtsRoute = ApiTtsRouteImport.update({
+  id: '/api/tts',
+  path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksDailyContentSyncRoute =
@@ -355,44 +273,75 @@ const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
   path: '/api/public/hooks/deal-push',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksHarajSyncRoute = ApiPublicHooksHarajSyncRouteImport.update({
-  id: '/api/public/hooks/haraj-sync',
-  path: '/api/public/hooks/haraj-sync',
+const ApiChatRoute = ApiChatRouteImport.update({
+  id: '/api/chat',
+  path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksOfficePicksRoute =
-  ApiPublicHooksOfficePicksRouteImport.update({
-    id: '/api/public/hooks/office-picks',
-    path: '/api/public/hooks/office-picks',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSearchConsoleSnapshotRoute =
-  ApiPublicHooksSearchConsoleSnapshotRouteImport.update({
-    id: '/api/public/hooks/search-console-snapshot',
-    path: '/api/public/hooks/search-console-snapshot',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksShowroomSyncRoute =
-  ApiPublicHooksShowroomSyncRouteImport.update({
-    id: '/api/public/hooks/showroom-sync',
-    path: '/api/public/hooks/showroom-sync',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSocialSyncRoute =
-  ApiPublicHooksSocialSyncRouteImport.update({
-    id: '/api/public/hooks/social-sync',
-    path: '/api/public/hooks/social-sync',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksStoreBotRoute = ApiPublicHooksStoreBotRouteImport.update({
-  id: '/api/public/hooks/store-bot',
-  path: '/api/public/hooks/store-bot',
-  getParentRoute: () => rootRouteImport,
+const AuthenticatedVisitorsRoute = AuthenticatedVisitorsRouteImport.update({
+  id: '/visitors',
+  path: '/visitors',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiPublicHooksSyncExternalDealsRoute =
-  ApiPublicHooksSyncExternalDealsRouteImport.update({
-    id: '/api/public/hooks/sync-external-deals',
-    path: '/api/public/hooks/sync-external-deals',
+const AuthenticatedSyncLogRoute = AuthenticatedSyncLogRouteImport.update({
+  id: '/sync-log',
+  path: '/sync-log',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSearchConsoleRoute =
+  AuthenticatedSearchConsoleRouteImport.update({
+    id: '/search-console',
+    path: '/search-console',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedNoonSettingsRoute =
+  AuthenticatedNoonSettingsRouteImport.update({
+    id: '/noon-settings',
+    path: '/noon-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMerchantReviewRoute =
+  AuthenticatedMerchantReviewRouteImport.update({
+    id: '/merchant-review',
+    path: '/merchant-review',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedMerchantRoute = AuthenticatedMerchantRouteImport.update({
+  id: '/merchant',
+  path: '/merchant',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDealsAdminRoute = AuthenticatedDealsAdminRouteImport.update({
+  id: '/deals-admin',
+  path: '/deals-admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDealReportsRoute =
+  AuthenticatedDealReportsRouteImport.update({
+    id: '/deal-reports',
+    path: '/deal-reports',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedBuildErrorsRoute =
+  AuthenticatedBuildErrorsRouteImport.update({
+    id: '/build-errors',
+    path: '/build-errors',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiPublicPostbackNetworkRoute =
+  ApiPublicPostbackNetworkRouteImport.update({
+    id: '/api/public/postback/$network',
+    path: '/api/public/postback/$network',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksWeeklyReportRoute =
@@ -401,12 +350,56 @@ const ApiPublicHooksWeeklyReportRoute =
     path: '/api/public/hooks/weekly-report',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicPostbackNetworkRoute =
-  ApiPublicPostbackNetworkRouteImport.update({
-    id: '/api/public/postback/$network',
-    path: '/api/public/postback/$network',
+const ApiPublicHooksSyncExternalDealsRoute =
+  ApiPublicHooksSyncExternalDealsRouteImport.update({
+    id: '/api/public/hooks/sync-external-deals',
+    path: '/api/public/hooks/sync-external-deals',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksStoreBotRoute = ApiPublicHooksStoreBotRouteImport.update({
+  id: '/api/public/hooks/store-bot',
+  path: '/api/public/hooks/store-bot',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksSocialSyncRoute =
+  ApiPublicHooksSocialSyncRouteImport.update({
+    id: '/api/public/hooks/social-sync',
+    path: '/api/public/hooks/social-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksShowroomSyncRoute =
+  ApiPublicHooksShowroomSyncRouteImport.update({
+    id: '/api/public/hooks/showroom-sync',
+    path: '/api/public/hooks/showroom-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSearchConsoleSnapshotRoute =
+  ApiPublicHooksSearchConsoleSnapshotRouteImport.update({
+    id: '/api/public/hooks/search-console-snapshot',
+    path: '/api/public/hooks/search-console-snapshot',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksOfficePicksRoute =
+  ApiPublicHooksOfficePicksRouteImport.update({
+    id: '/api/public/hooks/office-picks',
+    path: '/api/public/hooks/office-picks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksHarajSyncRoute = ApiPublicHooksHarajSyncRouteImport.update({
+  id: '/api/public/hooks/haraj-sync',
+  path: '/api/public/hooks/haraj-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
+  id: '/api/public/hooks/deal-push',
+  path: '/api/public/hooks/deal-push',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
+  id: '/api/public/go/$dealId',
+  path: '/api/public/go/$dealId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -432,6 +425,8 @@ export interface FileRoutesByFullPath {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -497,6 +492,8 @@ export interface FileRoutesByTo {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -564,6 +561,8 @@ export interface FileRoutesById {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -631,6 +630,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -696,6 +697,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -762,6 +765,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -829,6 +834,8 @@ export interface RootRouteChildren {
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  ShopRoute: typeof ShopRoute
+  ShowroomRoute: typeof ShowroomRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SmartListRoute: typeof SmartListRoute
   SocialOffersRoute: typeof SocialOffersRoute
@@ -858,200 +865,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated': {
-      id: '/_authenticated'
-      path: ''
-      fullPath: '/'
-      preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ads': {
-      id: '/ads'
-      path: '/ads'
-      fullPath: '/ads'
-      preLoaderRoute: typeof AdsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/affiliate-setup': {
-      id: '/affiliate-setup'
-      path: '/affiliate-setup'
-      fullPath: '/affiliate-setup'
-      preLoaderRoute: typeof AffiliateSetupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/agents': {
-      id: '/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analysis': {
-      id: '/analysis'
-      path: '/analysis'
-      fullPath: '/analysis'
-      preLoaderRoute: typeof AnalysisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cars': {
-      id: '/cars'
-      path: '/cars'
-      fullPath: '/cars'
-      preLoaderRoute: typeof CarsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/compare': {
-      id: '/compare'
-      path: '/compare'
-      fullPath: '/compare'
-      preLoaderRoute: typeof CompareRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coupons': {
-      id: '/coupons'
-      path: '/coupons'
-      fullPath: '/coupons'
-      preLoaderRoute: typeof CouponsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/deals': {
-      id: '/deals'
-      path: '/deals'
-      fullPath: '/deals'
-      preLoaderRoute: typeof DealsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/delete-account': {
-      id: '/delete-account'
-      path: '/delete-account'
-      fullPath: '/delete-account'
-      preLoaderRoute: typeof DeleteAccountRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hkeeem-shopping': {
-      id: '/hkeeem-shopping'
-      path: '/hkeeem-shopping'
-      fullPath: '/hkeeem-shopping'
-      preLoaderRoute: typeof HkeeemShoppingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hkeeem-showroom': {
-      id: '/hkeeem-showroom'
-      path: '/hkeeem-showroom'
-      fullPath: '/hkeeem-showroom'
-      preLoaderRoute: typeof HkeeemShowroomRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/maps': {
-      id: '/maps'
-      path: '/maps'
-      fullPath: '/maps'
-      preLoaderRoute: typeof MapsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/market': {
-      id: '/market'
-      path: '/market'
-      fullPath: '/market'
-      preLoaderRoute: typeof MarketRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/office': {
-      id: '/office'
-      path: '/office'
-      fullPath: '/office'
-      preLoaderRoute: typeof OfficeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pro': {
-      id: '/pro'
-      path: '/pro'
-      fullPath: '/pro'
-      preLoaderRoute: typeof ProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/real-estate': {
-      id: '/real-estate'
-      path: '/real-estate'
-      fullPath: '/real-estate'
-      preLoaderRoute: typeof RealEstateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/rewards': {
-      id: '/rewards'
-      path: '/rewards'
-      fullPath: '/rewards'
-      preLoaderRoute: typeof RewardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/smart-list': {
-      id: '/smart-list'
-      path: '/smart-list'
-      fullPath: '/smart-list'
-      preLoaderRoute: typeof SmartListRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/social-offers': {
-      id: '/social-offers'
-      path: '/social-offers'
-      fullPath: '/social-offers'
-      preLoaderRoute: typeof SocialOffersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stores': {
-      id: '/stores'
-      path: '/stores'
-      fullPath: '/stores'
-      preLoaderRoute: typeof StoresRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sync-partners': {
@@ -1061,158 +879,200 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SyncPartnersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
+    '/stores': {
+      id: '/stores'
+      path: '/stores'
+      fullPath: '/stores'
+      preLoaderRoute: typeof StoresRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/build-errors': {
-      id: '/_authenticated/build-errors'
-      path: '/build-errors'
-      fullPath: '/build-errors'
-      preLoaderRoute: typeof AuthenticatedBuildErrorsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/deal-reports': {
-      id: '/_authenticated/deal-reports'
-      path: '/deal-reports'
-      fullPath: '/deal-reports'
-      preLoaderRoute: typeof AuthenticatedDealReportsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/deals-admin': {
-      id: '/_authenticated/deals-admin'
-      path: '/deals-admin'
-      fullPath: '/deals-admin'
-      preLoaderRoute: typeof AuthenticatedDealsAdminRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/me': {
-      id: '/_authenticated/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof AuthenticatedMeRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/merchant': {
-      id: '/_authenticated/merchant'
-      path: '/merchant'
-      fullPath: '/merchant'
-      preLoaderRoute: typeof AuthenticatedMerchantRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/merchant-review': {
-      id: '/_authenticated/merchant-review'
-      path: '/merchant-review'
-      fullPath: '/merchant-review'
-      preLoaderRoute: typeof AuthenticatedMerchantReviewRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/noon-settings': {
-      id: '/_authenticated/noon-settings'
-      path: '/noon-settings'
-      fullPath: '/noon-settings'
-      preLoaderRoute: typeof AuthenticatedNoonSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/search-console': {
-      id: '/_authenticated/search-console'
-      path: '/search-console'
-      fullPath: '/search-console'
-      preLoaderRoute: typeof AuthenticatedSearchConsoleRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/sync-log': {
-      id: '/_authenticated/sync-log'
-      path: '/sync-log'
-      fullPath: '/sync-log'
-      preLoaderRoute: typeof AuthenticatedSyncLogRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/visitors': {
-      id: '/_authenticated/visitors'
-      path: '/visitors'
-      fullPath: '/visitors'
-      preLoaderRoute: typeof AuthenticatedVisitorsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/api/chat': {
-      id: '/api/chat'
-      path: '/api/chat'
-      fullPath: '/api/chat'
-      preLoaderRoute: typeof ApiChatRouteImport
+    '/social-offers': {
+      id: '/social-offers'
+      path: '/social-offers'
+      fullPath: '/social-offers'
+      preLoaderRoute: typeof SocialOffersRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/stt': {
-      id: '/api/stt'
-      path: '/api/stt'
-      fullPath: '/api/stt'
-      preLoaderRoute: typeof ApiSttRouteImport
+    '/smart-list': {
+      id: '/smart-list'
+      path: '/smart-list'
+      fullPath: '/smart-list'
+      preLoaderRoute: typeof SmartListRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/tts': {
-      id: '/api/tts'
-      path: '/api/tts'
-      fullPath: '/api/tts'
-      preLoaderRoute: typeof ApiTtsRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/coupons/$id': {
-      id: '/coupons/$id'
-      path: '/$id'
-      fullPath: '/coupons/$id'
-      preLoaderRoute: typeof CouponsIdRouteImport
-      parentRoute: typeof CouponsRoute
+    '/showroom': {
+      id: '/showroom'
+      path: '/showroom'
+      fullPath: '/showroom'
+      preLoaderRoute: typeof ShowroomRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/deals/$id': {
-      id: '/deals/$id'
-      path: '/$id'
-      fullPath: '/deals/$id'
-      preLoaderRoute: typeof DealsIdRouteImport
-      parentRoute: typeof DealsRoute
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/deals/panda-vs-othaim-comparison': {
-      id: '/deals/panda-vs-othaim-comparison'
-      path: '/panda-vs-othaim-comparison'
-      fullPath: '/deals/panda-vs-othaim-comparison'
-      preLoaderRoute: typeof DealsPandaVsOthaimComparisonRouteImport
-      parentRoute: typeof DealsRoute
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/real-estate': {
+      id: '/real-estate'
+      path: '/real-estate'
+      fullPath: '/real-estate'
+      preLoaderRoute: typeof RealEstateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pro': {
+      id: '/pro'
+      path: '/pro'
+      fullPath: '/pro'
+      preLoaderRoute: typeof ProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/market': {
+      id: '/market'
+      path: '/market'
+      fullPath: '/market'
+      preLoaderRoute: typeof MarketRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maps': {
+      id: '/maps'
+      path: '/maps'
+      fullPath: '/maps'
+      preLoaderRoute: typeof MapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/deals': {
+      id: '/deals'
+      path: '/deals'
+      fullPath: '/deals'
+      preLoaderRoute: typeof DealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coupons': {
+      id: '/coupons'
+      path: '/coupons'
+      fullPath: '/coupons'
+      preLoaderRoute: typeof CouponsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare': {
+      id: '/compare'
+      path: '/compare'
+      fullPath: '/compare'
+      preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cars': {
+      id: '/cars'
+      path: '/cars'
+      fullPath: '/cars'
+      preLoaderRoute: typeof CarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analysis': {
+      id: '/analysis'
+      path: '/analysis'
+      fullPath: '/analysis'
+      preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/agents': {
+      id: '/agents'
+      path: '/agents'
+      fullPath: '/agents'
+      preLoaderRoute: typeof AgentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/affiliate-setup': {
+      id: '/affiliate-setup'
+      path: '/affiliate-setup'
+      fullPath: '/affiliate-setup'
+      preLoaderRoute: typeof AffiliateSetupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ads': {
+      id: '/ads'
+      path: '/ads'
+      fullPath: '/ads'
+      preLoaderRoute: typeof AdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/hkeeem/': {
       id: '/hkeeem/'
       path: '/hkeeem'
       fullPath: '/hkeeem/'
       preLoaderRoute: typeof HkeeemIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hkeeem/chat': {
-      id: '/hkeeem/chat'
-      path: '/hkeeem/chat'
-      fullPath: '/hkeeem/chat'
-      preLoaderRoute: typeof HkeeemChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hkeeem/nearby': {
-      id: '/hkeeem/nearby'
-      path: '/hkeeem/nearby'
-      fullPath: '/hkeeem/nearby'
-      preLoaderRoute: typeof HkeeemNearbyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/hkeeem/product': {
-      id: '/hkeeem/product'
-      path: '/hkeeem/product'
-      fullPath: '/hkeeem/product'
-      preLoaderRoute: typeof HkeeemProductRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards/$id': {
@@ -1222,74 +1082,151 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RewardsIdRouteImport
       parentRoute: typeof RewardsRoute
     }
-    '/api/public/go/$dealId': {
-      id: '/api/public/go/$dealId'
-      path: '/api/public/go/$dealId'
-      fullPath: '/api/public/go/$dealId'
-      preLoaderRoute: typeof ApiPublicGoDealIdRouteImport
+    '/hkeeem/product': {
+      id: '/hkeeem/product'
+      path: '/hkeeem/product'
+      fullPath: '/hkeeem/product'
+      preLoaderRoute: typeof HkeeemProductRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/daily-content-sync': {
-      id: '/api/public/hooks/daily-content-sync'
-      path: '/api/public/hooks/daily-content-sync'
-      fullPath: '/api/public/hooks/daily-content-sync'
-      preLoaderRoute: typeof ApiPublicHooksDailyContentSyncRouteImport
+    '/hkeeem/nearby': {
+      id: '/hkeeem/nearby'
+      path: '/hkeeem/nearby'
+      fullPath: '/hkeeem/nearby'
+      preLoaderRoute: typeof HkeeemNearbyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/deal-push': {
-      id: '/api/public/hooks/deal-push'
-      path: '/api/public/hooks/deal-push'
-      fullPath: '/api/public/hooks/deal-push'
-      preLoaderRoute: typeof ApiPublicHooksDealPushRouteImport
+    '/hkeeem/chat': {
+      id: '/hkeeem/chat'
+      path: '/hkeeem/chat'
+      fullPath: '/hkeeem/chat'
+      preLoaderRoute: typeof HkeeemChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/haraj-sync': {
-      id: '/api/public/hooks/haraj-sync'
-      path: '/api/public/hooks/haraj-sync'
-      fullPath: '/api/public/hooks/haraj-sync'
-      preLoaderRoute: typeof ApiPublicHooksHarajSyncRouteImport
+    '/deals/panda-vs-othaim-comparison': {
+      id: '/deals/panda-vs-othaim-comparison'
+      path: '/panda-vs-othaim-comparison'
+      fullPath: '/deals/panda-vs-othaim-comparison'
+      preLoaderRoute: typeof DealsPandaVsOthaimComparisonRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/deals/$id': {
+      id: '/deals/$id'
+      path: '/$id'
+      fullPath: '/deals/$id'
+      preLoaderRoute: typeof DealsIdRouteImport
+      parentRoute: typeof DealsRoute
+    }
+    '/coupons/$id': {
+      id: '/coupons/$id'
+      path: '/$id'
+      fullPath: '/coupons/$id'
+      preLoaderRoute: typeof CouponsIdRouteImport
+      parentRoute: typeof CouponsRoute
+    }
+    '/api/tts': {
+      id: '/api/tts'
+      path: '/api/tts'
+      fullPath: '/api/tts'
+      preLoaderRoute: typeof ApiTtsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/office-picks': {
-      id: '/api/public/hooks/office-picks'
-      path: '/api/public/hooks/office-picks'
-      fullPath: '/api/public/hooks/office-picks'
-      preLoaderRoute: typeof ApiPublicHooksOfficePicksRouteImport
+    '/api/stt': {
+      id: '/api/stt'
+      path: '/api/stt'
+      fullPath: '/api/stt'
+      preLoaderRoute: typeof ApiSttRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/search-console-snapshot': {
-      id: '/api/public/hooks/search-console-snapshot'
-      path: '/api/public/hooks/search-console-snapshot'
-      fullPath: '/api/public/hooks/search-console-snapshot'
-      preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
+    '/api/chat': {
+      id: '/api/chat'
+      path: '/api/chat'
+      fullPath: '/api/chat'
+      preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/showroom-sync': {
-      id: '/api/public/hooks/showroom-sync'
-      path: '/api/public/hooks/showroom-sync'
-      fullPath: '/api/public/hooks/showroom-sync'
-      preLoaderRoute: typeof ApiPublicHooksShowroomSyncRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/visitors': {
+      id: '/_authenticated/visitors'
+      path: '/visitors'
+      fullPath: '/visitors'
+      preLoaderRoute: typeof AuthenticatedVisitorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/hooks/social-sync': {
-      id: '/api/public/hooks/social-sync'
-      path: '/api/public/hooks/social-sync'
-      fullPath: '/api/public/hooks/social-sync'
-      preLoaderRoute: typeof ApiPublicHooksSocialSyncRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/sync-log': {
+      id: '/_authenticated/sync-log'
+      path: '/sync-log'
+      fullPath: '/sync-log'
+      preLoaderRoute: typeof AuthenticatedSyncLogRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/hooks/store-bot': {
-      id: '/api/public/hooks/store-bot'
-      path: '/api/public/hooks/store-bot'
-      fullPath: '/api/public/hooks/store-bot'
-      preLoaderRoute: typeof ApiPublicHooksStoreBotRouteImport
-      parentRoute: typeof rootRouteImport
+    '/_authenticated/search-console': {
+      id: '/_authenticated/search-console'
+      path: '/search-console'
+      fullPath: '/search-console'
+      preLoaderRoute: typeof AuthenticatedSearchConsoleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/public/hooks/sync-external-deals': {
-      id: '/api/public/hooks/sync-external-deals'
-      path: '/api/public/hooks/sync-external-deals'
-      fullPath: '/api/public/hooks/sync-external-deals'
-      preLoaderRoute: typeof ApiPublicHooksSyncExternalDealsRouteImport
+    '/_authenticated/noon-settings': {
+      id: '/_authenticated/noon-settings'
+      path: '/noon-settings'
+      fullPath: '/noon-settings'
+      preLoaderRoute: typeof AuthenticatedNoonSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/merchant-review': {
+      id: '/_authenticated/merchant-review'
+      path: '/merchant-review'
+      fullPath: '/merchant-review'
+      preLoaderRoute: typeof AuthenticatedMerchantReviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/merchant': {
+      id: '/_authenticated/merchant'
+      path: '/merchant'
+      fullPath: '/merchant'
+      preLoaderRoute: typeof AuthenticatedMerchantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/me': {
+      id: '/_authenticated/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deals-admin': {
+      id: '/_authenticated/deals-admin'
+      path: '/deals-admin'
+      fullPath: '/deals-admin'
+      preLoaderRoute: typeof AuthenticatedDealsAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/deal-reports': {
+      id: '/_authenticated/deal-reports'
+      path: '/deal-reports'
+      fullPath: '/deal-reports'
+      preLoaderRoute: typeof AuthenticatedDealReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/build-errors': {
+      id: '/_authenticated/build-errors'
+      path: '/build-errors'
+      fullPath: '/build-errors'
+      preLoaderRoute: typeof AuthenticatedBuildErrorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/postback/$network': {
+      id: '/api/public/postback/$network'
+      path: '/api/public/postback/$network'
+      fullPath: '/api/public/postback/$network'
+      preLoaderRoute: typeof ApiPublicPostbackNetworkRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/weekly-report': {
@@ -1299,11 +1236,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksWeeklyReportRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/postback/$network': {
-      id: '/api/public/postback/$network'
-      path: '/api/public/postback/$network'
-      fullPath: '/api/public/postback/$network'
-      preLoaderRoute: typeof ApiPublicPostbackNetworkRouteImport
+    '/api/public/hooks/sync-external-deals': {
+      id: '/api/public/hooks/sync-external-deals'
+      path: '/api/public/hooks/sync-external-deals'
+      fullPath: '/api/public/hooks/sync-external-deals'
+      preLoaderRoute: typeof ApiPublicHooksSyncExternalDealsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/store-bot': {
+      id: '/api/public/hooks/store-bot'
+      path: '/api/public/hooks/store-bot'
+      fullPath: '/api/public/hooks/store-bot'
+      preLoaderRoute: typeof ApiPublicHooksStoreBotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/social-sync': {
+      id: '/api/public/hooks/social-sync'
+      path: '/api/public/hooks/social-sync'
+      fullPath: '/api/public/hooks/social-sync'
+      preLoaderRoute: typeof ApiPublicHooksSocialSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/showroom-sync': {
+      id: '/api/public/hooks/showroom-sync'
+      path: '/api/public/hooks/showroom-sync'
+      fullPath: '/api/public/hooks/showroom-sync'
+      preLoaderRoute: typeof ApiPublicHooksShowroomSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/search-console-snapshot': {
+      id: '/api/public/hooks/search-console-snapshot'
+      path: '/api/public/hooks/search-console-snapshot'
+      fullPath: '/api/public/hooks/search-console-snapshot'
+      preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/office-picks': {
+      id: '/api/public/hooks/office-picks'
+      path: '/api/public/hooks/office-picks'
+      fullPath: '/api/public/hooks/office-picks'
+      preLoaderRoute: typeof ApiPublicHooksOfficePicksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/haraj-sync': {
+      id: '/api/public/hooks/haraj-sync'
+      path: '/api/public/hooks/haraj-sync'
+      fullPath: '/api/public/hooks/haraj-sync'
+      preLoaderRoute: typeof ApiPublicHooksHarajSyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/deal-push': {
+      id: '/api/public/hooks/deal-push'
+      path: '/api/public/hooks/deal-push'
+      fullPath: '/api/public/hooks/deal-push'
+      preLoaderRoute: typeof ApiPublicHooksDealPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/go/$dealId': {
+      id: '/api/public/go/$dealId'
+      path: '/api/public/go/$dealId'
+      fullPath: '/api/public/go/$dealId'
+      preLoaderRoute: typeof ApiPublicGoDealIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -1399,6 +1392,8 @@ const rootRouteChildren: RootRouteChildren = {
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  ShopRoute: ShopRoute,
+  ShowroomRoute: ShowroomRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SmartListRoute: SmartListRoute,
   SocialOffersRoute: SocialOffersRoute,

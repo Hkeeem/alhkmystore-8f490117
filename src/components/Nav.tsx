@@ -73,6 +73,8 @@ const groups: Group[] = [
     icon: Store,
     items: [
       { to: "/stores", key: "item.stores", icon: Store },
+      { to: "/showroom", key: "item.showroom", icon: Sparkles, badgeKey: "nav.new" },
+      { to: "/shop", key: "item.shop", icon: ShoppingBag, badgeKey: "nav.new" },
       { to: "/deals", key: "item.deals", icon: Tag },
       { to: "/coupons", key: "item.coupons", icon: Ticket },
       { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
