@@ -1,6 +1,6 @@
 import { fetchStorePrices, fetchActiveCoupons } from "@/integrations/hkeeem-prices";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
@@ -54,6 +54,24 @@ function Home() {
   const groups = comparableGroups().slice(0, 3);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
+
+  // حالات لتخزين البيانات الحية المسترجعة من Supabase
+  const [livePrices, setLivePrices] = useState<any[]>([]);
+  const [activeCoupons, setActiveCoupons] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadLiveData() {
+      try {
+        const pricesData = await fetchStorePrices();
+        const couponsData = await fetchActiveCoupons();
+        setLivePrices(pricesData);
+        setActiveCoupons(couponsData);
+      } catch (err) {
+        console.error("Failed to load live data from Supabase:", err);
+      }
+    }
+    loadLiveData();
+  }, []);
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,6 +216,32 @@ function Home() {
       <LazySection minHeight={300}>
         <OffersSection />
       </LazySection>
+
+      {/* قسم عرض الأسعار الحية المسترجعة من Supabase مع ضريبة 15% */}
+      {livePrices.length > 0 && (
+        <LazySection minHeight={300}>
+          <section className="bg-card rounded-3xl p-6 border border-border/60 shadow-card">
+            <h2 className="text-xl font-bold mb-4 text-foreground flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              الأسعار المحدثة من قاعدة البيانات (شاملة ضريبة القيمة المضافة 15%)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {livePrices.map((item) => (
+                <div key={item.id} className="p-4 rounded-2xl bg-secondary/50 border border-border/40 flex justify-between items-center">
+                  <div>
+                    <h3 className="font-bold text-sm">{item.products?.name_ar || "منتج"}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">المتجر: {item.stores?.name_ar || "متجر"}</p>
+                  </div>
+                  <div className="text-left">
+                    <span className="font-black text-primary text-base">{item.price_with_tax} ر.س</span>
+                    <span className="block text-[10px] text-muted-foreground">قبل الضريبة: {item.price_before_tax} ر.س</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </LazySection>
+      )}
 
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
