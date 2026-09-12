@@ -15,6 +15,8 @@ import { Route as StoresRouteImport } from './routes/stores'
 import { Route as SocialOffersRouteImport } from './routes/social-offers'
 import { Route as SmartListRouteImport } from './routes/smart-list'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShowroomRouteImport } from './routes/showroom'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
@@ -98,6 +100,16 @@ const SmartListRoute = SmartListRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowroomRoute = ShowroomRouteImport.update({
+  id: '/showroom',
+  path: '/showroom',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -404,6 +416,8 @@ export interface FileRoutesByFullPath {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -465,6 +479,8 @@ export interface FileRoutesByTo {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -528,6 +544,8 @@ export interface FileRoutesById {
   '/real-estate': typeof RealEstateRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
+  '/shop': typeof ShopRoute
+  '/showroom': typeof ShowroomRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/smart-list': typeof SmartListRoute
   '/social-offers': typeof SocialOffersRoute
@@ -591,6 +609,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -652,6 +672,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -714,6 +736,8 @@ export interface FileRouteTypes {
     | '/real-estate'
     | '/rewards'
     | '/settings'
+    | '/shop'
+    | '/showroom'
     | '/sitemap.xml'
     | '/smart-list'
     | '/social-offers'
@@ -777,6 +801,8 @@ export interface RootRouteChildren {
   RealEstateRoute: typeof RealEstateRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
+  ShopRoute: typeof ShopRoute
+  ShowroomRoute: typeof ShowroomRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SmartListRoute: typeof SmartListRoute
   SocialOffersRoute: typeof SocialOffersRoute
@@ -845,6 +871,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/showroom': {
+      id: '/showroom'
+      path: '/showroom'
+      fullPath: '/showroom'
+      preLoaderRoute: typeof ShowroomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -1315,6 +1355,8 @@ const rootRouteChildren: RootRouteChildren = {
   RealEstateRoute: RealEstateRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SettingsRoute: SettingsRoute,
+  ShopRoute: ShopRoute,
+  ShowroomRoute: ShowroomRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SmartListRoute: SmartListRoute,
   SocialOffersRoute: SocialOffersRoute,
