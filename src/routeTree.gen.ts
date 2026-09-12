@@ -262,9 +262,15 @@ const ApiTtsRoute = ApiTtsRouteImport.update({
   path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiSttRoute = ApiSttRouteImport.update({
-  id: '/api/stt',
-  path: '/api/stt',
+const ApiPublicHooksDailyContentSyncRoute =
+  ApiPublicHooksDailyContentSyncRouteImport.update({
+    id: '/api/public/hooks/daily-content-sync',
+    path: '/api/public/hooks/daily-content-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
+  id: '/api/public/hooks/deal-push',
+  path: '/api/public/hooks/deal-push',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -408,9 +414,12 @@ export interface FileRoutesByFullPath {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/hkeeem-shopping': typeof HkeeemShoppingRoute
+  '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
+  '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
@@ -447,6 +456,7 @@ export interface FileRoutesByFullPath {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
@@ -471,9 +481,12 @@ export interface FileRoutesByTo {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/hkeeem-shopping': typeof HkeeemShoppingRoute
+  '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
+  '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
@@ -510,6 +523,7 @@ export interface FileRoutesByTo {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
@@ -536,9 +550,12 @@ export interface FileRoutesById {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/hkeeem-shopping': typeof HkeeemShoppingRoute
+  '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
+  '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
@@ -575,6 +592,7 @@ export interface FileRoutesById {
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
+  '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
@@ -601,9 +619,12 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/hkeeem-shopping'
+    | '/hkeeem-showroom'
     | '/maps'
     | '/market'
     | '/notifications'
+    | '/office'
     | '/privacy'
     | '/pro'
     | '/real-estate'
@@ -640,6 +661,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem/'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/office-picks'
@@ -664,9 +686,12 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/hkeeem-shopping'
+    | '/hkeeem-showroom'
     | '/maps'
     | '/market'
     | '/notifications'
+    | '/office'
     | '/privacy'
     | '/pro'
     | '/real-estate'
@@ -703,6 +728,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/office-picks'
@@ -728,9 +754,12 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/hkeeem-shopping'
+    | '/hkeeem-showroom'
     | '/maps'
     | '/market'
     | '/notifications'
+    | '/office'
     | '/privacy'
     | '/pro'
     | '/real-estate'
@@ -767,6 +796,7 @@ export interface FileRouteTypes {
     | '/rewards/$id'
     | '/hkeeem/'
     | '/api/public/go/$dealId'
+    | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/office-picks'
@@ -793,9 +823,12 @@ export interface RootRouteChildren {
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
+  HkeeemShoppingRoute: typeof HkeeemShoppingRoute
+  HkeeemShowroomRoute: typeof HkeeemShowroomRoute
   MapsRoute: typeof MapsRoute
   MarketRoute: typeof MarketRoute
   NotificationsRoute: typeof NotificationsRoute
+  OfficeRoute: typeof OfficeRoute
   PrivacyRoute: typeof PrivacyRoute
   ProRoute: typeof ProRoute
   RealEstateRoute: typeof RealEstateRoute
@@ -817,6 +850,7 @@ export interface RootRouteChildren {
   HkeeemProductRoute: typeof HkeeemProductRoute
   HkeeemIndexRoute: typeof HkeeemIndexRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
+  ApiPublicHooksDailyContentSyncRoute: typeof ApiPublicHooksDailyContentSyncRoute
   ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
   ApiPublicHooksHarajSyncRoute: typeof ApiPublicHooksHarajSyncRoute
   ApiPublicHooksOfficePicksRoute: typeof ApiPublicHooksOfficePicksRoute
@@ -1347,9 +1381,12 @@ const rootRouteChildren: RootRouteChildren = {
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
+  HkeeemShoppingRoute: HkeeemShoppingRoute,
+  HkeeemShowroomRoute: HkeeemShowroomRoute,
   MapsRoute: MapsRoute,
   MarketRoute: MarketRoute,
   NotificationsRoute: NotificationsRoute,
+  OfficeRoute: OfficeRoute,
   PrivacyRoute: PrivacyRoute,
   ProRoute: ProRoute,
   RealEstateRoute: RealEstateRoute,
@@ -1371,6 +1408,7 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemProductRoute: HkeeemProductRoute,
   HkeeemIndexRoute: HkeeemIndexRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
+  ApiPublicHooksDailyContentSyncRoute: ApiPublicHooksDailyContentSyncRoute,
   ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
   ApiPublicHooksHarajSyncRoute: ApiPublicHooksHarajSyncRoute,
   ApiPublicHooksOfficePicksRoute: ApiPublicHooksOfficePicksRoute,

@@ -1,4 +1,10 @@
 {
   "framework": "tanstack-start",
-  "installCommand": "bun install"
+  "installCommand": "bun install",
+  "crons": [
+    {
+      "path": "/api/public/hooks/daily-content-sync",
+      "schedule": "0 3 * * *"
+    }
+  ]
 }

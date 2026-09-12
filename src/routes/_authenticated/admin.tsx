@@ -30,6 +30,7 @@ import {
   Globe,
   Link2,
   Tags,
+  Store,
 } from "lucide-react";
 import {
   getAdminContext,
@@ -56,6 +57,7 @@ import {
 import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
+import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 
 type Tab =
   | "dashboard"
@@ -70,7 +72,8 @@ type Tab =
   | "deploy"
   | "clicks"
   | "reports"
-  | "deals";
+  | "deals"
+  | "showroom";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -164,6 +167,12 @@ function AdminPage() {
       icon: Tags,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    {
+      id: "showroom" as const,
+      label: "معرض حكيم",
+      icon: Store,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -213,6 +222,7 @@ function AdminPage() {
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
           {tab === "deals" && <DealsAdminTab />}
+          {tab === "showroom" && <ShowroomAdminPanel />}
         </main>
       </div>
     </div>
