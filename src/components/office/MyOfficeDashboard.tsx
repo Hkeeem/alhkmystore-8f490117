@@ -40,6 +40,9 @@ export const MyOfficeDashboard: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* مختارات مكتب حكيم */}
+      <OfficePicks />
     </div>
   );
 };
