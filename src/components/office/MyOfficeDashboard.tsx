@@ -1,5 +1,6 @@
 import React from "react";
 import { Building2, TrendingUp, Users, DollarSign, Plus } from "lucide-react";
+import { OfficePicks } from "@/components/office/OfficePicks";
 
 export const MyOfficeDashboard: React.FC = () => {
   const stats = [
@@ -39,6 +40,9 @@ export const MyOfficeDashboard: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* مختارات مكتب حكيم */}
+      <OfficePicks />
     </div>
   );
 };
