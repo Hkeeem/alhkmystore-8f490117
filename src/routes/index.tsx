@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   Zap,
   Award,
+  Tag,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -55,7 +56,7 @@ function Home() {
   const navigate = useNavigate();
   const [q, setQ] = useState("");
 
-  // حالات لتخزين البيانات الحية المسترجعة من Supabase
+  // حالات لتخزين الأسعار والكوبونات الحية المسترجعة من قاعدة البيانات
   const [livePrices, setLivePrices] = useState<any[]>([]);
   const [activeCoupons, setActiveCoupons] = useState<any[]>([]);
 
@@ -64,8 +65,8 @@ function Home() {
       try {
         const pricesData = await fetchStorePrices();
         const couponsData = await fetchActiveCoupons();
-        setLivePrices(pricesData);
-        setActiveCoupons(couponsData);
+        setLivePrices(pricesData || []);
+        setActiveCoupons(couponsData || []);
       } catch (err) {
         console.error("Failed to load live data from Supabase:", err);
       }
@@ -212,36 +213,64 @@ function Home() {
         </div>
       </section>
 
-      {/* عروض حية من قاعدة البيانات — أول شيء يشوفه المستهلك */}
+      {/* قسم الأسعار الحية والكوبونات المباشرة من قاعدة البيانات أسفل الـ HERO */}
+      {(livePrices.length > 0 || activeCoupons.length > 0) && (
+        <section className="space-y-6">
+          {livePrices.length > 0 && (
+            <div className="bg-card rounded-3xl p-6 border border-border/60 shadow-card">
+              <div className="flex items-center gap-2 mb-4">
+                <Sparkles className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">الأسعار المحدثة من قاعدة البيانات (شاملة ضريبة 15%)</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {livePrices.map((item, idx) => (
+                  <div key={item.id || idx} className="p-4 rounded-2xl bg-secondary/50 border border-border/40 flex justify-between items-center">
+                    <div>
+                      <h3 className="font-bold text-sm">{item.products?.name_ar || item.product_id || "منتج"}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <Tag className="w-3 h-3 text-primary" /> متجر حكيم المعتمد
+                      </p>
+                    </div>
+                    <div className="text-left">
+                      <span className="font-black text-primary text-base">{item.price_with_tax || item.price_before_tax} ر.س</span>
+                      <span className="block text-[10px] text-muted-foreground">قبل الضريبة: {item.price_before_tax} ر.س</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeCoupons.length > 0 && (
+            <div className="bg-card rounded-3xl p-6 border border-border/60 shadow-card">
+              <div className="flex items-center gap-2 mb-4">
+                <Ticket className="w-5 h-5 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">كوبونات الخصم النشطة</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {activeCoupons.map((coupon, idx) => (
+                  <div key={coupon.id || idx} className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex justify-between items-center">
+                    <div>
+                      <span className="text-xs text-muted-foreground block">رمز الكوبون</span>
+                      <span className="font-mono font-black text-lg text-primary">{coupon.code}</span>
+                    </div>
+                    <div className="text-left">
+                      <span className="text-xs font-bold bg-primary text-primary-foreground px-2.5 py-1 rounded-full">
+                        خصم {coupon.discount_value}%
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* عروض حية من قاعدة البيانات */}
       <LazySection minHeight={300}>
         <OffersSection />
       </LazySection>
-
-      {/* قسم عرض الأسعار الحية المسترجعة من Supabase مع ضريبة 15% */}
-      {livePrices.length > 0 && (
-        <LazySection minHeight={300}>
-          <section className="bg-card rounded-3xl p-6 border border-border/60 shadow-card">
-            <h2 className="text-xl font-bold mb-4 text-foreground flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-primary" />
-              الأسعار المحدثة من قاعدة البيانات (شاملة ضريبة القيمة المضافة 15%)
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {livePrices.map((item) => (
-                <div key={item.id} className="p-4 rounded-2xl bg-secondary/50 border border-border/40 flex justify-between items-center">
-                  <div>
-                    <h3 className="font-bold text-sm">{item.products?.name_ar || "منتج"}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">المتجر: {item.stores?.name_ar || "متجر"}</p>
-                  </div>
-                  <div className="text-left">
-                    <span className="font-black text-primary text-base">{item.price_with_tax} ر.س</span>
-                    <span className="block text-[10px] text-muted-foreground">قبل الضريبة: {item.price_before_tax} ر.س</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        </LazySection>
-      )}
 
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
