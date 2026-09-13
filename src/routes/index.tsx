@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
+import { useMemo, useState } from "react";
+import { discountPercent, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
+import { useRealDeals } from "@/hooks/use-real-deals";
+import { liveComparableGroups } from "@/lib/compare-groups";
+import { VAT_NOTE } from "@/lib/vat";
 
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import { useI18n } from "@/lib/i18n";
@@ -49,8 +52,13 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t } = useI18n();
-  const top = bestDeals(6);
-  const groups = comparableGroups().slice(0, 3);
+  const dealsQuery = useRealDeals(120);
+  const liveDeals = useMemo(() => dealsQuery.data ?? [], [dealsQuery.data]);
+  const top = useMemo(
+    () => [...liveDeals].sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6),
+    [liveDeals],
+  );
+  const groups = useMemo(() => liveComparableGroups(liveDeals, 3), [liveDeals]);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
 
@@ -225,6 +233,7 @@ function Home() {
               subtitle={t("home.compareSubtitle")}
               icon={<TrendingDown className="w-5 h-5" />}
             />
+            <p className="text-[11px] text-muted-foreground -mt-2 mb-3">{VAT_NOTE}</p>
             <div className="space-y-4">
               {groups.map((g) => {
                 const Icon = getDealIcon(g[0]);
