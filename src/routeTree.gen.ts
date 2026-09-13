@@ -22,9 +22,12 @@ import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as OfficeRouteImport } from './routes/office'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
+import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
+import { Route as HkeeemShoppingRouteImport } from './routes/hkeeem-shopping'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
@@ -70,6 +73,7 @@ import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './route
 import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
 import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
 import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
+import { Route as ApiPublicHooksDailyContentSyncRouteImport } from './routes/api/public/hooks/daily-content-sync'
 import { Route as ApiPublicGoDealIdRouteImport } from './routes/api/public/go.$dealId'
 
 const TermsRoute = TermsRouteImport.update({
@@ -137,6 +141,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OfficeRoute = OfficeRouteImport.update({
+  id: '/office',
+  path: '/office',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
@@ -150,6 +159,16 @@ const MarketRoute = MarketRouteImport.update({
 const MapsRoute = MapsRouteImport.update({
   id: '/maps',
   path: '/maps',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemShowroomRoute = HkeeemShowroomRouteImport.update({
+  id: '/hkeeem-showroom',
+  path: '/hkeeem-showroom',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HkeeemShoppingRoute = HkeeemShoppingRouteImport.update({
+  id: '/hkeeem-shopping',
+  path: '/hkeeem-shopping',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeleteAccountRoute = DeleteAccountRouteImport.update({
@@ -262,15 +281,9 @@ const ApiTtsRoute = ApiTtsRouteImport.update({
   path: '/api/tts',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicHooksDailyContentSyncRoute =
-  ApiPublicHooksDailyContentSyncRouteImport.update({
-    id: '/api/public/hooks/daily-content-sync',
-    path: '/api/public/hooks/daily-content-sync',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
-  id: '/api/public/hooks/deal-push',
-  path: '/api/public/hooks/deal-push',
+const ApiSttRoute = ApiSttRouteImport.update({
+  id: '/api/stt',
+  path: '/api/stt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiChatRoute = ApiChatRouteImport.update({
@@ -395,6 +408,12 @@ const ApiPublicHooksDealPushRoute = ApiPublicHooksDealPushRouteImport.update({
   path: '/api/public/hooks/deal-push',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksDailyContentSyncRoute =
+  ApiPublicHooksDailyContentSyncRouteImport.update({
+    id: '/api/public/hooks/daily-content-sync',
+    path: '/api/public/hooks/daily-content-sync',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
   id: '/api/public/go/$dealId',
   path: '/api/public/go/$dealId',
@@ -956,6 +975,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/office': {
+      id: '/office'
+      path: '/office'
+      fullPath: '/office'
+      preLoaderRoute: typeof OfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/notifications': {
       id: '/notifications'
       path: '/notifications'
@@ -975,6 +1001,20 @@ declare module '@tanstack/react-router' {
       path: '/maps'
       fullPath: '/maps'
       preLoaderRoute: typeof MapsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hkeeem-showroom': {
+      id: '/hkeeem-showroom'
+      path: '/hkeeem-showroom'
+      fullPath: '/hkeeem-showroom'
+      preLoaderRoute: typeof HkeeemShowroomRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hkeeem-shopping': {
+      id: '/hkeeem-shopping'
+      path: '/hkeeem-shopping'
+      fullPath: '/hkeeem-shopping'
+      preLoaderRoute: typeof HkeeemShoppingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/delete-account': {
@@ -1290,6 +1330,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/deal-push'
       fullPath: '/api/public/hooks/deal-push'
       preLoaderRoute: typeof ApiPublicHooksDealPushRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/daily-content-sync': {
+      id: '/api/public/hooks/daily-content-sync'
+      path: '/api/public/hooks/daily-content-sync'
+      fullPath: '/api/public/hooks/daily-content-sync'
+      preLoaderRoute: typeof ApiPublicHooksDailyContentSyncRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/go/$dealId': {
