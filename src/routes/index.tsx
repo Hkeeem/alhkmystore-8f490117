@@ -52,8 +52,13 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t } = useI18n();
-  const top = bestDeals(6);
-  const groups = comparableGroups().slice(0, 3);
+  const dealsQuery = useRealDeals(120);
+  const liveDeals = useMemo(() => dealsQuery.data ?? [], [dealsQuery.data]);
+  const top = useMemo(
+    () => [...liveDeals].sort((a, b) => discountPercent(b) - discountPercent(a)).slice(0, 6),
+    [liveDeals],
+  );
+  const groups = useMemo(() => liveComparableGroups(liveDeals, 3), [liveDeals]);
   const navigate = useNavigate();
   const [q, setQ] = useState("");
 
