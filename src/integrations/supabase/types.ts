@@ -1660,6 +1660,45 @@ export type Database = {
           },
         ]
       }
+      affiliate_stores_public: {
+        Row: {
+          active: boolean | null
+          category: string | null
+          city: string | null
+          created_at: string | null
+          id: string | null
+          logo_url: string | null
+          name: string | null
+          network: string | null
+          site_url: string | null
+          slug: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          network?: string | null
+          site_url?: string | null
+          slug?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          category?: string | null
+          city?: string | null
+          created_at?: string | null
+          id?: string | null
+          logo_url?: string | null
+          name?: string | null
+          network?: string | null
+          site_url?: string | null
+          slug?: string | null
+        }
+        Relationships: []
+      }
       cashback_user_totals: {
         Row: {
           confirmed_total: number | null
