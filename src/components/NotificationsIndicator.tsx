@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { supabase as typedSupabase } from '../integrations/supabase/client';
 import type { DealView } from '../lib/deals';
+
+const supabase = typedSupabase as unknown as SupabaseClient;
 
 export default function NotificationsIndicator() {
   const [latest, setLatest] = useState<DealView | null>(null);

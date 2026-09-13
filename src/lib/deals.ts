@@ -1,4 +1,8 @@
- import { supabase } from '../integrations/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { supabase as typedSupabase } from '../integrations/supabase/client';
+
+// جداول المعرض (gallery_deals) خارج الأنواع المولّدة، لذا نستخدم عميلاً غير مقيّد بالأنواع.
+const supabase = typedSupabase as unknown as SupabaseClient;
 
 
 export type Deal = {
