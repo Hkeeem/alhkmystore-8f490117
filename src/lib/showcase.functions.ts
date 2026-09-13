@@ -21,7 +21,7 @@ export const getShowroomOffers = createServerFn({ method: "GET" })
 export const getOfficePicks = createServerFn({ method: "GET" })
   .inputValidator((value: unknown) => {
     const d = (value ?? {}) as { kind?: unknown; limit?: unknown };
-    const kind = d.kind === "developer" ? "developer" : "property";
+    const kind: "developer" | "property" = d.kind === "developer" ? "developer" : "property";
     const limit = Number(d.limit);
     return {
       kind,
@@ -88,8 +88,8 @@ export const adminSaveShowroomOffer = createServerFn({ method: "POST" })
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const payload = { ...data };
-    delete payload.id;
+    const { id: _id, ...rest } = data;
+    const payload = rest as never;
     const query = data.id
       ? supabaseAdmin.from("showroom_offers").update(payload).eq("id", data.id).select().single()
       : supabaseAdmin.from("showroom_offers").insert(payload).select().single();
