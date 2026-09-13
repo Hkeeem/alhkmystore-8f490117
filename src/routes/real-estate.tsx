@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { LiveListings } from "@/components/real-estate/LiveListings";
 import { supabase } from "@/integrations/supabase/client";
 import { getSaudiCities, getSaudiDistricts, SAUDI_REGIONS } from "@/data/saudi-locations";
 import {
@@ -725,7 +726,14 @@ function RealEstate() {
         </button>
       </nav>
 
-      {mode === "seeker" ? <BuyerRequestPanel /> : <AdvertiserPanel />}
+      {mode === "seeker" ? (
+        <>
+          <LiveListings />
+          <BuyerRequestPanel />
+        </>
+      ) : (
+        <AdvertiserPanel />
+      )}
 
       <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
         <BadgeCheck className="h-4 w-4 text-emerald-600" /> لا تظهر بيانات التواصل إلا ضمن طلبات

@@ -1,0 +1,1 @@
+DROP VIEW IF EXISTS public.affiliate_stores_public;
