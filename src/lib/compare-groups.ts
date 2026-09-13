@@ -39,6 +39,11 @@ export function liveComparableGroups(deals: Deal[], max = 3): Deal[][] {
         .sort((a, b) => a.price - b.price);
     })
     .filter((g) => g.length > 1)
-    .sort((a, b) => b[a.length - 1]!.price - b[0]!.price - (a[a.length - 1]!.price - a[0]!.price))
+    .sort((a, b) => spread(b) - spread(a))
     .slice(0, max);
+}
+
+/** فارق السعر بين أغلى وأرخص متجر في المجموعة */
+function spread(g: Deal[]) {
+  return (g[g.length - 1]?.price ?? 0) - (g[0]?.price ?? 0);
 }

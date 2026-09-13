@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { bestDeals, comparableGroups, stores, getStore } from "@/data/deals";
+import { useMemo, useState } from "react";
+import { discountPercent, stores, getStore } from "@/data/deals";
 import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
+import { useRealDeals } from "@/hooks/use-real-deals";
+import { liveComparableGroups } from "@/lib/compare-groups";
+import { VAT_NOTE } from "@/lib/vat";
 
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import { useI18n } from "@/lib/i18n";
