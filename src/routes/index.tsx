@@ -233,6 +233,7 @@ function Home() {
               subtitle={t("home.compareSubtitle")}
               icon={<TrendingDown className="w-5 h-5" />}
             />
+            <p className="text-[11px] text-muted-foreground -mt-2 mb-3">{VAT_NOTE}</p>
             <div className="space-y-4">
               {groups.map((g) => {
                 const Icon = getDealIcon(g[0]);
