@@ -45,8 +45,8 @@ export const runBotNow = createServerFn({ method: "POST" })
         return { ok: true, message: `جُلب ${r.upserted ?? 0} عرضًا` };
       }
       if (data.key === "real_estate") {
-        const { syncHarajListings } = await import("@/lib/haraj.server");
-        const r: any = await syncHarajListings();
+        const { runHarajSync } = await import("@/lib/haraj.server");
+        const r: any = await runHarajSync();
         return { ok: true, message: `حُدِّث ${r?.upserted ?? r?.count ?? 0} إعلانًا عقاريًا` };
       }
       const { syncExternalDeals } = await import("@/lib/external-sync.server");
