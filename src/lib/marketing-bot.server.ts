@@ -244,21 +244,36 @@ async function publishSnapchat(text: string, image: string | null, link: string 
   return { status: "published", externalId: body?.id };
 }
 
-/** بوت تسويق المتاجر: ينشر العرض داخل المنصة كتنبيه عام لكل المشتركين. */
-async function publishStore(text: string, link: string | null, title: string): Promise<PublishResult> {
+/** بوت تسويق المتاجر: ينشر العرض داخل المنصة كتنبيه فوري لكل المشتركين. */
+async function publishStore(
+  text: string,
+  link: string | null,
+  title: string,
+  image: string | null,
+): Promise<PublishResult> {
   try {
-    const { sendPushToTopic } = await import("@/lib/push.server");
-    const fn = sendPushToTopic as unknown as
-      | ((args: { topic: string; title: string; body: string; link?: string }) => Promise<unknown>)
-      | undefined;
-    if (typeof fn === "function") {
-      await fn({ topic: "deals", title: `عرض حكيم: ${title}`, body: text.slice(0, 160), link: link ?? SITE_URL });
-      return { status: "published" };
-    }
+    const db = await admin();
+    const { data: subs } = await db
+      .from("push_subscriptions")
+      .select("endpoint, p256dh, auth")
+      .lt("failure_count", 5)
+      .limit(500);
+    const list = (subs ?? []) as { endpoint: string; p256dh: string; auth: string }[];
+    if (!list.length) return { status: "pending", error: "لا يوجد مشتركون في الإشعارات" };
+
+    const { sendPushBatch } = await import("@/lib/push.server");
+    const res = await sendPushBatch(list, {
+      title: `عرض حكيم: ${title}`.slice(0, 80),
+      body: text.split("\n").slice(1, 4).join(" • ").slice(0, 160),
+      url: link ?? SITE_URL,
+      image: image ?? undefined,
+      tag: "marketing",
+    });
+    if (!res.sent) return { status: "failed", error: `لم يصل أي إشعار (${res.failed} فشل)` };
+    return { status: "published", externalId: `push:${res.sent}` };
   } catch (error) {
-    console.error("store marketing push failed", error);
+    return { status: "failed", error: error instanceof Error ? error.message : String(error) };
   }
-  return { status: "published" };
 }
 
 /* ------------------------------ التشغيل ------------------------------ */
