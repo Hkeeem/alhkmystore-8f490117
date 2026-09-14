@@ -1,26 +1,66 @@
-# hkeeem
+# 🧠 HkeeemAI – الذكاء التسويقي المتقدم
 
-يجمع جميع عروض المملكة في الأسواق وجميع العروض اللي في التطبيقات، آآآ تطبيقات الـ-اللي هي آآآ الشي الأسواق يعني. يجمع-- يجيب لي أب-- يجيب لي أفضل العروض. يعني عرض كذا يرقيه في البداية. ويكون التطبيق سهل وجميل ويعمل بالذكاء الاصطناعي. يعني يجمع لي جميع العروض في نفس الوقت. ويسهل لي ويسهل للزبون يستفيد منها ويأخذ العرض الأفضل.
+تطبيق حكيم AI هو نظام ذكي لتحليل الأسعار، مقارنة السلة بين المتاجر، اكتشاف أفضل العروض، وتقديم توصيات شراء مبنية على الذكاء الاصطناعي بنسبة دقة تصل إلى 96%.
 
-This project was built with [Lovable](https://lovable.dev).
+يهدف التطبيق إلى مساعدة المستخدمين في اتخاذ قرارات شراء أفضل، مع توفير أدوات تحليل احترافية وسهلة الاستخدام.
 
-**Live app**: https://alhkmystore.lovable.app
+---
 
-## Build with Lovable
+## 🚀 المميزات الرئيسية
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/acdaa49a-fbcf-422a-9d15-8fd622843181).
+### 🛒 مقارنة السلة بين المتاجر
+- مقارنة الأسعار بين عدة متاجر في وقت واحد  
+- عرض السعر شامل ضريبة القيمة المضافة %15  
+- تحليل الفارق السعري بين المتاجر  
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+### 🔍 تحليل العرض الفردي
+- السعر الحالي  
+- السعر بعد الكوبون  
+- أدنى سعر تاريخي  
+- درجة الذكاء الاصطناعي  
+- توصية الشراء (صفقة استثنائية / فرصة ذهبية / شراء عادي)
 
-## Development
+### 📉 تتبع هبوط الأسعار
+- تنبيهات فورية عند انخفاض السعر  
+- مراقبة المنتجات بشكل مستمر  
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+### 🤖 مركز البوتات الذكية
+- بوت الشريطي (عروض السيارات)  
+- بوت الوسيط العقاري  
+- بوت عروض الهايبر والكوبونات  
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+### 🛍 السلة الذكية
+- مراقبة المنتجات  
+- تحليل التغيرات السعرية  
+- مقارنة المنافسين  
+
+### 🖼 البحث بالصور
+- رفع صورة المنتج  
+- تحليل المنتج واستخراج أفضل الأسعار  
+
+---
+
+## 🏗️ التقنية المستخدمة
+- Next.js  
+- React  
+- Node.js  
+- Lovable.dev  
+- GitHub Actions  
+- Vercel Deployment  
+
+---
+
+## 📦 الإصدارات
+### Latest Release: `v1.0.0`
+أول إصدار إنتاجي للتطبيق، يحتوي على جميع المميزات الأساسية.
+
+راجع ملف:  
+**CHANGELOG.md**
+
+---
+
+## 🔧 طريقة التشغيل محليًا
+
+```bash
+npm install
 npm run dev
-```
