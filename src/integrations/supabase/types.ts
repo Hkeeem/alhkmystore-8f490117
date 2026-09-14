@@ -1679,6 +1679,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_bots_status: { Args: never; Returns: Json }
       get_search_console_schedule: { Args: never; Returns: Json }
       get_sync_schedule: { Args: never; Returns: Json }
       has_role: {
