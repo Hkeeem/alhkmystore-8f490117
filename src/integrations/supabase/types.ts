@@ -729,6 +729,87 @@ export type Database = {
         }
         Relationships: []
       }
+      marketing_bots: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          key: string
+          label: string
+          last_run_at: string | null
+          last_status: string | null
+          offset_minutes: number
+          platform: string
+          posts_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          key: string
+          label: string
+          last_run_at?: string | null
+          last_status?: string | null
+          offset_minutes?: number
+          platform: string
+          posts_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          key?: string
+          label?: string
+          last_run_at?: string | null
+          last_status?: string | null
+          offset_minutes?: number
+          platform?: string
+          posts_count?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marketing_posts: {
+        Row: {
+          content: string
+          created_at: string
+          error: string | null
+          external_id: string | null
+          id: string
+          image_url: string | null
+          link_url: string | null
+          platform: string
+          published_at: string | null
+          status: string
+          title: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          error?: string | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          platform: string
+          published_at?: string | null
+          status?: string
+          title?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          error?: string | null
+          external_id?: string | null
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          platform?: string
+          published_at?: string | null
+          status?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
       merchant_deals: {
         Row: {
           category: string
