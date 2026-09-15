@@ -311,8 +311,6 @@ export async function runMarketingBot(platform: MarketingPlatform): Promise<Mark
     .single();
 
   if (status === "published") {
-    await supabaseAdmin.rpc("increment_marketing_posts_count" as never, { _key: botKey } as never).catch?.(() => undefined);
-    // fallback بسيط لو الدالة غير موجودة
     const { data: bot } = await supabaseAdmin
       .from("marketing_bots")
       .select("posts_count")
