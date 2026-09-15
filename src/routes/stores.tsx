@@ -41,7 +41,7 @@ function Stores() {
             {t("stores.title")}
           </h1>
           <p className="text-sm text-muted-foreground">
-            {stores.length} {t("stores.count")}
+            {scopedStores.length} {t("stores.count")} — {city}
           </p>
         </div>
       </header>
