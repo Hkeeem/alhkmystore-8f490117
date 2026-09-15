@@ -4,6 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Store as StoreIcon } from "lucide-react";
 import { StoresPageSkeleton } from "@/components/Skeletons";
 import { useI18n } from "@/lib/i18n";
+import { useStoreScope } from "@/lib/store-scope";
 
 export const Route = createFileRoute("/stores")({
   head: () => ({
@@ -24,7 +25,8 @@ export const Route = createFileRoute("/stores")({
 
 function Stores() {
   const { t } = useI18n();
-  const grouped = stores.reduce<Record<string, typeof stores>>((acc, s) => {
+  const { scopedStores, city } = useStoreScope();
+  const grouped = scopedStores.reduce<Record<string, typeof stores>>((acc, s) => {
     (acc[s.category] ||= []).push(s);
     return acc;
   }, {});
