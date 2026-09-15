@@ -1,4 +1,4 @@
-export function AIProvidersSection() {
+export function AIToolsSection() {
   const aiProviders = [
     { name: 'Gemini', logo: '✨', color: 'from-blue-500 to-indigo-500' },
     { name: 'ChatGPT', logo: '🤖', color: 'from-emerald-500 to-teal-600' },
@@ -15,7 +15,6 @@ export function AIProvidersSection() {
         <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">مدعوم بالكامل</span>
       </div>
 
-      {/* شبكة أيقونات النماذج */}
       <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
         {aiProviders.map((provider, idx) => (
           <div
