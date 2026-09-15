@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
+import { StoreScopeProvider } from "@/lib/store-scope";
+import { StoreScopeBar } from "@/components/StoreScopeBar";
 import { InstallHandler } from "@/components/InstallHandler";
 import { ScrollMemory } from "@/components/ScrollMemory";
 import { Footer } from "@/components/Footer";
@@ -195,6 +197,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
+        <StoreScopeProvider>
         <div className="min-h-screen pb-20 md:pb-0">
           <a href="#main-content" className="skip-link">
             تخطي إلى المحتوى الرئيسي / Skip to content
@@ -204,6 +207,7 @@ function RootComponent() {
           <DealAlerts />
 
           <TopBar />
+          <StoreScopeBar />
           <ScrollMemory />
           <div
             key={pathname}
@@ -220,6 +224,7 @@ function RootComponent() {
           <NotificationPrompt />
           <FeedbackSurvey />
         </div>
+        </StoreScopeProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );
