@@ -2,53 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-/* تنسيقات أساسية لإدارة العرض على الجوال */
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #f8fafc;
-  color: #1e293b;
-  overflow-x: hidden;
 }
 
-/* منع تداخل الحاويات الرئيسية وجعلها تتسلسل بسلاسة */
-#root, main, .app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  position: relative;
+/* تحجيم حاوية الهيدر العلوية والشعار لكي لا تسيطر على الشاشة */
+header, .header-section, div:has(> img[alt*="logo" i]), div:has(> img[src*="H"]) {
+  max-height: 180px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem !important;
 }
 
-/* إصلاح مشكلة البانرات والعناصر العائمة التي تغطي النصوص */
-div[class*="fixed"], div[class*="sticky"], 
-.notification-banner, .floating-bar, bottom-nav {
-  position: relative !important;
-  inset: auto !important;
-  transform: none !important;
-  margin: 0.5rem auto !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  z-index: 1 !important;
+/* تقييد أبعاد شعار H الذهبي ليظهر بشكل أنيق وصغير على الجوال */
+img[src*="H"], .logo-image, header img {
+  width: 70px !important;
+  height: 70px !important;
+  object-fit: contain;
+  border-radius: 12px;
 }
 
-/* تنظيم قسم المتاجر المشاركة وأيقوناتها الأفقية لتكون مقروءة بدون تداخل */
-.stores-container, .grid, .flex {
-  flex-wrap: wrap !important;
-}
-
-/* تنسيق الفوتر ليكون في الأسفل بشكل مريح ومرتب */
-footer {
-  margin-top: auto;
-  width: 100%;
-  padding: 1.5rem 1rem;
-  background-color: #ffffff;
-  border-top: 1px solid #e2e8f0;
-  text-align: center;
+/* إعطاء مسافة أمان للمحتوى أسفل الهيدر */
+main {
+  margin-top: 1rem !important;
   position: relative;
   z-index: 2;
 }
