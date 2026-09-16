@@ -12,21 +12,21 @@ import type { QueryClient } from "@tanstack/react-query";
 import { LanguageProvider } from "@/lib/i18n";
 import { StoreScopeProvider } from "@/lib/store-scope";
 
-// استيراد ملف الـ CSS ليعود التصميم الأصلي الملون
+// استيراد ملف الـ CSS لتصميم الموقع الجميل
 import appCss from "../styles.css?url";
 
-// استيراد المكونات الموجودة فعلاً في مجلد components
-import Nav from "@/components/Nav";
-import StoreScopeBar from "@/components/StoreScopeBar";
-import Footer from "@/components/Footer";
-import InstallHandler from "@/components/InstallHandler";
+// استخدام الأقواس المتعرجة لأنها Named Exports
+import { Nav } from "@/components/Nav";
+import { StoreScopeBar } from "@/components/StoreScopeBar";
+import { Footer } from "@/components/Footer";
+import { InstallHandler } from "@/components/InstallHandler";
 import { Toaster } from "sonner";
-import NotificationPrompt from "@/components/NotificationPrompt";
-import FeedbackSurvey from "@/components/FeedbackSurvey";
-import PreviewErrorRecorder from "@/components/PreviewErrorRecorder";
-import VisitorTracker from "@/components/VisitorTracker";
-import DealAlerts from "@/components/DealAlerts";
-import ScrollMemory from "@/components/ScrollMemory";
+import { NotificationPrompt } from "@/components/NotificationPrompt";
+import { FeedbackSurvey } from "@/components/FeedbackSurvey";
+import { PreviewErrorRecorder } from "@/components/PreviewErrorRecorder";
+import { VisitorTracker } from "@/components/VisitorTracker";
+import { DealAlerts } from "@/components/DealAlerts";
+import { ScrollMemory } from "@/components/ScrollMemory";
 import { initGoogleAnalytics, trackPageView } from "@/lib/analytics";
 
 interface MyRouterContext {
@@ -53,7 +53,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
-      { rel: "stylesheet", href: appCss }, // ربط الـ CSS ليعود الشكل الجميل
+      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/hkeeem_192.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
