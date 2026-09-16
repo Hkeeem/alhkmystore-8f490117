@@ -9,28 +9,32 @@ body {
   background-color: #f8fafc;
 }
 
-/* تحجيم حاوية الهيدر العلوية والشعار لكي لا تسيطر على الشاشة */
-header, .header-section, div:has(> img[alt*="logo" i]), div:has(> img[src*="H"]) {
-  max-height: 180px !important;
-  overflow: hidden !important;
+/* إخفاء الهيدر المكرر الأول والابقاء على هيدر واحد منظم */
+header:first-of-type, .top-banner-header {
+  display: none !important;
+}
+
+/* ضبط الهيدر النشط والوحيد في الأعلى */
+header, nav, .main-header {
+  position: relative !important;
+  width: 100% !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 1rem !important;
   display: flex !important;
-  flex-direction: column !important;
   align-items: center !important;
-  justify-content: center !important;
-  padding: 0.5rem !important;
+  justify-content: space-between !important;
+  z-index: 50;
 }
 
-/* تقييد أبعاد شعار H الذهبي ليظهر بشكل أنيق وصغير على الجوال */
-img[src*="H"], .logo-image, header img {
-  width: 70px !important;
-  height: 70px !important;
-  object-fit: contain;
-  border-radius: 12px;
+/* تنسيق شعار H في الهيدر الواحد بشكل متناسق */
+header img, .main-header img {
+  max-height: 45px !important;
+  width: auto !important;
 }
 
-/* إعطاء مسافة أمان للمحتوى أسفل الهيدر */
-main {
-  margin-top: 1rem !important;
-  position: relative;
-  z-index: 2;
+/* ضبط المسافة العلوية للمحتوى لكي لا يلتصق بالأعلى */
+main, .content-container {
+  margin-top: 0.5rem !important;
+  padding: 0.5rem;
 }
