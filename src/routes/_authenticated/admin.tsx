@@ -31,6 +31,9 @@ import {
   Link2,
   Tags,
   Store,
+  Bot,
+  Megaphone,
+  KeyRound,
 } from "lucide-react";
 import {
   getAdminContext,
@@ -58,6 +61,9 @@ import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
+import { BotsPanel } from "@/components/admin/BotsPanel";
+import { MarketingBotsPanel } from "@/components/admin/MarketingBotsPanel";
+import { PublishingKeysPanel } from "@/components/admin/PublishingKeysPanel";
 
 type Tab =
   | "dashboard"
@@ -73,7 +79,10 @@ type Tab =
   | "clicks"
   | "reports"
   | "deals"
-  | "showroom";
+  | "showroom"
+  | "bots"
+  | "marketing"
+  | "pubkeys";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -173,6 +182,14 @@ function AdminPage() {
       icon: Store,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    { id: "bots" as const, label: "البوتات", icon: Bot, allow: ["super_admin", "admin"] },
+    {
+      id: "marketing" as const,
+      label: "بوتات التسويق",
+      icon: Megaphone,
+      allow: ["super_admin", "admin"],
+    },
+    { id: "pubkeys" as const, label: "مفاتيح النشر", icon: KeyRound, allow: ["super_admin", "admin"] },
   ].filter((t) => can(t.allow));
 
   return (
@@ -223,6 +240,9 @@ function AdminPage() {
           {tab === "deploy" && <DeployTab />}
           {tab === "deals" && <DealsAdminTab />}
           {tab === "showroom" && <ShowroomAdminPanel />}
+          {tab === "bots" && <BotsPanel />}
+          {tab === "marketing" && <MarketingBotsPanel />}
+          {tab === "pubkeys" && <PublishingKeysPanel />}
         </main>
       </div>
     </div>
