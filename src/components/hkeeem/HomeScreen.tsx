@@ -40,18 +40,18 @@ export default function HomeScreen() {
           </span>
         </button>
         <div className="text-center">
-          <h1 className="text-2xl font-black hk-gold-text">hkeeemAI ✨</h1>
-          <p className="text-xs hk-dim-text">تسوّق أذكى .. ووفّر أكثر</p>
+          <h1 className="text-2xl font-black hkt-gold-text">hkeeemAI ✨</h1>
+          <p className="text-xs hkt-dim-text">تسوّق أذكى .. ووفّر أكثر</p>
         </div>
-        <button className="text-2xl hk-gold-text">☰</button>
+        <button className="text-2xl hkt-gold-text">☰</button>
       </header>
 
       <div className="flex gap-2 px-4 mt-3">
-        <button className="hk-card px-3 hk-gold-text text-xl" title="مسح">
+        <button className="hkt-card px-3 hkt-gold-text text-xl" title="مسح">
           ▦
         </button>
-        <div className="hk-card flex-1 flex items-center gap-2 px-4 py-2">
-          <span className="hk-gold-text">🔍</span>
+        <div className="hkt-card flex-1 flex items-center gap-2 px-4 py-2">
+          <span className="hkt-gold-text">🔍</span>
           <input
             className="bg-transparent flex-1 outline-none text-sm placeholder:text-[#B0B0B0]"
             placeholder="ابحث عن منتج أو عرض أو متجر..."
@@ -62,23 +62,23 @@ export default function HomeScreen() {
       <div className="flex justify-around px-2 mt-5">
         {categories.map((c) => (
           <div key={c.name} className="flex flex-col items-center gap-1">
-            <div className="hk-card w-14 h-14 rounded-full flex items-center justify-center text-xl hk-gold-text">
+            <div className="hkt-card w-14 h-14 rounded-full flex items-center justify-center text-xl hkt-gold-text">
               {c.icon}
             </div>
-            <span className="text-[11px] hk-dim-text">{c.name}</span>
+            <span className="text-[11px] hkt-dim-text">{c.name}</span>
           </div>
         ))}
       </div>
 
       <div className="px-4 mt-5">
         <div
-          className="hk-card relative overflow-hidden h-40"
+          className="hkt-card relative overflow-hidden h-40"
           style={{ background: "linear-gradient(135deg,#1A1408,#3A2E0A)" }}
         >
           <div className="p-5">
-            <h2 className="text-xl font-black hk-gold-text">{banners[banner].title}</h2>
-            <p className="text-sm hk-dim-text mt-1">{banners[banner].sub}</p>
-            <button className="hk-btn-gold mt-3 text-sm !py-2 !px-4">‹ اكتشف الآن</button>
+            <h2 className="text-xl font-black hkt-gold-text">{banners[banner].title}</h2>
+            <p className="text-sm hkt-dim-text mt-1">{banners[banner].sub}</p>
+            <button className="hkt-btn-gold mt-3 text-sm !py-2 !px-4">‹ اكتشف الآن</button>
           </div>
           <span className="absolute left-6 bottom-4 text-6xl opacity-80">🛍️</span>
         </div>
@@ -99,7 +99,7 @@ export default function HomeScreen() {
       <div className="mt-6">
         <div className="flex justify-between items-center px-4">
           <h3 className="font-bold">⭐ أفضل العروض لك</h3>
-          <span className="text-xs hk-gold-text">‹ عرض الكل</span>
+          <span className="text-xs hkt-gold-text">‹ عرض الكل</span>
         </div>
         <div className="flex gap-3 overflow-x-auto px-4 mt-3 pb-2">
           {products.map((p) => (
@@ -123,7 +123,7 @@ export default function HomeScreen() {
         </div>
       </div>
 
-      <div className="hk-savings mx-4 mt-4 p-4 flex justify-between items-center">
+      <div className="hkt-savings mx-4 mt-4 p-4 flex justify-between items-center">
         <div>
           <p className="font-bold text-sm">💰 وفرت اليوم</p>
           <p className="text-xs opacity-80">من خلال 3 عروض ذكية</p>
@@ -131,18 +131,18 @@ export default function HomeScreen() {
         <p className="text-xl font-black">1,240 ر.س</p>
       </div>
 
-      <Link to="/hkeeem/nearby" className="hk-card mx-4 mt-4 p-4 flex items-center gap-3 block">
-        <span className="text-2xl hk-gold-text">📍</span>
+      <Link to="/hkeeem/nearby" className="hkt-card mx-4 mt-4 p-4 flex items-center gap-3 block">
+        <span className="text-2xl hkt-gold-text">📍</span>
         <div className="flex-1">
           <p className="font-bold text-sm">العروض القريبة منك</p>
-          <p className="text-xs hk-dim-text">اكتشف أفضل العروض في محيطك الآن</p>
+          <p className="text-xs hkt-dim-text">اكتشف أفضل العروض في محيطك الآن</p>
         </div>
-        <span className="hk-gold-text">‹</span>
+        <span className="hkt-gold-text">‹</span>
       </Link>
 
       <Link
         to="/hkeeem/chat"
-        className="hk-assistant-float fixed bottom-24 left-4 w-14 h-14 rounded-full flex items-center justify-center text-2xl z-50"
+        className="hkt-assistant-float fixed bottom-24 left-4 w-14 h-14 rounded-full flex items-center justify-center text-2xl z-50"
         style={{ background: "linear-gradient(135deg,#D4AF37,#FFD700)" }}
       >
         🤖
@@ -160,7 +160,7 @@ export default function HomeScreen() {
           <Link
             to={to as string}
             key={label as string}
-            className={`flex flex-col items-center text-[10px] ${i === 0 ? "hk-gold-text" : "hk-dim-text"}`}
+            className={`flex flex-col items-center text-[10px] ${i === 0 ? "hkt-gold-text" : "hkt-dim-text"}`}
           >
             <span className="text-lg">{icon}</span>
             {label}
