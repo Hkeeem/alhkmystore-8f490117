@@ -50,22 +50,22 @@ export default function AiChat() {
       style={{ background: "var(--hkeeem-bg)" }}
     >
       <header className="flex items-center gap-3 px-3 py-2.5 border-b border-[rgba(212,175,55,0.2)]">
-        <Link to="/hkeeem" className="hk-gold-text text-xl">
+        <Link to="/hkeeem" className="hkt-gold-text text-xl">
           →
         </Link>
         <div
-          className="w-10 h-10 rounded-full hk-card flex items-center justify-center text-xl"
+          className="w-10 h-10 rounded-full hkt-card flex items-center justify-center text-xl"
           style={{ boxShadow: "0 0 12px rgba(212,175,55,0.4)" }}
         >
           ح
         </div>
         <div className="flex-1">
-          <p className="font-bold text-sm hk-gold-text">مساعد Hkeeem AI</p>
+          <p className="font-bold text-sm hkt-gold-text">مساعد Hkeeem AI</p>
           <p className="text-[11px]" style={{ color: "var(--hkeeem-success)" }}>
             متصل الآن
           </p>
         </div>
-        <button className="hk-gold-text text-xl">⋮</button>
+        <button className="hkt-gold-text text-xl">⋮</button>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -81,17 +81,17 @@ export default function AiChat() {
             </div>
           ) : (
             <div key={i} className="flex justify-end">
-              <div className="max-w-[80%] hk-card px-4 py-3 rounded-2xl rounded-br-sm">
+              <div className="max-w-[80%] hkt-card px-4 py-3 rounded-2xl rounded-br-sm">
                 <p className="text-sm">{m.text}</p>
                 {m.product && (
                   <div className="mt-2 p-3 rounded-xl bg-black/30 border border-[rgba(212,175,55,0.5)]">
-                    <p className="font-bold hk-gold-text text-sm">
+                    <p className="font-bold hkt-gold-text text-sm">
                       {m.product.store} - {m.product.price}
                     </p>
                     <p className="text-[11px] mt-0.5" style={{ color: "var(--hkeeem-success)" }}>
                       {m.product.saving}
                     </p>
-                    <button className="hk-btn-gold w-full mt-2 text-sm !py-2">اشتري الآن</button>
+                    <button className="hkt-btn-gold w-full mt-2 text-sm !py-2">اشتري الآن</button>
                   </div>
                 )}
               </div>
@@ -100,10 +100,10 @@ export default function AiChat() {
         )}
         {typing && (
           <div className="flex justify-end">
-            <div className="hk-card px-4 py-3 rounded-2xl flex gap-1.5">
-              <span className="hk-typing-dot" />
-              <span className="hk-typing-dot" />
-              <span className="hk-typing-dot" />
+            <div className="hkt-card px-4 py-3 rounded-2xl flex gap-1.5">
+              <span className="hkt-typing-dot" />
+              <span className="hkt-typing-dot" />
+              <span className="hkt-typing-dot" />
             </div>
           </div>
         )}
@@ -115,7 +115,7 @@ export default function AiChat() {
           <button
             key={q}
             onClick={() => send(q)}
-            className="whitespace-nowrap text-xs hk-gold-text border border-[rgba(212,175,55,0.6)] rounded-full px-3.5 py-1.5"
+            className="whitespace-nowrap text-xs hkt-gold-text border border-[rgba(212,175,55,0.6)] rounded-full px-3.5 py-1.5"
           >
             {q}
           </button>
@@ -139,9 +139,9 @@ export default function AiChat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && send(input)}
             placeholder="اكتب رسالتك..."
-            className="hk-card flex-1 px-4 py-2.5 text-sm outline-none bg-transparent placeholder:text-[#B0B0B0]"
+            className="hkt-card flex-1 px-4 py-2.5 text-sm outline-none bg-transparent placeholder:text-[#B0B0B0]"
           />
-          <button className="hk-gold-text text-xl">🎤</button>
+          <button className="hkt-gold-text text-xl">🎤</button>
         </div>
         <p className="text-center text-[10px] mt-1.5" style={{ color: "var(--hkeeem-gold-dark)" }}>
           مدعوم بالذكاء الاصطناعي
