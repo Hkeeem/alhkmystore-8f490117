@@ -1,6 +1,3 @@
-// استبدل السطور القديمة الخاصة بالـ context بهذا الشكل الصحيح:
-import { LanguageProvider } from "@/lib/i18n"; // أو اسم ملف اللغة الفعلي لديك في lib
-import { StoreScopeProvider } from "@/lib/store-scope";
 import { 
   Outlet, 
   createRootRouteWithContext, 
@@ -12,8 +9,8 @@ import type { ReactNode } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import type { QueryClient } from "@tanstack/react-query";
-import { LanguageProvider } from "@/context/LanguageContext";
-import { StoreScopeProvider } from "@/context/StoreScopeContext";
+import { LanguageProvider } from "@/lib/i18n";
+import { StoreScopeProvider } from "@/lib/store-scope";
 import TopBar from "@/components/TopBar";
 import StoreScopeBar from "@/components/StoreScopeBar";
 import Footer from "@/components/Footer";
