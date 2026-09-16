@@ -1,39 +1,22 @@
-Import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { stores, type Store } from "@/data/deals";
-import { CITIES, branches } from "@/data/store-branches";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { CITIES } from "@/data/store-branches";
 
 export type StoreGroupId = "all" | "hyper" | "retail" | "pharmacy" | "online" | "food";
 
-export type StoreGroup = {
-  id: StoreGroupId;
-  label: string;
-  emoji: string;
-  /** معرّفات المتاجر ضمن الفئة (فارغة = الكل) */
-  storeIds: string[];
-};
+export type GeoScope = "neighborhood" | "city" | "all";
 
-export const STORE_GROUPS: StoreGroup[] = [
+export const STORE_GROUPS = [
   { id: "all", label: "كافة المتاجر", emoji: "🌟", storeIds: [] },
   { id: "hyper", label: "هايبر ماركت", emoji: "🏬", storeIds: ["panda", "lulu", "carrefour"] },
-  {
-    id: "retail",
-    label: "متاجر التجزئة",
-    emoji: "🛒",
-    storeIds: ["othaim", "danube", "tamimi"],
-  },
+  { id: "retail", label: "متاجر التجزئة", emoji: "🛒", storeIds: ["othaim", "danube", "tamimi"] },
   { id: "pharmacy", label: "صيدليات", emoji: "💊", storeIds: ["nahdi", "dawaa"] },
-  {
-    id: "online",
-    label: "متاجر إلكترونية",
-    emoji: "📦",
-    storeIds: ["noon", "amazon", "jarir", "extra"],
-  },
+  { id: "online", label: "متاجر إلكترونية", emoji: "📦", storeIds: ["noon", "amazon", "jarir", "extra"] },
   { id: "food", label: "مطاعم وتوصيل", emoji: "🍔", storeIds: ["hunger", "jahez", "toshel"] },
 ];
 
 export const CITY_NAMES = CITIES.map((c) => c.name);
 
-const CITY_KEY = "hkeeem-scope-city";const CITY_KEY = "hkeeem-scope-city";
+const CITY_KEY = "hkeeem-scope-city";
 const SCOPE_KEY = "hkeeem-geo-scope";
 
 interface StoreScopeContextType {
