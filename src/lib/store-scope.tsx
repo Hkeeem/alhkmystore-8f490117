@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { CITIES } from "@/data/store-branches";
+import { CITIES, branches } from "@/data/store-branches";
+import { stores } from "@/data/deals";
 
 export type StoreGroupId = "all" | "hyper" | "retail" | "pharmacy" | "online" | "food";
 
@@ -15,6 +16,18 @@ export const STORE_GROUPS = [
 ];
 
 export const CITY_NAMES = CITIES.map((c) => c.name);
+
+export function branchCount(storeId: string, city: string): number {
+  return branches.filter((b) => b.storeId === storeId && b.city === city).length;
+}
+
+export function storesInGroup(groupId: StoreGroupId): string[] {
+  const group = STORE_GROUPS.find((g) => g.id === groupId);
+  if (!group || group.storeIds.length === 0) {
+    return stores.map((s) => s.id);
+  }
+  return group.storeIds;
+}
 
 const CITY_KEY = "hkeeem-scope-city";
 const SCOPE_KEY = "hkeeem-geo-scope";
