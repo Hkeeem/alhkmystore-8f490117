@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from "react";
+Import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { stores, type Store } from "@/data/deals";
 import { CITIES, branches } from "@/data/store-branches";
 
@@ -8,10 +8,9 @@ export type StoreGroup = {
   id: StoreGroupId;
   label: string;
   emoji: string;
+  /** معرّفات المتاجر ضمن الفئة (فارغة = الكل) */
   storeIds: string[];
 };
-
-export type GeoScope = "neighborhood" | "city" | "all";
 
 export const STORE_GROUPS: StoreGroup[] = [
   { id: "all", label: "كافة المتاجر", emoji: "🌟", storeIds: [] },
@@ -34,7 +33,7 @@ export const STORE_GROUPS: StoreGroup[] = [
 
 export const CITY_NAMES = CITIES.map((c) => c.name);
 
-const CITY_KEY = "hkeeem-scope-city";
+const CITY_KEY = "hkeeem-scope-city";const CITY_KEY = "hkeeem-scope-city";
 const SCOPE_KEY = "hkeeem-geo-scope";
 
 interface StoreScopeContextType {
