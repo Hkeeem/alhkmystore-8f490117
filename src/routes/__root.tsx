@@ -1,123 +1,41 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  createRootRouteWithContext,
-  useRouter,
-  useRouterState,
-  HeadContent,
-  Scripts,
+import { 
+  Outlet, 
+  createRootRouteWithContext, 
+  HeadContent, 
+  Scripts, 
+  useRouterState 
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
-import appCss from "../styles.css?url";
-import { reportLovableError } from "@/lib/lovable-error-reporting";
-import { TopBar, BottomBar } from "@/components/Nav";
-import { StoreScopeProvider } from "@/lib/store-scope";
-import { StoreScopeBar } from "@/components/StoreScopeBar";
-import { InstallHandler } from "@/components/InstallHandler";
-import { ScrollMemory } from "@/components/ScrollMemory";
-import { Footer } from "@/components/Footer";
-import { Toaster } from "@/components/ui/sonner";
-import { NotificationPrompt } from "@/components/NotificationPrompt";
-import { FeedbackSurvey } from "@/components/FeedbackSurvey";
-import { LanguageProvider } from "@/lib/i18n";
-import { DealAlerts } from "@/components/DealAlerts";
-import { VisitorTracker } from "@/components/VisitorTracker";
-import { PreviewErrorRecorder } from "@/components/PreviewErrorRecorder";
+import type { ReactNode } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import type { QueryClient } from "@tanstack/react-query";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { StoreScopeProvider } from "@/context/StoreScopeContext";
+import TopBar from "@/components/TopBar";
+import StoreScopeBar from "@/components/StoreScopeBar";
+import Footer from "@/components/Footer";
+import BottomBar from "@/components/BottomBar";
+import InstallHandler from "@/components/InstallHandler";
+import { Toaster } from "sonner";
+import NotificationPrompt from "@/components/NotificationPrompt";
+import FeedbackSurvey from "@/components/FeedbackSurvey";
+import PreviewErrorRecorder from "@/components/PreviewErrorRecorder";
+import VisitorTracker from "@/components/VisitorTracker";
+import DealAlerts from "@/components/DealAlerts";
+import ScrollMemory from "@/components/ScrollMemory";
+import { initGoogleAnalytics, trackPageView } from "@/lib/analytics";
 
-import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
-import { deals, discountPercent } from "@/data/deals";
-import { initGoogleAnalytics, trackPageView } from "@/lib/ga4";
-
-function NotFoundComponent() {
-  const path = typeof window !== "undefined" ? window.location.pathname : "";
-  let suggestion = { to: "/", label: "الصفحة الرئيسية", hint: "أفضل العروض اليوم", emoji: "🏠" };
-  let backTo = { to: "/", label: "الرئيسية" };
-  if (path.startsWith("/deal") || path.startsWith("/offers")) {
-    const top = [...deals].sort((a, b) => discountPercent(b) - discountPercent(a))[0];
-    suggestion = {
-      to: `/deals/${top.id}`,
-      label: top.title,
-      hint: `خصم ${discountPercent(top)}٪`,
-      emoji: top.image,
-    };
-    backTo = { to: "/deals", label: "كل العروض" };
-  } else if (path.startsWith("/coupon")) {
-    suggestion = {
-      to: "/coupons",
-      label: "قائمة الكوبونات",
-      hint: "أحدث الأكواد المتاحة",
-      emoji: "🎟️",
-    };
-    backTo = { to: "/coupons", label: "الكوبونات" };
-  } else if (path.startsWith("/reward")) {
-    suggestion = { to: "/rewards", label: "قائمة الجوائز", hint: "استبدل نقاطك", emoji: "🎁" };
-    backTo = { to: "/rewards", label: "الجوائز" };
-  } else if (path.startsWith("/smart") || path.startsWith("/list")) {
-    suggestion = {
-      to: "/smart-list",
-      label: "قائمة التسوق الذكية",
-      hint: "ابنِ قائمتك بالذكاء الاصطناعي",
-      emoji: "🛒",
-    };
-    backTo = { to: "/", label: "الرئيسية" };
-  } else if (path.startsWith("/chat") || path.startsWith("/makki")) {
-    suggestion = {
-      to: "/chat",
-      label: "حكيم — مساعدك الذكي",
-      hint: "اسأله عن أي عرض",
-      emoji: "💬",
-    };
-    backTo = { to: "/", label: "الرئيسية" };
-  }
-  return (
-    <InvalidLinkFallback
-      icon="🧭"
-      title="الرابط غير موجود"
-      message="الصفحة اللي تدور عليها ما لقيناها. حوّلناك لأقرب صفحة متاحة."
-      suggestion={suggestion}
-      backTo={backTo}
-    />
-  );
+interface MyRouterContext {
+  queryClient: QueryClient;
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-bold">صار خطأ غير متوقع</h1>
-        <p className="mt-2 text-sm text-muted-foreground">جرّب تحدّث الصفحة.</p>
-        <div className="mt-6 flex justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="rounded-2xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground"
-          >
-            إعادة المحاولة
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "HkeeemAI — تسوّق أذكى… وفّر أكثر" },
-      {
-        name: "description",
-        content:
-          "HkeeemAI — منصة سعودية ذكية تجمع أفضل العروض والكوبونات ومقارنة الأسعار والعقارات والسيارات والخرائط في مكان واحد، مدعومة بالذكاء الاصطناعي.",
-      },
-      { name: "theme-color", content: "#D4AF37" },
+      { name: "description", content: "الذكاء الاقتصادي للمملكة: قرارات شراء أذكى في دقائق." },
       { property: "og:title", content: "HkeeemAI — تسوّق أذكى… وفّر أكثر" },
       {
         property: "og:description",
@@ -131,7 +49,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/hkeeem_192.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
