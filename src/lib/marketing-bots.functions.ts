@@ -23,8 +23,6 @@ export type MarketingBotRow = {
   posts_count: number;
 };
 
-type RpcClient = { rpc: (fn: never, args: never) => unknown };
-
 async function assertStaff(supabase: unknown, userId: string) {
   const client = supabase as {
     rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>;
@@ -32,7 +30,6 @@ async function assertStaff(supabase: unknown, userId: string) {
   const { data: isStaff } = await client.rpc("is_staff", { _user_id: userId });
   if (!isStaff) throw new Error("forbidden");
 }
-void (0 as unknown as RpcClient);
 
 export const getMarketingBots = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
