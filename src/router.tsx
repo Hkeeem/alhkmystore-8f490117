@@ -1,5 +1,5 @@
-  import appCss from "@/styles.css?url";
-import { reportLovableError } from "@/lib/lovable-error-reporting";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
   Outlet,
   createRootRouteWithContext,
   useRouter,
@@ -9,8 +9,8 @@ import { reportLovableError } from "@/lib/lovable-error-reporting";
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import appCss from "@/styles.css?url";
+import { reportLovableError } from "@/lib/lovable-error-reporting";
 import { TopBar, BottomBar } from "@/components/Nav";
 import { StoreScopeProvider } from "@/lib/store-scope";
 import { StoreScopeBar } from "@/components/StoreScopeBar";
