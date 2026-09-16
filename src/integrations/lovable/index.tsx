@@ -1,5 +1,11 @@
 import React from "react";
 
+// كائن وهمي لكي يتوافق مع الاستيراد في ملف auth.tsx
+export const lovable = {
+  init: () => {},
+  auth: {},
+};
+
 export function LovableIntegrationView() {
   return (
     <div className="min-h-screen bg-background flex flex-col" dir="rtl">
