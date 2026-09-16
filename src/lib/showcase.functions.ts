@@ -31,7 +31,7 @@ export const getOfficePicks = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { fetchOfficePicks } = await import("@/lib/showcase");
     try {
-      return await fetchOfficePicks(data.kind, data.limit);
+      return await fetchOfficePicks(data.kind as "developer" | "property", data.limit);
     } catch {
       return [];
     }
@@ -88,11 +88,11 @@ export const adminSaveShowroomOffer = createServerFn({ method: "POST" })
     const { data: isStaff } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
     if (!isStaff) throw new Error("forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const payload = { ...data };
-    delete payload.id;
+    const { id: _omit, ...payload } = data;
+    void _omit;
     const query = data.id
-      ? supabaseAdmin.from("showroom_offers").update(payload).eq("id", data.id).select().single()
-      : supabaseAdmin.from("showroom_offers").insert(payload).select().single();
+      ? supabaseAdmin.from("showroom_offers").update(payload as never).eq("id", data.id).select().single()
+      : supabaseAdmin.from("showroom_offers").insert(payload as never).select().single();
     const { data: row, error } = await query;
     if (error) throw new Error(error.message);
     return row;

@@ -1,4 +1,7 @@
- import { supabase } from '../integrations/supabase/client';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { supabase as typedSupabase } from '../integrations/supabase/client';
+
+const supabase = typedSupabase as unknown as SupabaseClient;
 
 
 export type Deal = {
@@ -103,7 +106,7 @@ export async function fetchDealStats() {
     .from('gallery_deals')
     .select('clicks_count');
 
-  const totalClicks = (clicks ?? []).reduce((sum, d) => sum + (d.clicks_count ?? 0), 0);
+  const totalClicks = (clicks ?? []).reduce((sum: number, d: { clicks_count?: number | null }) => sum + (d.clicks_count ?? 0), 0);
 
   const { count: totalViews } = await supabase
     .from('gallery_deal_views')
