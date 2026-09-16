@@ -12,10 +12,10 @@ import type { QueryClient } from "@tanstack/react-query";
 import { LanguageProvider } from "@/lib/i18n";
 import { StoreScopeProvider } from "@/lib/store-scope";
 
-// استيراد ملف الـ CSS لإعادة التصميم الملون الأصلي
+// استيراد ملف الـ CSS ليعود التصميم الأصلي الملون
 import appCss from "../styles.css?url";
 
-// استيراد المكونات الموجودة فعلاً في مجلد components لديك
+// استيراد المكونات الموجودة فعلاً في مجلد components
 import Nav from "@/components/Nav";
 import StoreScopeBar from "@/components/StoreScopeBar";
 import Footer from "@/components/Footer";
