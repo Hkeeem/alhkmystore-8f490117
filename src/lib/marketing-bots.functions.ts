@@ -1,9 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import {
-  MARKETING_PLATFORMS,
-  type MarketingPlatform,
-} from "@/lib/marketing-bot.server";
+
+export const MARKETING_PLATFORMS = [
+  "store",
+  "twitter",
+  "instagram",
+  "tiktok",
+  "snapchat",
+] as const;
+export type MarketingPlatform = (typeof MARKETING_PLATFORMS)[number];
 
 export type MarketingBotKey = "store_marketing" | "twitter" | "instagram" | "tiktok" | "snapchat";
 
@@ -18,12 +23,16 @@ export type MarketingBotRow = {
   posts_count: number;
 };
 
-async function assertStaff(supabase: {
-  rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>;
-}, userId: string) {
-  const { data: isStaff } = await supabase.rpc("is_staff", { _user_id: userId });
+type RpcClient = { rpc: (fn: never, args: never) => unknown };
+
+async function assertStaff(supabase: unknown, userId: string) {
+  const client = supabase as {
+    rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }>;
+  };
+  const { data: isStaff } = await client.rpc("is_staff", { _user_id: userId });
   if (!isStaff) throw new Error("forbidden");
 }
+void (0 as unknown as RpcClient);
 
 export const getMarketingBots = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
