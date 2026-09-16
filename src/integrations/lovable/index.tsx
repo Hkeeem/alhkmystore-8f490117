@@ -1,6 +1,5 @@
 import React from "react";
 
-// كائن وهمي لكي يتوافق مع الاستيراد في ملف auth.tsx
 export const lovable = {
   init: () => {},
   auth: {},
