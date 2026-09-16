@@ -12,14 +12,13 @@ import type { QueryClient } from "@tanstack/react-query";
 import { LanguageProvider } from "@/lib/i18n";
 import { StoreScopeProvider } from "@/lib/store-scope";
 
-// استيراد ملف الـ CSS ليعود التصميم الأصلي
+// استيراد ملف الـ CSS لإعادة التصميم الملون الأصلي
 import appCss from "../styles.css?url";
 
-// مسارات المكونات (تأكد أن TopBar و BottomBar موجودة في src/components/ أو عدل مسارها حسب مكانها الفعلي)
-import TopBar from "@/components/TopBar";
+// استيراد المكونات الموجودة فعلاً في مجلد components لديك
+import Nav from "@/components/Nav";
 import StoreScopeBar from "@/components/StoreScopeBar";
 import Footer from "@/components/Footer";
-import BottomBar from "@/components/BottomBar";
 import InstallHandler from "@/components/InstallHandler";
 import { Toaster } from "sonner";
 import NotificationPrompt from "@/components/NotificationPrompt";
@@ -54,7 +53,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
     links: [
-      { rel: "stylesheet", href: appCss }, // ربط ملف الـ CSS ليعود التصميم
+      { rel: "stylesheet", href: appCss }, // ربط الـ CSS ليعود الشكل الجميل
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/hkeeem_192.png" },
       { rel: "manifest", href: "/manifest.webmanifest" },
@@ -128,7 +127,7 @@ function RootComponent() {
           <VisitorTracker />
           <DealAlerts />
 
-          <TopBar />
+          <Nav />
           <StoreScopeBar />
           <ScrollMemory />
           <div
@@ -140,7 +139,6 @@ function RootComponent() {
             <Outlet />
           </div>
           <Footer />
-          <BottomBar />
           <InstallHandler />
           <Toaster position="top-center" richColors closeButton dir="rtl" />
           <NotificationPrompt />
