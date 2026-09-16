@@ -1,5 +1,5 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
+  import appCss from "@/styles.css?url";
+import { reportLovableError } from "@/lib/lovable-error-reporting";
   Outlet,
   createRootRouteWithContext,
   useRouter,
