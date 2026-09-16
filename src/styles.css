@@ -1,4 +1,5 @@
-@import "tailwindcss" source(none);
+Q: التعديل الأسلم: تغيير اسم الكلاس بأي ملف؟
+A: @import "tailwindcss" source(none);ما ادري 
 @source "../src";
 @import "tw-animate-css";
 
@@ -1047,4 +1048,4 @@ html {
 }
 .sidebar-panel .sidebar-item span {
   font-size: 13px;
-}
+    }
