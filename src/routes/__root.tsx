@@ -1,3 +1,6 @@
+// استبدل السطور القديمة الخاصة بالـ context بهذا الشكل الصحيح:
+import { LanguageProvider } from "@/lib/i18n"; // أو اسم ملف اللغة الفعلي لديك في lib
+import { StoreScopeProvider } from "@/lib/store-scope";
 import { 
   Outlet, 
   createRootRouteWithContext, 
