@@ -193,6 +193,12 @@ function AdminPage() {
       allow: ["super_admin", "admin"],
     },
     { id: "pubkeys" as const, label: "مفاتيح النشر", icon: KeyRound, allow: ["super_admin", "admin"] },
+    {
+      id: "coupons" as const,
+      label: "الكوبونات",
+      icon: Ticket,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -246,6 +252,7 @@ function AdminPage() {
           {tab === "bots" && <BotsPanel />}
           {tab === "marketing" && <MarketingBotsPanel />}
           {tab === "pubkeys" && <PublishingKeysPanel />}
+          {tab === "coupons" && <CouponsAdminPanel />}
         </main>
       </div>
     </div>

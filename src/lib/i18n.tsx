@@ -45,6 +45,7 @@ export const dict = {
   "item.showroom": { ar: "معرض حكيم", en: "Hkeeem showroom" },
   "item.shopping": { ar: "تسوّق حكيم", en: "Hkeeem shopping" },
   "item.cars": { ar: "السيارات", en: "Cars" },
+  "item.restaurants": { ar: "عروض المطاعم", en: "Restaurant deals" },
   "item.realEstate": { ar: "البحث العقاري", en: "Real estate search" },
   "item.office": { ar: "مكتب حكيم", en: "Hkeeem office" },
   "item.compare": { ar: "مقارنة الأسعار", en: "Price comparison" },
