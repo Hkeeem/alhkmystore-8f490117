@@ -1,3 +1,119 @@
+@import "./styles/hkeeem-theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 42 33% 97%;
+    --foreground: 32 22% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 32 22% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 32 22% 13%;
+    --primary: #b88712;
+    --primary-foreground: #fffdf5;
+    --secondary: 42 30% 93%;
+    --secondary-foreground: 32 22% 18%;
+    --muted: 42 24% 94%;
+    --muted-foreground: 28 10% 43%;
+    --accent: 42 30% 93%;
+    --accent-foreground: 32 22% 18%;
+    --border: 39 25% 86%;
+    --input: 39 25% 86%;
+    --ring: 43 74% 42%;
+    --color-primary: #b88712;
+    --color-primary-foreground: #fffdf5;
+    --color-background: #fbfaf7;
+    --color-foreground: #2c2418;
+  }
+
+  .dark {
+    --background: 30 12% 8%;
+    --foreground: 42 26% 95%;
+    --card: 30 10% 12%;
+    --card-foreground: 42 26% 95%;
+    --popover: 30 10% 12%;
+    --popover-foreground: 42 26% 95%;
+    --secondary: 30 9% 18%;
+    --secondary-foreground: 42 26% 95%;
+    --muted: 30 9% 18%;
+    --muted-foreground: 38 10% 68%;
+    --accent: 30 9% 18%;
+    --accent-foreground: 42 26% 95%;
+    --border: 30 8% 24%;
+    --input: 30 8% 24%;
+    --color-background: #12100d;
+    --color-foreground: #f8f1df;
+  }
+
+  html {
+    background: var(--color-background);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-width: 320px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.08), transparent 26rem),
+      var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Tajawal", "Cairo", system-ui, sans-serif;
+    text-rendering: optimizeLegibility;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: rgba(184, 135, 18, 0.22);
+    color: var(--color-foreground);
+  }
+}
+
+@layer components {
+  .hk-card {
+    border: 1px solid rgba(184, 135, 18, 0.16);
+    border-radius: var(--hk-card-radius, 20px);
+    background: hsl(var(--card));
+    box-shadow: 0 8px 24px rgba(87, 61, 12, 0.07);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .hk-card:hover {
+    border-color: rgba(184, 135, 18, 0.38);
+    box-shadow: 0 14px 32px rgba(87, 61, 12, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .dark .hk-card {
+    border-color: rgba(212, 175, 55, 0.24);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+  }
+
+  .gold-surface {
+    background: linear-gradient(135deg, #f8df8a 0%, #d4af37 52%, #b17d12 100%);
+    color: #211a0c;
+  }
+
+  .gold-focus:focus-visible {
+    outline: 3px solid rgba(184, 135, 18, 0.35);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
