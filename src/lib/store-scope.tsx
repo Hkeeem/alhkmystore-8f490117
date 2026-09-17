@@ -6,7 +6,12 @@ export type StoreGroupId = "all" | "hyper" | "retail" | "pharmacy" | "online" | 
 
 export type GeoScope = "neighborhood" | "city" | "all";
 
-export const STORE_GROUPS = [
+export const STORE_GROUPS: Array<{
+  id: StoreGroupId;
+  label: string;
+  emoji: string;
+  storeIds: string[];
+}> = [
   { id: "all", label: "كافة المتاجر", emoji: "🌟", storeIds: [] },
   { id: "hyper", label: "هايبر ماركت", emoji: "🏬", storeIds: ["panda", "lulu", "carrefour"] },
   { id: "retail", label: "متاجر التجزئة", emoji: "🛒", storeIds: ["othaim", "danube", "tamimi"] },

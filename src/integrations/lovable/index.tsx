@@ -1,8 +1,23 @@
-import React from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+type OAuthProvider = "google" | "apple" | "azure";
+
+type OAuthResult = { error: Error | null; redirected: boolean };
 
 export const lovable = {
   init: () => {},
-  auth: {},
+  auth: {
+    async signInWithOAuth(
+      provider: OAuthProvider,
+      options?: { redirect_uri?: string },
+    ): Promise<OAuthResult> {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { redirectTo: options?.redirect_uri ?? window.location.origin },
+      });
+      return { error: error ? new Error(error.message) : null, redirected: !error };
+    },
+  },
 };
 
 export function LovableIntegrationView() {
