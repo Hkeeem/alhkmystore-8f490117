@@ -32,8 +32,6 @@ import {
   Tags,
   Crown,
   Bug,
-  Car,
-  UtensilsCrossed,
 } from "lucide-react";
 import {
   Sheet,
@@ -96,13 +94,6 @@ const groups: Group[] = [
     items: [
       { to: "/office", key: "item.office", icon: Building2, badgeKey: "nav.new" },
       { to: "/real-estate", key: "item.realEstate", icon: Building2 },
-      { to: "/cars", key: "item.cars", icon: Car, badgeKey: "nav.new" },
-      {
-        to: "/restaurants",
-        key: "item.restaurants",
-        icon: UtensilsCrossed,
-        badgeKey: "nav.new",
-      },
     ],
   },
   {

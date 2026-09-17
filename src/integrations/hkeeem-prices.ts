@@ -1,7 +1,4 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
-import { supabase as typedSupabase } from "@/integrations/supabase/client";
-
-const supabase = typedSupabase as unknown as SupabaseClient;
+import { supabase } from "@/integrations/supabase/client";
 
 /** جلب المنتجات والأسعار مع ضريبة القيمة المضافة 15% وتفاصيل المتاجر */
 export async function fetchStorePrices() {

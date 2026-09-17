@@ -1,3 +1,1050 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@import "@fontsource/tajawal/400.css";
+@import "@fontsource/tajawal/500.css";
+@import "@fontsource/tajawal/700.css";
+@import "@fontsource/tajawal/900.css";
+
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/cairo/900.css";
+
+@import "@fontsource/aref-ruqaa/400.css";
+@import "@fontsource/aref-ruqaa/700.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: "Tajawal", system-ui, sans-serif;
+  --font-display: "Cairo", "Tajawal", system-ui, sans-serif;
+  /* خط عربي بأسلوب الثلث/الرقعة للعناوين الفاخرة */
+  --font-thuluth: "Aref Ruqaa", "Cairo", serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-hot: var(--hot);
+  --color-hot-foreground: var(--hot-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+:root {
+  /* Hkeeem AI — Luxury Gold & Black */
+
+  --radius: 1rem;
+
+  /* Background — بيج دافئ */
+  --background: oklch(0.97 0.015 75);
+  --foreground: oklch(0.16 0.01 60);
+
+  /* Cards — أبيض مائل للكريمي */
+  --card: oklch(0.99 0.008 75);
+  --card-foreground: oklch(0.16 0.01 60);
+
+  /* Popover */
+  --popover: oklch(0.99 0.008 75);
+  --popover-foreground: oklch(0.16 0.01 60);
+
+  /* Primary Gold — ذهبي معدني فاخر */
+  --primary: oklch(0.75 0.16 78);
+  --primary-foreground: oklch(0.12 0.02 60);
+
+  /* Secondary — بيج غامق */
+  --secondary: oklch(0.93 0.02 75);
+  --secondary-foreground: oklch(0.25 0.02 60);
+
+  /* Muted — بيج فاتح */
+  --muted: oklch(0.95 0.015 75);
+  --muted-foreground: oklch(0.42 0.02 70);
+
+  /* Accent — ذهبي دافئ */
+  --accent: oklch(0.88 0.06 80);
+  --accent-foreground: oklch(0.22 0.02 60);
+
+  /* Status — دُكِّنت لضمان تباين ٤.٥:١ مع النص الأبيض */
+  --destructive: oklch(0.5 0.2 27);
+  --destructive-foreground: oklch(0.99 0 0);
+
+  --success: oklch(0.51 0.13 148);
+  --success-foreground: oklch(0.99 0 0);
+
+  --hot: oklch(0.53 0.19 30);
+  --hot-foreground: oklch(0.99 0 0);
+
+  /* Borders — بيج خفيف */
+  --border: oklch(0.86 0.025 75);
+  --input: oklch(0.91 0.02 75);
+  --ring: oklch(0.62 0.14 72);
+}
+:root {
+  /* Gradients */
+
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.18 0.03 65) 0%,
+    oklch(0.28 0.05 70) 40%,
+    oklch(0.75 0.16 78) 100%
+  );
+
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.9 0.16 88) 0%,
+    oklch(0.78 0.18 80) 40%,
+    oklch(0.65 0.17 72) 100%
+  );
+
+  --gradient-hot: linear-gradient(135deg, oklch(0.65 0.22 35), oklch(0.55 0.23 20));
+
+  /* Shadows */
+
+  --shadow-soft: 0 4px 20px -8px oklch(0.18 0 0 / 0.18);
+
+  --shadow-glow: 0 8px 40px -8px oklch(0.75 0.16 78 / 0.65), 0 0 0 1px oklch(0.75 0.16 78 / 0.2);
+
+  --shadow-card: 0 2px 12px -4px oklch(0.18 0 0 / 0.1);
+}
+
+/* Dark Mode Variables — Deep Indigo/Violet with Gold */
+.dark {
+  /* خلفية بنفسجية/نيلية داكنة */
+  --background: oklch(0.13 0.04 280);
+  --foreground: oklch(0.95 0.01 85);
+
+  /* البطاقات — أغمق قليلاً مع صبغة بنفسجية */
+  --card: oklch(0.17 0.05 280);
+  --card-foreground: oklch(0.95 0.01 85);
+
+  --popover: oklch(0.17 0.05 280);
+  --popover-foreground: oklch(0.95 0.01 85);
+
+  /* الذهبي — أقوى في الوضع الليلي للتمييز */
+  --primary: oklch(0.82 0.17 82);
+  --primary-foreground: oklch(0.13 0.04 280);
+
+  /* الثانوي — بنفسجي شفاف */
+  --secondary: oklch(0.22 0.06 280);
+  --secondary-foreground: oklch(0.9 0.02 85);
+
+  /* المكتوم */
+  --muted: oklch(0.2 0.05 280);
+  --muted-foreground: oklch(0.58 0.04 280);
+
+  /* التمييز */
+  --accent: oklch(0.55 0.18 290);
+  --accent-foreground: oklch(0.95 0.01 85);
+
+  /* الحدود — بنفسجية شفافة */
+  --border: oklch(0.28 0.06 280);
+  --input: oklch(0.22 0.05 280);
+  --ring: oklch(0.8 0.14 85);
+}
+
+/* ===== الأنماط المعدنية: ذهبي / فضي / برونزي ===== */
+/* ملاحظة: الألوان الأساسية مُعتمة بما يكفي ليبقى النص المكتوب بها
+   مقروءًا على الخلفيات الفاتحة (تباين ≥ 4.5:1)، بينما يبقى اللمعان
+   المعدني عبر التدرّجات. */
+
+:root {
+  --shine-dark: oklch(0.42 0.12 66);
+  --shine-mid: oklch(0.52 0.14 78);
+  --shine-light: oklch(0.62 0.15 85);
+}
+
+.theme-gold {
+  --primary: oklch(0.6 0.13 72);
+  --primary-foreground: oklch(0.99 0.01 85);
+  --accent: oklch(0.86 0.06 80);
+  --accent-foreground: oklch(0.22 0.02 60);
+  --ring: oklch(0.6 0.13 72);
+}
+
+.theme-silver {
+  --background: oklch(0.97 0.004 250);
+  --foreground: oklch(0.16 0.01 250);
+  --card: oklch(0.99 0.003 250);
+  --card-foreground: oklch(0.16 0.01 250);
+  --popover: oklch(0.99 0.003 250);
+  --popover-foreground: oklch(0.16 0.01 250);
+  --primary: oklch(0.52 0.015 250);
+  --primary-foreground: oklch(0.99 0.002 250);
+  --secondary: oklch(0.92 0.006 250);
+  --secondary-foreground: oklch(0.22 0.01 250);
+  --muted: oklch(0.95 0.005 250);
+  --muted-foreground: oklch(0.44 0.012 250);
+  --accent: oklch(0.86 0.012 250);
+  --accent-foreground: oklch(0.22 0.01 250);
+  --border: oklch(0.86 0.01 250);
+  --input: oklch(0.91 0.008 250);
+  --ring: oklch(0.52 0.015 250);
+
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.2 0.01 250) 0%,
+    oklch(0.36 0.012 250) 45%,
+    oklch(0.62 0.015 250) 100%
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.92 0.006 250) 0%,
+    oklch(0.76 0.012 250) 40%,
+    oklch(0.58 0.015 250) 100%
+  );
+  --shadow-glow: 0 8px 40px -8px oklch(0.55 0.02 250 / 0.45), 0 0 0 1px oklch(0.55 0.02 250 / 0.25);
+
+  --shine-dark: oklch(0.36 0.01 250);
+  --shine-mid: oklch(0.46 0.012 250);
+  --shine-light: oklch(0.58 0.014 250);
+}
+
+.theme-bronze {
+  --background: oklch(0.96 0.02 55);
+  --foreground: oklch(0.17 0.02 45);
+  --card: oklch(0.99 0.012 55);
+  --card-foreground: oklch(0.17 0.02 45);
+  --popover: oklch(0.99 0.012 55);
+  --popover-foreground: oklch(0.17 0.02 45);
+  --primary: oklch(0.52 0.11 52);
+  --primary-foreground: oklch(0.99 0.01 60);
+  --secondary: oklch(0.91 0.03 55);
+  --secondary-foreground: oklch(0.24 0.03 45);
+  --muted: oklch(0.94 0.02 55);
+  --muted-foreground: oklch(0.44 0.03 50);
+  --accent: oklch(0.82 0.07 55);
+  --accent-foreground: oklch(0.22 0.03 45);
+  --border: oklch(0.85 0.03 55);
+  --input: oklch(0.91 0.025 55);
+  --ring: oklch(0.52 0.11 52);
+
+  --gradient-hero: linear-gradient(
+    135deg,
+    oklch(0.19 0.03 45) 0%,
+    oklch(0.31 0.06 50) 45%,
+    oklch(0.58 0.12 55) 100%
+  );
+  --gradient-gold: linear-gradient(
+    135deg,
+    oklch(0.8 0.09 62) 0%,
+    oklch(0.62 0.13 55) 45%,
+    oklch(0.44 0.1 48) 100%
+  );
+  --shadow-glow: 0 8px 40px -8px oklch(0.52 0.11 52 / 0.5), 0 0 0 1px oklch(0.52 0.11 52 / 0.25);
+
+  --shine-dark: oklch(0.38 0.09 48);
+  --shine-mid: oklch(0.48 0.11 52);
+  --shine-light: oklch(0.58 0.12 58);
+}
+
+/* ===== الوضع الداكن التلقائي (تفضيل النظام) لكل نمط معدني ===== */
+.dark.theme-gold {
+  --background: oklch(0.13 0.02 80);
+  --foreground: oklch(0.96 0.01 85);
+  --card: oklch(0.17 0.02 80);
+  --card-foreground: oklch(0.96 0.01 85);
+  --popover: oklch(0.17 0.02 80);
+  --popover-foreground: oklch(0.96 0.01 85);
+  --primary: oklch(0.82 0.15 82);
+  --primary-foreground: oklch(0.15 0.02 80);
+  --secondary: oklch(0.22 0.02 80);
+  --secondary-foreground: oklch(0.92 0.01 85);
+  --muted: oklch(0.2 0.02 80);
+  --muted-foreground: oklch(0.72 0.02 82);
+  --accent: oklch(0.34 0.05 80);
+  --accent-foreground: oklch(0.95 0.01 85);
+  --border: oklch(0.3 0.03 80);
+  --input: oklch(0.24 0.02 80);
+  --ring: oklch(0.82 0.15 82);
+
+  --shine-dark: oklch(0.66 0.12 70);
+  --shine-mid: oklch(0.78 0.14 80);
+  --shine-light: oklch(0.9 0.1 88);
+}
+
+.dark.theme-silver {
+  --background: oklch(0.14 0.006 250);
+  --foreground: oklch(0.96 0.003 250);
+  --card: oklch(0.18 0.007 250);
+  --card-foreground: oklch(0.96 0.003 250);
+  --popover: oklch(0.18 0.007 250);
+  --popover-foreground: oklch(0.96 0.003 250);
+  --primary: oklch(0.84 0.012 250);
+  --primary-foreground: oklch(0.16 0.008 250);
+  --secondary: oklch(0.23 0.008 250);
+  --secondary-foreground: oklch(0.92 0.004 250);
+  --muted: oklch(0.21 0.007 250);
+  --muted-foreground: oklch(0.72 0.008 250);
+  --accent: oklch(0.34 0.01 250);
+  --accent-foreground: oklch(0.95 0.004 250);
+  --border: oklch(0.31 0.01 250);
+  --input: oklch(0.25 0.008 250);
+  --ring: oklch(0.84 0.012 250);
+
+  --shine-dark: oklch(0.68 0.008 250);
+  --shine-mid: oklch(0.8 0.01 250);
+  --shine-light: oklch(0.93 0.005 250);
+}
+
+.dark.theme-bronze {
+  --background: oklch(0.13 0.02 45);
+  --foreground: oklch(0.96 0.01 60);
+  --card: oklch(0.18 0.025 45);
+  --card-foreground: oklch(0.96 0.01 60);
+  --popover: oklch(0.18 0.025 45);
+  --popover-foreground: oklch(0.96 0.01 60);
+  --primary: oklch(0.78 0.1 58);
+  --primary-foreground: oklch(0.16 0.02 45);
+  --secondary: oklch(0.23 0.03 45);
+  --secondary-foreground: oklch(0.92 0.015 55);
+  --muted: oklch(0.21 0.025 45);
+  --muted-foreground: oklch(0.72 0.03 52);
+  --accent: oklch(0.35 0.05 50);
+  --accent-foreground: oklch(0.95 0.01 60);
+  --border: oklch(0.31 0.04 48);
+  --input: oklch(0.25 0.03 45);
+  --ring: oklch(0.78 0.1 58);
+
+  --shine-dark: oklch(0.62 0.1 48);
+  --shine-mid: oklch(0.74 0.11 55);
+  --shine-light: oklch(0.86 0.08 62);
+}
+
+/* ===== انتقال ناعم عند تبديل النمط المعدني ===== */
+/* يشمل كل العناصر والعناصر الزائفة والأيقونات والتدرّجات والظلال */
+html.theme-switching,
+html.theme-switching body,
+html.theme-switching *,
+html.theme-switching *::before,
+html.theme-switching *::after,
+html.theme-switching svg,
+html.theme-switching svg * {
+  transition:
+    background-color 420ms ease,
+    background-image 420ms ease,
+    border-color 420ms ease,
+    outline-color 420ms ease,
+    color 420ms ease,
+    fill 420ms ease,
+    stroke 420ms ease,
+    box-shadow 420ms ease,
+    text-decoration-color 420ms ease,
+    caret-color 420ms ease,
+    opacity 420ms ease !important;
+  transition-delay: 0ms !important;
+}
+
+/* لا نريد تأخير الحركات التفاعلية أثناء التبديل */
+html.theme-switching *:hover,
+html.theme-switching *:active {
+  transition-duration: 420ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.theme-switching,
+  html.theme-switching body,
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after,
+  html.theme-switching svg,
+  html.theme-switching svg * {
+    transition: none !important;
+  }
+}
+
+/* ===== شعار رؤية 2030 الرسمي كخلفية شفافة خلف شعار HkeeemAI ===== */
+.vision-2030-bg {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--vision-size, 4.5rem);
+  height: auto;
+  aspect-ratio: 640 / 428;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  object-fit: contain;
+  /* تباين أعلى لضمان وضوح الشعار دون التداخل مع النص */
+  filter: brightness(1.25) contrast(1.05) saturate(1.15);
+}
+
+/* الأحجام */
+.vision-2030-bg.vision-sm {
+  --vision-size: 2.8rem;
+}
+.vision-2030-bg.vision-md {
+  --vision-size: 4rem;
+}
+.vision-2030-bg.vision-lg {
+  --vision-size: 5.5rem;
+}
+
+/* المكان داخل الترويسة (إحداثيات ثابتة لضمان التمركز الدقيق في RTL) */
+.vision-2030-bg.vision-start {
+  right: -0.25rem;
+  left: auto;
+}
+.vision-2030-bg.vision-end {
+  left: -0.5rem;
+  right: auto;
+}
+.vision-2030-bg.vision-center {
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    direction: rtl;
+  }
+
+  body {
+    background: var(--color-background);
+
+    color: var(--color-foreground);
+
+    font-family: var(--font-sans);
+
+    /* وضوح أعلى للنص العربي: وزن متوسط، تباعد أسطر مريح، وتحسين الحواف */
+    font-weight: 500;
+
+    font-size: 1.0625rem;
+
+    line-height: 1.85;
+
+    letter-spacing: 0;
+
+    font-feature-settings: "kern";
+
+    text-rendering: optimizeLegibility;
+
+    -webkit-font-smoothing: antialiased;
+
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* لا نصغّر النص عن الحد المقروء في أي مكان */
+  .text-\[10px\],
+  .text-\[11px\],
+  .text-\[12px\] {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  p,
+  li,
+  label,
+  span,
+  button,
+  a {
+    letter-spacing: 0;
+  }
+
+  small,
+  .text-xs {
+    font-weight: 600;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+
+    font-weight: 900;
+
+    letter-spacing: 0;
+
+    line-height: 1.5;
+
+    text-wrap: balance;
+  }
+}
+
+/* وضوح النص فوق الخلفيات الذهبية المتدرجة */
+.bg-gradient-hero,
+.bg-gradient-gold,
+.bg-gradient-hot {
+  text-shadow: 0 1px 2px oklch(0 0 0 / 0.35);
+}
+
+.bg-gradient-hero .text-muted-foreground,
+.bg-gradient-gold .text-muted-foreground {
+  color: color-mix(in oklab, var(--color-foreground) 88%, transparent);
+}
+
+/* لا نسمح بشفافية تُضعف قراءة النص */
+.bg-gradient-hero [class*="/60"],
+.bg-gradient-hero [class*="/70"],
+.bg-gradient-gold [class*="/60"],
+.bg-gradient-gold [class*="/70"] {
+  opacity: 1;
+}
+
+::placeholder {
+  color: color-mix(in oklab, var(--color-foreground) 65%, transparent);
+  font-weight: 500;
+}
+
+@utility bg-gradient-hero {
+  background-image: var(--gradient-hero);
+}
+
+@utility bg-gradient-gold {
+  background-image: var(--gradient-gold);
+}
+
+@utility bg-gradient-hot {
+  background-image: var(--gradient-hot);
+}
+
+@utility shadow-soft {
+  box-shadow: var(--shadow-soft);
+}
+
+@utility shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+@utility font-thuluth {
+  font-family: var(--font-thuluth);
+  font-weight: 700;
+  line-height: 1.9;
+  letter-spacing: 0;
+  /* حد رفيع يزيد وضوح الخط الزخرفي فوق الخلفيات الذهبية */
+  paint-order: stroke fill;
+  -webkit-text-stroke: 0.4px currentColor;
+}
+
+@utility text-gold-shine {
+  background-image: linear-gradient(
+    100deg,
+    var(--shine-dark) 0%,
+
+    var(--shine-light) 35%,
+    var(--shine-mid) 50%,
+    var(--shine-light) 65%,
+    var(--shine-dark) 100%
+  );
+  background-size: 300% 100%;
+  background-clip: text;
+  color: transparent;
+  /* ظل خفيف يفصل النص عن الخلفية ويرفع وضوحه */
+  filter: drop-shadow(0 1px 1px oklch(0 0 0 / 0.35));
+  animation: goldShine 4s ease-in-out infinite;
+}
+
+@utility glass-card {
+  background-color: oklch(1 0 0 / 0.72);
+  backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid var(--border);
+}
+
+@keyframes goldShine {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@utility glow-gold {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--primary) 55%, transparent),
+    0 4px 20px -4px color-mix(in oklab, var(--primary) 45%, transparent),
+    0 0 40px -10px color-mix(in oklab, var(--primary) 30%, transparent);
+}
+
+/* شكل سداسي صغير للأيقونات والشعارات */
+@utility hex-shape {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+}
+
+@utility hex-tile {
+  clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  background: linear-gradient(
+    150deg,
+    color-mix(in oklab, var(--primary) 26%, transparent),
+    color-mix(in oklab, var(--primary) 8%, transparent)
+  );
+  border: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* بطاقة زجاجية للوضع الليلي */
+@utility glass-dark {
+  background-color: oklch(0.2 0.06 280 / 0.6);
+  backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid oklch(0.5 0.1 280 / 0.25);
+}
+
+/* أيقونة شفافة للوضع الليلي */
+@utility icon-glass {
+  background-color: oklch(0.3 0.08 280 / 0.45);
+  backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.55 0.1 280 / 0.3);
+}
+
+/* --- UX polish: soft elevation, ripple, skeleton --- */
+
+@utility hover-lift {
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+  will-change: transform;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px -12px oklch(0.18 0 0 / 0.22);
+  }
+  &:active {
+    transform: translateY(-1px) scale(0.995);
+  }
+}
+
+@utility press-ripple {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: currentColor;
+    opacity: 0;
+    transform: scale(1);
+    pointer-events: none;
+  }
+  &:active::after {
+    animation: rippleOut 0.55s ease-out;
+  }
+  &:active {
+    transform: scale(0.985);
+  }
+}
+
+@keyframes rippleOut {
+  0% {
+    opacity: 0.22;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(48);
+  }
+}
+
+@utility skeleton-box {
+  background-image: linear-gradient(
+    100deg,
+    var(--secondary) 20%,
+    var(--muted) 40%,
+    var(--secondary) 60%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer base {
+  button,
+  a,
+  [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :where(button, a, input, textarea, select):focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  img {
+    content-visibility: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ===== تمرير ناعم + استعادة موضع التمرير ===== */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+  overscroll-behavior-y: contain;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ===== انتقالات ناعمة بين الصفحات (opacity فقط حتى لا تتأثر استعادة التمرير) ===== */
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-transition {
+  animation: pageEnter 0.22s ease-out both;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
+/* ===== وضع التباين العالي للقائمة الجانبية ===== */
+[data-sidebar-hc="on"] {
+  --muted-foreground: var(--foreground);
+}
+
+[data-sidebar-hc="on"] a,
+[data-sidebar-hc="on"] button,
+[data-sidebar-hc="on"] p,
+[data-sidebar-hc="on"] span {
+  font-weight: 600;
+}
+
+/* ===== حركات القائمة الجانبية ===== */
+@keyframes sidebarItemIn {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.sidebar-item {
+  animation: sidebarItemIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* انزلاق ناعم للقائمة اليمنى عند الفتح والإغلاق */
+@keyframes sidebarPanelIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes sidebarPanelOut {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%) scale(0.99);
+  }
+}
+
+.sidebar-panel {
+  will-change: width, transform, opacity;
+}
+
+.sidebar-panel[data-state="open"] {
+  animation: sidebarPanelIn 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sidebar-panel[data-state="closed"] {
+  animation: sidebarPanelOut 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* تعتيم الخلفية بتزامن مع القائمة */
+.sidebar-panel ~ * {
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-item,
+  .sidebar-panel[data-state="open"],
+  .sidebar-panel[data-state="closed"] {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .sidebar-panel {
+    transition: none !important;
+    will-change: auto;
+  }
+}
+
+/* Skip to main content link */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 100;
+  transform: translateY(-200%);
+  border-radius: 1rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+  transition: transform 0.2s ease;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+  }
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* تحسين نوافذ الخريطة المنبثقة بهوية حكيم الذهبية */
+.leaflet-popup-content-wrapper {
+  border-radius: 16px !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  box-shadow:
+    0 8px 30px rgba(212, 175, 55, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+.leaflet-popup-tip {
+  border-top: 1px solid rgba(212, 175, 55, 0.45) !important;
+}
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.6 !important;
+}
+.leaflet-popup-close-button {
+  font-size: 18px !important;
+  padding: 6px 8px 0 0 !important;
+}
+.leaflet-container {
+  font-family: inherit !important;
+  background: #e8e0d5;
+}
+
+/* ===== تخصيص شكل البطاقات من صفحة الإعدادات ===== */
+:root {
+  --hk-card-radius: 20px;
+}
+
+@utility hk-card {
+  border-radius: var(--hk-card-radius);
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 0.06);
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.hk-card:hover {
+  box-shadow: 0 14px 40px rgb(0 0 0 / 0.12);
+}
+
+[data-card-style="flat"] .hk-card {
+  box-shadow: none;
+  background-color: color-mix(in oklab, var(--primary) 4%, oklch(1 0 0));
+  border-color: transparent;
+}
+
+[data-card-style="flat"] .hk-card:hover {
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
+}
+
+[data-card-style="outline"] .hk-card {
+  box-shadow: none;
+  border: 1.5px solid color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+[data-card-style="outline"] .hk-card:hover {
+  border-color: var(--primary);
+}
+
+[data-card-style="glass"] .hk-card {
+  background-color: oklch(1 0 0 / 0.68);
+  backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--primary) 24%, transparent);
+  box-shadow: 0 10px 34px rgb(0 0 0 / 0.1);
+}
+
+/* ===== قاعدة التباين العامة في كل الثيمات والصفحات =====
+   الخلفية الداكنة → نص فاتح دائماً، والخلفية الفاتحة → نص غامق دائماً.
+   (قواعد غير مُدرجة في layer لتتغلّب على أدوات Tailwind على نفس العنصر) */
+
+/* تدرّج الـHero داكن في جميع الثيمات (ذهبي/فضي/برونزي/تلقائي) → نص فاتح */
+.bg-gradient-hero {
+  color: oklch(0.97 0.012 85);
+  color-scheme: dark;
+}
+
+/* التدرّج الذهبي فاتح لامع → نص غامق */
+.bg-gradient-gold {
+  color: oklch(0.16 0.02 60);
+}
+
+/* ضمان مقروئية النصوص فوق الصور والتدرجات الداكنة */
+.text-on-dark {
+  color: oklch(0.97 0.012 85);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.45);
+}
+.text-on-light {
+  color: oklch(0.16 0.01 60);
+}
+
+/* ===== هوية حكيم برو — بلاتيني معدني فاخر ===== */
+.bg-gradient-platinum {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.24 0.012 250) 0%,
+    oklch(0.46 0.014 250) 42%,
+    oklch(0.78 0.018 250) 100%
+  );
+  /* التدرج البلاتيني داكن في أغلب مساحته → نص فاتح دائماً */
+  color: oklch(0.97 0.005 250);
+  color-scheme: dark;
+}
+
+.bg-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.002 250) 0%,
+    oklch(0.86 0.008 250) 40%,
+    oklch(0.7 0.014 250) 100%
+  );
+  /* سطح فاتح → نص غامق */
+  color: oklch(0.18 0.01 250);
+}
+
+.text-platinum-shine {
+  background-image: linear-gradient(
+    135deg,
+    oklch(0.99 0.003 250) 0%,
+    oklch(0.85 0.012 250) 45%,
+    oklch(0.7 0.02 250) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.shadow-platinum {
+  box-shadow:
+    0 8px 40px -8px oklch(0.75 0.02 250 / 0.55),
+    0 0 0 1px oklch(0.75 0.02 250 / 0.25);
+}
+
+/* قائمة جانبية أنحف وبلمسة ذهبية */
+.sidebar-panel {
+  background-image: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--primary) 10%, transparent),
+    transparent 55%
+  );
+}
+.sidebar-panel .sidebar-item {
+  padding: 0.34rem 0.6rem;
+  gap: 0.5rem;
+  border-radius: 0.65rem;
+  font-size: 13px;
+  line-height: 1.35;
+  color: color-mix(in oklab, var(--primary) 72%, var(--foreground));
+}
+.sidebar-panel .sidebar-item svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: color-mix(in oklab, var(--primary) 85%, var(--foreground));
+}
+.sidebar-panel .sidebar-item[aria-current="page"],
+.sidebar-panel .sidebar-item[aria-current="page"] svg {
+  color: var(--primary-foreground);
+}
+.sidebar-panel .sidebar-item span {
+  font-size: 13px;
+}

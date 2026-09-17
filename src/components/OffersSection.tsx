@@ -6,7 +6,7 @@ const supabaseKey = 'pcycuavbjpqvfuwwqlso';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export function OffersSection() {
-  const [offers, setOffers] = useState<Array<Record<string, unknown>>>([]);
+  const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
@@ -24,7 +24,7 @@ export function OffersSection() {
         // تسجيل وقت التحديث الحالي
         setLastUpdated(new Date().toLocaleTimeString('ar-SA'));
       } catch (error) {
-        console.error('خطأ في جلب العروض:', error instanceof Error ? error.message : error);
+        console.error('خطأ في جلب العروض:', error.message);
       } finally {
         setLoading(false);
       }

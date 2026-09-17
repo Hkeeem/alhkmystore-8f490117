@@ -19,7 +19,6 @@ import { Route as ShowroomRouteImport } from './routes/showroom'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -72,7 +71,6 @@ import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/publi
 import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
 import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
-import { Route as ApiPublicHooksMarketingBotRouteImport } from './routes/api/public/hooks/marketing-bot'
 import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
 import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
 import { Route as ApiPublicHooksDailyContentSyncRouteImport } from './routes/api/public/hooks/daily-content-sync'
@@ -126,11 +124,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RestaurantsRoute = RestaurantsRouteImport.update({
-  id: '/restaurants',
-  path: '/restaurants',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealEstateRoute = RealEstateRouteImport.update({
@@ -405,12 +398,6 @@ const ApiPublicHooksOfficePicksRoute =
     path: '/api/public/hooks/office-picks',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksMarketingBotRoute =
-  ApiPublicHooksMarketingBotRouteImport.update({
-    id: '/api/public/hooks/marketing-bot',
-    path: '/api/public/hooks/marketing-bot',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksHarajSyncRoute = ApiPublicHooksHarajSyncRouteImport.update({
   id: '/api/public/hooks/haraj-sync',
   path: '/api/public/hooks/haraj-sync',
@@ -455,7 +442,6 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -492,7 +478,6 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
@@ -524,7 +509,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -561,7 +545,6 @@ export interface FileRoutesByTo {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
@@ -595,7 +578,6 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -632,7 +614,6 @@ export interface FileRoutesById {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
@@ -666,7 +647,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -703,7 +683,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
@@ -735,7 +714,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -772,7 +750,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
@@ -805,7 +782,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -842,7 +818,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
@@ -876,7 +851,6 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProRoute: typeof ProRoute
   RealEstateRoute: typeof RealEstateRoute
-  RestaurantsRoute: typeof RestaurantsRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
@@ -898,7 +872,6 @@ export interface RootRouteChildren {
   ApiPublicHooksDailyContentSyncRoute: typeof ApiPublicHooksDailyContentSyncRoute
   ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
   ApiPublicHooksHarajSyncRoute: typeof ApiPublicHooksHarajSyncRoute
-  ApiPublicHooksMarketingBotRoute: typeof ApiPublicHooksMarketingBotRoute
   ApiPublicHooksOfficePicksRoute: typeof ApiPublicHooksOfficePicksRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksShowroomSyncRoute: typeof ApiPublicHooksShowroomSyncRoute
@@ -979,13 +952,6 @@ declare module '@tanstack/react-router' {
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/restaurants': {
-      id: '/restaurants'
-      path: '/restaurants'
-      fullPath: '/restaurants'
-      preLoaderRoute: typeof RestaurantsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/real-estate': {
@@ -1352,13 +1318,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksOfficePicksRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/marketing-bot': {
-      id: '/api/public/hooks/marketing-bot'
-      path: '/api/public/hooks/marketing-bot'
-      fullPath: '/api/public/hooks/marketing-bot'
-      preLoaderRoute: typeof ApiPublicHooksMarketingBotRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/haraj-sync': {
       id: '/api/public/hooks/haraj-sync'
       path: '/api/public/hooks/haraj-sync'
@@ -1478,7 +1437,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProRoute: ProRoute,
   RealEstateRoute: RealEstateRoute,
-  RestaurantsRoute: RestaurantsRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
@@ -1500,7 +1458,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksDailyContentSyncRoute: ApiPublicHooksDailyContentSyncRoute,
   ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
   ApiPublicHooksHarajSyncRoute: ApiPublicHooksHarajSyncRoute,
-  ApiPublicHooksMarketingBotRoute: ApiPublicHooksMarketingBotRoute,
   ApiPublicHooksOfficePicksRoute: ApiPublicHooksOfficePicksRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,

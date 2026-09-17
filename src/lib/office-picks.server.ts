@@ -22,8 +22,7 @@ export async function runOfficePicksSync(limit = 5) {
       .limit(60),
   ]);
 
-  type PropRow = { id: string; title: string; city: string | null; district: string | null; property_type: string | null; created_at: string };
-  const properties = ((props.data ?? []) as unknown as PropRow[])
+  const properties = (props.data ?? [])
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, limit)
     .map((p, i) => ({
