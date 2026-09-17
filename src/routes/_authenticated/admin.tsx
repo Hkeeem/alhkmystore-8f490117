@@ -34,6 +34,7 @@ import {
   Bot,
   Megaphone,
   KeyRound,
+  Ticket,
 } from "lucide-react";
 import {
   getAdminContext,
@@ -64,6 +65,7 @@ import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 import { BotsPanel } from "@/components/admin/BotsPanel";
 import { MarketingBotsPanel } from "@/components/admin/MarketingBotsPanel";
 import { PublishingKeysPanel } from "@/components/admin/PublishingKeysPanel";
+import { CouponsAdminPanel } from "@/components/admin/CouponsAdminPanel";
 
 type Tab =
   | "dashboard"
@@ -82,7 +84,8 @@ type Tab =
   | "showroom"
   | "bots"
   | "marketing"
-  | "pubkeys";
+  | "pubkeys"
+  | "coupons";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
