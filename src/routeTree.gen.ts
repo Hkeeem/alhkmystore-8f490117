@@ -19,6 +19,7 @@ import { Route as ShowroomRouteImport } from './routes/showroom'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -125,6 +126,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RestaurantsRoute = RestaurantsRouteImport.update({
+  id: '/restaurants',
+  path: '/restaurants',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealEstateRoute = RealEstateRouteImport.update({
@@ -449,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
+  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -517,6 +524,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
+  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -587,6 +595,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
+  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -657,6 +666,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
+    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -725,6 +735,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
+    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -794,6 +805,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
+    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -864,6 +876,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProRoute: typeof ProRoute
   RealEstateRoute: typeof RealEstateRoute
+  RestaurantsRoute: typeof RestaurantsRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
@@ -966,6 +979,13 @@ declare module '@tanstack/react-router' {
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/restaurants': {
+      id: '/restaurants'
+      path: '/restaurants'
+      fullPath: '/restaurants'
+      preLoaderRoute: typeof RestaurantsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/real-estate': {
@@ -1458,6 +1478,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProRoute: ProRoute,
   RealEstateRoute: RealEstateRoute,
+  RestaurantsRoute: RestaurantsRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,

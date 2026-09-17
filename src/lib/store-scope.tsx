@@ -6,7 +6,12 @@ export type StoreGroupId = "all" | "hyper" | "retail" | "pharmacy" | "online" | 
 
 export type GeoScope = "neighborhood" | "city" | "all";
 
-export const STORE_GROUPS = [
+export const STORE_GROUPS: Array<{
+  id: StoreGroupId;
+  label: string;
+  emoji: string;
+  storeIds: string[];
+}> = [
   { id: "all", label: "كافة المتاجر", emoji: "🌟", storeIds: [] },
   { id: "hyper", label: "هايبر ماركت", emoji: "🏬", storeIds: ["panda", "lulu", "carrefour"] },
   { id: "retail", label: "متاجر التجزئة", emoji: "🛒", storeIds: ["othaim", "danube", "tamimi"] },
@@ -39,6 +44,8 @@ interface StoreScopeContextType {
   setGeoScope: (scope: GeoScope) => void;
   activeGroup: StoreGroupId;
   setActiveGroup: (group: StoreGroupId) => void;
+  city: string;
+  scopedStores: typeof stores;
 }
 
 const StoreScopeContext = createContext<StoreScopeContextType | undefined>(undefined);
@@ -76,6 +83,11 @@ export function StoreScopeProvider({ children }: { children: ReactNode }) {
         setGeoScope,
         activeGroup,
         setActiveGroup,
+        city: selectedCity,
+        scopedStores: (() => {
+          const ids = storesInGroup(activeGroup);
+          return stores.filter((s) => ids.includes(s.id));
+        })(),
       }}
     >
       {children}

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase"; 
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { supabase as typedSupabase } from "@/integrations/supabase/client";
+
+const supabase = typedSupabase as unknown as SupabaseClient;
 
 interface Offer {
   id: string;
