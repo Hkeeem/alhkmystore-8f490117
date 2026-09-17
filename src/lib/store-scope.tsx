@@ -44,6 +44,8 @@ interface StoreScopeContextType {
   setGeoScope: (scope: GeoScope) => void;
   activeGroup: StoreGroupId;
   setActiveGroup: (group: StoreGroupId) => void;
+  city: string;
+  scopedStores: typeof stores;
 }
 
 const StoreScopeContext = createContext<StoreScopeContextType | undefined>(undefined);
@@ -81,6 +83,11 @@ export function StoreScopeProvider({ children }: { children: ReactNode }) {
         setGeoScope,
         activeGroup,
         setActiveGroup,
+        city: selectedCity,
+        scopedStores: (() => {
+          const ids = storesInGroup(activeGroup);
+          return stores.filter((s) => ids.includes(s.id));
+        })(),
       }}
     >
       {children}
