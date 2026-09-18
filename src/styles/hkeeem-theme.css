@@ -29,6 +29,7 @@
     box-shadow 180ms ease,
     border-color 180ms ease;
 }
+
 .hkt-card:hover {
   border-color: rgba(184, 135, 18, 0.4);
   box-shadow: 0 14px 32px rgba(87, 61, 12, 0.12);
@@ -46,6 +47,7 @@
   border: none;
   cursor: pointer;
 }
+
 .hkt-btn-gold:hover {
   box-shadow: 0 12px 28px rgba(184, 135, 18, 0.34);
   transform: translateY(-1px);
@@ -61,6 +63,7 @@
   transition: all 0.2s ease;
   cursor: pointer;
 }
+
 .dark .hkt-btn-outline {
   color: var(--hkeeem-gold-bright);
 }
@@ -87,9 +90,11 @@
 .hkt-gold-text {
   color: var(--hkeeem-gold-dark);
 }
+
 .dark .hkt-gold-text {
   color: var(--hkeeem-gold-bright);
 }
+
 .hkt-dim-text {
   color: var(--hkeeem-text-dim);
 }
@@ -103,6 +108,7 @@
     transform: scale(1.06);
   }
 }
+
 .hkt-assistant-float {
   animation: hkt-breathe 2s ease-in-out infinite;
   box-shadow: 0 0 24px rgba(212, 175, 55, 0.38);
@@ -120,6 +126,7 @@
     transform: translateY(-4px);
   }
 }
+
 .hkt-typing-dot {
   width: 8px;
   height: 8px;
@@ -128,9 +135,11 @@
   display: inline-block;
   animation: hkt-typing 1.2s ease-in-out infinite;
 }
+
 .hkt-typing-dot:nth-child(2) {
   animation-delay: 0.2s;
 }
+
 .hkt-typing-dot:nth-child(3) {
   animation-delay: 0.4s;
 }
