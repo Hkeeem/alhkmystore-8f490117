@@ -58,6 +58,7 @@ import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
+import { SocialKeysPanel } from "@/components/admin/SocialKeysPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 
 type Tab =
@@ -187,6 +188,12 @@ function AdminPage() {
       label: "معرض حكيم",
       icon: Store,
       allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
+      id: "social-keys" as const,
+      label: "مفاتيح النشر",
+      icon: Link2,
+      allow: ["super_admin", "admin"],
     },
   ].filter((t) => can(t.allow));
 
