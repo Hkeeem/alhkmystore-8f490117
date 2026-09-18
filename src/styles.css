@@ -47,6 +47,79 @@
     --color-foreground: #f8f1df;
   }
 
+  /* الثيمات المعدنية تُطبَّق على جذر الصفحة من useTheme */
+  .theme-gold {
+    --background: 24 26% 8%;
+    --foreground: 42 26% 95%;
+    --card: 24 20% 12%;
+    --card-foreground: 42 26% 95%;
+    --popover: 24 20% 12%;
+    --popover-foreground: 42 26% 95%;
+    --primary: #d4af37;
+    --primary-foreground: #211a0c;
+    --secondary: 24 16% 17%;
+    --secondary-foreground: 42 26% 95%;
+    --muted: 24 14% 17%;
+    --muted-foreground: 38 10% 70%;
+    --accent: 24 16% 17%;
+    --accent-foreground: 42 26% 95%;
+    --border: 35 24% 27%;
+    --input: 35 24% 27%;
+    --ring: 43 74% 52%;
+    --color-primary: #d4af37;
+    --color-primary-foreground: #211a0c;
+    --color-background: #1b1008;
+    --color-foreground: #f8f1df;
+  }
+
+  .theme-silver {
+    --background: 210 20% 97%;
+    --foreground: 215 25% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 16%;
+    --primary: #64748b;
+    --primary-foreground: #ffffff;
+    --secondary: 210 18% 92%;
+    --secondary-foreground: 215 25% 16%;
+    --muted: 210 18% 93%;
+    --muted-foreground: 215 12% 42%;
+    --accent: 210 18% 92%;
+    --accent-foreground: 215 25% 16%;
+    --border: 214 18% 82%;
+    --input: 214 18% 82%;
+    --ring: 215 25% 45%;
+    --color-primary: #64748b;
+    --color-primary-foreground: #ffffff;
+    --color-background: #f6f8fa;
+    --color-foreground: #1f2937;
+  }
+
+  .theme-bronze {
+    --background: 22 24% 10%;
+    --foreground: 30 40% 95%;
+    --card: 22 20% 15%;
+    --card-foreground: 30 40% 95%;
+    --popover: 22 20% 15%;
+    --popover-foreground: 30 40% 95%;
+    --primary: #c47b43;
+    --primary-foreground: #fff8f0;
+    --secondary: 22 17% 21%;
+    --secondary-foreground: 30 40% 95%;
+    --muted: 22 15% 20%;
+    --muted-foreground: 28 16% 72%;
+    --accent: 22 17% 21%;
+    --accent-foreground: 30 40% 95%;
+    --border: 24 25% 31%;
+    --input: 24 25% 31%;
+    --ring: 24 55% 55%;
+    --color-primary: #c47b43;
+    --color-primary-foreground: #fff8f0;
+    --color-background: #21130d;
+    --color-foreground: #fff1e4;
+  }
+
   html {
     background: var(--color-background);
     scroll-behavior: smooth;
