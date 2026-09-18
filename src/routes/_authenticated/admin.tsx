@@ -77,7 +77,8 @@ type Tab =
   | "clicks"
   | "reports"
   | "deals"
-  | "showroom";
+  | "showroom"
+  | "social-keys";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
