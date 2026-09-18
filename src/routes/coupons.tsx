@@ -56,10 +56,19 @@ function CouponsPage() {
     });
   }, [all, q, cat]);
 
-  const handleCopy = async (code: string) => {
+  const handleCopy = async (c: LiveCoupon) => {
+    const code = c.code;
     try {
       await navigator.clipboard.writeText(code);
       setCopied(code);
+      trackCouponClick({
+        couponId: c.id,
+        code: c.code,
+        title: c.title,
+        storeId: c.storeId,
+        storeName: c.storeName,
+        surface: "coupon",
+      });
       const s = addPoints("copy_coupon");
       toast.success(`تم نسخ الكود ${code} · +10 نقاط (المجموع ${s.points})`);
       setTimeout(() => setCopied(null), 1800);
