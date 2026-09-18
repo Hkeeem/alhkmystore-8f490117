@@ -37,6 +37,7 @@ import { fetchLiveCoupons } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { trackCouponClick } from "@/lib/track-deal";
 
 export const Route = createFileRoute("/coupons/$id")({
   head: () => ({
@@ -112,6 +113,14 @@ function CouponDetail() {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(coupon.code);
+      trackCouponClick({
+        couponId: coupon.id,
+        code: coupon.code,
+        title: coupon.title,
+        storeId: coupon.storeId,
+        storeName: coupon.storeName,
+        surface: "coupon-detail",
+      });
       setCopied(true);
       const st = addPoints("copy_coupon");
       toast.success(`تم نسخ ${coupon.code} · +10 نقاط (المجموع ${st.points})`);
