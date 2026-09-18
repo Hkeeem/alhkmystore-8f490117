@@ -58,6 +58,7 @@ import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
+import { SocialKeysPanel } from "@/components/admin/SocialKeysPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 
 type Tab =
@@ -76,7 +77,8 @@ type Tab =
   | "clicks"
   | "reports"
   | "deals"
-  | "showroom";
+  | "showroom"
+  | "social-keys";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -188,6 +190,12 @@ function AdminPage() {
       icon: Store,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    {
+      id: "social-keys" as const,
+      label: "مفاتيح النشر",
+      icon: Link2,
+      allow: ["super_admin", "admin"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -240,6 +248,7 @@ function AdminPage() {
           {tab === "deploy" && <DeployTab />}
           {tab === "deals" && <DealsAdminTab />}
           {tab === "showroom" && <ShowroomAdminPanel />}
+          {tab === "social-keys" && <SocialKeysPanel />}
         </main>
       </div>
     </div>

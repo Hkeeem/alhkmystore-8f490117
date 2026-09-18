@@ -1,30 +1,52 @@
-import { createClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
-const supabaseUrl = 'https://wrycrgldsjpigapqszw.supabase.co';
-const supabaseKey = 'pcycuavbjpqvfuwwqlso';
-const supabase = createClient(supabaseUrl, supabaseKey);
+type PropertyOffer = {
+  id: string;
+  title: string;
+  city: string;
+  district: string | null;
+  property_type: string;
+  listing_type: string;
+  price: number;
+  features: string[];
+  services: string[];
+};
 
 export function OffersSection() {
-  const [offers, setOffers] = useState([]);
+  const [offers, setOffers] = useState<PropertyOffer[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<string>('');
 
   useEffect(() => {
     async function fetchOffers() {
       try {
-        let { data, error } = await supabase
-          .from('property_offers')
-          .select('*')
-          .order('created_at', { ascending: false });
+        const { data, error } = await supabase
+          .from('property_listings')
+          .select('id, title, city, district, property_type, purpose, price, features, required_services')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(12);
 
         if (error) throw error;
-        setOffers(data || []);
-        
+        setOffers(
+          (data ?? []).map((p) => ({
+            id: p.id,
+            title: p.title,
+            city: p.city,
+            district: p.district,
+            property_type: p.property_type,
+            listing_type: p.purpose,
+            price: p.price,
+            features: p.features ?? [],
+            services: p.required_services ?? [],
+          }))
+        );
+
         // تسجيل وقت التحديث الحالي
         setLastUpdated(new Date().toLocaleTimeString('ar-SA'));
       } catch (error) {
-        console.error('خطأ في جلب العروض:', error.message);
+        console.error('خطأ في جلب العروض:', error instanceof Error ? error.message : error);
       } finally {
         setLoading(false);
       }
