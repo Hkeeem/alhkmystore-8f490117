@@ -247,6 +247,7 @@ function AdminPage() {
           {tab === "deploy" && <DeployTab />}
           {tab === "deals" && <DealsAdminTab />}
           {tab === "showroom" && <ShowroomAdminPanel />}
+          {tab === "social-keys" && <SocialKeysPanel />}
         </main>
       </div>
     </div>
