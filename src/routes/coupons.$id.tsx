@@ -198,6 +198,16 @@ function CouponDetail() {
             {coupon.storeUrl && (
               <a
                 href={coupon.storeUrl}
+                onClick={() =>
+                  trackCouponClick({
+                    couponId: coupon.id,
+                    code: coupon.code,
+                    title: coupon.title,
+                    storeId: coupon.storeId,
+                    storeName: coupon.storeName,
+                    surface: "coupon-detail",
+                  })
+                }
                 target="_blank"
                 rel="nofollow sponsored noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 w-full px-6 py-3 rounded-2xl bg-primary text-primary-foreground hover:opacity-90 font-black text-sm transition"
@@ -256,6 +266,16 @@ function CouponDetail() {
       {coupon.storeUrl && (
         <a
           href={coupon.storeUrl}
+          onClick={() =>
+            trackCouponClick({
+              couponId: coupon.id,
+              code: coupon.code,
+              title: coupon.title,
+              storeId: coupon.storeId,
+              storeName: coupon.storeName,
+              surface: "coupon-detail",
+            })
+          }
           target="_blank"
           rel="nofollow sponsored noopener noreferrer"
           className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-3xl bg-primary text-primary-foreground hover:opacity-90 font-black text-base transition"
