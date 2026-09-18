@@ -77,7 +77,7 @@ export function LivePricesSection() {
                 </div>
                 <div className="text-left">
                   <span className="text-xs font-bold bg-primary text-primary-foreground px-2.5 py-1 rounded-full">
-                    خصم {coupon.discount_value}%
+                    خصم {coupon.discount_value}
                   </span>
                 </div>
               </div>

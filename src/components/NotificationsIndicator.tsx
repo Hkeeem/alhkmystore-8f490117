@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import type { DealView } from '../lib/deals';
 
 export default function NotificationsIndicator() {
