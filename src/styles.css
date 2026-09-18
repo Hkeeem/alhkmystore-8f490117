@@ -3,6 +3,8 @@
 
 @layer base {
   :root {
+    direction: rtl;
+    text-align: right;
     --background: 42 33% 97%;
     --foreground: 32 22% 13%;
     --card: 0 0% 100%;
@@ -48,6 +50,7 @@
   html {
     background: var(--color-background);
     scroll-behavior: smooth;
+    direction: rtl;
   }
 
   body {
@@ -58,6 +61,8 @@
     color: var(--color-foreground);
     font-family: "Tajawal", "Cairo", system-ui, sans-serif;
     text-rendering: optimizeLegibility;
+    direction: rtl;
+    text-align: right;
   }
 
   button,
