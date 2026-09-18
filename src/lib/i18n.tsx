@@ -190,12 +190,7 @@ function detectLang(): Lang {
   } catch {
     /* ignore */
   }
-  try {
-    const nav = navigator.languages?.[0] || navigator.language || "ar";
-    return nav.toLowerCase().startsWith("ar") ? "ar" : "en";
-  } catch {
-    /* ignore */
-  }
+  // العربية هي اللغة الافتراضية للمنصة؛ لا نغيّرها تلقائيًا حسب لغة الجهاز.
   return "ar";
 }
 
