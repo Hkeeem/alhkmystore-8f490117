@@ -58,8 +58,11 @@ import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
+import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 
 type Tab =
+  | "offer-clicks"
+  | "coupon-clicks"
   | "dashboard"
   | "complaints"
   | "suggestions"
@@ -149,6 +152,18 @@ function AdminPage() {
       allow: ["super_admin", "admin"],
     },
     {
+      id: "offer-clicks" as const,
+      label: "نقرات العروض",
+      icon: MousePointerClick,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
+      id: "coupon-clicks" as const,
+      label: "نقرات الكوبونات",
+      icon: Tags,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
       id: "reports" as const,
       label: "التقارير الدورية",
       icon: Mail,
@@ -218,6 +233,8 @@ function AdminPage() {
           {tab === "cashback" && <CashbackAdminTab />}
           {tab === "alerts" && <AlertsAdminTab />}
           {tab === "clicks" && <ClickAnalyticsTab />}
+          {tab === "offer-clicks" && <OfferClicksPanel mode="offer" />}
+          {tab === "coupon-clicks" && <OfferClicksPanel mode="coupon" />}
           {tab === "reports" && <ReportsTab />}
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
