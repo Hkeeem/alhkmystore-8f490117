@@ -9,8 +9,8 @@ export async function runOfficePicksSync(limit = 5) {
 
   const [props, devs] = await Promise.all([
     supabaseAdmin
-      .from("real_estate_listings" as never)
-      .select("id, title, city, district, property_type, status, created_at")
+      .from("property_listings")
+      .select("id, title, city, district, property_type, price, status, created_at")
       .eq("status", "active")
       .order("created_at", { ascending: false })
       .limit(60),
