@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchExternalSourceDeals } from "@/lib/external-source";
 import type { Category, Deal } from "@/data/deals";
 import { stores } from "@/data/deals";
 
@@ -89,6 +90,12 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       source: row.store_name ?? row.source ?? undefined,
       productUrl: row.product_url ?? undefined,
     });
+  }
+
+  // دمج العروض الحية من المصدر الخارجي
+  const externalSource = await fetchExternalSourceDeals(limit);
+  for (const deal of externalSource) {
+    if (!list.some((d) => d.id === deal.id)) list.push(deal);
   }
 
   return list;
