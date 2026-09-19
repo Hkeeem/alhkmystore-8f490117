@@ -13,7 +13,7 @@ export type StorePriceRow = {
 export async function fetchStorePrices(): Promise<StorePriceRow[]> {
   const { data, error } = await supabase
     .from("external_deals")
-    .select("id, title, store_name, price, updated_at")
+    .select("id, title, store_id, store_name, price, updated_at")
     .eq("active", true)
     .order("updated_at", { ascending: false })
     .limit(30);
