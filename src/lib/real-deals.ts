@@ -91,6 +91,12 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
     });
   }
 
+  // دمج العروض الحية من المصدر الخارجي
+  const externalSource = await fetchExternalSourceDeals(limit);
+  for (const deal of externalSource) {
+    if (!list.some((d) => d.id === deal.id)) list.push(deal);
+  }
+
   return list;
 }
 
