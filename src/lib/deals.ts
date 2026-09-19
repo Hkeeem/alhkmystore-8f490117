@@ -77,9 +77,9 @@ export async function logDealView(
   const { error } = await supabase.rpc('log_deal_view', {
     p_deal_id: dealId,
     p_view_type: opts.viewType ?? 'view',
-    p_page_path: opts.pagePath ?? (typeof window !== 'undefined' ? window.location.pathname : null),
-    p_referrer: opts.referrer ?? (typeof document !== 'undefined' ? document.referrer : null),
-    p_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+    p_page_path: opts.pagePath ?? (typeof window !== 'undefined' ? window.location.pathname : undefined),
+    p_referrer: opts.referrer ?? (typeof document !== 'undefined' ? document.referrer : undefined),
+    p_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
   });
   if (error) console.error('logDealView:', error.message);
 }
