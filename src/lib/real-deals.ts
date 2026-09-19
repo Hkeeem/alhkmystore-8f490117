@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchExternalSourceDeals } from "@/lib/external-source";
 import type { Category, Deal } from "@/data/deals";
 import { stores } from "@/data/deals";
 
