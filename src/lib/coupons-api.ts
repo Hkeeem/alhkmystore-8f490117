@@ -150,5 +150,12 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
     });
   }
 
+  // دمج الكوبونات الحية من المصدر الخارجي (إضافة وليست استبدالاً)
+  const { fetchExternalSourceCoupons } = await import("@/lib/external-source");
+  const externalSource = await fetchExternalSourceCoupons(limit);
+  for (const c of externalSource) {
+    if (!list.some((x) => x.code === c.code && x.storeName === c.storeName)) list.push(c);
+  }
+
   return list;
 }
