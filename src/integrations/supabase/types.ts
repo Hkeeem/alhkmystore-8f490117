@@ -315,6 +315,84 @@ export type Database = {
         }
         Relationships: []
       }
+      car_listings: {
+        Row: {
+          active: boolean
+          body_type: string
+          brand: string
+          city: string
+          color: string | null
+          condition: string
+          created_at: string
+          dealer: string | null
+          features: string[]
+          fuel: string
+          id: string
+          image_url: string | null
+          link_url: string | null
+          mileage_km: number
+          model: string | null
+          original_price: number | null
+          phone: string | null
+          price: number
+          seats: number
+          title: string
+          transmission: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          active?: boolean
+          body_type?: string
+          brand: string
+          city: string
+          color?: string | null
+          condition?: string
+          created_at?: string
+          dealer?: string | null
+          features?: string[]
+          fuel?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          mileage_km?: number
+          model?: string | null
+          original_price?: number | null
+          phone?: string | null
+          price: number
+          seats?: number
+          title: string
+          transmission?: string
+          updated_at?: string
+          year?: number
+        }
+        Update: {
+          active?: boolean
+          body_type?: string
+          brand?: string
+          city?: string
+          color?: string | null
+          condition?: string
+          created_at?: string
+          dealer?: string | null
+          features?: string[]
+          fuel?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          mileage_km?: number
+          model?: string | null
+          original_price?: number | null
+          phone?: string | null
+          price?: number
+          seats?: number
+          title?: string
+          transmission?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
