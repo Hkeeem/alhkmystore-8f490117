@@ -272,6 +272,23 @@ function Home() {
         <OffersSection />
       </LazySection>
 
+      {/* مدخل قسم السيارات */}
+      <Link
+        to="/cars"
+        className="flex items-center justify-between gap-3 rounded-3xl border border-border/60 bg-card p-5 shadow-card transition hover:border-primary/40"
+      >
+        <div>
+          <h2 className="text-lg font-black text-foreground">🚗 عروض السيارات</h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            جديد ومستعمل بأفضل الأسعار — فلترة حسب المدينة والسعر والمواصفات
+          </p>
+        </div>
+        <span className="rounded-2xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">
+          تصفّح
+        </span>
+      </Link>
+
+
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
         <LazySection minHeight={520}>
