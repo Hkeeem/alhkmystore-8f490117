@@ -15,8 +15,11 @@ export function OffersSection() {
       try {
         let { data, error } = await supabase
           .from('property_offers')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .select(
+            'id,title,city,district,property_type,listing_type,price,features,services,created_at',
+          )
+          .order('created_at', { ascending: false })
+          .limit(8);
 
         if (error) throw error;
         setOffers(data || []);
