@@ -98,6 +98,45 @@ export async function fetchExternalSourceDeals(limit = 60): Promise<Deal[]> {
   }
 }
 
+/** عرض واحد من المصدر الخارجي بالمعرّف (بدون البادئة ext-) */
+export async function fetchExternalSourceDealById(rawId: string): Promise<Deal | null> {
+  const id = rawId.startsWith("ext-") ? rawId.slice(4) : rawId;
+  try {
+    const [{ data }, storeMap] = await Promise.all([
+      externalSupabase
+        .from("offers")
+        .select(
+          "id,title,description,original_price,current_price,discount_percent,image_url,product_url,store_id,category,status,expires_at,created_at,updated_at",
+        )
+        .eq("id", id)
+        .maybeSingle(),
+      loadStores(),
+    ]);
+    if (!data) return null;
+    const row = data as Record<string, unknown>;
+    const store = storeMap.get(String(row["store_id"] ?? ""));
+    const storeName = store?.name_ar || store?.name || "متجر";
+    const price = Number(row["current_price"] ?? 0);
+    const original = Number(row["original_price"] ?? price);
+    return {
+      id: `ext-${String(row["id"])}`,
+      title: String(row["title"] ?? ""),
+      storeId: (store?.name ?? "external").toLowerCase(),
+      category: toCategory(row["category"]),
+      originalPrice: original,
+      price,
+      image: (row["image_url"] as string) ?? "🏷️",
+      expiresIn: expiresLabel(row["expires_at"] as string | null),
+      expiresAt: (row["expires_at"] as string) ?? undefined,
+      verifiedAt: (row["updated_at"] as string) ?? (row["created_at"] as string) ?? undefined,
+      source: storeName,
+      productUrl: (row["product_url"] as string) ?? store?.website_url ?? undefined,
+    } satisfies Deal;
+  } catch {
+    return null;
+  }
+}
+
 /** كوبونات حية من المصدر الخارجي */
 export async function fetchExternalSourceCoupons(limit = 60): Promise<LiveCoupon[]> {
   try {
