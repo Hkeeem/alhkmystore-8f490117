@@ -96,6 +96,7 @@ const groups: Group[] = [
     items: [
       { to: "/office", key: "item.office", icon: Building2, badgeKey: "nav.new" },
       { to: "/real-estate", key: "item.realEstate", icon: Building2 },
+      { to: "/property-bot", key: "item.propertyBot", icon: Bot, badgeKey: "nav.new" },
       { to: "/cars", key: "item.cars", icon: Car, badgeKey: "nav.new" },
       {
         to: "/restaurants",
