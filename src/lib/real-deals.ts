@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { fetchExternalSourceDeals } from "@/lib/external-source";
+import { fetchExternalSourceDeals, fetchExternalSourceDealById } from "@/lib/external-source";
 import type { Category, Deal } from "@/data/deals";
 import { stores } from "@/data/deals";
 
@@ -103,6 +103,11 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
 
 /** جلب عرض حقيقي واحد بالمعرّف (تاجر موثّق أو مصدر خارجي مثل نون) */
 export async function fetchRealDealById(id: string): Promise<Deal | null> {
+  // عروض المصدر الخارجي تحمل بادئة ext-
+  if (id.startsWith("ext-")) {
+    return fetchExternalSourceDealById(id);
+  }
+
   const [merchantRes, externalRes] = await Promise.all([
     supabase
       .from("merchant_deals")
