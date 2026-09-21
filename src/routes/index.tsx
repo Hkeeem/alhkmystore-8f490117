@@ -6,6 +6,7 @@ import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
+import { HowItWorksSection } from "@/components/HowItWorksSection";
 
 import { getDealIcon, getStoreIcon } from "@/lib/icons";
 import { useI18n } from "@/lib/i18n";
@@ -271,6 +272,12 @@ function Home() {
       <LazySection minHeight={300}>
         <OffersSection />
       </LazySection>
+
+      {/* كيف يعمل حكيم + شريط المتاجر */}
+      <LazySection minHeight={420}>
+        <HowItWorksSection />
+      </LazySection>
+
 
       {/* مدخل قسم السيارات */}
       <Link
