@@ -13,11 +13,8 @@ export function OffersSection() {
   useEffect(() => {
     async function fetchOffers() {
       try {
-        let { data, error } = await supabase
-          .from('property_listings')
-          .select(
-            'id,title,purpose,city,district,property_type,price,bedrooms,features,required_services,created_at',
-          )
+        let { data, error } = await (supabase.from('real_estate_listings' as never) as any)
+          .select('id,title,listing_type,city,district,property_type,price,rooms,area,details,created_at')
           .eq('status', 'active')
           .order('created_at', { ascending: false })
           .limit(8);
@@ -71,27 +68,19 @@ export function OffersSection() {
                 المدينة: {offer.city} {offer.district ? `- ${offer.district}` : ''}
               </p>
               <p className="text-xs text-muted-foreground">
-                النوع: {offer.property_type} ({offer.purpose})
+                النوع: {offer.property_type} ({offer.listing_type})
               </p>
-              <p className="text-xs text-muted-foreground">غرف النوم: {offer.bedrooms}</p>
+              <p className="text-xs text-muted-foreground">
+                الغرف: {offer.rooms} · المساحة: {offer.area || "—"} م²
+              </p>
+              {offer.details && (
+                <p className="text-xs text-muted-foreground line-clamp-2">{offer.details}</p>
+              )}
               
               <div className="flex gap-2 mt-3 items-center">
                 <span className="text-green-700 font-black text-base">{offer.price} ر.س</span>
               </div>
 
-              {/* عرض المميزات والخدمات */}
-              <div className="flex flex-wrap gap-1 mt-3">
-                {offer.features?.map((feat: string, idx: number) => (
-                  <span key={idx} className="bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full">
-                    {feat}
-                  </span>
-                ))}
-                {offer.required_services?.map((serv: string, idx: number) => (
-                  <span key={idx} className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full">
-                    {serv}
-                  </span>
-                ))}
-              </div>
             </div>
           </div>
         ))}

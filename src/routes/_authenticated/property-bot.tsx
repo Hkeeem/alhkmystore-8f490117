@@ -15,61 +15,54 @@ export const Route = createFileRoute("/_authenticated/property-bot")({
   component: PropertyBotPage,
 });
 
-type Step = "title" | "purpose" | "city" | "district" | "type" | "price" | "bedrooms" | "features" | "services" | "review";
+type Step = "title" | "listing_type" | "city" | "district" | "type" | "price" | "rooms" | "area" | "details" | "review";
 type Form = {
   title: string;
-  purpose: "شراء" | "إيجار";
+  listing_type: "شراء" | "إيجار";
   city: string;
   district: string;
   property_type: string;
   price: string;
-  bedrooms: string;
-  features: string;
-  required_services: string;
+  rooms: string;
+  area: string;
+  details: string;
 };
 
 const initialForm: Form = {
   title: "",
-  purpose: "شراء",
+  listing_type: "شراء",
   city: "",
   district: "",
   property_type: "",
   price: "",
-  bedrooms: "",
-  features: "",
-  required_services: "",
+  rooms: "",
+  area: "",
+  details: "",
 };
 
 const questions: Record<Exclude<Step, "review">, string> = {
   title: "ما عنوان الإعلان؟ مثال: شقة عائلية بإطلالة جميلة",
-  purpose: "هل العقار للبيع أم للإيجار؟ اكتب: شراء أو إيجار",
+  listing_type: "هل العقار للبيع أم للإيجار؟ اكتب: شراء أو إيجار",
   city: "في أي مدينة يقع العقار؟",
   district: "ما الحي أو المنطقة؟",
   type: "ما نوع العقار؟ مثال: شقة، فيلا، أرض، مكتب",
   price: "ما السعر بالريال السعودي؟",
-  bedrooms: "كم عدد غرف النوم؟ اكتب 0 إذا لم ينطبق",
-  features: "ما أبرز المميزات؟ افصل بينها بفاصلة، أو اكتب لا يوجد",
-  services: "ما الخدمات المطلوبة أو المتوفرة؟ افصل بينها بفاصلة، أو اكتب لا يوجد",
+  rooms: "كم عدد الغرف؟ اكتب 0 إذا لم ينطبق",
+  area: "ما مساحة العقار بالمتر المربع؟ اكتب 0 إذا لم تتوفر",
+  details: "اكتب تفاصيل العقار أو مميزاته، أو اكتب لا يوجد",
 };
 
 const steps: Exclude<Step, "review">[] = [
   "title",
-  "purpose",
+  "listing_type",
   "city",
   "district",
   "type",
   "price",
-  "bedrooms",
-  "features",
-  "services",
+  "rooms",
+  "area",
+  "details",
 ];
-
-function splitList(value: string) {
-  return value
-    .split(/[،,]/)
-    .map((item) => item.trim())
-    .filter((item) => item && item !== "لا يوجد");
-}
 
 function PropertyBotPage() {
   const { user } = useAuth();
@@ -85,13 +78,13 @@ function PropertyBotPage() {
   const summary = useMemo(
     () => [
       ["العنوان", form.title],
-      ["الغرض", form.purpose],
+      ["نوع العرض", form.listing_type],
       ["الموقع", `${form.city} — ${form.district}`],
       ["النوع", form.property_type],
       ["السعر", `${Number(form.price || 0).toLocaleString("ar-SA")} ر.س`],
-      ["غرف النوم", form.bedrooms],
-      ["المميزات", form.features || "لا يوجد"],
-      ["الخدمات", form.required_services || "لا يوجد"],
+      ["الغرف", form.rooms],
+      ["المساحة", `${form.area || "0"} م²`],
+      ["التفاصيل", form.details || "لا يوجد"],
     ],
     [form],
   );
@@ -108,16 +101,16 @@ function PropertyBotPage() {
       toast.error("اكتب إجابة قبل المتابعة");
       return;
     }
-    if (currentStep === "purpose" && !["شراء", "إيجار", "بيع"].includes(value)) {
+    if (currentStep === "listing_type" && !["شراء", "إيجار", "بيع"].includes(value)) {
       toast.error("اكتب شراء أو إيجار");
       return;
     }
-    if (["price", "bedrooms"].includes(currentStep) && (!/^\d+(\.\d+)?$/.test(value) || Number(value) < 0)) {
+    if (["price", "rooms", "area"].includes(currentStep) && (!/^\d+(\.\d+)?$/.test(value) || Number(value) < 0)) {
       toast.error("أدخل رقمًا صحيحًا فقط");
       return;
     }
-    const key = currentStep === "type" ? "property_type" : currentStep === "services" ? "required_services" : currentStep;
-    setForm((old) => ({ ...old, [key]: currentStep === "purpose" ? (value === "بيع" ? "شراء" : value) : value }));
+    const key = currentStep === "type" ? "property_type" : currentStep;
+    setForm((old) => ({ ...old, [key]: currentStep === "listing_type" ? (value === "بيع" ? "شراء" : value) : value }));
     setInput("");
     setStepIndex((index) => index + 1);
   }
@@ -128,23 +121,23 @@ function PropertyBotPage() {
       return;
     }
     const price = Number(form.price);
-    const bedrooms = Number(form.bedrooms);
-    if (!form.title || !form.city || !form.district || !form.property_type || !price || Number.isNaN(bedrooms)) {
+    const rooms = Number(form.rooms || 0);
+    const area = Number(form.area || 0);
+    if (!form.title || !form.city || !form.district || !form.property_type || !price || Number.isNaN(rooms) || Number.isNaN(area)) {
       toast.error("أكمل بيانات العقار قبل الحفظ");
       return;
     }
     setSaving(true);
-    const { error } = await supabase.from("property_listings").insert({
-      owner_id: user.id,
+    const { error } = await (supabase.from("real_estate_listings" as never) as any).insert({
       title: form.title,
-      purpose: form.purpose,
+      listing_type: form.listing_type,
       city: form.city,
       district: form.district,
       property_type: form.property_type,
       price,
-      bedrooms,
-      features: splitList(form.features),
-      required_services: splitList(form.required_services),
+      rooms,
+      area,
+      details: form.details || null,
       status: "draft",
     });
     setSaving(false);
@@ -186,7 +179,7 @@ function PropertyBotPage() {
 
           {currentStep !== "review" ? (
             <form onSubmit={(event) => { event.preventDefault(); next(); }} className="space-y-4">
-              {currentStep === "purpose" ? (
+              {currentStep === "listing_type" ? (
                 <div className="grid grid-cols-2 gap-3">
                   {["شراء", "إيجار"].map((value) => (
                     <button key={value} type="button" onClick={() => setInput(value)} className={`rounded-2xl border p-4 font-bold transition ${input === value ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"}`}>
@@ -195,7 +188,7 @@ function PropertyBotPage() {
                   ))}
                 </div>
               ) : (
-                <input autoFocus value={input} onChange={(event) => setInput(event.target.value)} inputMode={currentStep === "price" || currentStep === "bedrooms" ? "numeric" : "text"} placeholder="اكتب إجابتك هنا" className="w-full rounded-2xl border border-border bg-background px-4 py-4 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                <input autoFocus value={input} onChange={(event) => setInput(event.target.value)} inputMode={currentStep === "price" || currentStep === "rooms" || currentStep === "area" ? "numeric" : "text"} placeholder="اكتب إجابتك هنا" className="w-full rounded-2xl border border-border bg-background px-4 py-4 text-base outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               )}
               <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-gold px-5 py-3 font-bold text-secondary shadow-glow hover:opacity-95">
                 <Send className="h-4 w-4" /> متابعة
