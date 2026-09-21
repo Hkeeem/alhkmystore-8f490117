@@ -1929,6 +1929,7 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_verified_advertiser: { Args: { _user_id: string }; Returns: boolean }
       log_deal_view: {
         Args: {
           p_deal_id: string
