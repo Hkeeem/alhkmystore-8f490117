@@ -1048,3 +1048,25 @@ html {
 .sidebar-panel .sidebar-item span {
   font-size: 13px;
 }
+
+/* شريط شعارات المتاجر المتحرك (قسم كيف يعمل حكيم) */
+@keyframes hkeeem-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50%);
+  }
+}
+.hkeeem-marquee-track {
+  animation: hkeeem-marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+.hkeeem-marquee:hover .hkeeem-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hkeeem-marquee-track {
+    animation: none;
+  }
+}
