@@ -14,10 +14,11 @@ export function OffersSection() {
     async function fetchOffers() {
       try {
         let { data, error } = await supabase
-          .from('property_offers')
+          .from('property_listings')
           .select(
-            'id,title,city,district,property_type,listing_type,price,features,services,created_at',
+            'id,title,purpose,city,district,property_type,price,bedrooms,features,required_services,created_at',
           )
+          .eq('status', 'active')
           .order('created_at', { ascending: false })
           .limit(8);
 
@@ -69,7 +70,10 @@ export function OffersSection() {
               <p className="text-xs text-muted-foreground mt-1">
                 المدينة: {offer.city} {offer.district ? `- ${offer.district}` : ''}
               </p>
-              <p className="text-xs text-muted-foreground">النوع: {offer.property_type} ({offer.listing_type})</p>
+              <p className="text-xs text-muted-foreground">
+                النوع: {offer.property_type} ({offer.purpose})
+              </p>
+              <p className="text-xs text-muted-foreground">غرف النوم: {offer.bedrooms}</p>
               
               <div className="flex gap-2 mt-3 items-center">
                 <span className="text-green-700 font-black text-base">{offer.price} ر.س</span>
@@ -82,7 +86,7 @@ export function OffersSection() {
                     {feat}
                   </span>
                 ))}
-                {offer.services?.map((serv: string, idx: number) => (
+                {offer.required_services?.map((serv: string, idx: number) => (
                   <span key={idx} className="bg-blue-100 text-blue-700 text-[10px] px-2 py-0.5 rounded-full">
                     {serv}
                   </span>
