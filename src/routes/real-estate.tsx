@@ -501,8 +501,11 @@ function BuyerMatchCard({ match, property }: { match: BuyerMatch; property: Prop
           <MessageCircle className="h-4 w-4" /> تواصل عبر واتساب
         </a>
       ) : (
-        <div className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-secondary text-sm font-bold text-muted-foreground">
-          <ShieldCheck className="h-4 w-4" /> التواصل متاح للطلبات الفعلية فقط
+        <div className="mt-4 flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-secondary px-3 py-2 text-center text-sm font-bold text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 shrink-0" />
+          {match.is_demo
+            ? "التواصل متاح للطلبات الفعلية فقط"
+            : "بيانات التواصل تظهر للمعلنين الموثّقين فقط"}
         </div>
       )}
     </article>
