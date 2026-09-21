@@ -5,6 +5,18 @@
     {
       "path": "/api/public/hooks/daily-content-sync",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/public/hooks/hyper-bot",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/public/hooks/cars-bot",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/public/hooks/real-estate-bot",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
