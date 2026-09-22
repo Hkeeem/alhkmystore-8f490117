@@ -29,6 +29,7 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
 import { Route as HkeeemShoppingRouteImport } from './routes/hkeeem-shopping'
+import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
@@ -40,6 +41,7 @@ import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
@@ -179,6 +181,11 @@ const HkeeemShoppingRoute = HkeeemShoppingRouteImport.update({
   path: '/hkeeem-shopping',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DeleteAccountRoute = DeleteAccountRouteImport.update({
   id: '/delete-account',
   path: '/delete-account',
@@ -232,6 +239,11 @@ const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
 const AdsRoute = AdsRouteImport.update({
   id: '/ads',
   path: '/ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -442,6 +454,7 @@ const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -453,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -512,6 +526,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -523,6 +538,7 @@ export interface FileRoutesByTo {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -584,6 +600,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -595,6 +612,7 @@ export interface FileRoutesById {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
+  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -656,6 +674,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -667,6 +686,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -726,6 +746,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -737,6 +758,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -797,6 +819,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -808,6 +831,7 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
+    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -869,6 +893,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AdsRoute: typeof AdsRoute
   AffiliateSetupRoute: typeof AffiliateSetupRoute
   AgentsRoute: typeof AgentsRoute
@@ -880,6 +905,7 @@ export interface RootRouteChildren {
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
+  FaqRoute: typeof FaqRoute
   HkeeemShoppingRoute: typeof HkeeemShoppingRoute
   HkeeemShowroomRoute: typeof HkeeemShowroomRoute
   MapsRoute: typeof MapsRoute
@@ -1064,6 +1090,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HkeeemShoppingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/delete-account': {
       id: '/delete-account'
       path: '/delete-account'
@@ -1139,6 +1172,13 @@ declare module '@tanstack/react-router' {
       path: '/ads'
       fullPath: '/ads'
       preLoaderRoute: typeof AdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1480,6 +1520,7 @@ const RewardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AdsRoute: AdsRoute,
   AffiliateSetupRoute: AffiliateSetupRoute,
   AgentsRoute: AgentsRoute,
@@ -1491,6 +1532,7 @@ const rootRouteChildren: RootRouteChildren = {
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
+  FaqRoute: FaqRoute,
   HkeeemShoppingRoute: HkeeemShoppingRoute,
   HkeeemShowroomRoute: HkeeemShowroomRoute,
   MapsRoute: MapsRoute,
