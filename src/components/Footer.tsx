@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
-import { Sparkles, ShieldCheck, FileText, UserMinus, Mail } from "lucide-react";
+import { Sparkles, ShieldCheck, FileText, UserMinus, Mail, MessageCircleQuestion } from "lucide-react";
 
 export const SUPPORT_EMAIL = "support@alhkmy.store";
 
@@ -69,26 +69,43 @@ export function Footer() {
           </div>
         </div>
 
-        <nav className="flex flex-wrap gap-2">
-          <Link
-            to="/privacy"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-primary" /> {t("footer.privacy")}
-          </Link>
-          <Link
-            to="/terms"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
-          >
-            <FileText className="w-3.5 h-3.5 text-primary" /> {t("footer.terms")}
-          </Link>
-          <Link
-            to="/delete-account"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
-          >
-            <UserMinus className="w-3.5 h-3.5 text-primary" /> {t("footer.deleteAccount")}
-          </Link>
-        </nav>
+        <div className="space-y-3">
+          <p className="text-xs font-bold text-gold-shine bg-secondary/60 border border-primary/20 rounded-xl px-3 py-2">
+            💡 حكيم مجاني 100% — نحصل على عمولة إحالة من المتاجر دون أي تكلفة إضافية عليك
+          </p>
+          <nav className="flex flex-wrap gap-2">
+            <Link
+              to="/about"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-primary" /> {t("footer.about")}
+            </Link>
+            <Link
+              to="/faq"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
+            >
+              <MessageCircleQuestion className="w-3.5 h-3.5 text-primary" /> {t("footer.faq")}
+            </Link>
+            <Link
+              to="/privacy"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-primary" /> {t("footer.privacy")}
+            </Link>
+            <Link
+              to="/terms"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
+            >
+              <FileText className="w-3.5 h-3.5 text-primary" /> {t("footer.terms")}
+            </Link>
+            <Link
+              to="/delete-account"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary/60 text-xs font-bold hover:bg-secondary press-ripple transition"
+            >
+              <UserMinus className="w-3.5 h-3.5 text-primary" /> {t("footer.deleteAccount")}
+            </Link>
+          </nav>
+        </div>
       </div>
       <div className="border-t border-border/60">
         <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row gap-4 items-center justify-between">
