@@ -8,6 +8,13 @@
       "when": 1790035653298,
       "tag": "0000_price_history_alerts_coupon_verification",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790035678634,
+      "tag": "0001_coupon_reports_insert_and_count",
+      "breakpoints": true
     }
   ]
 }
