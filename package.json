@@ -17,6 +17,7 @@
     "@block65/webcrypto-web-push": "^1.0.2",
     "@fontsource/aref-ruqaa": "^5.3.0",
     "@fontsource/cairo": "^5.2.7",
+    "@fontsource/noto-sans-arabic": "^5.3.0",
     "@fontsource/tajawal": "^5.2.7",
     "@googlemaps/js-api-loader": "^2.1.1",
     "@hookform/resolvers": "^5.2.2",
