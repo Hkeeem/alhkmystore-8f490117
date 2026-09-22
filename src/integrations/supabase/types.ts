@@ -538,7 +538,9 @@ export type Database = {
           discount: string
           expires_at: string | null
           id: string
+          last_verified_at: string | null
           min_order: number | null
+          report_count: number
           source: string
           store_id: string | null
           store_name: string
@@ -554,7 +556,9 @@ export type Database = {
           discount: string
           expires_at?: string | null
           id?: string
+          last_verified_at?: string | null
           min_order?: number | null
+          report_count?: number
           source?: string
           store_id?: string | null
           store_name: string
@@ -570,7 +574,9 @@ export type Database = {
           discount?: string
           expires_at?: string | null
           id?: string
+          last_verified_at?: string | null
           min_order?: number | null
+          report_count?: number
           source?: string
           store_id?: string | null
           store_name?: string
@@ -1276,10 +1282,12 @@ export type Database = {
       price_alerts: {
         Row: {
           active: boolean
+          channel: string
           created_at: string
           current_price: number
           deal_id: string
           id: string
+          last_notified_at: string | null
           product_key: string | null
           target_price: number
           title: string
@@ -1289,10 +1297,12 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          channel?: string
           created_at?: string
           current_price: number
           deal_id: string
           id?: string
+          last_notified_at?: string | null
           product_key?: string | null
           target_price: number
           title: string
@@ -1302,16 +1312,42 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          channel?: string
           created_at?: string
           current_price?: number
           deal_id?: string
           id?: string
+          last_notified_at?: string | null
           product_key?: string | null
           target_price?: number
           title?: string
           triggered_at?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      price_history: {
+        Row: {
+          captured_at: string
+          id: string
+          price: number
+          product_id: string
+          store_id: string
+        }
+        Insert: {
+          captured_at?: string
+          id?: string
+          price: number
+          product_id: string
+          store_id: string
+        }
+        Update: {
+          captured_at?: string
+          id?: string
+          price?: number
+          product_id?: string
+          store_id?: string
         }
         Relationships: []
       }
