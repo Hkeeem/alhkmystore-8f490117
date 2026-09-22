@@ -9,30 +9,6 @@
     {
       "path": "/api/public/hooks/price-watch",
       "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/public/hooks/store-bot",
-      "schedule": "0 */2 * * *"
-    },
-    {
-      "path": "/api/public/hooks/deal-push",
-      "schedule": "*/30 * * * *"
-    },
-    {
-      "path": "/api/public/hooks/haraj-sync",
-      "schedule": "15 */4 * * *"
-    },
-    {
-      "path": "/api/public/hooks/marketing-bot",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/public/hooks/weekly-report",
-      "schedule": "0 6 * * 0"
-    },
-    {
-      "path": "/api/public/hooks/social-sync",
-      "schedule": "0 */8 * * *"
     }
   ]
 }
