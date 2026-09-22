@@ -74,6 +74,7 @@ import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
+import { Route as ApiPublicHooksPriceWatchRouteImport } from './routes/api/public/hooks/price-watch'
 import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
 import { Route as ApiPublicHooksMarketingBotRouteImport } from './routes/api/public/hooks/marketing-bot'
 import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
@@ -418,6 +419,12 @@ const ApiPublicHooksSearchConsoleSnapshotRoute =
     path: '/api/public/hooks/search-console-snapshot',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksPriceWatchRoute =
+  ApiPublicHooksPriceWatchRouteImport.update({
+    id: '/api/public/hooks/price-watch',
+    path: '/api/public/hooks/price-watch',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksOfficePicksRoute =
   ApiPublicHooksOfficePicksRouteImport.update({
     id: '/api/public/hooks/office-picks',
@@ -516,6 +523,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
+  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -588,6 +596,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
+  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -662,6 +671,7 @@ export interface FileRoutesById {
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
   '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
+  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -736,6 +746,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
+    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -808,6 +819,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
+    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -881,6 +893,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/haraj-sync'
     | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
+    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -939,6 +952,7 @@ export interface RootRouteChildren {
   ApiPublicHooksHarajSyncRoute: typeof ApiPublicHooksHarajSyncRoute
   ApiPublicHooksMarketingBotRoute: typeof ApiPublicHooksMarketingBotRoute
   ApiPublicHooksOfficePicksRoute: typeof ApiPublicHooksOfficePicksRoute
+  ApiPublicHooksPriceWatchRoute: typeof ApiPublicHooksPriceWatchRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksShowroomSyncRoute: typeof ApiPublicHooksShowroomSyncRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
@@ -1405,6 +1419,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/price-watch': {
+      id: '/api/public/hooks/price-watch'
+      path: '/api/public/hooks/price-watch'
+      fullPath: '/api/public/hooks/price-watch'
+      preLoaderRoute: typeof ApiPublicHooksPriceWatchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/office-picks': {
       id: '/api/public/hooks/office-picks'
       path: '/api/public/hooks/office-picks'
@@ -1566,6 +1587,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksHarajSyncRoute: ApiPublicHooksHarajSyncRoute,
   ApiPublicHooksMarketingBotRoute: ApiPublicHooksMarketingBotRoute,
   ApiPublicHooksOfficePicksRoute: ApiPublicHooksOfficePicksRoute,
+  ApiPublicHooksPriceWatchRoute: ApiPublicHooksPriceWatchRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
   ApiPublicHooksShowroomSyncRoute: ApiPublicHooksShowroomSyncRoute,
