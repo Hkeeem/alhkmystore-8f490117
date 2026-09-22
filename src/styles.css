@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap");
+@import '@fontsource/noto-sans-arabic/400.css';
+@import '@fontsource/noto-sans-arabic/600.css';
+@import '@fontsource/noto-sans-arabic/700.css';
 @import "tailwindcss";
 @import "./styles/hkeeem-theme.css";
 
@@ -33,8 +35,7 @@
     --cream-100: #f3ebdd;
     --success: #2f7d5b;
     --success-soft: #e4f2ec;
-    direction: rtl;
-    text-align: right;
+    direction: rtl;    text-align: right;
     --background: 42 33% 97%;
     --foreground: 32 22% 13%;
     --card: 0 0% 100%;
