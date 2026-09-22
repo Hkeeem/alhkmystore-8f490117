@@ -1,105 +1,81 @@
 :root {
-  --hkeeem-bg: #fbfaf7;
-  --hkeeem-card: #ffffff;
-  --hkeeem-gold: #b88712;
-  --hkeeem-gold-bright: #d4af37;
-  --hkeeem-gold-dark: #76500a;
-  --hkeeem-success: #2f855a;
-  --hkeeem-danger: #c53030;
-  --hkeeem-text: #2c2418;
-  --hkeeem-text-dim: #756e63;
-  --hkeeem-gold-wash: #fbf4dc;
+  --hkeeem-bg: #0a0a0a;
+  --hkeeem-card: #161616;
+  --hkeeem-gold: #d4af37;
+  --hkeeem-gold-bright: #ffd700;
+  --hkeeem-gold-dark: #8b6914;
+  --hkeeem-success: #4caf50;
+  --hkeeem-danger: #e53935;
+  --hkeeem-text: #ffffff;
+  --hkeeem-text-dim: #b0b0b0;
 }
 
-.dark {
-  --hkeeem-bg: #12100d;
-  --hkeeem-card: #1c1915;
-  --hkeeem-text: #f8f1df;
-  --hkeeem-text-dim: #b9ad96;
-  --hkeeem-gold-wash: #302710;
+body {
+  font-family: "Cairo", sans-serif;
+  background-color: var(--hkeeem-bg);
+  color: var(--hkeeem-text);
 }
 
-.hkt-card {
+.hk-card {
   background-color: var(--hkeeem-card);
-  border: 1px solid rgba(184, 135, 18, 0.2);
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(87, 61, 12, 0.07);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    border-color 180ms ease;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
 }
 
-.hkt-card:hover {
-  border-color: rgba(184, 135, 18, 0.4);
-  box-shadow: 0 14px 32px rgba(87, 61, 12, 0.12);
-  transform: translateY(-2px);
-}
-
-.hkt-btn-gold {
-  background: linear-gradient(135deg, #f8df8a, var(--hkeeem-gold-bright) 52%, #b17d12);
-  color: #211a0c;
-  font-weight: 800;
+.hk-btn-gold {
+  background: linear-gradient(135deg, var(--hkeeem-gold), var(--hkeeem-gold-bright));
+  color: #000;
+  font-weight: 700;
   border-radius: 14px;
   padding: 14px 24px;
-  box-shadow: 0 8px 22px rgba(184, 135, 18, 0.24);
-  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+  transition: all 0.3s ease;
   border: none;
   cursor: pointer;
 }
-
-.hkt-btn-gold:hover {
-  box-shadow: 0 12px 28px rgba(184, 135, 18, 0.34);
+.hk-btn-gold:hover {
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
   transform: translateY(-1px);
 }
 
-.hkt-btn-outline {
+.hk-btn-outline {
   background: transparent;
-  color: var(--hkeeem-gold-dark);
-  border: 1px solid rgba(184, 135, 18, 0.58);
+  color: var(--hkeeem-gold);
+  border: 1px solid var(--hkeeem-gold);
   border-radius: 14px;
   padding: 14px 24px;
-  font-weight: 700;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
-.dark .hkt-btn-outline {
-  color: var(--hkeeem-gold-bright);
-}
-
-.hkt-ai-badge {
+.hk-ai-badge {
   display: inline-flex;
   align-items: center;
-  background: var(--hkeeem-gold-bright);
-  color: #211a0c;
+  background: var(--hkeeem-gold);
+  color: #000;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   padding: 3px 10px;
-  border-radius: 999px;
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.32);
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
 }
 
-.hkt-savings {
-  background: linear-gradient(90deg, #f8e7a4, #d4af37, #b17d12);
+.hk-savings {
+  background: linear-gradient(90deg, #3a2e0a, #8b6914, #d4af37);
   border-radius: 18px;
-  color: #211a0c;
-  box-shadow: 0 8px 24px rgba(184, 135, 18, 0.22);
+  color: #000;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
 }
 
-.hkt-gold-text {
-  color: var(--hkeeem-gold-dark);
+.hk-gold-text {
+  color: var(--hkeeem-gold);
 }
-
-.dark .hkt-gold-text {
-  color: var(--hkeeem-gold-bright);
-}
-
-.hkt-dim-text {
+.hk-dim-text {
   color: var(--hkeeem-text-dim);
 }
 
-@keyframes hkt-breathe {
+@keyframes hk-breathe {
   0%,
   100% {
     transform: scale(1);
@@ -108,13 +84,12 @@
     transform: scale(1.06);
   }
 }
-
-.hkt-assistant-float {
-  animation: hkt-breathe 2s ease-in-out infinite;
-  box-shadow: 0 0 24px rgba(212, 175, 55, 0.38);
+.hk-assistant-float {
+  animation: hk-breathe 2s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(212, 175, 55, 0.5);
 }
 
-@keyframes hkt-typing {
+@keyframes hk-typing {
   0%,
   60%,
   100% {
@@ -126,20 +101,17 @@
     transform: translateY(-4px);
   }
 }
-
-.hkt-typing-dot {
+.hk-typing-dot {
   width: 8px;
   height: 8px;
   background: var(--hkeeem-gold);
   border-radius: 50%;
   display: inline-block;
-  animation: hkt-typing 1.2s ease-in-out infinite;
+  animation: hk-typing 1.2s ease-in-out infinite;
 }
-
-.hkt-typing-dot:nth-child(2) {
+.hk-typing-dot:nth-child(2) {
   animation-delay: 0.2s;
 }
-
-.hkt-typing-dot:nth-child(3) {
+.hk-typing-dot:nth-child(3) {
   animation-delay: 0.4s;
 }

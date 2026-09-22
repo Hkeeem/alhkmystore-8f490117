@@ -45,10 +45,8 @@ export const dict = {
   "item.showroom": { ar: "معرض حكيم", en: "Hkeeem showroom" },
   "item.shopping": { ar: "تسوّق حكيم", en: "Hkeeem shopping" },
   "item.cars": { ar: "السيارات", en: "Cars" },
-  "item.restaurants": { ar: "عروض المطاعم", en: "Restaurant deals" },
   "item.realEstate": { ar: "البحث العقاري", en: "Real estate search" },
   "item.office": { ar: "مكتب حكيم", en: "Hkeeem office" },
-  "item.propertyBot": { ar: "بوت إدخال العقارات", en: "Property entry bot" },
   "item.compare": { ar: "مقارنة الأسعار", en: "Price comparison" },
   "item.analysis": { ar: "تحليل المتاجر", en: "Store analysis" },
   "item.ads": { ar: "مولد الإعلانات", en: "Ad generator" },
@@ -118,8 +116,6 @@ export const dict = {
   "pillar.assistantNote": { ar: "اسأله بالعربي", en: "Ask in Arabic or English" },
 
   // Footer
-  "footer.about": { ar: "من نحن", en: "About us" },
-  "footer.faq": { ar: "الأسئلة الشائعة", en: "FAQ" },
   "footer.privacy": { ar: "سياسة الخصوصية", en: "Privacy policy" },
   "footer.terms": { ar: "الشروط والأحكام", en: "Terms of use" },
   "footer.contact": { ar: "التواصل", en: "Contact" },
@@ -193,7 +189,12 @@ function detectLang(): Lang {
   } catch {
     /* ignore */
   }
-  // العربية هي اللغة الافتراضية للمنصة؛ لا نغيّرها تلقائيًا حسب لغة الجهاز.
+  try {
+    const nav = navigator.languages?.[0] || navigator.language || "ar";
+    return nav.toLowerCase().startsWith("ar") ? "ar" : "en";
+  } catch {
+    /* ignore */
+  }
   return "ar";
 }
 

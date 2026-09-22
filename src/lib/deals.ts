@@ -1,7 +1,4 @@
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { supabase as typedSupabase } from '../integrations/supabase/client';
-
-const supabase = typedSupabase as unknown as SupabaseClient;
+ import { supabase } from '../integrations/supabase/client';
 
 
 export type Deal = {
@@ -80,9 +77,9 @@ export async function logDealView(
   const { error } = await supabase.rpc('log_deal_view', {
     p_deal_id: dealId,
     p_view_type: opts.viewType ?? 'view',
-    p_page_path: opts.pagePath ?? (typeof window !== 'undefined' ? window.location.pathname : null),
-    p_referrer: opts.referrer ?? (typeof document !== 'undefined' ? document.referrer : null),
-    p_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+    p_page_path: opts.pagePath ?? (typeof window !== 'undefined' ? window.location.pathname : undefined),
+    p_referrer: opts.referrer ?? (typeof document !== 'undefined' ? document.referrer : undefined),
+    p_user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
   });
   if (error) console.error('logDealView:', error.message);
 }
@@ -106,7 +103,7 @@ export async function fetchDealStats() {
     .from('gallery_deals')
     .select('clicks_count');
 
-  const totalClicks = (clicks ?? []).reduce((sum: number, d: { clicks_count?: number | null }) => sum + (d.clicks_count ?? 0), 0);
+  const totalClicks = (clicks ?? []).reduce((sum, d) => sum + (d.clicks_count ?? 0), 0);
 
   const { count: totalViews } = await supabase
     .from('gallery_deal_views')

@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { assertCronRequest } from "@/lib/cron-auth.server";
 
 async function run(request: Request) {
-  const denied = await assertCronRequest(request);
-  if (denied) return denied;
+  const apikey = request.headers.get("apikey") ?? "";
+  const expected =
+    process.env["SUPABASE_ANON_KEY"] ?? process.env["SUPABASE_PUBLISHABLE_KEY"] ?? "";
+  if (!expected || apikey !== expected) {
+    return Response.json({ error: "unauthorized" }, { status: 401 });
+  }
 
   try {
     const { runDealPushSweep } = await import("@/lib/deal-push.server");

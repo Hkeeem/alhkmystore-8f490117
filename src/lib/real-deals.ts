@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { fetchExternalSourceDeals, fetchExternalSourceDealById } from "@/lib/external-source";
 import type { Category, Deal } from "@/data/deals";
 import { stores } from "@/data/deals";
 
@@ -91,11 +92,22 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
     });
   }
 
+  // دمج العروض الحية من المصدر الخارجي
+  const externalSource = await fetchExternalSourceDeals(limit);
+  for (const deal of externalSource) {
+    if (!list.some((d) => d.id === deal.id)) list.push(deal);
+  }
+
   return list;
 }
 
 /** جلب عرض حقيقي واحد بالمعرّف (تاجر موثّق أو مصدر خارجي مثل نون) */
 export async function fetchRealDealById(id: string): Promise<Deal | null> {
+  // عروض المصدر الخارجي تحمل بادئة ext-
+  if (id.startsWith("ext-")) {
+    return fetchExternalSourceDealById(id);
+  }
+
   const [merchantRes, externalRes] = await Promise.all([
     supabase
       .from("merchant_deals")

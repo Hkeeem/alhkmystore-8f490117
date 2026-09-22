@@ -30,5 +30,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-*.keystore
-signing-key-info.txt

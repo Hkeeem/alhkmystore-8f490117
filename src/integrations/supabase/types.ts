@@ -315,84 +315,6 @@ export type Database = {
         }
         Relationships: []
       }
-      car_listings: {
-        Row: {
-          active: boolean
-          body_type: string
-          brand: string
-          city: string
-          color: string | null
-          condition: string
-          created_at: string
-          dealer: string | null
-          features: string[]
-          fuel: string
-          id: string
-          image_url: string | null
-          link_url: string | null
-          mileage_km: number
-          model: string | null
-          original_price: number | null
-          phone: string | null
-          price: number
-          seats: number
-          title: string
-          transmission: string
-          updated_at: string
-          year: number
-        }
-        Insert: {
-          active?: boolean
-          body_type?: string
-          brand: string
-          city: string
-          color?: string | null
-          condition?: string
-          created_at?: string
-          dealer?: string | null
-          features?: string[]
-          fuel?: string
-          id?: string
-          image_url?: string | null
-          link_url?: string | null
-          mileage_km?: number
-          model?: string | null
-          original_price?: number | null
-          phone?: string | null
-          price: number
-          seats?: number
-          title: string
-          transmission?: string
-          updated_at?: string
-          year?: number
-        }
-        Update: {
-          active?: boolean
-          body_type?: string
-          brand?: string
-          city?: string
-          color?: string | null
-          condition?: string
-          created_at?: string
-          dealer?: string | null
-          features?: string[]
-          fuel?: string
-          id?: string
-          image_url?: string | null
-          link_url?: string | null
-          mileage_km?: number
-          model?: string | null
-          original_price?: number | null
-          phone?: string | null
-          price?: number
-          seats?: number
-          title?: string
-          transmission?: string
-          updated_at?: string
-          year?: number
-        }
-        Relationships: []
-      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
@@ -538,9 +460,7 @@ export type Database = {
           discount: string
           expires_at: string | null
           id: string
-          last_verified_at: string | null
           min_order: number | null
-          report_count: number
           source: string
           store_id: string | null
           store_name: string
@@ -556,9 +476,7 @@ export type Database = {
           discount: string
           expires_at?: string | null
           id?: string
-          last_verified_at?: string | null
           min_order?: number | null
-          report_count?: number
           source?: string
           store_id?: string | null
           store_name: string
@@ -574,9 +492,7 @@ export type Database = {
           discount?: string
           expires_at?: string | null
           id?: string
-          last_verified_at?: string | null
           min_order?: number | null
-          report_count?: number
           source?: string
           store_id?: string | null
           store_name?: string
@@ -1282,12 +1198,10 @@ export type Database = {
       price_alerts: {
         Row: {
           active: boolean
-          channel: string
           created_at: string
           current_price: number
           deal_id: string
           id: string
-          last_notified_at: string | null
           product_key: string | null
           target_price: number
           title: string
@@ -1297,12 +1211,10 @@ export type Database = {
         }
         Insert: {
           active?: boolean
-          channel?: string
           created_at?: string
           current_price: number
           deal_id: string
           id?: string
-          last_notified_at?: string | null
           product_key?: string | null
           target_price: number
           title: string
@@ -1312,42 +1224,16 @@ export type Database = {
         }
         Update: {
           active?: boolean
-          channel?: string
           created_at?: string
           current_price?: number
           deal_id?: string
           id?: string
-          last_notified_at?: string | null
           product_key?: string | null
           target_price?: number
           title?: string
           triggered_at?: string | null
           updated_at?: string
           user_id?: string
-        }
-        Relationships: []
-      }
-      price_history: {
-        Row: {
-          captured_at: string
-          id: string
-          price: number
-          product_id: string
-          store_id: string
-        }
-        Insert: {
-          captured_at?: string
-          id?: string
-          price: number
-          product_id: string
-          store_id: string
-        }
-        Update: {
-          captured_at?: string
-          id?: string
-          price?: number
-          product_id?: string
-          store_id?: string
         }
         Relationships: []
       }
@@ -1965,7 +1851,6 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
-      is_verified_advertiser: { Args: { _user_id: string }; Returns: boolean }
       log_deal_view: {
         Args: {
           p_deal_id: string

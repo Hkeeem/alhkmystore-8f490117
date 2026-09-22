@@ -29,7 +29,7 @@ export const CARD_STYLES: { id: CardStyle; label: string; hint: string }[] = [
   { id: "glass", label: "زجاجية", hint: "شفافية وضبابية أنيقة" },
 ];
 
-export const DEFAULT_APPEARANCE: Appearance = { accent: "#D4AF37", radius: 20, cardStyle: "elevated" };
+export const DEFAULT_APPEARANCE: Appearance = { accent: "", radius: 20, cardStyle: "elevated" };
 
 const KEY = "hkeeem-appearance";
 const EVT = "hkeeem:appearance";

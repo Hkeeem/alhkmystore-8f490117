@@ -19,7 +19,6 @@ import { Route as ShowroomRouteImport } from './routes/showroom'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RewardsRouteImport } from './routes/rewards'
-import { Route as RestaurantsRouteImport } from './routes/restaurants'
 import { Route as RealEstateRouteImport } from './routes/real-estate'
 import { Route as ProRouteImport } from './routes/pro'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -29,7 +28,6 @@ import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
 import { Route as HkeeemShoppingRouteImport } from './routes/hkeeem-shopping'
-import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as DealsRouteImport } from './routes/deals'
 import { Route as CouponsRouteImport } from './routes/coupons'
@@ -41,7 +39,6 @@ import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
@@ -58,7 +55,6 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedVisitorsRouteImport } from './routes/_authenticated/visitors'
 import { Route as AuthenticatedSyncLogRouteImport } from './routes/_authenticated/sync-log'
 import { Route as AuthenticatedSearchConsoleRouteImport } from './routes/_authenticated/search-console'
-import { Route as AuthenticatedPropertyBotRouteImport } from './routes/_authenticated/property-bot'
 import { Route as AuthenticatedNoonSettingsRouteImport } from './routes/_authenticated/noon-settings'
 import { Route as AuthenticatedMerchantReviewRouteImport } from './routes/_authenticated/merchant-review'
 import { Route as AuthenticatedMerchantRouteImport } from './routes/_authenticated/merchant'
@@ -74,9 +70,7 @@ import { Route as ApiPublicHooksStoreBotRouteImport } from './routes/api/public/
 import { Route as ApiPublicHooksSocialSyncRouteImport } from './routes/api/public/hooks/social-sync'
 import { Route as ApiPublicHooksShowroomSyncRouteImport } from './routes/api/public/hooks/showroom-sync'
 import { Route as ApiPublicHooksSearchConsoleSnapshotRouteImport } from './routes/api/public/hooks/search-console-snapshot'
-import { Route as ApiPublicHooksPriceWatchRouteImport } from './routes/api/public/hooks/price-watch'
 import { Route as ApiPublicHooksOfficePicksRouteImport } from './routes/api/public/hooks/office-picks'
-import { Route as ApiPublicHooksMarketingBotRouteImport } from './routes/api/public/hooks/marketing-bot'
 import { Route as ApiPublicHooksHarajSyncRouteImport } from './routes/api/public/hooks/haraj-sync'
 import { Route as ApiPublicHooksDealPushRouteImport } from './routes/api/public/hooks/deal-push'
 import { Route as ApiPublicHooksDailyContentSyncRouteImport } from './routes/api/public/hooks/daily-content-sync'
@@ -132,11 +126,6 @@ const RewardsRoute = RewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RestaurantsRoute = RestaurantsRouteImport.update({
-  id: '/restaurants',
-  path: '/restaurants',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const RealEstateRoute = RealEstateRouteImport.update({
   id: '/real-estate',
   path: '/real-estate',
@@ -180,11 +169,6 @@ const HkeeemShowroomRoute = HkeeemShowroomRouteImport.update({
 const HkeeemShoppingRoute = HkeeemShoppingRouteImport.update({
   id: '/hkeeem-shopping',
   path: '/hkeeem-shopping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DeleteAccountRoute = DeleteAccountRouteImport.update({
@@ -240,11 +224,6 @@ const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
 const AdsRoute = AdsRouteImport.update({
   id: '/ads',
   path: '/ads',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -326,12 +305,6 @@ const AuthenticatedSearchConsoleRoute =
   AuthenticatedSearchConsoleRouteImport.update({
     id: '/search-console',
     path: '/search-console',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedPropertyBotRoute =
-  AuthenticatedPropertyBotRouteImport.update({
-    id: '/property-bot',
-    path: '/property-bot',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedNoonSettingsRoute =
@@ -419,22 +392,10 @@ const ApiPublicHooksSearchConsoleSnapshotRoute =
     path: '/api/public/hooks/search-console-snapshot',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicHooksPriceWatchRoute =
-  ApiPublicHooksPriceWatchRouteImport.update({
-    id: '/api/public/hooks/price-watch',
-    path: '/api/public/hooks/price-watch',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const ApiPublicHooksOfficePicksRoute =
   ApiPublicHooksOfficePicksRouteImport.update({
     id: '/api/public/hooks/office-picks',
     path: '/api/public/hooks/office-picks',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksMarketingBotRoute =
-  ApiPublicHooksMarketingBotRouteImport.update({
-    id: '/api/public/hooks/marketing-bot',
-    path: '/api/public/hooks/marketing-bot',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksHarajSyncRoute = ApiPublicHooksHarajSyncRouteImport.update({
@@ -461,7 +422,6 @@ const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -473,7 +433,6 @@ export interface FileRoutesByFullPath {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
-  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -483,7 +442,6 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -502,7 +460,6 @@ export interface FileRoutesByFullPath {
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
-  '/property-bot': typeof AuthenticatedPropertyBotRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
   '/visitors': typeof AuthenticatedVisitorsRoute
@@ -521,9 +478,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
-  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -534,7 +489,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -546,7 +500,6 @@ export interface FileRoutesByTo {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
-  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -556,7 +509,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -575,7 +527,6 @@ export interface FileRoutesByTo {
   '/merchant': typeof AuthenticatedMerchantRoute
   '/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/noon-settings': typeof AuthenticatedNoonSettingsRoute
-  '/property-bot': typeof AuthenticatedPropertyBotRoute
   '/search-console': typeof AuthenticatedSearchConsoleRoute
   '/sync-log': typeof AuthenticatedSyncLogRoute
   '/visitors': typeof AuthenticatedVisitorsRoute
@@ -594,9 +545,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
-  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -609,7 +558,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -621,7 +569,6 @@ export interface FileRoutesById {
   '/coupons': typeof CouponsRouteWithChildren
   '/deals': typeof DealsRouteWithChildren
   '/delete-account': typeof DeleteAccountRoute
-  '/faq': typeof FaqRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
@@ -631,7 +578,6 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/restaurants': typeof RestaurantsRoute
   '/rewards': typeof RewardsRouteWithChildren
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
@@ -650,7 +596,6 @@ export interface FileRoutesById {
   '/_authenticated/merchant': typeof AuthenticatedMerchantRoute
   '/_authenticated/merchant-review': typeof AuthenticatedMerchantReviewRoute
   '/_authenticated/noon-settings': typeof AuthenticatedNoonSettingsRoute
-  '/_authenticated/property-bot': typeof AuthenticatedPropertyBotRoute
   '/_authenticated/search-console': typeof AuthenticatedSearchConsoleRoute
   '/_authenticated/sync-log': typeof AuthenticatedSyncLogRoute
   '/_authenticated/visitors': typeof AuthenticatedVisitorsRoute
@@ -669,9 +614,7 @@ export interface FileRoutesById {
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
   '/api/public/hooks/deal-push': typeof ApiPublicHooksDealPushRoute
   '/api/public/hooks/haraj-sync': typeof ApiPublicHooksHarajSyncRoute
-  '/api/public/hooks/marketing-bot': typeof ApiPublicHooksMarketingBotRoute
   '/api/public/hooks/office-picks': typeof ApiPublicHooksOfficePicksRoute
-  '/api/public/hooks/price-watch': typeof ApiPublicHooksPriceWatchRoute
   '/api/public/hooks/search-console-snapshot': typeof ApiPublicHooksSearchConsoleSnapshotRoute
   '/api/public/hooks/showroom-sync': typeof ApiPublicHooksShowroomSyncRoute
   '/api/public/hooks/social-sync': typeof ApiPublicHooksSocialSyncRoute
@@ -684,7 +627,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -696,7 +638,6 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
-    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -706,7 +647,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -725,7 +665,6 @@ export interface FileRouteTypes {
     | '/merchant'
     | '/merchant-review'
     | '/noon-settings'
-    | '/property-bot'
     | '/search-console'
     | '/sync-log'
     | '/visitors'
@@ -744,9 +683,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
-    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -757,7 +694,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -769,7 +705,6 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
-    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -779,7 +714,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -798,7 +732,6 @@ export interface FileRouteTypes {
     | '/merchant'
     | '/merchant-review'
     | '/noon-settings'
-    | '/property-bot'
     | '/search-console'
     | '/sync-log'
     | '/visitors'
@@ -817,9 +750,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
-    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -831,7 +762,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -843,7 +773,6 @@ export interface FileRouteTypes {
     | '/coupons'
     | '/deals'
     | '/delete-account'
-    | '/faq'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
     | '/maps'
@@ -853,7 +782,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/pro'
     | '/real-estate'
-    | '/restaurants'
     | '/rewards'
     | '/settings'
     | '/shop'
@@ -872,7 +800,6 @@ export interface FileRouteTypes {
     | '/_authenticated/merchant'
     | '/_authenticated/merchant-review'
     | '/_authenticated/noon-settings'
-    | '/_authenticated/property-bot'
     | '/_authenticated/search-console'
     | '/_authenticated/sync-log'
     | '/_authenticated/visitors'
@@ -891,9 +818,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/daily-content-sync'
     | '/api/public/hooks/deal-push'
     | '/api/public/hooks/haraj-sync'
-    | '/api/public/hooks/marketing-bot'
     | '/api/public/hooks/office-picks'
-    | '/api/public/hooks/price-watch'
     | '/api/public/hooks/search-console-snapshot'
     | '/api/public/hooks/showroom-sync'
     | '/api/public/hooks/social-sync'
@@ -906,7 +831,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AboutRoute: typeof AboutRoute
   AdsRoute: typeof AdsRoute
   AffiliateSetupRoute: typeof AffiliateSetupRoute
   AgentsRoute: typeof AgentsRoute
@@ -918,7 +842,6 @@ export interface RootRouteChildren {
   CouponsRoute: typeof CouponsRouteWithChildren
   DealsRoute: typeof DealsRouteWithChildren
   DeleteAccountRoute: typeof DeleteAccountRoute
-  FaqRoute: typeof FaqRoute
   HkeeemShoppingRoute: typeof HkeeemShoppingRoute
   HkeeemShowroomRoute: typeof HkeeemShowroomRoute
   MapsRoute: typeof MapsRoute
@@ -928,7 +851,6 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProRoute: typeof ProRoute
   RealEstateRoute: typeof RealEstateRoute
-  RestaurantsRoute: typeof RestaurantsRoute
   RewardsRoute: typeof RewardsRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
@@ -950,9 +872,7 @@ export interface RootRouteChildren {
   ApiPublicHooksDailyContentSyncRoute: typeof ApiPublicHooksDailyContentSyncRoute
   ApiPublicHooksDealPushRoute: typeof ApiPublicHooksDealPushRoute
   ApiPublicHooksHarajSyncRoute: typeof ApiPublicHooksHarajSyncRoute
-  ApiPublicHooksMarketingBotRoute: typeof ApiPublicHooksMarketingBotRoute
   ApiPublicHooksOfficePicksRoute: typeof ApiPublicHooksOfficePicksRoute
-  ApiPublicHooksPriceWatchRoute: typeof ApiPublicHooksPriceWatchRoute
   ApiPublicHooksSearchConsoleSnapshotRoute: typeof ApiPublicHooksSearchConsoleSnapshotRoute
   ApiPublicHooksShowroomSyncRoute: typeof ApiPublicHooksShowroomSyncRoute
   ApiPublicHooksSocialSyncRoute: typeof ApiPublicHooksSocialSyncRoute
@@ -1034,13 +954,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/restaurants': {
-      id: '/restaurants'
-      path: '/restaurants'
-      fullPath: '/restaurants'
-      preLoaderRoute: typeof RestaurantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/real-estate': {
       id: '/real-estate'
       path: '/real-estate'
@@ -1102,13 +1015,6 @@ declare module '@tanstack/react-router' {
       path: '/hkeeem-shopping'
       fullPath: '/hkeeem-shopping'
       preLoaderRoute: typeof HkeeemShoppingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/delete-account': {
@@ -1186,13 +1092,6 @@ declare module '@tanstack/react-router' {
       path: '/ads'
       fullPath: '/ads'
       preLoaderRoute: typeof AdsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1307,13 +1206,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSearchConsoleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/property-bot': {
-      id: '/_authenticated/property-bot'
-      path: '/property-bot'
-      fullPath: '/property-bot'
-      preLoaderRoute: typeof AuthenticatedPropertyBotRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/noon-settings': {
       id: '/_authenticated/noon-settings'
       path: '/noon-settings'
@@ -1419,25 +1311,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSearchConsoleSnapshotRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/hooks/price-watch': {
-      id: '/api/public/hooks/price-watch'
-      path: '/api/public/hooks/price-watch'
-      fullPath: '/api/public/hooks/price-watch'
-      preLoaderRoute: typeof ApiPublicHooksPriceWatchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/hooks/office-picks': {
       id: '/api/public/hooks/office-picks'
       path: '/api/public/hooks/office-picks'
       fullPath: '/api/public/hooks/office-picks'
       preLoaderRoute: typeof ApiPublicHooksOfficePicksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/marketing-bot': {
-      id: '/api/public/hooks/marketing-bot'
-      path: '/api/public/hooks/marketing-bot'
-      fullPath: '/api/public/hooks/marketing-bot'
-      preLoaderRoute: typeof ApiPublicHooksMarketingBotRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/haraj-sync': {
@@ -1480,7 +1358,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMerchantRoute: typeof AuthenticatedMerchantRoute
   AuthenticatedMerchantReviewRoute: typeof AuthenticatedMerchantReviewRoute
   AuthenticatedNoonSettingsRoute: typeof AuthenticatedNoonSettingsRoute
-  AuthenticatedPropertyBotRoute: typeof AuthenticatedPropertyBotRoute
   AuthenticatedSearchConsoleRoute: typeof AuthenticatedSearchConsoleRoute
   AuthenticatedSyncLogRoute: typeof AuthenticatedSyncLogRoute
   AuthenticatedVisitorsRoute: typeof AuthenticatedVisitorsRoute
@@ -1495,7 +1372,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMerchantRoute: AuthenticatedMerchantRoute,
   AuthenticatedMerchantReviewRoute: AuthenticatedMerchantReviewRoute,
   AuthenticatedNoonSettingsRoute: AuthenticatedNoonSettingsRoute,
-  AuthenticatedPropertyBotRoute: AuthenticatedPropertyBotRoute,
   AuthenticatedSearchConsoleRoute: AuthenticatedSearchConsoleRoute,
   AuthenticatedSyncLogRoute: AuthenticatedSyncLogRoute,
   AuthenticatedVisitorsRoute: AuthenticatedVisitorsRoute,
@@ -1541,7 +1417,6 @@ const RewardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AboutRoute: AboutRoute,
   AdsRoute: AdsRoute,
   AffiliateSetupRoute: AffiliateSetupRoute,
   AgentsRoute: AgentsRoute,
@@ -1553,7 +1428,6 @@ const rootRouteChildren: RootRouteChildren = {
   CouponsRoute: CouponsRouteWithChildren,
   DealsRoute: DealsRouteWithChildren,
   DeleteAccountRoute: DeleteAccountRoute,
-  FaqRoute: FaqRoute,
   HkeeemShoppingRoute: HkeeemShoppingRoute,
   HkeeemShowroomRoute: HkeeemShowroomRoute,
   MapsRoute: MapsRoute,
@@ -1563,7 +1437,6 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProRoute: ProRoute,
   RealEstateRoute: RealEstateRoute,
-  RestaurantsRoute: RestaurantsRoute,
   RewardsRoute: RewardsRouteWithChildren,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
@@ -1585,9 +1458,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksDailyContentSyncRoute: ApiPublicHooksDailyContentSyncRoute,
   ApiPublicHooksDealPushRoute: ApiPublicHooksDealPushRoute,
   ApiPublicHooksHarajSyncRoute: ApiPublicHooksHarajSyncRoute,
-  ApiPublicHooksMarketingBotRoute: ApiPublicHooksMarketingBotRoute,
   ApiPublicHooksOfficePicksRoute: ApiPublicHooksOfficePicksRoute,
-  ApiPublicHooksPriceWatchRoute: ApiPublicHooksPriceWatchRoute,
   ApiPublicHooksSearchConsoleSnapshotRoute:
     ApiPublicHooksSearchConsoleSnapshotRoute,
   ApiPublicHooksShowroomSyncRoute: ApiPublicHooksShowroomSyncRoute,

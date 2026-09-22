@@ -8,16 +8,10 @@ export const getRouter = () => {
   const router = createRouter({
     routeTree,
     context: { queryClient },
+    // استعادة موضع التمرير تُدار عبر مكوّن ScrollMemory
     scrollRestoration: false,
     defaultPreloadStaleTime: 0,
   });
 
   return router;
 };
-
-// تعريف نوع الراوتر للملفات الأخرى
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: ReturnType<typeof getRouter>;
-  }
-}

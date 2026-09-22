@@ -31,10 +31,6 @@ import {
   Link2,
   Tags,
   Store,
-  Bot,
-  Megaphone,
-  KeyRound,
-  Ticket,
 } from "lucide-react";
 import {
   getAdminContext,
@@ -62,12 +58,12 @@ import { getClickAnalytics } from "@/lib/click-analytics.functions";
 import { ReportsTab } from "@/components/admin/ReportsTab";
 import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
-import { BotsPanel } from "@/components/admin/BotsPanel";
-import { MarketingBotsPanel } from "@/components/admin/MarketingBotsPanel";
-import { PublishingKeysPanel } from "@/components/admin/PublishingKeysPanel";
-import { CouponsAdminPanel } from "@/components/admin/CouponsAdminPanel";
+import { SocialKeysPanel } from "@/components/admin/SocialKeysPanel";
+import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 
 type Tab =
+  | "offer-clicks"
+  | "coupon-clicks"
   | "dashboard"
   | "complaints"
   | "suggestions"
@@ -82,10 +78,7 @@ type Tab =
   | "reports"
   | "deals"
   | "showroom"
-  | "bots"
-  | "marketing"
-  | "pubkeys"
-  | "coupons";
+  | "social-keys";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -161,6 +154,18 @@ function AdminPage() {
       allow: ["super_admin", "admin"],
     },
     {
+      id: "offer-clicks" as const,
+      label: "نقرات العروض",
+      icon: MousePointerClick,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
+      id: "coupon-clicks" as const,
+      label: "نقرات الكوبونات",
+      icon: Tags,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
       id: "reports" as const,
       label: "التقارير الدورية",
       icon: Mail,
@@ -185,19 +190,11 @@ function AdminPage() {
       icon: Store,
       allow: ["super_admin", "admin", "content_manager"],
     },
-    { id: "bots" as const, label: "البوتات", icon: Bot, allow: ["super_admin", "admin"] },
     {
-      id: "marketing" as const,
-      label: "بوتات التسويق",
-      icon: Megaphone,
+      id: "social-keys" as const,
+      label: "مفاتيح النشر",
+      icon: Link2,
       allow: ["super_admin", "admin"],
-    },
-    { id: "pubkeys" as const, label: "مفاتيح النشر", icon: KeyRound, allow: ["super_admin", "admin"] },
-    {
-      id: "coupons" as const,
-      label: "الكوبونات",
-      icon: Ticket,
-      allow: ["super_admin", "admin", "content_manager"],
     },
   ].filter((t) => can(t.allow));
 
@@ -244,15 +241,14 @@ function AdminPage() {
           {tab === "cashback" && <CashbackAdminTab />}
           {tab === "alerts" && <AlertsAdminTab />}
           {tab === "clicks" && <ClickAnalyticsTab />}
+          {tab === "offer-clicks" && <OfferClicksPanel mode="offer" />}
+          {tab === "coupon-clicks" && <OfferClicksPanel mode="coupon" />}
           {tab === "reports" && <ReportsTab />}
           {tab === "audit" && <AuditTab />}
           {tab === "deploy" && <DeployTab />}
           {tab === "deals" && <DealsAdminTab />}
           {tab === "showroom" && <ShowroomAdminPanel />}
-          {tab === "bots" && <BotsPanel />}
-          {tab === "marketing" && <MarketingBotsPanel />}
-          {tab === "pubkeys" && <PublishingKeysPanel />}
-          {tab === "coupons" && <CouponsAdminPanel />}
+          {tab === "social-keys" && <SocialKeysPanel />}
         </main>
       </div>
     </div>

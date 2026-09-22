@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, Clock, ExternalLink, MapPin, ShieldCheck, Tag } from "lucide-react";
 import { fetchRealDealById } from "@/lib/real-deals";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+import { trackDealClick } from "@/lib/track-deal";
 
 function pct(original: number, price: number) {
   if (!original || original <= price) return 0;
@@ -118,6 +119,14 @@ export function RealDealDetail({ id }: { id: string }) {
       {deal.productUrl ? (
         <a
           href={deal.productUrl}
+          onClick={() =>
+            trackDealClick({
+              dealId: deal.id,
+              title: deal.title,
+              storeName: storeLabel,
+              surface: "detail",
+            })
+          }
           target="_blank"
           rel="nofollow sponsored noopener noreferrer"
           className="w-full inline-flex items-center justify-center gap-2 bg-gradient-hero text-primary-foreground px-6 py-4 rounded-2xl font-black shadow-glow"

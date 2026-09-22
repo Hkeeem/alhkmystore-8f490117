@@ -129,7 +129,7 @@ export function DealCard({
         )}
 
         <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
-          <div className="gold-surface text-[11px] font-black px-2.5 py-1 rounded-full shadow-sm">
+          <div className="bg-amber-400 text-zinc-900 text-[11px] font-black px-2.5 py-1 rounded-full shadow">
             وفر {savings} ر.س
           </div>
           {lastDay && (
@@ -182,7 +182,7 @@ export function DealCard({
               aria-expanded={whyOpen}
               aria-label={`لماذا هذا العرض في الأعلى؟ ${reason}`}
               title={reasonDetail ?? reason}
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold"
+              className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#5B21B6]/10 text-[#5B21B6] text-[10px] font-bold"
             >
               <Info className="w-3 h-3 shrink-0" />
               {reason}
@@ -198,7 +198,7 @@ export function DealCard({
         <div className="mt-auto pt-2 flex items-center justify-between gap-2">
           <div className="flex items-baseline gap-2">
             <span className="text-[12px] text-zinc-400 line-through">{deal.originalPrice} ر.س</span>
-            <span className="text-[18px] font-black text-primary">{deal.price} ر.س</span>
+            <span className="text-[18px] font-black text-[#5B21B6]">{deal.price} ر.س</span>
           </div>
           <span className="flex items-center gap-1 text-[11px] text-zinc-500 shrink-0">
             <Clock className="w-3 h-3" /> {deal.expiresIn}
@@ -208,8 +208,8 @@ export function DealCard({
         <button
           type="button"
           onClick={handleCta}
-            className={`w-full h-11 rounded-full font-bold text-[14px] transition-all ${
-            copied ? "bg-emerald-600 text-white" : "gold-surface hover:brightness-105"
+          className={`w-full h-11 rounded-full font-bold text-[14px] transition-all ${
+            copied ? "bg-emerald-500 text-white" : "bg-[#5B21B6] text-white"
           }`}
         >
           {copied

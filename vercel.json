@@ -5,10 +5,6 @@
     {
       "path": "/api/public/hooks/daily-content-sync",
       "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/public/hooks/price-watch",
-      "schedule": "0 4 * * *"
     }
   ]
 }

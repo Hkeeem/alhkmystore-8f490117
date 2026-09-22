@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { fetchLiveCoupons, type LiveCoupon } from "@/lib/coupons-api";
 import { addPoints } from "@/lib/rewards";
 import { ShareSheet } from "@/components/ShareSheet";
+import { trackCouponClick } from "@/lib/track-deal";
 
 export const Route = createFileRoute("/coupons")({
   head: () => ({
@@ -56,10 +57,19 @@ function CouponsPage() {
     });
   }, [all, q, cat]);
 
-  const handleCopy = async (code: string) => {
+  const handleCopy = async (c: LiveCoupon) => {
+    const code = c.code;
     try {
       await navigator.clipboard.writeText(code);
       setCopied(code);
+      trackCouponClick({
+        couponId: c.id,
+        code: c.code,
+        title: c.title,
+        storeId: c.storeId,
+        storeName: c.storeName,
+        surface: "coupon",
+      });
       const s = addPoints("copy_coupon");
       toast.success(`تم نسخ الكود ${code} · +10 نقاط (المجموع ${s.points})`);
       setTimeout(() => setCopied(null), 1800);
@@ -179,7 +189,7 @@ function CouponsPage() {
                   </span>
                 </div>
                 <button
-                  onClick={() => handleCopy(c.code)}
+                  onClick={() => handleCopy(c)}
                   className={`h-12 px-4 rounded-2xl font-bold text-sm transition flex items-center gap-2 ${
                     isCopied
                       ? "bg-green-600 text-white"
@@ -214,6 +224,16 @@ function CouponsPage() {
               {c.storeUrl && (
                 <a
                   href={c.storeUrl}
+                  onClick={() =>
+                    trackCouponClick({
+                      couponId: c.id,
+                      code: c.code,
+                      title: c.title,
+                      storeId: c.storeId,
+                      storeName: c.storeName,
+                      surface: "coupon",
+                    })
+                  }
                   target="_blank"
                   rel="nofollow sponsored noopener noreferrer"
                   className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-secondary hover:bg-secondary/80 font-black text-sm transition"

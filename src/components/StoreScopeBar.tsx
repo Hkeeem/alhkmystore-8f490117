@@ -3,10 +3,12 @@ import { MapPin, X, Check } from "lucide-react";
 import {
   STORE_GROUPS,
   CITY_NAMES,
+  branchCount,
+  storesInGroup,
   useStoreScope,
   type StoreGroupId,
-  type GeoScope,
 } from "@/lib/store-scope";
+import { getStoreIcon } from "@/lib/icons";
 import {
   Dialog,
   DialogContent,
@@ -17,9 +19,9 @@ import {
 
 /** شريط المدينة + فئات المتاجر أسفل الشريط العلوي */
 export function StoreScopeBar() {
-  const { selectedCity, setSelectedCity, geoScope, setGeoScope, activeGroup, setActiveGroup } = useStoreScope();
+  const { city, group, setCity, setGroup, scopedStores, isFiltered, reset } = useStoreScope();
   const [open, setOpen] = useState(false);
-  const currentGroup = STORE_GROUPS.find((g) => g.id === activeGroup) || STORE_GROUPS[0];
+  const activeGroup = STORE_GROUPS.find((g) => g.id === group)!;
 
   return (
     <div
@@ -27,99 +29,136 @@ export function StoreScopeBar() {
       className="sticky top-16 z-30 border-b border-primary/10 bg-background/80 backdrop-blur-xl"
     >
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2 space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          
-          {/* زر نافذة اختيار المدينة والنطاق */}
+        <div className="flex items-center gap-2">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <button
                 type="button"
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 text-primary text-xs font-bold hover:bg-primary/15 transition shadow-xs"
+                className="flex items-center gap-2 rounded-xl border border-primary/30 bg-secondary/50 px-3 py-2 text-right hover:border-primary transition"
+                aria-label="تغيير المدينة وفئة المتاجر"
               >
-                <MapPin className="w-3.5 h-3.5" />
-                <span>{selectedCity}</span>
-                <span className="text-[10px] opacity-75">
-                  ({geoScope === "neighborhood" ? "داخل الحي" : geoScope === "city" ? "المدينة" : "كل المناطق"})
+                <MapPin className="w-4 h-4 text-primary shrink-0" />
+                <span className="leading-tight">
+                  <span className="block text-xs font-black">{city}</span>
+                  <span className="block text-[10px] text-muted-foreground">
+                    {activeGroup.label} · {scopedStores.length} متجر
+                  </span>
                 </span>
               </button>
             </DialogTrigger>
-            <DialogContent className="max-w-sm rounded-3xl p-6" dir="rtl">
+            <DialogContent dir="rtl" className="max-w-md text-right">
               <DialogHeader>
-                <DialogTitle className="text-base font-bold text-right">حدد نطاق البحث الجغرافي</DialogTitle>
+                <DialogTitle className="text-right">المدينة وتفضيلات المتاجر</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 pt-2">
+
+              <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-bold text-muted-foreground block mb-2">اختر المدينة:</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {CITY_NAMES.map((city) => (
+                  <p className="text-xs font-bold text-muted-foreground mb-2">اختر مدينتك</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {CITY_NAMES.map((c) => (
                       <button
-                        key={city}
-                        onClick={() => setSelectedCity(city)}
-                        className={`p-2 rounded-xl text-xs font-bold flex items-center justify-between transition ${
-                          selectedCity === city
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "bg-secondary/50 text-secondary-foreground hover:bg-secondary"
+                        key={c}
+                        type="button"
+                        onClick={() => setCity(c)}
+                        aria-pressed={c === city}
+                        className={`rounded-xl px-2 py-2 text-xs font-bold border transition ${
+                          c === city
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "border-border/60 hover:border-primary/50"
                         }`}
                       >
-                        <span>{city}</span>
-                        {selectedCity === city && <Check className="w-3.5 h-3.5" />}
+                        {c}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="border-t border-border/50 pt-3">
-                  <label className="text-xs font-bold text-muted-foreground block mb-2">نطاق مقارنة المتاجر:</label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { id: "neighborhood", label: "الحي" },
-                      { id: "city", label: "المدينة" },
-                      { id: "all", label: "الكل" },
-                    ].map((scope) => (
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground mb-2">فئة المتاجر</p>
+                  <div className="space-y-1.5 max-h-56 overflow-y-auto pl-1">
+                    {STORE_GROUPS.map((g) => (
                       <button
-                        key={scope.id}
-                        onClick={() => setGeoScope(scope.id as GeoScope)}
-                        className={`p-2 rounded-xl text-xs font-bold transition text-center ${
-                          geoScope === scope.id
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "bg-secondary/50 text-secondary-foreground hover:bg-secondary"
+                        key={g.id}
+                        type="button"
+                        onClick={() => setGroup(g.id as StoreGroupId)}
+                        className={`w-full flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold border transition ${
+                          g.id === group
+                            ? "border-primary bg-primary/10"
+                            : "border-border/60 hover:border-primary/40"
                         }`}
                       >
-                        {scope.label}
+                        <span>{g.emoji}</span>
+                        <span className="flex-1 text-right">{g.label}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {branchCount(city, g.id)} فرع
+                        </span>
+                        {g.id === group && <Check className="w-3.5 h-3.5 text-primary" />}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setOpen(false)}
-                  className="w-full mt-2 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-xs shadow-sm"
-                >
-                  تطبيق النطاق
-                </button>
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground mb-2">
+                    المتاجر المتوفرة في {city}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {storesInGroup(group).map((s) => {
+                      const Icon = getStoreIcon(s);
+                      return (
+                        <span
+                          key={s.id}
+                          className="inline-flex items-center gap-1.5 rounded-lg bg-secondary/60 px-2 py-1 text-[11px] font-bold"
+                        >
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                          {s.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
 
-          {/* فئات المتاجر السريعة */}
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
-            {STORE_GROUPS.map((group) => (
+          <div
+            className="flex-1 flex gap-1.5 overflow-x-auto scrollbar-hide"
+            role="group"
+            aria-label="فئات المتاجر"
+          >
+            {STORE_GROUPS.map((g) => (
               <button
-                key={group.id}
-                onClick={() => setActiveGroup(group.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition whitespace-nowrap flex items-center gap-1 ${
-                  activeGroup === group.id
-                    ? "bg-primary text-primary-foreground shadow-xs"
-                    : "bg-secondary/60 text-muted-foreground hover:text-foreground"
+                key={g.id}
+                type="button"
+                onClick={() => setGroup(g.id)}
+                aria-pressed={g.id === group}
+                className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[11px] font-bold border transition ${
+                  g.id === group
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border/60 text-muted-foreground hover:border-primary/40"
                 }`}
               >
-                <span>{group.emoji}</span>
-                <span>{group.label}</span>
+                {g.emoji} {g.label}
               </button>
             ))}
           </div>
-
         </div>
+
+        {isFiltered && (
+          <div className="flex items-center gap-2 rounded-xl bg-primary/10 border border-primary/25 px-3 py-1.5 text-[11px] font-bold">
+            <span className="flex-1">
+              النتائج مقصورة على «{activeGroup.label}» في {city} ({scopedStores.length} متجر)
+            </span>
+            <button
+              type="button"
+              onClick={reset}
+              className="inline-flex items-center gap-1 text-primary hover:underline"
+            >
+              <X className="w-3 h-3" />
+              إلغاء الفلترة
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
