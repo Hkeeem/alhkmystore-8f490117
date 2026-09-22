@@ -1,8 +1,38 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap");
 @import "tailwindcss";
 @import "./styles/hkeeem-theme.css";
 
+@theme {
+  --color-maroon-950: #2b0a10;
+  --color-maroon-900: #3d1018;
+  --color-maroon-800: #571a26;
+  --color-maroon-700: #722232;
+  --color-maroon-600: #8c2b3e;
+  --color-gold-300: #e8c87a;
+  --color-gold-400: #d4af37;
+  --color-gold-500: #c39b27;
+  --color-gold-100: #f7ecd2;
+  --color-gold-50: #fdf8ec;
+  --color-cream-50: #faf6ef;
+  --color-cream-100: #f3ebdd;
+}
+
 @layer base {
   :root {
+    --maroon-950: #2b0a10;
+    --maroon-900: #3d1018;
+    --maroon-800: #571a26;
+    --maroon-700: #722232;
+    --maroon-600: #8c2b3e;
+    --gold-300: #e8c87a;
+    --gold-400: #d4af37;
+    --gold-500: #c39b27;
+    --gold-100: #f7ecd2;
+    --gold-50: #fdf8ec;
+    --cream-50: #faf6ef;
+    --cream-100: #f3ebdd;
+    --success: #2f7d5b;
+    --success-soft: #e4f2ec;
     direction: rtl;
     text-align: right;
     --background: 42 33% 97%;
@@ -132,7 +162,7 @@
       radial-gradient(circle at 100% 0%, rgba(212, 175, 55, 0.08), transparent 26rem),
       var(--color-background);
     color: var(--color-foreground);
-    font-family: "Tajawal", "Cairo", system-ui, sans-serif;
+    font-family: "Noto Sans Arabic", "Tajawal", "Cairo", system-ui, sans-serif;
     text-rendering: optimizeLegibility;
     direction: rtl;
     text-align: right;
@@ -191,4 +221,12 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+.ring-gold {
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.45);
+}
+
+.ring-gold:hover {
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.75);
 }

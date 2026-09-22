@@ -118,6 +118,7 @@ const groups: Group[] = [
       { to: "/pro", key: "item.pro", icon: Crown, badgeKey: "nav.new" },
       { to: "/affiliate-setup", key: "item.affiliate", icon: Link2, badgeKey: "nav.guide" },
       { to: "/agents", key: "item.agents", icon: ShieldCheck, badgeKey: "nav.new" },
+      { to: "/hub", key: "item.aiTools", icon: Bot, badgeKey: "nav.new" },
       { to: "/settings", key: "item.settings", icon: Palette, badgeKey: "nav.new" },
     ],
   },
