@@ -315,6 +315,84 @@ export type Database = {
         }
         Relationships: []
       }
+      car_listings: {
+        Row: {
+          active: boolean
+          body_type: string
+          brand: string
+          city: string
+          color: string | null
+          condition: string
+          created_at: string
+          dealer: string | null
+          features: string[]
+          fuel: string
+          id: string
+          image_url: string | null
+          link_url: string | null
+          mileage_km: number
+          model: string | null
+          original_price: number | null
+          phone: string | null
+          price: number
+          seats: number
+          title: string
+          transmission: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          active?: boolean
+          body_type?: string
+          brand: string
+          city: string
+          color?: string | null
+          condition?: string
+          created_at?: string
+          dealer?: string | null
+          features?: string[]
+          fuel?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          mileage_km?: number
+          model?: string | null
+          original_price?: number | null
+          phone?: string | null
+          price: number
+          seats?: number
+          title: string
+          transmission?: string
+          updated_at?: string
+          year?: number
+        }
+        Update: {
+          active?: boolean
+          body_type?: string
+          brand?: string
+          city?: string
+          color?: string | null
+          condition?: string
+          created_at?: string
+          dealer?: string | null
+          features?: string[]
+          fuel?: string
+          id?: string
+          image_url?: string | null
+          link_url?: string | null
+          mileage_km?: number
+          model?: string | null
+          original_price?: number | null
+          phone?: string | null
+          price?: number
+          seats?: number
+          title?: string
+          transmission?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
       cashback_transactions: {
         Row: {
           cashback_amount: number
@@ -645,6 +723,86 @@ export type Database = {
           item_id?: string
           item_type?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      gallery_deal_views: {
+        Row: {
+          deal_id: string | null
+          id: string
+          page_path: string | null
+          referrer: string | null
+          user_agent: string | null
+          user_id: string | null
+          view_type: string
+          viewed_at: string
+        }
+        Insert: {
+          deal_id?: string | null
+          id?: string
+          page_path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          view_type?: string
+          viewed_at?: string
+        }
+        Update: {
+          deal_id?: string | null
+          id?: string
+          page_path?: string | null
+          referrer?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          view_type?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gallery_deal_views_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "gallery_deals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gallery_deals: {
+        Row: {
+          clicks_count: number
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link_url: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          clicks_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          clicks_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1771,6 +1929,17 @@ export type Database = {
         Returns: boolean
       }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_verified_advertiser: { Args: { _user_id: string }; Returns: boolean }
+      log_deal_view: {
+        Args: {
+          p_deal_id: string
+          p_page_path?: string
+          p_referrer?: string
+          p_user_agent?: string
+          p_view_type?: string
+        }
+        Returns: undefined
+      }
       match_buyers_for_property: {
         Args: { p_listing_id: string }
         Returns: {
