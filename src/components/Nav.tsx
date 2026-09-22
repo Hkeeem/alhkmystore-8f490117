@@ -34,6 +34,7 @@ import {
   Bug,
   Car,
   UtensilsCrossed,
+  Bot,
 } from "lucide-react";
 import {
   Sheet,

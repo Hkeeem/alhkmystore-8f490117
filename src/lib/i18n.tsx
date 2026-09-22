@@ -118,6 +118,8 @@ export const dict = {
   "pillar.assistantNote": { ar: "اسأله بالعربي", en: "Ask in Arabic or English" },
 
   // Footer
+  "footer.about": { ar: "من نحن", en: "About us" },
+  "footer.faq": { ar: "الأسئلة الشائعة", en: "FAQ" },
   "footer.privacy": { ar: "سياسة الخصوصية", en: "Privacy policy" },
   "footer.terms": { ar: "الشروط والأحكام", en: "Terms of use" },
   "footer.contact": { ar: "التواصل", en: "Contact" },
