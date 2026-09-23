@@ -48,6 +48,47 @@
 - GitHub Actions  
 - Vercel Deployment  
 
+
+---
+
+## 🚀 مدعوم بأذكى نماذج الذكاء الاصطناعي
+
+في **60 يوماً فقط**، وبميزانية لا تتجاوز **100 دولار**، وبالاستعانة بمجموعة من أذكى نماذج الذكاء الاصطناعي، أطلقنا **Hkeeem AI** — منصة ذكية لمقارنة الأسعار والعروض في السعودية.
+
+### 🤝 الشركاء في البناء
+
+| الأداة | الدور |
+|--------|-------|
+| ![ChatGPT](https://img.shields.io/badge/-ChatGPT-10a37f?style=flat-square) | هيكلة وأفكار |
+| ![Claude](https://img.shields.io/badge/-Claude-d97757?style=flat-square) | كتابة وتحرير |
+| ![Gemini](https://img.shields.io/badge/-Gemini-4285f4?style=flat-square) | مساعد ذكي |
+| ![DeepSeek](https://img.shields.io/badge/-DeepSeek-4d6bfe?style=flat-square) | تطوير وبرمجة |
+| ![Grok](https://img.shields.io/badge/-Grok-000000?style=flat-square) | تحليل ذكي |
+| ![Genspark](https://img.shields.io/badge/-Genspark-f59e0b?style=flat-square) | بحث شامل |
+| ![Manus](https://img.shields.io/badge/-Manus-1e293b?style=flat-square) | مهام معقدة |
+| ![Meta AI](https://img.shields.io/badge/-Meta%20AI-0866ff?style=flat-square) | أفكار إبداعية |
+| ![Lovable](https://img.shields.io/badge/-Lovable-ec4899?style=flat-square) | بناء المنصة |
+| ![Vercel](https://img.shields.io/badge/-Vercel-000000?style=flat-square) | النشر والاستضافة |
+
+### 📊 أرقام المشروع
+
+- ⏱️ **مدة البناء:** 60 يوماً
+- 💰 **الميزانية:** أقل من 100 دولار
+- 🤖 **أدوات AI:** 10+
+- 🏪 **متجر مدعوم:** 65+
+- 🎯 **دقة التوصيات:** 96%
+
+### 🔗 الروابط
+
+- 🌐 **المنصة:** [alhkmy.app](https://alhkmy.app)
+- 📱 **الموقع:** [alhkmy.store](https://alhkmy.store)
+- 📧 **التواصل:** support@alhkmy.store
+
+---
+
+<p align="center">
+  <strong>Hkeeem AI</strong> — تسوّق أذكى.. وفّر أكثر ⚡
+</p>
 ---
 
 ## 📦 الإصدارات
