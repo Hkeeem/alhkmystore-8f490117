@@ -1,0 +1,188 @@
+import { useMemo } from "react";
+import { cn } from "@/lib/utils";
+
+/**
+ * AIStackSection — شريط شعارات أدوات الذكاء الاصطناعي التي بُني بها المشروع.
+ * أيقونات فقط (بدون نصوص) مع tooltip عند التحويم، وقابلة للنقر لفتح كل أداة.
+ * الشعارات مسارات SVG رسمية (simple-icons / LobeHub) وشعار Genspark الرسمي.
+ */
+
+type AiLogo = {
+  name: string;
+  href: string;
+  viewBox?: string;
+  paths?: React.ReactNode;
+  img?: string;
+};
+
+const AI_LOGOS: AiLogo[] = [
+  {
+    name: "ChatGPT",
+    href: "https://chatgpt.com",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M9.205 8.658v-2.26c0-.19.072-.333.238-.428l4.543-2.616c.619-.357 1.356-.523 2.117-.523 2.854 0 4.662 2.212 4.662 4.566 0 .167 0 .357-.024.547l-4.71-2.759a.797.797 0 00-.856 0l-5.97 3.473zm10.609 8.8V12.06c0-.333-.143-.57-.429-.737l-5.97-3.473 1.95-1.118a.433.433 0 01.476 0l4.543 2.617c1.309.76 2.189 2.378 2.189 3.948 0 1.808-1.07 3.473-2.76 4.163zM7.802 12.703l-1.95-1.142c-.167-.095-.239-.238-.239-.428V5.899c0-2.545 1.95-4.472 4.591-4.472 1 0 1.927.333 2.712.928L8.23 5.067c-.285.166-.428.404-.428.737v6.898zM12 15.128l-2.795-1.57v-3.33L12 8.658l2.795 1.57v3.33L12 15.128zm1.796 7.23c-1 0-1.927-.332-2.712-.927l4.686-2.712c.285-.166.428-.404.428-.737v-6.898l1.974 1.142c.167.095.238.238.238.428v5.233c0 2.545-1.974 4.472-4.614 4.472zm-5.637-5.303l-4.544-2.617c-1.308-.761-2.188-2.378-2.188-3.948A4.482 4.482 0 014.21 6.327v5.423c0 .333.143.571.428.738l5.947 3.449-1.95 1.118a.432.432 0 01-.476 0zm-.262 3.9c-2.688 0-4.662-2.021-4.662-4.519 0-.19.024-.38.047-.57l4.686 2.71c.286.167.571.167.856 0l5.97-3.448v2.26c0 .19-.07.333-.237.428l-4.543 2.616c-.619.357-1.356.523-2.117.523zm5.899 2.83a5.947 5.947 0 005.827-4.756C22.287 18.339 24 15.84 24 13.296c0-1.665-.713-3.282-1.998-4.448.119-.5.19-.999.19-1.498 0-3.401-2.759-5.947-5.946-5.947-.642 0-1.26.095-1.88.31A5.962 5.962 0 0010.205 0a5.947 5.947 0 00-5.827 4.757C1.713 5.447 0 7.945 0 10.49c0 1.666.713 3.283 1.998 4.448-.119.5-.19 1-.19 1.499 0 3.401 2.759 5.946 5.946 5.946.642 0 1.26-.095 1.88-.309a5.96 5.96 0 004.162 1.713z" />
+      </>
+    ),
+  },
+  {
+    name: "Claude",
+    href: "https://claude.ai",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z" />
+      </>
+    ),
+  },
+  {
+    name: "Gemini",
+    href: "https://gemini.google.com",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81" />
+      </>
+    ),
+  },
+  {
+    name: "Meta AI",
+    href: "https://www.meta.ai",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z" />
+      </>
+    ),
+  },
+  {
+    name: "DeepSeek",
+    href: "https://www.deepseek.com",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M23.748 4.651c-.254-.124-.364.113-.512.233-.051.04-.094.09-.137.137-.372.397-.806.657-1.373.626-.829-.046-1.537.214-2.163.848-.133-.782-.575-1.248-1.247-1.548-.352-.155-.708-.311-.955-.65-.172-.24-.219-.509-.305-.774-.055-.16-.11-.323-.293-.35-.2-.031-.278.136-.356.276-.313.572-.434 1.202-.422 1.84.027 1.436.633 2.58 1.838 3.393.137.094.172.187.129.323-.082.28-.18.553-.266.833-.055.179-.137.218-.328.14a5.5 5.5 0 0 1-1.737-1.179c-.857-.828-1.631-1.743-2.597-2.46a12 12 0 0 0-.689-.47c-.985-.957.13-1.743.387-1.836.27-.098.094-.433-.778-.428-.872.003-1.67.295-2.687.685a3 3 0 0 1-.465.136 9.6 9.6 0 0 0-2.883-.101c-1.885.21-3.39 1.1-4.497 2.622C.082 8.776-.231 10.854.152 13.02c.403 2.284 1.568 4.175 3.36 5.653 1.857 1.533 3.997 2.284 6.438 2.14 1.482-.085 3.132-.284 4.994-1.86.47.234.962.328 1.78.398.629.058 1.235-.031 1.705-.129.735-.155.684-.836.418-.961-2.155-1.004-1.682-.595-2.112-.926 1.095-1.295 2.768-3.598 3.284-6.733.05-.346.115-.834.108-1.114-.004-.171.035-.238.23-.257a4.2 4.2 0 0 0 1.545-.475c1.397-.763 1.96-2.016 2.093-3.517.02-.23-.004-.467-.247-.588M11.58 18.168c-2.088-1.642-3.101-2.183-3.52-2.16-.39.024-.32.472-.234.763.09.288.207.487.371.74.114.167.192.416-.113.603-.673.416-1.842-.14-1.897-.168-1.361-.801-2.5-1.86-3.301-3.306-.775-1.393-1.225-2.888-1.299-4.482-.02-.385.094-.522.477-.592a4.7 4.7 0 0 1 1.53-.038c2.131.311 3.946 1.264 5.467 2.774.868.86 1.525 1.887 2.202 2.89.72 1.066 1.494 2.082 2.48 2.915.348.291.626.513.892.677-.802.09-2.14.109-3.055-.615zm1.001-6.44a.306.306 0 0 1 .415-.287.3.3 0 0 1 .113.074.3.3 0 0 1 .086.214c0 .17-.136.307-.308.307a.303.303 0 0 1-.306-.307m3.11 1.596c-.2.081-.4.151-.591.16a1.25 1.25 0 0 1-.798-.254c-.274-.23-.47-.358-.551-.758a1.7 1.7 0 0 1 .015-.588c.07-.327-.007-.537-.238-.727-.188-.156-.426-.199-.689-.199a.6.6 0 0 1-.254-.078.253.253 0 0 1-.114-.358 1 1 0 0 1 .192-.21c.356-.202.767-.136 1.146.016.352.144.618.408 1.001.782.392.451.462.576.685.915.176.264.336.536.446.848.066.194-.02.353-.25.45" />
+      </>
+    ),
+  },
+  {
+    name: "Grok",
+    href: "https://grok.com",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M9.27 15.29l7.978-5.897c.391-.29.95-.177 1.137.272.98 2.369.542 5.215-1.41 7.169-1.951 1.954-4.667 2.382-7.149 1.406l-2.711 1.257c3.889 2.661 8.611 2.003 11.562-.953 2.341-2.344 3.066-5.539 2.388-8.42l.006.007c-.983-4.232.242-5.924 2.75-9.383.06-.082.12-.164.179-.248l-3.301 3.305v-.01L9.267 15.292M7.623 16.723c-2.792-2.67-2.31-6.801.071-9.184 1.761-1.763 4.647-2.483 7.166-1.425l2.705-1.25a7.808 7.808 0 00-1.829-1A8.975 8.975 0 005.984 5.83c-2.533 2.536-3.33 6.436-1.962 9.764 1.022 2.487-.653 4.246-2.34 6.022-.599.63-1.199 1.259-1.682 1.925l7.62-6.815" />
+      </>
+    ),
+  },
+  {
+    name: "Genspark",
+    href: "https://www.genspark.ai",
+    img: "data:image/png;base64,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",
+  },
+  {
+    name: "Manus",
+    href: "https://manus.im",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M8.047 1.163A.936.936 0 119.863.709c.063.256.132.508.2.76l.005.016c.158.58.315 1.16.416 1.771a.936.936 0 11-1.847.305c-.085-.517-.203-.949-.346-1.473v-.002c-.075-.274-.157-.573-.244-.923zM3.67 2.753a.936.936 0 00.428 1.252c.667.327 1.245.65 1.818 1.295a.936.936 0 001.4-1.242C6.5 3.138 5.66 2.687 4.922 2.325a.936.936 0 00-1.252.428z" />
+        <path d="M15.672 21.284c-.17-.036-.356-.075-.546-.117-.7-.152-1.65-.365-2.097-.513l-.033-.011-.032-.012c-.198-.074-.534-.156-1.09-.283l-.103-.023c-.48-.11-1.07-.244-1.63-.413-.578-.176-1.294-.437-1.903-.862-.638-.446-1.364-1.232-1.404-2.412a5.024 5.024 0 01.009-.51 2.716 2.716 0 01-.65-1.24 2.632 2.632 0 01.03-1.275c.083-.317.21-.594.316-.8.036-.07.073-.14.11-.206-.35-.111-.747-.248-1.133-.412-.503-.215-1.218-.57-1.752-1.141a2.798 2.798 0 01-.71-1.327 2.55 2.55 0 01.226-1.68c.604-1.208 1.757-1.635 2.782-1.672.926-.033 1.912.226 2.795.536.804.282 1.955.807 2.933 1.264.322-.529.747-1.126 1.149-1.608l.08-.095.092-.084a3.43 3.43 0 012.06-.887 3.559 3.559 0 011.059.08l.036.008.023.007h.003l.002.001s.002 0-.477 1.786l.479-1.786.208.058.19.102c.964.516 1.238 1.406 1.31 1.876a2.9 2.9 0 01-.008.903l-.003.018v.005l-1.858-.37 1.857.371-.01.054-.3 1.19c-.058.292-.065.459-.062.547a.286.286 0 00.016.107v.001c.013.03.043.095.154.263.043.066.088.131.144.214l.058.084c.08.118.174.257.274.412.623.97.684 1.902.68 2.499v.026l.238.078.103.032.153.049c.076.024.173.056.267.09.11-.202.407-.636.945-.636.702 0 .99.987.99.987.275 1.838-.98 8.013-2.794 9.164-1.386.88-2.413-.427-3.176-2.437zM8.72 12.868c.118-.119.47-.37 1.136-.445a4.337 4.337 0 012.228.365c.623.276 1.053.908 1.233 1.667.088.371.104.731.066 1.025-.04.31-.128.465-.169.511-.05.058-.228.157-.721.053a3.417 3.417 0 01-.764-.266l-.006-.003a.936.936 0 00-.861 1.662h.001l.003.002.008.004.024.012a4.888 4.888 0 00.34.152c.215.086.52.194.866.267.615.13 1.75.23 2.52-.652.37-.424.548-.98.615-1.501a4.789 4.789 0 00-.1-1.697c-.268-1.128-.976-2.362-2.297-2.948a6.208 6.208 0 00-3.195-.513c-.619.07-1.211.242-1.69.504l-.02-.006h-.004c-1.183-.338-3.536-1.01-2.956-2.17.44-.88 1.643-.807 3.275-.234.663.232 1.584.647 2.453 1.051.27.125.534.25.784.367l.974.454c.693-.832.962-1.29 1.2-1.695.163-.278.312-.53.573-.862l.025-.032a9.902 9.902 0 01.146-.18.895.895 0 01.02-.017c.642-.567 1.389-.36 1.389-.36.427.228.318.806.318.806l-.296 1.178c-.284 1.386.03 1.845.547 2.6.09.133.188.275.29.433.412.643.392 1.26.377 1.765-.01.324-.019.602.09.809.224.425 1.06.69 1.61.862.132.042.247.078.333.11l.059.023c-.078.24-.148.489-.218.737-.313 1.103-.623 2.202-1.55 2.53-.632.225-1.263.214-1.71.156-.786-.17-1.716-.379-2.066-.495-.363-.135-.871-.25-1.424-.377-1.316-.3-2.883-.656-3.331-1.462a.975.975 0 01-.125-.447c-.026-.74.234-1.404.234-1.404s-.403.002-.685-.27a.853.853 0 01-.238-.431c-.03-.13-.042-.28-.025-.44.008 0 .012-.008.012-.028 0-.234.234-.702.702-1.17z" />
+        <path d="M14.077.604a.936.936 0 01.315 1.285c-.355.584-.561 1.181-.786 2.081a.936.936 0 11-1.816-.454c.243-.971.504-1.778 1.002-2.598a.936.936 0 011.285-.314z" />
+      </>
+    ),
+  },
+  {
+    name: "Lovable",
+    href: "https://lovable.dev",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="M7.082 0c3.91 0 7.081 3.179 7.081 7.1v2.7h2.357c3.91 0 7.082 3.178 7.082 7.1 0 3.923-3.17 7.1-7.082 7.1H0V7.1C0 3.18 3.17 0 7.082 0z" />
+      </>
+    ),
+  },
+  {
+    name: "Vercel",
+    href: "https://vercel.com",
+    viewBox: "0 0 24 24",
+    paths: (
+      <>
+        <path d="m12 1.608 12 20.784H0Z" />
+      </>
+    ),
+  },
+];
+
+function AiTile({ logo, index }: { logo: AiLogo; index: number }) {
+  const delay = useMemo(() => `${index * 60}ms`, [index]);
+
+  return (
+    <a
+      href={logo.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={logo.name}
+      aria-label={logo.name}
+      className="group relative flex items-center justify-center
+        w-14 h-14 sm:w-16 sm:h-16 rounded-2xl
+        bg-card/70 backdrop-blur-md
+        border border-border/70
+        shadow-sm
+        transition-all duration-300 ease-out
+        hover:scale-110 hover:-translate-y-1
+        hover:border-primary/50
+        hover:shadow-[0_8px_30px_-6px_var(--primary)]
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60
+        motion-reduce:transition-none motion-reduce:hover:scale-100 motion-reduce:hover:translate-y-0"
+      style={{ animationDelay: delay }}
+    >
+      {logo.img ? (
+        <img
+          src={logo.img}
+          alt={logo.name}
+          loading="lazy"
+          className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 group-hover:scale-110"
+        />
+      ) : (
+        <svg
+          viewBox={logo.viewBox}
+          role="img"
+          aria-hidden="true"
+          className="w-7 h-7 sm:w-8 sm:h-8 fill-foreground/85 transition-all duration-300
+            group-hover:fill-foreground group-hover:scale-110"
+        >
+          {logo.paths}
+        </svg>
+      )}
+
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2
+          whitespace-nowrap rounded-lg px-2.5 py-1 text-xs font-medium
+          bg-foreground text-background opacity-0 translate-y-1
+          transition-all duration-200
+          group-hover:opacity-100 group-hover:translate-y-0"
+      >
+        {logo.name}
+      </span>
+    </a>
+  );
+}
+
+export function AIStackSection({ className }: { className?: string }) {
+  return (
+    <section
+      aria-label="أدوات الذكاء الاصطناعي المستخدمة في المشروع"
+      className={cn("flex flex-col items-center gap-4 pt-12 pb-6", className)}
+      dir="rtl"
+    >
+      <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-2xl">
+        {AI_LOGOS.map((logo, i) => (
+          <AiTile key={logo.name} logo={logo} index={i} />
+        ))}
+      </div>
+    </section>
+  );
+}
