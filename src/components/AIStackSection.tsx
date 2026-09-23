@@ -175,7 +175,7 @@ export function AIStackSection({ className }: { className?: string }) {
   return (
     <section
       aria-label="أدوات الذكاء الاصطناعي المستخدمة في المشروع"
-      className={cn("flex flex-col items-center gap-4 py-6", className)}
+      className={cn("flex flex-col items-center gap-4 pt-12 pb-6", className)}
       dir="rtl"
     >
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 max-w-2xl">
