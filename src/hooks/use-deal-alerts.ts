@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { fetchLiveCoupons } from "@/lib/coupons-api";
+import { supabase } from "@/integrations/supabase/client";
 
 const SEEN_EXPIRING = "hkeeem-alert-expiring";
 const SEEN_COUPONS = "hkeeem-alert-coupons";
@@ -30,7 +31,46 @@ function writeSeen(key: string, ids: string[]) {
  * - عرض ينتهي خلال أقل من 24 ساعة (آخر يوم).
  * - كوبون جديد لم يُعرض على المستخدم من قبل.
  */
+function notifyNow(title: string, body: string, link: string) {
+  toast.success(title, {
+    description: body,
+    duration: 8000,
+    action: { label: "عرض", onClick: () => (window.location.href = link) },
+  });
+  try {
+    if ("Notification" in window && Notification.permission === "granted") {
+      const n = new Notification(title, { body, icon: "/pwa-192x192.png" });
+      n.onclick = () => {
+        window.focus();
+        window.location.href = link;
+      };
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 export function useDealAlerts() {
+  // تنبيهات فورية عند نشر كوبون أو عقار جديد
+  useEffect(() => {
+    const ch = supabase
+      .channel("instant-alerts")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "coupons" }, (p) => {
+        const r = p.new as { active?: boolean; store_name?: string; code?: string; discount?: string };
+        if (r.active === false) return;
+        notifyNow(`🎟️ كوبون جديد: ${r.store_name ?? ""}`, `${r.code ?? ""} — ${r.discount ?? ""}`, "/coupons");
+      })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "property_listings" }, (p) => {
+        const r = p.new as { status?: string; title?: string; city?: string };
+        if (r.status !== "active") return;
+        notifyNow("🏠 عقار جديد منشور", `${r.title ?? ""} — ${r.city ?? ""}`, "/real-estate");
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(ch);
+    };
+  }, []);
+
   const dealsQ = useRealDeals();
   const couponsQ = useQuery({
     queryKey: ["live-coupons"],

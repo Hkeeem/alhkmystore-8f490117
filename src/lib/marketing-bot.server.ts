@@ -255,10 +255,10 @@ async function publishStore(
     const db = await admin();
     const { data: subs } = await db
       .from("push_subscriptions")
-      .select("endpoint, p256dh, auth")
+      .select("id, endpoint, p256dh, auth")
       .lt("failure_count", 5)
       .limit(500);
-    const list = (subs ?? []) as { endpoint: string; p256dh: string; auth: string }[];
+    const list = (subs ?? []) as { id: string; endpoint: string; p256dh: string; auth: string }[];
     if (!list.length) return { status: "pending", error: "لا يوجد مشتركون في الإشعارات" };
 
     const { sendPushBatch } = await import("@/lib/push.server");
@@ -303,7 +303,7 @@ export async function runMarketingBot(platform: MarketingPlatform) {
     else if (platform === "instagram") result = await publishInstagram(text, candidate.image);
     else if (platform === "tiktok") result = await publishTiktok(text, candidate.image);
     else if (platform === "snapchat") result = await publishSnapchat(text, candidate.image, candidate.link);
-    else result = await publishStore(text, candidate.link, candidate.title);
+    else result = await publishStore(text, candidate.link, candidate.title, candidate.image ?? null);
   } catch (error) {
     result = { status: "failed", error: error instanceof Error ? error.message : String(error) };
   }

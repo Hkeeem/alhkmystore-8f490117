@@ -71,7 +71,8 @@ const STATUS_META: Record<string, { label: Bi; tone: string; desc: Bi }> = {
 
 function NotificationSettingsPage() {
   const { permission, dismissed, isReady, request, reset } = useNotifications();
-  const { lang } = useI18n();
+  useI18n();
+  const lang = "ar" as const;
 
   const status = STATUS_META[permission] ?? STATUS_META.default;
 
@@ -89,7 +90,7 @@ function NotificationSettingsPage() {
   const handleTest = () => {
     try {
       const n = new Notification("حكيم AI", {
-        body: "هذه إشعار تجريبي — ستصلك تنبيهات العروض هنا.",
+        body: "هذا إشعار تجريبي — ستصلك تنبيهات العروض والكوبونات والعقارات الجديدة هنا.",
         icon: "/pwa-192x192.png",
       });
       n.onclick = () => window.focus();
@@ -105,7 +106,7 @@ function NotificationSettingsPage() {
   };
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-8 space-y-8">
+    <main dir="rtl" lang="ar" className="mx-auto max-w-3xl px-4 py-8 space-y-8 text-right">
       <header className="space-y-2">
         <h1 className="text-2xl sm:text-3xl font-black flex items-center gap-2">
           <Bell className="w-6 h-6 text-primary" />

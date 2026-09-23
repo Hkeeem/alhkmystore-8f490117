@@ -116,7 +116,10 @@ export async function fetchLiveCoupons(limit = 120): Promise<LiveCoupon[]> {
       storeName: row.store_name || meta?.name || "متجر",
       logo: meta?.logo,
       color: meta?.color,
-      storeUrl: withPromo(storeLink(row.store_id), row.code),
+      storeUrl: withPromo(
+        (row as { store_url?: string | null }).store_url ?? storeLink(row.store_id),
+        row.code,
+      ),
       source: row.source,
     });
   }
