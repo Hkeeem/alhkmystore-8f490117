@@ -25,7 +25,7 @@ import {
   Award,
   Tag,
 } from "lucide-react";
-
+import { AIToolsSection } from "@/components/AIToolsSection";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
