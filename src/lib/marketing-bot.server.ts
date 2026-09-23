@@ -303,7 +303,7 @@ export async function runMarketingBot(platform: MarketingPlatform) {
     else if (platform === "instagram") result = await publishInstagram(text, candidate.image);
     else if (platform === "tiktok") result = await publishTiktok(text, candidate.image);
     else if (platform === "snapchat") result = await publishSnapchat(text, candidate.image, candidate.link);
-    else result = await publishStore(text, candidate.link, candidate.title);
+    else result = await publishStore(text, candidate.link, candidate.title, candidate.image ?? null);
   } catch (error) {
     result = { status: "failed", error: error instanceof Error ? error.message : String(error) };
   }
