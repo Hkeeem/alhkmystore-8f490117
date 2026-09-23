@@ -544,6 +544,7 @@ export type Database = {
           source: string
           store_id: string | null
           store_name: string
+          store_url: string | null
           title: string
           updated_at: string
         }
@@ -562,6 +563,7 @@ export type Database = {
           source?: string
           store_id?: string | null
           store_name: string
+          store_url?: string | null
           title: string
           updated_at?: string
         }
@@ -580,6 +582,7 @@ export type Database = {
           source?: string
           store_id?: string | null
           store_name?: string
+          store_url?: string | null
           title?: string
           updated_at?: string
         }
