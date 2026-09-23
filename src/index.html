@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hkeeem AI - متجر حكيم الذكي</title>
-    
-    <!-- كود توثيق Mitgo المضاف حديثاً -->
+
+    <!-- كود توثيق Mitgo -->
     <meta name="mitgo-verification" content="bdc14335-4072-45e4-9a91-d4924c8d0715" />
+
+    <title>Hkeeem AI - متجر حكيم الذكي</title>
 
     <meta
       name="description"
@@ -20,6 +21,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="HkeeemAI" />
     <link rel="apple-touch-icon" href="/hkeeem_192.png" />
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,896 +32,672 @@
 
     <style>
       /* ==========================================
-           1. BRAND SYSTEM VARIABLES (Design System)
-           ========================================== */
+         1. BRAND SYSTEM VARIABLES (Design System)
+         ========================================== */
       :root {
         /* Primary Brand Colors */
-        --color-black: #0b0b0b;
-        --color-dark-gray: #171717;
-        --color-medium-gray: #262626;
-        --color-border-gray: #333333;
-        --color-metallic-gold: #d4af37;
-        --color-light-gold: #f6d365;
-        --color-white: #ffffff;
-        --color-text-muted: #a3a3a3;
+        --gold: #D4AF37;
+        --gold-light: #F4D97A;
+        --gold-dark: #A8862A;
 
-        /* Gradient Definitions */
-        --gold-gradient: linear-gradient(135deg, #f6d365 0%, #d4af37 50%, #996515 100%);
-        --dark-surface-gradient: linear-gradient(180deg, #171717 0%, #0b0b0b 100%);
+        /* Backgrounds */
+        --bg-main: #0B0B0F;
+        --bg-elev: #14141B;
+        --bg-card: #1A1A23;
+        --bg-soft: #22222D;
 
-        /* Typography */
-        --font-ar: "Tajawal", sans-serif;
-        --font-en: "Plus Jakarta Sans", sans-serif;
+        /* Text */
+        --text-main: #FFFFFF;
+        --text-muted: #A9A9B8;
+        --text-dim: #6E6E7E;
 
-        /* Corner Radius */
-        --radius-sm: 8px;
-        --radius-md: 16px;
-        --radius-lg: 24px;
-        --radius-full: 9999px;
+        /* Borders */
+        --border: rgba(212, 175, 55, 0.18);
+        --border-soft: rgba(255, 255, 255, 0.06);
 
-        /* Elevation & Shadows */
-        --shadow-gold-glow: 0px 8px 30px rgba(212, 175, 55, 0.15);
-        --shadow-card: 0px 10px 30px rgba(0, 0, 0, 0.5);
-        --border-gold-glow: 1px solid rgba(212, 175, 55, 0.3);
-        --border-subtle: 1px solid rgba(255, 255, 255, 0.1);
+        /* Status */
+        --success: #2ECC71;
+        --danger: #E74C3C;
+
+        /* Gradients */
+        --grad-gold: linear-gradient(135deg, #D4AF37 0%, #F4D97A 50%, #A8862A 100%);
+        --grad-dark: linear-gradient(180deg, #0B0B0F 0%, #14141B 100%);
+
+        /* Shadows */
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+        --shadow-gold: 0 8px 32px rgba(212, 175, 55, 0.25);
+
+        /* Radii */
+        --r-sm: 10px;
+        --r-md: 16px;
+        --r-lg: 24px;
+        --r-full: 999px;
+
+        /* Transitions */
+        --t-fast: 0.15s ease;
+        --t-med: 0.3s ease;
+        --t-slow: 0.5s ease;
+
+        /* Fonts */
+        --font-ar: 'Tajawal', system-ui, sans-serif;
+        --font-en: 'Plus Jakarta Sans', system-ui, sans-serif;
       }
 
-      /* Base Styles */
-      * {
+      /* ==========================================
+         2. RESET & BASE
+         ========================================== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
       }
 
       body {
-        background-color: var(--color-black);
-        color: var(--color-white);
         font-family: var(--font-ar);
-        line-height: 1.6;
+        background: var(--bg-main);
+        color: var(--text-main);
+        line-height: 1.7;
+        min-height: 100vh;
         overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
+      a {
+        color: inherit;
+        text-decoration: none;
+        transition: color var(--t-fast);
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+        color: inherit;
+      }
+
+      ::selection {
+        background: var(--gold);
+        color: #000;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-main);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--gold-dark);
+        border-radius: var(--r-full);
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--gold);
+      }
+
+      /* ==========================================
+         3. LAYOUT HELPERS
+         ========================================== */
       .container {
-        max-width: 1280px;
+        width: 100%;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 0 2rem;
+        padding: 0 20px;
       }
 
-      /* Gold Gradient Text Utility */
-      .gold-text {
-        background: var(--gold-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        display: inline-block;
-      }
-
-      /* Headings & Section Styling */
-      h1,
-      h2,
-      h3,
-      h4 {
-        font-weight: 700;
+      .section {
+        padding: 80px 0;
       }
 
       .section-title {
-        font-size: 2rem;
-        margin-bottom: 2rem;
-        border-bottom: 1px solid var(--color-border-gray);
-        padding-bottom: 1rem;
+        font-size: clamp(1.6rem, 4vw, 2.4rem);
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 12px;
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .section-sub {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 1rem;
+        max-width: 600px;
+        margin: 0 auto 48px;
+      }
+
+      /* ==========================================
+         4. HEADER / NAVBAR
+         ========================================== */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(11, 11, 15, 0.85);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--border-soft);
+      }
+
+      .nav-inner {
         display: flex;
         align-items: center;
-        gap: 1rem;
+        justify-content: space-between;
+        height: 68px;
       }
 
-      .section-title span.step {
-        color: var(--color-metallic-gold);
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 900;
+        font-size: 1.25rem;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: var(--r-sm);
+        background: var(--grad-gold);
+        display: grid;
+        place-items: center;
         font-family: var(--font-en);
-        font-size: 1.2rem;
-        border: 1px solid var(--color-metallic-gold);
-        padding: 2px 10px;
-        border-radius: var(--radius-sm);
+        color: #000;
+        font-weight: 800;
+        box-shadow: var(--shadow-gold);
       }
 
-      section {
-        padding: 5rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      .brand-name {
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
-      /* Buttons Component */
+      .nav-links {
+        display: flex;
+        gap: 28px;
+        list-style: none;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+
+      .nav-links a {
+        color: var(--text-muted);
+        position: relative;
+      }
+
+      .nav-links a:hover {
+        color: var(--gold);
+      }
+
+      .nav-links a::after {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: -6px;
+        width: 0;
+        height: 2px;
+        background: var(--gold);
+        transition: width var(--t-med);
+      }
+
+      .nav-links a:hover::after {
+        width: 100%;
+      }
+
       .btn {
-        padding: 12px 28px;
-        border-radius: var(--radius-full);
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
+        padding: 12px 24px;
+        border-radius: var(--r-full);
+        font-weight: 700;
         font-size: 0.95rem;
-        border: none;
+        transition: all var(--t-med);
+        cursor: pointer;
+        white-space: nowrap;
       }
 
-      .btn-primary {
-        background: var(--gold-gradient);
-        color: var(--color-black);
-        box-shadow: var(--shadow-gold-glow);
+      .btn-gold {
+        background: var(--grad-gold);
+        color: #000;
+        box-shadow: var(--shadow-gold);
       }
 
-      .btn-primary:hover {
+      .btn-gold:hover {
         transform: translateY(-2px);
-        box-shadow: 0px 12px 35px rgba(212, 175, 55, 0.3);
+        box-shadow: 0 12px 40px rgba(212, 175, 55, 0.45);
       }
 
-      .btn-secondary {
+      .btn-ghost {
         background: transparent;
-        color: var(--color-white);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--gold);
+        border: 1.5px solid var(--border);
       }
 
-      .btn-secondary:hover {
-        border-color: var(--color-metallic-gold);
-        color: var(--color-metallic-gold);
+      .btn-ghost:hover {
+        background: rgba(212, 175, 55, 0.08);
+        border-color: var(--gold);
       }
 
-      /* UI Cards */
-      .card {
-        background: var(--color-dark-gray);
-        border: var(--border-subtle);
-        border-radius: var(--radius-md);
-        padding: 1.5rem;
-        transition: all 0.3s ease;
+      .menu-toggle {
+        display: none;
+        font-size: 1.5rem;
+        color: var(--gold);
       }
 
-      .card:hover {
-        border-color: rgba(212, 175, 55, 0.4);
-        transform: translateY(-4px);
-      }
-
-      /* Navigation Header */
-      header {
-        background: rgba(11, 11, 11, 0.8);
-        backdrop-filter: blur(20px);
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1000;
-        border-bottom: var(--border-subtle);
-      }
-
-      .nav-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        height: 80px;
-      }
-
-      /* Logo SVGs Inline Styling */
-      .svg-logo-icon {
-        width: 48px;
-        height: 48px;
-      }
-
-      /* Color Palette Grid */
-      .color-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .color-swatch {
-        border-radius: var(--radius-md);
+      /* ==========================================
+         5. HERO
+         ========================================== */
+      .hero {
+        position: relative;
+        padding: 100px 0 80px;
+        text-align: center;
         overflow: hidden;
-        border: var(--border-subtle);
       }
 
-      .color-box {
-        height: 100px;
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -200px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 700px;
+        height: 700px;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 65%);
+        pointer-events: none;
+        z-index: 0;
       }
 
-      .color-info {
-        padding: 1rem;
-        background: var(--color-dark-gray);
+      .hero-inner {
+        position: relative;
+        z-index: 1;
       }
 
-      /* App Icon Display Grid */
-      .app-icon-grid {
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--border);
+        border-radius: var(--r-full);
+        color: var(--gold-light);
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 24px;
+      }
+
+      .badge .dot {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 10px var(--success);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 6vw, 3.6rem);
+        font-weight: 900;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .hero h1 .highlight {
+        background: var(--grad-gold);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero p {
+        color: var(--text-muted);
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        max-width: 640px;
+        margin: 0 auto 36px;
+      }
+
+      .hero-cta {
         display: flex;
-        align-items: flex-end;
-        gap: 2rem;
+        gap: 14px;
+        justify-content: center;
         flex-wrap: wrap;
       }
 
-      .app-icon-item {
-        text-align: center;
-      }
-
-      .app-icon-box {
-        background: var(--color-black);
-        border: var(--border-gold-glow);
-        border-radius: 22%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 0.5rem;
-        box-shadow: var(--shadow-card);
-      }
-
-      /* Splash Screen Presentation */
-      .splash-mockup {
-        width: 320px;
-        height: 640px;
-        background: var(--color-black);
-        border: 8px solid var(--color-medium-gray);
-        border-radius: 40px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.8);
-        position: relative;
-      }
-
-      /* Dashboard & UI Components Showcase Grid */
-      .ui-grid {
+      .hero-stats {
         display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 1.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        max-width: 720px;
+        margin: 64px auto 0;
       }
 
-      .col-4 {
-        grid-column: span 4;
-      }
-      .col-6 {
-        grid-column: span 6;
-      }
-      .col-8 {
-        grid-column: span 8;
-      }
-      .col-12 {
-        grid-column: span 12;
+      .stat {
+        padding: 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-md);
+        transition: all var(--t-med);
       }
 
-      @media (max-width: 900px) {
-        .col-4,
-        .col-6,
-        .col-8 {
-          grid-column: span 12;
+      .stat:hover {
+        border-color: var(--border);
+        transform: translateY(-4px);
+      }
+
+      .stat-num {
+        font-family: var(--font-en);
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--gold);
+        display: block;
+      }
+
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      /* ==========================================
+         6. CATEGORIES GRID
+         ========================================== */
+      .categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        position: relative;
+        padding: 32px 24px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-soft);
+        border-radius: var(--r-lg);
+        transition: all var(--t-med);
+        overflow: hidden;
+      }
+
+      .card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: var(--grad-gold);
+        opacity: 0;
+        transition: opacity var(--t-med);
+        z-index: 0;
+      }
+
+      .card:hover {
+        transform: translateY(-6px);
+        border-color: var(--border);
+        box-shadow: var(--shadow-gold);
+      }
+
+      .card > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      .card-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--r-md);
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--border);
+        display: grid;
+        place-items: center;
+        font-size: 1.6rem;
+        margin-bottom: 18px;
+      }
+
+      .card h3 {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .card p {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+      }
+
+      /* ==========================================
+         7. CTA SECTION
+         ========================================== */
+      .cta {
+        text-align: center;
+        padding: 64px 32px;
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.02));
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+      }
+
+      .cta h2 {
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        font-weight: 900;
+        margin-bottom: 12px;
+      }
+
+      .cta p {
+        color: var(--text-muted);
+        margin-bottom: 28px;
+      }
+
+      /* ==========================================
+         8. FOOTER
+         ========================================== */
+      footer {
+        margin-top: 80px;
+        padding: 40px 0 32px;
+        border-top: 1px solid var(--border-soft);
+        text-align: center;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+      }
+
+      footer .brand {
+        justify-content: center;
+        margin-bottom: 12px;
+      }
+
+      /* ==========================================
+         9. RESPONSIVE
+         ========================================== */
+      @media (max-width: 768px) {
+        .nav-links {
+          display: none;
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        .nav-cta .btn {
+          padding: 10px 18px;
+          font-size: 0.85rem;
+        }
+
+        .hero {
+          padding: 60px 0 40px;
+        }
+
+        .hero-stats {
+          grid-template-columns: 1fr;
+          gap: 12px;
+          margin-top: 40px;
+        }
+
+        .section {
+          padding: 56px 0;
+        }
+
+        .cta {
+          padding: 48px 20px;
         }
       }
 
-      /* Input Bar */
-      .search-bar-ui {
-        background: var(--color-medium-gray);
-        border: var(--border-subtle);
-        border-radius: var(--radius-full);
-        padding: 8px 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .search-bar-ui input {
-        background: transparent;
-        border: none;
-        color: var(--color-white);
-        outline: none;
-        width: 100%;
-        font-family: var(--font-ar);
+      /* Reduced motion */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
+
   <body>
-    <!-- NAV HEADER -->
-    <header>
-      <div class="container nav-wrapper">
-        <div style="display: flex; align-items: center; gap: 12px">
-          <!-- Full Logo SVG Symbol -->
-          <svg class="svg-logo-icon" viewBox="0 0 100 100" fill="none">
-            <defs>
-              <linearGradient id="gold3d" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#F6D365" />
-                <stop offset="50%" stop-color="#D4AF37" />
-                <stop offset="100%" stop-color="#8A660E" />
-              </linearGradient>
-            </defs>
-            <rect width="100" height="100" rx="22" fill="#0B0B0B" />
-            <rect
-              width="100"
-              height="100"
-              rx="22"
-              stroke="url(#gold3d)"
-              stroke-width="2"
-              fill="none"
-              opacity="0.4"
-            />
-            <!-- Styled Modern Arabic Ha (ح) Icon -->
-            <path
-              d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40 C 40 40, 35 48, 35 48"
-              stroke="url(#gold3d)"
-              stroke-width="9"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              fill="none"
-            />
-            <circle cx="50" cy="55" r="4" fill="url(#gold3d)" />
-          </svg>
-          <div
-            style="
-              font-family: var(--font-en);
-              font-weight: 800;
-              font-size: 1.4rem;
-              letter-spacing: -0.5px;
-            "
-          >
-            Hkeeem <span class="gold-text">AI</span>
-          </div>
+    <!-- ========== NAVBAR ========== -->
+    <header class="navbar">
+      <div class="container nav-inner">
+        <a href="/" class="brand">
+          <span class="brand-mark">H</span>
+          <span class="brand-name">Hkeeem AI</span>
+        </a>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="#offers">العروض</a></li>
+            <li><a href="#realestate">العقارات</a></li>
+            <li><a href="#cars">السيارات</a></li>
+            <li><a href="#maps">الخرائط</a></li>
+          </ul>
+        </nav>
+
+        <div class="nav-cta">
+          <a href="/app" class="btn btn-gold">ابدأ الآن</a>
         </div>
-        <button class="btn btn-primary">تجربة المنصة</button>
       </div>
     </header>
 
-    <div style="height: 100px"></div>
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <span class="badge">
+          <span class="dot"></span>
+          منصة سعودية ذكية
+        </span>
 
-    <!-- MAIN SYSTEM Showcase -->
-    <div class="container">
-      <!-- HERO SECTION -->
-      <section style="text-align: center; padding: 4rem 0">
-        <div
-          style="
-            display: inline-block;
-            border: 1px solid var(--color-metallic-gold);
-            padding: 4px 16px;
-            border-radius: var(--radius-full);
-            font-size: 0.85rem;
-            margin-bottom: 1rem;
-          "
-          class="gold-text"
-        >
-          نظام الهوية البصرية الرسمية
-        </div>
-        <h1 style="font-size: 3rem; margin-bottom: 1rem">
-          حكيم <span class="gold-text">Hkeeem AI</span>
+        <h1>
+          كل العروض والكوبونات<br />
+          في <span class="highlight">مكان واحد</span>
         </h1>
-        <p style="color: var(--color-text-muted); max-width: 600px; margin: 0 auto">
-          المنصة الذكية القرارية الأولى للخدمات، العقارات، السيارات، والتسوق الفاخر بالمملكة العربية
-          السعودية.
+
+        <p>
+          حكيم AI يجمع لك أفضل العروض ومقارنة الأسعار للعقارات والسيارات والخرائط
+          بذكاء اصطناعي متقدم، لاتخاذ قرارك بثقة.
         </p>
-      </section>
 
-      <!-- STEP 1 & 2: LOGO CONCEPT & WORDMARK -->
-      <section id="logo-design">
-        <div class="section-title">
-          <span class="step">STEP 1 & 2</span>
-          <h2>الشعار والرمز اللفظي (Official Symbol & Wordmark)</h2>
-        </div>
-        <div
-          style="
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--color-dark-gray);
-            padding: 4rem;
-            border-radius: var(--radius-lg);
-            border: var(--border-subtle);
-            gap: 2rem;
-            flex-wrap: wrap;
-          "
-        >
-          <!-- Full Logo Display -->
-          <div style="display: flex; align-items: center; gap: 20px">
-            <svg width="90" height="90" viewBox="0 0 100 100" fill="none">
-              <rect width="100" height="100" rx="22" fill="#171717" />
-              <path
-                d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40 C 40 40, 35 48, 35 48"
-                stroke="url(#gold3d)"
-                stroke-width="8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                fill="none"
-              />
-              <circle cx="50" cy="55" r="4" fill="url(#gold3d)" />
-            </svg>
-            <div>
-              <div
-                style="
-                  font-family: var(--font-en);
-                  font-size: 2.5rem;
-                  font-weight: 800;
-                  line-height: 1;
-                  letter-spacing: -1px;
-                "
-              >
-                Hkeeem <span class="gold-text">AI</span>
-              </div>
-              <div
-                style="
-                  font-family: var(--font-ar);
-                  font-size: 1.2rem;
-                  color: var(--color-text-muted);
-                  margin-top: 4px;
-                  letter-spacing: 2px;
-                "
-              >
-                حــكــيــم
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 3: LOGO VERSIONS -->
-      <section id="logo-versions">
-        <div class="section-title">
-          <span class="step">STEP 3</span>
-          <h2>نسخ الشعار المعتمدة (Logo Versions)</h2>
-        </div>
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-          "
-        >
-          <!-- 1. Full Logo -->
-          <div class="card" style="text-align: center">
-            <h4 style="margin-bottom: 1rem; color: var(--color-text-muted)">
-              1. Full Logo (الكامل)
-            </h4>
-            <div style="font-family: var(--font-en); font-size: 1.8rem; font-weight: 700">
-              Hkeeem <span class="gold-text">AI</span>
-            </div>
-          </div>
-
-          <!-- 2. Horizontal Logo -->
-          <div
-            class="card"
-            style="display: flex; align-items: center; justify-content: center; gap: 10px"
-          >
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <rect width="100" height="100" rx="20" fill="#0B0B0B" />
-              <path
-                d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40"
-                stroke="#D4AF37"
-                stroke-width="9"
-                fill="none"
-              />
-            </svg>
-            <span style="font-family: var(--font-en); font-weight: 700; font-size: 1.2rem"
-              >Hkeeem <span class="gold-text">AI</span></span
-            >
-          </div>
-
-          <!-- 3. Vertical Logo -->
-          <div class="card" style="text-align: center">
-            <svg width="50" height="50" viewBox="0 0 100 100">
-              <rect width="100" height="100" rx="20" fill="#0B0B0B" />
-              <path
-                d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 40 40, 35 48, 35 48"
-                stroke="#D4AF37"
-                stroke-width="9"
-                fill="none"
-              />
-            </svg>
-            <div style="font-family: var(--font-en); font-weight: 700; margin-top: 5px">
-              Hkeeem <span class="gold-text">AI</span>
-            </div>
-          </div>
-
-          <!-- 4. Icon Only -->
-          <div class="card" style="text-align: center">
-            <h4 style="margin-bottom: 0.5rem; color: var(--color-text-muted)">
-              4. Icon Only (الرمز)
-            </h4>
-            <svg width="48" height="48" viewBox="0 0 100 100">
-              <rect width="100" height="100" rx="20" fill="#0B0B0B" />
-              <path
-                d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50"
-                stroke="#D4AF37"
-                stroke-width="9"
-                fill="none"
-              />
-            </svg>
-          </div>
-
-          <!-- 5. Dark Version -->
-          <div class="card" style="background: #000; text-align: center">
-            <h4 style="margin-bottom: 0.5rem; color: var(--color-text-muted)">5. Dark Version</h4>
-            <span style="font-family: var(--font-en); font-weight: 700; color: #fff"
-              >Hkeeem <span style="color: #d4af37">AI</span></span
-            >
-          </div>
-
-          <!-- 6. Light Version -->
-          <div class="card" style="background: #ffffff; color: #000; text-align: center">
-            <h4 style="margin-bottom: 0.5rem; color: #666">6. Light Version</h4>
-            <span style="font-family: var(--font-en); font-weight: 700; color: #0b0b0b"
-              >Hkeeem <span style="color: #d4af37">AI</span></span
-            >
-          </div>
-
-          <!-- 7. Monochrome Version -->
-          <div class="card" style="text-align: center; border: 1px solid #555">
-            <h4 style="margin-bottom: 0.5rem; color: var(--color-text-muted)">7. Monochrome</h4>
-            <span style="font-family: var(--font-en); font-weight: 700; color: #fff"
-              >Hkeeem AI</span
-            >
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 4: APP ICON -->
-      <section id="app-icon">
-        <div class="section-title">
-          <span class="step">STEP 4</span>
-          <h2>أيقونة التطبيق (App Icon Grid)</h2>
-        </div>
-        <div class="app-icon-grid">
-          <!-- 512px -->
-          <div class="app-icon-item">
-            <div class="app-icon-box" style="width: 140px; height: 140px">
-              <svg width="80" height="80" viewBox="0 0 100 100">
-                <path
-                  d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40 C 40 40, 35 48, 35 48"
-                  stroke="url(#gold3d)"
-                  stroke-width="9"
-                  stroke-linecap="round"
-                  fill="none"
-                />
-                <circle cx="50" cy="55" r="4" fill="url(#gold3d)" />
-              </svg>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted)">512x512 / 192x192</span>
-          </div>
-
-          <!-- 128px -->
-          <div class="app-icon-item">
-            <div class="app-icon-box" style="width: 90px; height: 90px">
-              <svg width="50" height="50" viewBox="0 0 100 100">
-                <path
-                  d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40"
-                  stroke="url(#gold3d)"
-                  stroke-width="10"
-                  stroke-linecap="round"
-                  fill="none"
-                />
-              </svg>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted)">128x128</span>
-          </div>
-
-          <!-- 64px -->
-          <div class="app-icon-item">
-            <div class="app-icon-box" style="width: 64px; height: 64px">
-              <svg width="36" height="36" viewBox="0 0 100 100">
-                <path
-                  d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50"
-                  stroke="#D4AF37"
-                  stroke-width="12"
-                  fill="none"
-                />
-              </svg>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted)">64x64</span>
-          </div>
-
-          <!-- 48px -->
-          <div class="app-icon-item">
-            <div class="app-icon-box" style="width: 48px; height: 48px">
-              <svg width="26" height="26" viewBox="0 0 100 100">
-                <path
-                  d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50"
-                  stroke="#D4AF37"
-                  stroke-width="14"
-                  fill="none"
-                />
-              </svg>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted)">48x48</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 5: SPLASH SCREEN -->
-      <section id="splash-screen">
-        <div class="section-title">
-          <span class="step">STEP 5</span>
-          <h2>شاشة البداية (Splash Screen)</h2>
-        </div>
-        <div class="splash-mockup">
-          <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 1.5rem">
-            <path
-              d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70 C 55 75, 70 65, 70 50 C 70 42, 60 40, 50 40 C 40 40, 35 48, 35 48"
-              stroke="url(#gold3d)"
-              stroke-width="8"
-              stroke-linecap="round"
-              fill="none"
-            />
-            <circle cx="50" cy="55" r="4" fill="url(#gold3d)" />
-          </svg>
-          <div
-            style="
-              font-family: var(--font-en);
-              font-size: 1.8rem;
-              font-weight: 800;
-              margin-bottom: 1rem;
-            "
-          >
-            Hkeeem <span class="gold-text">AI</span>
-          </div>
-          <div
-            style="
-              font-size: 1.1rem;
-              font-weight: 500;
-              color: var(--color-text-muted);
-              line-height: 1.8;
-            "
-          >
-            تسوق أذكى...<br />
-            <span style="color: var(--color-white); font-weight: 700">وفر أكثر...</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 6: FAVICON -->
-      <section id="favicon">
-        <div class="section-title">
-          <span class="step">STEP 6</span>
-          <h2>أيقونة المفضلة للمتصفح (Favicon SVG / ICO)</h2>
-        </div>
-        <div style="display: flex; gap: 2rem; align-items: center">
-          <div
-            style="
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              background: var(--color-medium-gray);
-              padding: 8px 16px;
-              border-radius: 8px 8px 0 0;
-              width: 250px;
-            "
-          >
-            <svg width="16" height="16" viewBox="0 0 100 100">
-              <rect width="100" height="100" rx="20" fill="#0B0B0B" />
-              <path
-                d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70"
-                stroke="#D4AF37"
-                stroke-width="14"
-                fill="none"
-              />
-            </svg>
-            <span style="font-size: 0.8rem; font-family: var(--font-en)"
-              >Hkeeem AI - Smart Platform</span
-            >
-          </div>
-          <span style="color: var(--color-text-muted); font-size: 0.9rem"
-            >(معاينة ظهور الـ Favicon بحجم 16x16 داخل تبويب المتصفح)</span
-          >
-        </div>
-      </section>
-
-      <!-- STEP 7: BRAND GUIDE -->
-      <section id="brand-guide">
-        <div class="section-title">
-          <span class="step">STEP 7</span>
-          <h2>دليل العلامة التجارية (Brand Style Guide)</h2>
+        <div class="hero-cta">
+          <a href="/app" class="btn btn-gold">تصفح العروض</a>
+          <a href="#about" class="btn btn-ghost">اعرف المزيد</a>
         </div>
 
-        <!-- Colors -->
-        <h3 style="margin-bottom: 1rem; color: var(--color-metallic-gold)">
-          1. الألوان (Color Palette)
-        </h3>
-        <div class="color-grid" style="margin-bottom: 3rem">
-          <div class="color-swatch">
-            <div class="color-box" style="background: #0b0b0b"></div>
-            <div class="color-info">
-              <strong>Luxury Black</strong>
-              <p>#0B0B0B</p>
-            </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num">+50K</span>
+            <span class="stat-label">عرض وكوبون</span>
           </div>
-          <div class="color-swatch">
-            <div class="color-box" style="background: #171717"></div>
-            <div class="color-info">
-              <strong>Dark Gray</strong>
-              <p>#171717</p>
-            </div>
+          <div class="stat">
+            <span class="stat-num">+1,200</span>
+            <span class="stat-label">متجر شريك</span>
           </div>
-          <div class="color-swatch">
-            <div class="color-box" style="background: #d4af37"></div>
-            <div class="color-info">
-              <strong>Metallic Gold</strong>
-              <p>#D4AF37</p>
-            </div>
-          </div>
-          <div class="color-swatch">
-            <div class="color-box" style="background: #f6d365"></div>
-            <div class="color-info">
-              <strong>Light Gold</strong>
-              <p>#F6D365</p>
-            </div>
-          </div>
-          <div class="color-swatch">
-            <div class="color-box" style="background: #ffffff"></div>
-            <div class="color-info" style="color: #000">
-              <strong>Pure White</strong>
-              <p>#FFFFFF</p>
-            </div>
+          <div class="stat">
+            <span class="stat-num">24/7</span>
+            <span class="stat-label">تحديث ذكي</span>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Typography & System -->
-        <h3 style="margin-bottom: 1rem; color: var(--color-metallic-gold)">
-          2. الخطوط والمسافات (Typography & Grid)
-        </h3>
-        <div class="ui-grid">
-          <div class="card col-6">
-            <p style="color: var(--color-text-muted); font-size: 0.9rem">الخط العربي الرسمي</p>
-            <h2 style="font-family: &quot;Tajawal&quot;; font-size: 2rem">Tajawal (تجوال)</h2>
-            <p>أبجد هوز حطي كلمن سعفص قرشت - القرارات الاقتصادية الذكية</p>
-          </div>
-          <div class="card col-6">
-            <p style="color: var(--color-text-muted); font-size: 0.9rem">English Primary Font</p>
-            <h2 style="font-family: &quot;Plus Jakarta Sans&quot;; font-size: 2rem">
-              Plus Jakarta Sans
-            </h2>
-            <p>The Future of AI-Driven Economic Decisions</p>
-          </div>
+    <!-- ========== CATEGORIES ========== -->
+    <section class="section" id="offers">
+      <div class="container">
+        <h2 class="section-title">أقسام المنصة</h2>
+        <p class="section-sub">
+          اختر القسم الذي يهمك، ودع الذكاء الاصطناعي يجد لك أفضل الخيارات.
+        </p>
+
+        <div class="categories">
+          <a href="#offers" class="card">
+            <div class="card-icon">🎁</div>
+            <h3>العروض والكوبونات</h3>
+            <p>كوبونات خصم فعّالة ومحدّثة يومياً من أشهر المتاجر السعودية والعالمية.</p>
+          </a>
+
+          <a href="#realestate" class="card">
+            <div class="card-icon">🏠</div>
+            <h3>العقارات</h3>
+            <p>مقارنة أسعار العقارات والفلل والشقق حسب الموقع والمساحة والسعر.</p>
+          </a>
+
+          <a href="#cars" class="card">
+            <div class="card-icon">🚗</div>
+            <h3>السيارات</h3>
+            <p>مقارنة مواصفات وأسعار السيارات الجديدة والمستعملة بذكاء.</p>
+          </a>
+
+          <a href="#maps" class="card">
+            <div class="card-icon">🗺️</div>
+            <h3>الخرائط الذكية</h3>
+            <p>اكتشف الخدمات والمرافق القريبة منك مع تقييمات حقيقية.</p>
+          </a>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- STEP 8: UI DESIGN SYSTEM & COMPONENTS -->
-      <section id="ui-design">
-        <div class="section-title">
-          <span class="step">STEP 8</span>
-          <h2>واجهات المستخدم الذكية (UI System Components)</h2>
+    <!-- ========== CTA ========== -->
+    <section class="section">
+      <div class="container">
+        <div class="cta">
+          <h2>جاهز لتوفير أكثر؟</h2>
+          <p>انضم إلى آلاف المستخدمين الذين يوفّرون يومياً مع حكيم AI.</p>
+          <a href="/app" class="btn btn-gold">ابدأ مجاناً الآن</a>
         </div>
+      </div>
+    </section>
 
-        <!-- Dashboard Components Layout -->
-        <div class="ui-grid">
-          <!-- Search & AI Bar -->
-          <div class="card col-12">
-            <div style="margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--color-text-muted)">
-              مُحرك بحث حكيم الذكي (AI Search)
-            </div>
-            <div class="search-bar-ui">
-              <svg
-                width="20"
-                height="20"
-                fill="none"
-                stroke="#D4AF37"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="M21 21l-4.35-4.35" />
-              </svg>
-              <input
-                type="text"
-                placeholder="اسأل حكيم: قارن لي أفضل أسعار السيارات أو العقارات اليوم في الرياض..."
-              />
-              <button class="btn btn-primary" style="padding: 8px 20px">ابحث بحكمة</button>
-            </div>
-          </div>
-
-          <!-- Real Estate Card -->
-          <div class="card col-4">
-            <div
-              style="
-                background: #222;
-                height: 140px;
-                border-radius: 12px;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #555;
-              "
-            >
-              [ صورة العقار ]
-            </div>
-            <span
-              style="
-                background: rgba(212, 175, 55, 0.2);
-                color: var(--color-metallic-gold);
-                padding: 2px 10px;
-                border-radius: 4px;
-                font-size: 0.75rem;
-              "
-              >عقارات فاخرة</span
-            >
-            <h4 style="margin-top: 0.5rem">فيلا مودرن - حطين، الرياض</h4>
-            <p style="color: var(--color-text-muted); font-size: 0.9rem">
-              تحليل الذكاء الاصطناعي: السعر أقل من متوسط السوق بـ 8%
-            </p>
-            <div style="margin-top: 1rem; font-weight: 700; font-size: 1.2rem" class="gold-text">
-              4,200,000 ر.س
-            </div>
-          </div>
-
-          <!-- Cars Card -->
-          <div class="card col-4">
-            <div
-              style="
-                background: #222;
-                height: 140px;
-                border-radius: 12px;
-                margin-bottom: 1rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #555;
-              "
-            >
-              [ صورة السيارة ]
-            </div>
-            <span
-              style="
-                background: rgba(212, 175, 55, 0.2);
-                color: var(--color-metallic-gold);
-                padding: 2px 10px;
-                border-radius: 4px;
-                font-size: 0.75rem;
-              "
-              >سيارات</span
-            >
-            <h4 style="margin-top: 0.5rem">Lucid Air Sapphire 2026</h4>
-            <p style="color: var(--color-text-muted); font-size: 0.9rem">
-              أفضل عرض تمويل متوافق مع الشريعة متوفر الآن
-            </p>
-            <div style="margin-top: 1rem; font-weight: 700; font-size: 1.2rem" class="gold-text">
-              890,000 ر.س
-            </div>
-          </div>
-
-          <!-- AI Assistant Box -->
-          <div
-            class="card col-4"
-            style="
-              border: var(--border-gold-glow);
-              background: linear-gradient(180deg, #171717 0%, #0b0b0b 100%);
-            "
-          >
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem">
-              <svg width="30" height="30" viewBox="0 0 100 100">
-                <rect width="100" height="100" rx="20" fill="#0B0B0B" />
-                <path
-                  d="M 65 30 C 50 30, 35 35, 30 45 C 25 55, 30 65, 40 70"
-                  stroke="#D4AF37"
-                  stroke-width="12"
-                  fill="none"
-                />
-              </svg>
-              <strong>مساعد حكيم الشخصي</strong>
-            </div>
-            <p style="font-size: 0.9rem; color: #ddd">
-              "بناءً على سلوكك الشرائي، يمكنك توفير 1,450 ر.س هذا الشهر عند استخدام كود الخصم المتاح
-              لمتجر..."
-            </p>
-            <button
-              class="btn btn-secondary"
-              style="width: 100%; margin-top: 1.5rem; font-size: 0.85rem"
-            >
-              بدء المحادثة الذكية
-            </button>
-          </div>
+    <!-- ========== FOOTER ========== -->
+    <footer>
+      <div class="container">
+        <div class="brand">
+          <span class="brand-mark">H</span>
+          <span class="brand-name">Hkeeem AI</span>
         </div>
-      </section>
-    </div>
-
-    <!-- FOOTER -->
-    <footer
-      style="
-        text-align: center;
-        padding: 3rem 0;
-        color: var(--color-text-muted);
-        font-size: 0.85rem;
-        border-top: var(--border-subtle);
-      "
-    >
-      <p>© 2026 Hkeeem AI (حكيم). جميع الحقوق محفوظة. نظام الهوية البصرية الفاخرة.</p>
+        <p>© <span id="year"></span> Hkeeem AI — جميع الحقوق محفوظة.</p>
+      </div>
     </footer>
+
+    <script>
+      document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
