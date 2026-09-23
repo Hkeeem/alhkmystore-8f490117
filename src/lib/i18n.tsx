@@ -83,15 +83,9 @@ export const dict = {
     en: "Over 65 Saudi stores",
   },
   "pillar.realEstate": { ar: "عقارات", en: "Real Estate" },
-  "pillar.realEstateNote": {
-    ar: "بيع وشراء وإيجار",
-    en: "Buy, sell & rent",
-  },
+  "pillar.realEstateNote": { ar: "بيع وشراء وإيجار", en: "Buy, sell & rent" },
   "pillar.maps": { ar: "الخريطة", en: "Map" },
-  "pillar.mapsNote": {
-    ar: "أقرب المتاجر إليك",
-    en: "Nearest stores to you",
-  },
+  "pillar.mapsNote": { ar: "أقرب المتاجر إليك", en: "Nearest stores to you" },
   "pillar.assistant": { ar: "مساعد حكيم AI", en: "Hakeem AI Assistant" },
   "pillar.assistantNote": {
     ar: "اسأل عن أي منتج أو عرض",
@@ -277,14 +271,11 @@ export const dict = {
   "chat.thinking": { ar: "يفكّر…", en: "Thinking…" },
 
   /* ── Footer ─────────────────────────────────────────── */
-  "footer.rights": {
-    ar: "جميع الحقوق محفوظة",
-    en: "All rights reserved",
-  },
+  "footer.rights": { ar: "جميع الحقوق محفوظة", en: "All rights reserved" },
   "footer.about": { ar: "عن حكيم", en: "About Hakeem" },
   "footer.contact": { ar: "تواصل معنا", en: "Contact us" },
-  "footer.privacy": { ar: "سياسة الخصوصية", en: "Privacy policy" },
-  "footer.terms": { ar: "الشروط والأحكام", en: "Terms & conditions" },
+  "footer.privacy": { ar: "سياسة الخصوصية", en: "Privacy Policy" },
+  "footer.terms": { ar: "الشروط والأحكام", en: "Terms & Conditions" },
 } as const satisfies Record<string, DictEntry>;
 
 export type DictKey = keyof typeof dict;
@@ -292,7 +283,7 @@ export type DictKey = keyof typeof dict;
 /* ─────────────────────────────────────────────────────────
    3) الـ Context
    ───────────────────────────────────────────────────────── */
-type I18nContextValue = {
+export type I18nContextValue = {
   lang: Lang;
   dir: Dir;
   t: (key: DictKey) => string;
@@ -314,7 +305,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const dir: Dir = lang === "ar" ? "rtl" : "ltr";
 
-  // حفظ اللغة + تحديث <html lang & dir> عند كل تغيير
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.lang = lang;
@@ -363,7 +353,13 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 export function useI18n(): I18nContextValue {
   const ctx = useContext(I18nContext);
   if (!ctx) {
-    throw new Error("useI18n must be used inside <I18nProvider>");
+    throw new Error("useI18n must be used inside <I18nProvider> / <LanguageProvider>");
   }
   return ctx;
 }
+
+/* ─────────────────────────────────────────────────────────
+   6) Aliases للتوافق مع الكود القديم
+   ───────────────────────────────────────────────────────── */
+export const LanguageProvider = I18nProvider;
+export type LanguageContextValue = I18nContextValue;
