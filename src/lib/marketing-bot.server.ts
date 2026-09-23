@@ -255,10 +255,10 @@ async function publishStore(
     const db = await admin();
     const { data: subs } = await db
       .from("push_subscriptions")
-      .select("endpoint, p256dh, auth")
+      .select("id, endpoint, p256dh, auth")
       .lt("failure_count", 5)
       .limit(500);
-    const list = (subs ?? []) as { endpoint: string; p256dh: string; auth: string }[];
+    const list = (subs ?? []) as { id: string; endpoint: string; p256dh: string; auth: string }[];
     if (!list.length) return { status: "pending", error: "لا يوجد مشتركون في الإشعارات" };
 
     const { sendPushBatch } = await import("@/lib/push.server");

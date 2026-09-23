@@ -64,6 +64,7 @@ import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 
 type Tab =
   | "dashboard"
+  | "partner-coupons"
   | "complaints"
   | "suggestions"
   | "users"
