@@ -85,3 +85,19 @@ export function trackCouponClick(input: {
     /* تجاهل */
   }
 }
+
+/** تسجيل نقرة على عقار */
+export function trackPropertyClick(input: { id: string; title?: string; city?: string }) {
+  if (typeof window === "undefined" || !input.id) return;
+  void recordOfferClick({
+    data: {
+      kind: "property",
+      offerId: input.id,
+      offerTitle: input.title,
+      storeName: input.city,
+      surface: "home",
+      session: sessionId(),
+      path: window.location.pathname,
+    },
+  }).catch(() => {});
+}
