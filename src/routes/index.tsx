@@ -213,6 +213,10 @@ function Home() {
         <LiveListings />
       </LazySection>
 
+      <LazySection minHeight={380}>
+        <CarOffersSection />
+      </LazySection>
+
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
       {top.length > 0 && (
         <LazySection minHeight={520}>
