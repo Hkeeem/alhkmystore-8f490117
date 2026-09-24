@@ -7,6 +7,7 @@ import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
 import { AIStackSection } from "@/components/AIStackSection";
 import { LiveListings } from "@/components/real-estate/LiveListings";
+import { CarOffersSection } from "@/components/cars/CarOffersSection";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { liveComparableGroups } from "@/lib/compare-groups";
 import { VAT_NOTE } from "@/lib/vat";
@@ -210,6 +211,10 @@ function Home() {
 
       <LazySection minHeight={420}>
         <LiveListings />
+      </LazySection>
+
+      <LazySection minHeight={380}>
+        <CarOffersSection />
       </LazySection>
 
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
