@@ -58,7 +58,7 @@ const AI_LOGOS: AiLogo[] = [
   },
   {
     name: "DeepSeek",
-    href: "https://www.deepseek.com",
+    href: "https://chat.deepseek.com",
     viewBox: "0 0 24 24",
     paths: (
       <>
@@ -68,7 +68,7 @@ const AI_LOGOS: AiLogo[] = [
   },
   {
     name: "Grok",
-    href: "https://grok.com",
+    href: "https://grok.x.com",
     viewBox: "0 0 24 24",
     paths: (
       <>
