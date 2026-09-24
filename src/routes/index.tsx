@@ -6,6 +6,7 @@ import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
 import { AIStackSection } from "@/components/AIStackSection";
+import { LiveListings } from "@/components/real-estate/LiveListings";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { liveComparableGroups } from "@/lib/compare-groups";
 import { VAT_NOTE } from "@/lib/vat";
@@ -205,6 +206,10 @@ function Home() {
       {/* عروض حية من قاعدة البيانات — أول شيء يشوفه المستهلك */}
       <LazySection minHeight={300}>
         <OffersSection />
+      </LazySection>
+
+      <LazySection minHeight={420}>
+        <LiveListings />
       </LazySection>
 
       {/* Best deals — تُعرض فقط عند توفر عروض حقيقية */}
