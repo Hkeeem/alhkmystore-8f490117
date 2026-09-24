@@ -38,7 +38,7 @@ const AI_LOGOS: AiLogo[] = [
   },
   {
     name: "Gemini",
-    href: "https://gemini.google.com",
+    href: "https://deepmind.google/models/gemini/",
     viewBox: "0 0 24 24",
     paths: (
       <>
