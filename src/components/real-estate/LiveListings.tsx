@@ -1,3 +1,4 @@
+import { trackPropertyClick } from "@/lib/track-deal";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BedDouble, Building2, Loader2, MapPin, RefreshCw, WalletCards } from "lucide-react";
@@ -124,7 +125,10 @@ export function LiveListings() {
             <li key={l.id}>
               <button
                 type="button"
-                onClick={() => setSelected(l)}
+                onClick={() => {
+                  setSelected(l);
+                  trackPropertyClick({ id: l.id, title: l.title, city: l.city });
+                }}
                 className={`w-full rounded-2xl border p-3 text-right transition ${selected?.id === l.id ? "border-primary bg-primary/5" : "border-border/60 hover:border-primary/50"}`}
               >
                 <div className="flex items-start justify-between gap-3">

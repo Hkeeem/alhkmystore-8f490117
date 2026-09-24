@@ -61,10 +61,12 @@ import { SavedFiltersBar } from "@/components/admin/SavedFiltersBar";
 import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 import { BotsPanel } from "@/components/admin/BotsPanel";
 import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
+import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 
 type Tab =
   | "dashboard"
   | "partner-coupons"
+  | "offer-clicks"
   | "complaints"
   | "suggestions"
   | "users"
@@ -190,6 +192,12 @@ function AdminPage() {
       icon: Tags,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    {
+      id: "offer-clicks" as const,
+      label: "نقرات العروض",
+      icon: Tags,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -242,6 +250,7 @@ function AdminPage() {
           {tab === "showroom" && <ShowroomAdminPanel />}
           {tab === "bots" && <BotsPanel />}
           {tab === "partner-coupons" && <PartnerCouponsPanel />}
+          {tab === "offer-clicks" && <OfferClicksPanel />}
         </main>
       </div>
     </div>
