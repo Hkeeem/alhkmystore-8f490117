@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AIStackSection } from "@/components/AIStackSection";
-import { LazySection } from "@/components/LazySection";
-import { useI18n } from "@/lib/i18n";
+
 import {
   Sparkles,
   Ticket,
