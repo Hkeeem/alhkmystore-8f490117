@@ -59,6 +59,8 @@ const items = [
   { to: "/", key: "nav.home", icon: Home },
   { to: "/deals", key: "nav.deals", icon: Tag },
   { to: "/coupons", key: "nav.coupons", icon: Ticket },
+  { to: "/cars", key: "item.cars", icon: Car },
+  { to: "/real-estate", key: "item.realEstate", icon: Building2 },
   { to: "/maps", key: "nav.maps", icon: Map },
   { to: "/smart-list", key: "nav.list", icon: ListChecks },
   { to: "/rewards", key: "nav.rewards", icon: Trophy },
@@ -79,7 +81,6 @@ const groups: Group[] = [
       { to: "/deals", key: "item.deals", icon: Tag },
       { to: "/coupons", key: "item.coupons", icon: Ticket },
       { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
-      { to: "/cars", key: "item.cars", icon: Car, badgeKey: "nav.new" },
     ],
   },
   {
@@ -95,7 +96,6 @@ const groups: Group[] = [
     icon: Building2,
     items: [
       { to: "/office", key: "item.office", icon: Building2, badgeKey: "nav.new" },
-      { to: "/real-estate", key: "item.realEstate", icon: Building2 },
     ],
   },
   {
