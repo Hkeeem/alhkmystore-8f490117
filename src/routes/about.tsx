@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AIStackSection } from "@/components/AIStackSection";
+import { LazySection } from "@/components/LazySection";
+
 
 import {
   Sparkles,
@@ -62,9 +64,8 @@ const highlights: { icon: LucideIcon; title: string; note: string; tone: string 
 ];
 
 function AboutPage() {
-  const { t } = useI18n();
-
   return (
+
     <main className="min-h-screen pb-24" dir="rtl">
       {/* Hero */}
       <section className="relative overflow-hidden bg-gradient-to-b from-primary/20 via-background to-background">
@@ -92,11 +93,13 @@ function AboutPage() {
             </Link>
             <Link
               to="/chat"
+              search={{ q: "" }}
               className="inline-flex items-center gap-2 bg-card border border-border font-bold text-sm rounded-full px-6 py-3 hover:bg-muted/50 transition-colors"
             >
               <Bot className="w-4 h-4 text-primary" />
               اسأل الحكيم
             </Link>
+
           </div>
         </div>
       </section>
