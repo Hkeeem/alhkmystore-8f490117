@@ -39,6 +39,7 @@ import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as AffiliateSetupRouteImport } from './routes/affiliate-setup'
 import { Route as AdsRouteImport } from './routes/ads'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
@@ -228,6 +229,11 @@ const AffiliateSetupRoute = AffiliateSetupRouteImport.update({
 const AdsRoute = AdsRouteImport.update({
   id: '/ads',
   path: '/ads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -448,6 +454,7 @@ const ApiPublicGoDealIdRoute = ApiPublicGoDealIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -519,6 +526,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -592,6 +600,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/ads': typeof AdsRoute
   '/affiliate-setup': typeof AffiliateSetupRoute
   '/agents': typeof AgentsRoute
@@ -665,6 +674,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -736,6 +746,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -808,6 +819,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/ads'
     | '/affiliate-setup'
     | '/agents'
@@ -881,6 +893,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AdsRoute: typeof AdsRoute
   AffiliateSetupRoute: typeof AffiliateSetupRoute
   AgentsRoute: typeof AgentsRoute
@@ -1146,6 +1159,13 @@ declare module '@tanstack/react-router' {
       path: '/ads'
       fullPath: '/ads'
       preLoaderRoute: typeof AdsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1499,6 +1519,7 @@ const RewardsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AdsRoute: AdsRoute,
   AffiliateSetupRoute: AffiliateSetupRoute,
   AgentsRoute: AgentsRoute,
