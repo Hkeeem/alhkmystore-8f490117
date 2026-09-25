@@ -67,6 +67,7 @@ type Tab =
   | "dashboard"
   | "partner-coupons"
   | "offer-clicks"
+  | "coupon-clicks"
   | "complaints"
   | "suggestions"
   | "users"
@@ -198,6 +199,12 @@ function AdminPage() {
       icon: Tags,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    {
+      id: "coupon-clicks" as const,
+      label: "نقرات الكوبونات",
+      icon: Tags,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -251,6 +258,7 @@ function AdminPage() {
           {tab === "bots" && <BotsPanel />}
           {tab === "partner-coupons" && <PartnerCouponsPanel />}
           {tab === "offer-clicks" && <OfferClicksPanel />}
+          {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
         </main>
       </div>
     </div>
