@@ -56,6 +56,8 @@ export const dict = {
   "item.affiliate": { ar: "ربط أمازون ونون", en: "Amazon & noon setup" },
   "item.agents": { ar: "وكلاء حكيم", en: "Hkeeem agents" },
   "item.settings": { ar: "تخصيص المظهر", en: "Appearance" },
+  "item.about": { ar: "من نحن", en: "About us" },
+
   "item.syncLog": { ar: "سجل المزامنة", en: "Sync log" },
   "item.admin": { ar: "لوحة التحكم", en: "Admin dashboard" },
   "item.pro": { ar: "حكيم برو", en: "Hkeeem Pro" },
