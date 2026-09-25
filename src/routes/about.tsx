@@ -93,7 +93,7 @@ function AboutPage() {
             </Link>
             <Link
               to="/chat"
-              search={{ q: "" }}
+              search={{ q: "ما أفضل عروض وكوبونات اليوم؟" }}
               className="inline-flex items-center gap-2 bg-card border border-border font-bold text-sm rounded-full px-6 py-3 hover:bg-muted/50 transition-colors"
             >
               <Bot className="w-4 h-4 text-primary" />
