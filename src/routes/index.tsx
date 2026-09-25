@@ -5,7 +5,6 @@ import { DealCard } from "@/components/DealCard";
 import { IntroVideo } from "@/components/IntroVideo";
 import { LazySection } from "@/components/LazySection";
 import { OffersSection } from "@/components/OffersSection";
-import { AIStackSection } from "@/components/AIStackSection";
 import { useRealDeals } from "@/hooks/use-real-deals";
 import { liveComparableGroups } from "@/lib/compare-groups";
 import { VAT_NOTE } from "@/lib/vat";
@@ -450,10 +449,6 @@ function Home() {
         </section>
       </LazySection>
 
-      {/* أدوات الذكاء الاصطناعي التي بُني بها المشروع — أيقونات فقط */}
-      <LazySection minHeight={140}>
-        <AIStackSection className="pb-10" />
-      </LazySection>
     </main>
   );
 }
