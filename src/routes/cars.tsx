@@ -331,11 +331,13 @@ function CarsPage() {
                     <SpecItem icon={<Calendar className="w-3.5 h-3.5" />} label="الموديل" value={String(car.year)} />
                     <SpecItem icon={<Fuel className="w-3.5 h-3.5" />} label="الوقود" value={car.fuel} />
                     <SpecItem icon={<Settings2 className="w-3.5 h-3.5" />} label="ناقل الحركة" value={car.transmission} />
-                    <SpecItem
-                      icon={<Gauge className="w-3.5 h-3.5" />}
-                      label="الممشى"
-                      value={car.mileage_km > 0 ? `${car.mileage_km.toLocaleString("ar-SA")} كم` : "0 كم"}
-                    />
+                    {car.mileage_km > 0 && (
+                      <SpecItem
+                        icon={<Gauge className="w-3.5 h-3.5" />}
+                        label="الممشى"
+                        value={`${car.mileage_km.toLocaleString("ar-SA")} كم`}
+                      />
+                    )}
                   </div>
 
                   {/* تفاصيل إضافية */}
