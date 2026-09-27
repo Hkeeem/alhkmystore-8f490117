@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { trackPropertyClick } from "@/lib/track-deal";
 import { LiveListings } from "@/components/real-estate/LiveListings";
 import { supabase } from "@/integrations/supabase/client";
 import { getSaudiCities, getSaudiDistricts, SAUDI_REGIONS } from "@/data/saudi-locations";
@@ -497,6 +498,13 @@ function BuyerMatchCard({ match, property }: { match: BuyerMatch; property: Prop
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() =>
+            trackPropertyClick({
+              id: match.id,
+              title: `${property.propertyType} · ${property.district}`,
+              city: property.city,
+            })
+          }
           className="mt-4 flex h-11 items-center justify-center gap-2 rounded-2xl bg-emerald-600 text-sm font-black text-white transition-colors hover:bg-emerald-700"
         >
           <MessageCircle className="h-4 w-4" /> تواصل عبر واتساب

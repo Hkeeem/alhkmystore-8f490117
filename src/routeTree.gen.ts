@@ -50,6 +50,7 @@ import { Route as HkeeemChatRouteImport } from './routes/hkeeem.chat'
 import { Route as DealsPandaVsOthaimComparisonRouteImport } from './routes/deals.panda-vs-othaim-comparison'
 import { Route as DealsIdRouteImport } from './routes/deals.$id'
 import { Route as CouponsIdRouteImport } from './routes/coupons.$id'
+import { Route as CarsIdRouteImport } from './routes/cars_.$id'
 import { Route as ApiTtsRouteImport } from './routes/api/tts'
 import { Route as ApiSttRouteImport } from './routes/api/stt'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -286,6 +287,11 @@ const CouponsIdRoute = CouponsIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CouponsRoute,
 } as any)
+const CarsIdRoute = CarsIdRouteImport.update({
+  id: '/cars_/$id',
+  path: '/cars/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiTtsRoute = ApiTtsRouteImport.update({
   id: '/api/tts',
   path: '/api/tts',
@@ -499,6 +505,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/cars/$id': typeof CarsIdRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
@@ -571,6 +578,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/cars/$id': typeof CarsIdRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
@@ -645,6 +653,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/api/stt': typeof ApiSttRoute
   '/api/tts': typeof ApiTtsRoute
+  '/cars_/$id': typeof CarsIdRoute
   '/coupons/$id': typeof CouponsIdRoute
   '/deals/$id': typeof DealsIdRoute
   '/deals/panda-vs-othaim-comparison': typeof DealsPandaVsOthaimComparisonRoute
@@ -719,6 +728,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/cars/$id'
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
@@ -791,6 +801,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/cars/$id'
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
@@ -864,6 +875,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/api/stt'
     | '/api/tts'
+    | '/cars_/$id'
     | '/coupons/$id'
     | '/deals/$id'
     | '/deals/panda-vs-othaim-comparison'
@@ -927,6 +939,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
+  CarsIdRoute: typeof CarsIdRoute
   HkeeemChatRoute: typeof HkeeemChatRoute
   HkeeemNearbyRoute: typeof HkeeemNearbyRoute
   HkeeemProductRoute: typeof HkeeemProductRoute
@@ -1237,6 +1250,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/coupons/$id'
       preLoaderRoute: typeof CouponsIdRouteImport
       parentRoute: typeof CouponsRoute
+    }
+    '/cars_/$id': {
+      id: '/cars_/$id'
+      path: '/cars/$id'
+      fullPath: '/cars/$id'
+      preLoaderRoute: typeof CarsIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/tts': {
       id: '/api/tts'
@@ -1553,6 +1573,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
+  CarsIdRoute: CarsIdRoute,
   HkeeemChatRoute: HkeeemChatRoute,
   HkeeemNearbyRoute: HkeeemNearbyRoute,
   HkeeemProductRoute: HkeeemProductRoute,

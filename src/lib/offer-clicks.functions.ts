@@ -16,7 +16,7 @@ export const recordOfferClick = createServerFn({ method: "POST" })
     const surface = clean(d.surface, 24) || "list";
     const kind = clean(d.kind, 16) || "offer";
     return {
-      kind: ["offer", "coupon", "property"].includes(kind) ? kind : "offer",
+      kind: ["offer", "coupon", "property", "car"].includes(kind) ? kind : "offer",
       offerId: clean(d.offerId, 80),
       offerTitle: clean(d.offerTitle, 200),
       storeId: clean(d.storeId, 80),
