@@ -22,9 +22,9 @@ const RANGES = [
   { d: 90, label: "90 يوم" },
 ];
 
-const KIND_LABEL: Record<string, string> = { offer: "عرض", coupon: "كوبون", property: "عقار" };
+const KIND_LABEL: Record<string, string> = { offer: "عرض", coupon: "كوبون", property: "عقار", car: "سيارة" };
 
-export function OfferClicksPanel({ kind }: { kind?: "offer" | "coupon" | "property" }) {
+export function OfferClicksPanel({ kind }: { kind?: "offer" | "coupon" | "property" | "car" }) {
   const [days, setDays] = useState(7);
   const [filter, setFilter] = useState<string>(kind ?? "all");
   const qc = useQueryClient();
@@ -70,7 +70,7 @@ export function OfferClicksPanel({ kind }: { kind?: "offer" | "coupon" | "proper
   )
     .sort((a, b) => b.n - a.n)
     .slice(0, 10);
-  const counts = { offer: 0, coupon: 0, property: 0 } as Record<string, number>;
+  const counts = { offer: 0, coupon: 0, property: 0, car: 0 } as Record<string, number>;
   rows.forEach((r) => (counts[r.kind] = (counts[r.kind] ?? 0) + 1));
 
   return (
@@ -98,7 +98,7 @@ export function OfferClicksPanel({ kind }: { kind?: "offer" | "coupon" | "proper
 
       {!kind && (
         <div className="flex gap-1">
-          {["all", "offer", "coupon", "property"].map((k) => (
+          {["all", "offer", "coupon", "property", "car"].map((k) => (
             <button
               key={k}
               onClick={() => setFilter(k)}
@@ -110,11 +110,12 @@ export function OfferClicksPanel({ kind }: { kind?: "offer" | "coupon" | "proper
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         <Stat label="إجمالي النقرات" v={rows.length} />
         <Stat label="العروض" v={counts.offer} />
         <Stat label="الكوبونات" v={counts.coupon} />
         <Stat label="العقارات" v={counts.property} />
+        <Stat label="السيارات" v={counts.car} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

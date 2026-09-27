@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { carImage, CAR_FILTERS_KEY } from "@/lib/car-images";
 import { useQuery } from "@tanstack/react-query";
 import {
   Car,
@@ -143,6 +144,25 @@ function CarsPage() {
   const [fuel, setFuel] = useState("all");
   const [condition, setCondition] = useState("all");
   const [sort, setSort] = useState<SortKey>("price_asc");
+  const [loaded, setLoaded] = useState(false);
+
+  // حفظ الفلاتر للعودة إليها من صفحة التفاصيل
+  useEffect(() => {
+    try {
+      const s = JSON.parse(sessionStorage.getItem(CAR_FILTERS_KEY) ?? "{}");
+      if (s.q) setQ(s.q);
+      if (s.city) setCity(s.city);
+      if (s.fuel) setFuel(s.fuel);
+      if (s.condition) setCondition(s.condition);
+      if (s.sort) setSort(s.sort);
+    } catch {
+      /* تجاهل */
+    }
+    setLoaded(true);
+  }, []);
+  useEffect(() => {
+    if (loaded) sessionStorage.setItem(CAR_FILTERS_KEY, JSON.stringify({ q, city, fuel, condition, sort }));
+  }, [loaded, q, city, fuel, condition, sort]);
 
   const query = useQuery({
     queryKey: ["car-listings-full"],
@@ -293,18 +313,18 @@ function CarsPage() {
               <article className="group flex flex-col rounded-2xl border border-border/70 bg-card/70 backdrop-blur-md overflow-hidden transition hover:-translate-y-1 hover:shadow-lg">
                 {/* الصورة */}
                 <div className="relative h-40 bg-muted/40 grid place-items-center overflow-hidden">
-                  {car.image_url ? (
-                    <img
-                      src={car.image_url}
-                      alt={car.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover transition group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center gap-1 text-muted-foreground/50">
-                      <Car className="w-12 h-12" />
-                      <span className="text-xs font-bold">{car.brand}</span>
-                    </div>
+                  <img
+                    src={carImage(car).src}
+                    alt={car.title}
+                    loading="lazy"
+                    width={1024}
+                    height={640}
+                    className="w-full h-full object-cover transition group-hover:scale-105"
+                  />
+                  {car.mileage_km === 0 && (
+                    <span className="absolute bottom-2 start-2 rounded-full bg-primary text-primary-foreground text-[11px] font-bold px-2 py-0.5">
+                      جديدة
+                    </span>
                   )}
                   {discountPct > 0 && (
                     <span className="absolute top-2 start-2 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold px-2 py-0.5">
@@ -393,20 +413,17 @@ function CarsPage() {
               </article>
             );
 
-            return car.link_url ? (
-              <a key={car.id} href={car.link_url} target="_blank" rel="noopener noreferrer">
+            return (
+              <Link key={car.id} to="/cars/$id" params={{ id: car.id }}>
                 {inner}
-              </a>
-            ) : (
-              <div key={car.id}>{inner}</div>
+              </Link>
             );
           })}
         </div>
       )}
 
-      {/* زر العرض الخارجي */}
-      <p className="mt-6 text-center text-xs text-muted-foreground inline-flex items-center gap-1 w-full justify-center">
-        اضغط أي سيارة للانتقال إلى عرضها لدى المورد <ExternalLink className="w-3 h-3" />
+      <p className="mt-6 mb-24 text-center text-xs text-muted-foreground inline-flex items-center gap-1 w-full justify-center">
+        اضغط أي سيارة لعرض تفاصيلها ومواصفاتها الكاملة <ExternalLink className="w-3 h-3" />
       </p>
     </div>
   );
