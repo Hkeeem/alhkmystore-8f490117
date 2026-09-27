@@ -5,6 +5,7 @@ import { ArrowRight, Calendar, Car, ExternalLink, Fuel, Gauge, MapPin, Phone, Se
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { carImage } from "@/lib/car-images";
+import { CarInstallment } from "@/components/CarInstallment";
 import { recordOfferClick } from "@/lib/offer-clicks.functions";
 import { sessionId } from "@/lib/track-deal";
 
@@ -90,6 +91,7 @@ function CarDetail() {
         </div>
         {discount > 0 && <p className="mt-1 text-sm font-medium text-primary">توفّر {riyal(discount)}</p>}
       </div>
+      <CarInstallment price={car.price} />
 
       <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {specs.map(([icon, label, value]) => (

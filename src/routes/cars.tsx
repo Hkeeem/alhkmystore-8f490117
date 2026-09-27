@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { carImage, CAR_FILTERS_KEY } from "@/lib/car-images";
+import { monthlyInstallment } from "@/components/CarInstallment";
 import { useQuery } from "@tanstack/react-query";
 import {
   Car,
@@ -398,6 +399,9 @@ function CarsPage() {
                         </span>
                       )}
                     </div>
+                    <p className="text-[11px] font-medium text-foreground">
+                      القسط من {riyal(monthlyInstallment(car.price))} / شهريًا
+                    </p>
                     {discount > 0 && (
                       <p className="inline-flex items-center gap-1 text-[11px] font-medium text-primary">
                         <Banknote className="w-3.5 h-3.5" /> توفّر {riyal(discount)}
