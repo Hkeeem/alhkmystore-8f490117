@@ -296,7 +296,7 @@ function MapsPage() {
     return out.slice(0, 8);
   }, [query, nearbyDeals]);
 
-  /** إنشاء الخريطة مرة واحدة فقط — محدثة بالستايل النظيف CartoDB Voyager */
+  /** إنشاء الخريطة مرة واحدة فقط — بدون علامات مائية وبأداء ممتاز */
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
     let cancelled = false;
@@ -327,8 +327,8 @@ function MapsPage() {
       });
       mapInstanceRef.current = map;
 
-      // الخريطة النظيفة المحدثة بدلاً من OpenStreetMap التقليدي
-      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+      // الخريطة الأساسية النظيفة الآمنة بدون قيود أو مفاتيح خارجية
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         maxNativeZoom: 19,
         keepBuffer: 4,
