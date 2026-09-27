@@ -3,6 +3,10 @@
   "installCommand": "bun install",
   "crons": [
     {
+      "path": "/api/public/hooks/sync-deals-hourly",
+      "schedule": "0 * * * *"
+    },
+    {
       "path": "/api/public/hooks/daily-content-sync",
       "schedule": "0 3 * * *"
     },
