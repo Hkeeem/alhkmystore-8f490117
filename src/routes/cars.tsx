@@ -398,6 +398,9 @@ function CarsPage() {
                         </span>
                       )}
                     </div>
+                    <p className="text-[11px] font-medium text-foreground">
+                      القسط من {riyal(monthlyInstallment(car.price))} / شهريًا
+                    </p>
                     {discount > 0 && (
                       <p className="inline-flex items-center gap-1 text-[11px] font-medium text-primary">
                         <Banknote className="w-3.5 h-3.5" /> توفّر {riyal(discount)}
