@@ -162,7 +162,6 @@ function MapsPage() {
                     distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
                     distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng),
                 )[0] ?? null);
-        // متاجر غير مسجّلة في دليل الفروع (تجّار ومصادر خارجية): نضعها في مركز المدينة
         let branch: Branch | null = matched;
         if (!branch) {
           const fallbackCity =
@@ -195,7 +194,6 @@ function MapsPage() {
     }[];
   }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter, deals]);
 
-  /** أقرب عرض متاح بغضّ النظر عن التصفية — يُستخدم بدل رسالة «لا توجد عروض» */
   const nearestAnyDeal = useMemo(() => {
     if (!userLocation) return null;
     const candidates = deals
@@ -270,7 +268,6 @@ function MapsPage() {
       .slice(0, 15);
   }, [query, nearbyDeals]);
 
-  /** اقتراحات تلقائية: متاجر، مدن، فروع، عناوين عروض */
   const suggestions = useMemo(() => {
     const q = query.trim().toLowerCase();
     const out: { key: string; label: string; kind: string }[] = [];
@@ -283,7 +280,6 @@ function MapsPage() {
     };
 
     if (!q) {
-      // أشهر المتاجر والمدن القريبة كاقتراحات افتتاحية
       nearbyDeals.slice(0, 6).forEach(({ deal }) => push(getStore(deal.storeId).name, "متجر"));
       nearbyDeals.slice(0, 6).forEach(({ branch }) => push(branch.city, "مدينة"));
       return out.slice(0, 8);
@@ -300,12 +296,11 @@ function MapsPage() {
     return out.slice(0, 8);
   }, [query, nearbyDeals]);
 
-  /** إنشاء الخريطة مرة واحدة فقط — لا تُدمَّر عند تغيير الفلاتر */
+  /** إنشاء الخريطة مرة واحدة فقط — محدثة بالستايل النظيف CartoDB Voyager */
   useEffect(() => {
     if (!userLocation || !mapRef.current || mapInstanceRef.current) return;
     let cancelled = false;
 
-    // تحميل كسول لمكتبة الخرائط — تمنع كسر العرض من الخادم (SSR)
     (async () => {
       const L = (await import("leaflet")).default;
       await import("leaflet/dist/leaflet.css");
@@ -332,7 +327,8 @@ function MapsPage() {
       });
       mapInstanceRef.current = map;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      // الخريطة النظيفة المحدثة بدلاً من OpenStreetMap التقليدي
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
         maxZoom: 19,
         maxNativeZoom: 19,
         keepBuffer: 4,
@@ -340,7 +336,7 @@ function MapsPage() {
 
       const userIcon = L.divIcon({
         className: "",
-        html: `<div style="width:20px;height:20px;background:#D4AF37;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(212,175,55,0.3);"></div>`,
+        html: `<div style="width:20px;height:20px;background:#5B21B6;border:3px solid #fff;border-radius:50%;box-shadow:0 0 0 4px rgba(91,33,182,0.3);"></div>`,
         iconSize: [20, 20],
         iconAnchor: [10, 10],
       });
@@ -350,17 +346,15 @@ function MapsPage() {
 
       L.circle([userLocation.lat, userLocation.lng], {
         radius: 3000,
-        color: "#D4AF37",
-        fillColor: "#D4AF37",
+        color: "#5B21B6",
+        fillColor: "#5B21B6",
         fillOpacity: 0.06,
         weight: 1,
         opacity: 0.3,
       }).addTo(map);
 
-      // ضبط الأبعاد بعد تركيب الحاوية (يمنع بلاطات رمادية)
       setTimeout(() => map.invalidateSize(), 100);
 
-      // إعادة حساب الأبعاد تلقائياً عند تغيّر حجم الحاوية أو دوران الشاشة
       if (typeof ResizeObserver !== "undefined" && mapRef.current) {
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(mapRef.current);
@@ -383,19 +377,17 @@ function MapsPage() {
     };
   }, [userLocation]);
 
-  /** تحديث دبابيس العروض فقط عند تغيير الفلاتر — بدون إعادة بناء الخريطة */
+  /** تحديث دبابيس العروض عند تغيير الفلاتر */
   useEffect(() => {
     const L = LRef.current;
     const map = mapInstanceRef.current;
     if (!L || !map || !userLocation) return;
 
-    // تنظيف الدبابيس السابقة
     Object.values(markersRef.current).forEach((m) => map.removeLayer(m));
     markersRef.current = {};
 
     if (mapped.length === 0) return;
 
-    // تجميع العروض حسب الفرع: كل فرع دبوس واحد يعرض كل عروضه
     const byBranch = new Map<string, { branch: Branch; items: typeof mapped }>();
     for (const row of mapped) {
       const entry = byBranch.get(row.branch.id) ?? { branch: row.branch, items: [] };
@@ -420,10 +412,10 @@ function MapsPage() {
         className: "",
         html: `
           <div style="display:flex;flex-direction:column;align-items:center;">
-            <div style="background:#D4AF37;color:#111;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #fff;box-shadow:0 2px 8px rgba(212,175,55,0.6);white-space:nowrap;">
+            <div style="background:#5B21B6;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #fff;box-shadow:0 2px 8px rgba(91,33,182,0.4);white-space:nowrap;">
               ${store.name} · ${items.length} عرض
             </div>
-            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #D4AF37;margin-top:-1px;"></div>
+            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #5B21B6;margin-top:-1px;"></div>
           </div>`,
         iconSize: [90, 30],
         iconAnchor: [45, 30],
@@ -440,7 +432,7 @@ function MapsPage() {
           (r) => `
           <a href="/deals/${r.deal.id}" style="display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #eee;text-decoration:none;color:#111;">
             <span style="font-size:11px;font-weight:700;">${r.deal.title}</span>
-            <span style="font-size:11px;font-weight:900;color:#B8860B;white-space:nowrap;">${r.deal.price} ر.س</span>
+            <span style="font-size:11px;font-weight:900;color:#5B21B6;white-space:nowrap;">${r.deal.price} ر.س</span>
           </a>`,
         )
         .join("");
@@ -450,7 +442,7 @@ function MapsPage() {
           <div style="font-size:13px;font-weight:900;">${branch.name}</div>
           <div style="font-size:11px;color:#888;margin-bottom:6px;">${items.length} عرض · أفضل خصم ${bestOff}%</div>
           ${rows}
-          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:10px;background:#D4AF37;color:#111;font-size:12px;font-weight:900;font-family:'Tajawal',sans-serif;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 ابدأ التوجيه للفرع</a>
+          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:10px;background:#5B21B6;color:#fff;font-size:12px;font-weight:900;font-family:'Tajawal',sans-serif;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 ابدأ التوجيه للفرع</a>
         </div>`);
 
       items.forEach((r) => {
@@ -459,21 +451,18 @@ function MapsPage() {
       marker.on("click", () => setSelectedDeal(items[0].deal.id));
     });
 
-    // فتح العرض القادم من رابط عميق
     if (focusDealId && markersRef.current[focusDealId]) {
       const m = markersRef.current[focusDealId];
       map.setView(m.getLatLng(), 14, { animate: true });
       m.openPopup();
       didFitRef.current = true;
     } else if (bounds.length > 1 && !didFitRef.current) {
-      // ضبط الإطار مرة واحدة فقط حتى لا تُلغى حركة المستخدم عند تغيير الفلاتر
       map.flyToBounds(bounds, { padding: [40, 40], maxZoom: 13, duration: 0.6 });
       didFitRef.current = true;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapReady, mapped, focusDealId]);
 
-  /** طبقة العروض الحقيقية الحية من التجار — تُثبَّت حول مركز مدينة التاجر */
+  /** طبقة العروض الحية */
   useEffect(() => {
     const L = LRef.current;
     const map = mapInstanceRef.current;
@@ -492,7 +481,6 @@ function MapsPage() {
 
     for (const d of visible) {
       const city = CITIES.find((c) => c.name === d.merchants.city)!;
-      // إزاحة ثابتة حول مركز المدينة حتى لا تتكدس الدبابيس فوق بعضها
       const h = [...d.id].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
       const angle = (h % 360) * (Math.PI / 180);
       const r = 0.008 + (h % 7) * 0.004;
@@ -505,7 +493,7 @@ function MapsPage() {
         className: "",
         html: `
           <div style="display:flex;flex-direction:column;align-items:center;">
-            <div style="background:#111;color:#D4AF37;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #D4AF37;box-shadow:0 2px 10px rgba(0,0,0,0.45);white-space:nowrap;">
+            <div style="background:#111;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #5B21B6;box-shadow:0 2px 10px rgba(0,0,0,0.3);white-space:nowrap;">
               ${d.merchants.name} · خصم ${off}%
             </div>
             <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #111;margin-top:-1px;"></div>
@@ -518,25 +506,25 @@ function MapsPage() {
       const marker = L.marker([lat, lng], { icon }).addTo(map);
       const navUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
       const buyBtn = d.product_url
-        ? `<a href="${d.product_url}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#111;color:#D4AF37;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🛒 صفحة العرض لدى التاجر</a>`
+        ? `<a href="${d.product_url}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#5B21B6;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🛒 صفحة العرض لدى التاجر</a>`
         : "";
       marker.bindPopup(`
         <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:210px;max-width:250px;">
-          <div style="font-size:10px;font-weight:900;color:#B8860B;margin-bottom:2px;">⚡ عرض حقيقي من التاجر — ${d.merchants.city}</div>
+          <div style="font-size:10px;font-weight:900;color:#5B21B6;margin-bottom:2px;">⚡ عرض حقيقي من التاجر — ${d.merchants.city}</div>
           <div style="font-size:13px;font-weight:900;">${d.title}</div>
           <div style="font-size:11px;color:#888;margin:4px 0 6px;">${d.merchants.name}</div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:13px;font-weight:900;color:#B8860B;">${d.price} ر.س</span>
+            <span style="font-size:13px;font-weight:900;color:#5B21B6;">${d.price} ر.س</span>
             <span style="font-size:11px;color:#999;text-decoration:line-through;">${d.original_price} ر.س</span>
           </div>
           ${buyBtn}
-          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#D4AF37;color:#111;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 توجيه إلى ${d.merchants.city}</a>
+          <a href="${navUrl}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#5B21B6;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 توجيه إلى ${d.merchants.city}</a>
         </div>`);
       liveMarkersRef.current.push(marker);
     }
   }, [mapReady, liveDeals, cityFilter, categoryFilter, userLocation, mapped]);
 
-  /** طبقة عروض السوشال ميديا — تُعرض بإحداثيات الحساب مع تاريخ الانتهاء */
+  /** طبقة عروض السوشال ميديا */
   useEffect(() => {
     const L = LRef.current;
     const map = mapInstanceRef.current;
@@ -572,7 +560,7 @@ function MapsPage() {
         className: "",
         html: `
           <div style="display:flex;flex-direction:column;align-items:center;">
-            <div style="background:#1d1d1f;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #7c5cff;box-shadow:0 2px 10px rgba(0,0,0,0.4);white-space:nowrap;">
+            <div style="background:#1d1d1f;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #5B21B6;box-shadow:0 2px 10px rgba(0,0,0,0.3);white-space:nowrap;">
               📣 ${offer.platform} · @${offer.handle}
             </div>
             <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #1d1d1f;margin-top:-1px;"></div>
@@ -584,17 +572,17 @@ function MapsPage() {
 
       const marker = L.marker([lat, lng], { icon }).addTo(map);
       const priceRow = offer.price
-        ? `<div style="font-size:13px;font-weight:900;color:#B8860B;margin-top:4px;">${offer.price} ر.س${offer.original_price ? ` <span style="font-size:11px;color:#999;text-decoration:line-through;">${offer.original_price} ر.س</span>` : ""}</div>`
+        ? `<div style="font-size:13px;font-weight:900;color:#5B21B6;margin-top:4px;">${offer.price} ر.س${offer.original_price ? ` <span style="font-size:11px;color:#999;text-decoration:line-through;">${offer.original_price} ر.س</span>` : ""}</div>`
         : "";
       const codeRow = offer.coupon_code
         ? `<div style="font-size:11px;font-weight:900;margin-top:4px;">كود: ${offer.coupon_code}</div>`
         : "";
       const linkRow = offer.post_url
-        ? `<a href="${offer.post_url}" target="_blank" rel="nofollow sponsored noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#7c5cff;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">فتح المنشور</a>`
+        ? `<a href="${offer.post_url}" target="_blank" rel="nofollow sponsored noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#5B21B6;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">فتح المنشور</a>`
         : "";
       marker.bindPopup(`
         <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:200px;max-width:250px;">
-          <div style="font-size:10px;font-weight:900;color:#7c5cff;margin-bottom:2px;">عرض من السوشال ميديا</div>
+          <div style="font-size:10px;font-weight:900;color:#5B21B6;margin-bottom:2px;">عرض من السوشال ميديا</div>
           <div style="font-size:13px;font-weight:900;">${offer.title}</div>
           <div style="font-size:11px;color:#888;margin-top:2px;">${expiryLabel}</div>
           ${priceRow}
@@ -616,7 +604,6 @@ function MapsPage() {
     }
   };
 
-  /** خيارات لوحة المفاتيح: الاقتراحات ثم النتائج */
   const options = useMemo(
     () => [
       ...suggestions.map((s, i) => ({
@@ -691,7 +678,6 @@ function MapsPage() {
     }
   };
 
-  /** بعد تحديد الموقع عبر زر "استخدم موقعي": ركّز على أقرب فرع/عرض */
   useEffect(() => {
     if (!focusNearestRef.current) return;
     const nearest = nearbyDeals[0];
@@ -914,7 +900,6 @@ function MapsPage() {
         )}
       </div>
 
-      {/* تصفية نتائج الخريطة */}
       <section
         className="bg-card border border-border/60 rounded-2xl p-3 space-y-3"
         aria-label="تصفية نتائج الخريطة"
@@ -1072,8 +1057,8 @@ function MapsPage() {
       <div className="relative">
         <div
           ref={mapRef}
-          className="w-full h-[58vh] md:h-[65vh] rounded-3xl overflow-hidden border border-primary/20 shadow-glow"
-          style={{ background: "#e8e0d5" }}
+          className="w-full h-[58vh] md:h-[65vh] rounded-3xl overflow-hidden border border-primary/25 shadow-glow"
+          style={{ background: "#f8f9fa" }}
           role="application"
           aria-label="خريطة العروض والفروع القريبة"
         />
