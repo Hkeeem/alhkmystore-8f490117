@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { carImage, CAR_FILTERS_KEY } from "@/lib/car-images";
+import { monthlyInstallment } from "@/components/CarInstallment";
 import { useQuery } from "@tanstack/react-query";
 import {
   Car,
