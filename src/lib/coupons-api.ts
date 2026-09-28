@@ -38,7 +38,7 @@ const STORE_LINKS: Record<string, string> = {
 export const PUBLISHER_TAG = "HKM11";
 
 /** معرّف شراكة أمازون (Amazon Associates) — عام وليس سرّيًا */
-export const AMAZON_PARTNER_TAG = "amazon08b89-21";
+export const AMAZON_PARTNER_TAG = "shopping0e178-21";
 
 /** يضيف معرّف أمازون لأي رابط أمازون */
 export function withAmazonTag(url: string) {
