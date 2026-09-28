@@ -6,10 +6,12 @@ import { trackCouponClick } from "@/lib/track-deal";
 export const NOON_CODES = ["HKEEEM2", "JQUDQ", "XTMSM", "IVQVQ", "ACOCS"] as const;
 
 /** كوبونات حملة نون — تُعرض عند إتمام سلة المقاضي، ويُقترح كود مختلف لكل مستخدم لتوزيع الاستخدام. */
-export function NoonCouponsPanel() {
+export function NoonCouponsPanel({ noonSubtotal = 0 }: { noonSubtotal?: number }) {
   const [copied, setCopied] = useState<string | null>(null);
   const suggested = useMemo(() => NOON_CODES[Math.floor(Math.random() * NOON_CODES.length)], []);
   const codes = [suggested, ...NOON_CODES.filter((c) => c !== suggested)];
+  const discount = Math.min(Math.round(noonSubtotal * 0.1 * 100) / 100, 75);
+  const after = Math.round((noonSubtotal - discount) * 100) / 100;
 
   const copy = async (code: string) => {
     trackCouponClick({ couponId: `noon-${code}`, code, title: "كاش باك 10% من نون", storeId: "noon", storeName: "نون", surface: "coupon" });
@@ -32,6 +34,13 @@ export function NoonCouponsPanel() {
       <p className="text-xs text-muted-foreground mb-3">
         كاش باك 10% حتى 75 ر.س · سارية حتى 31 ديسمبر 2026
       </p>
+      {noonSubtotal > 0 && (
+        <div className="mb-3 rounded-2xl bg-card border border-primary/30 p-3 text-sm space-y-1">
+          <div className="flex justify-between"><span>منتجات نون في سلتك</span><span>{noonSubtotal} ر.س</span></div>
+          <div className="flex justify-between text-primary font-bold"><span>خصم الكود {suggested} (10%)</span><span>-{discount} ر.س</span></div>
+          <div className="flex justify-between font-black border-t border-border/50 pt-1"><span>بعد الخصم</span><span>{after} ر.س</span></div>
+        </div>
+      )}
       <div className="grid gap-2 sm:grid-cols-2">
         {codes.map((code) => (
           <div key={code} className="flex items-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-card px-3 py-2">

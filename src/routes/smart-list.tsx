@@ -353,7 +353,14 @@ function SmartList() {
         </div>
       )}
 
-      {result && <NoonCouponsPanel />}
+      {result && (
+        <NoonCouponsPanel
+          noonSubtotal={result.items.reduce(
+            (s, it) => s + (it.deal && it.deal.storeId === "noon" ? Number(it.deal.price) || 0 : 0),
+            0,
+          )}
+        />
+      )}
 
       <ShareSheet
         open={shareOpen}
