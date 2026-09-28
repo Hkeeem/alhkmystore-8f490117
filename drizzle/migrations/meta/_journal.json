@@ -15,6 +15,13 @@
       "when": 1790220901966,
       "tag": "0001_offer_clicks_realtime",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790554633044,
+      "tag": "0002_tighten_open_rls_policies",
+      "breakpoints": true
     }
   ]
 }
