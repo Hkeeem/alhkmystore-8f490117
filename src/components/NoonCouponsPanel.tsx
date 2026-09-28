@@ -12,7 +12,7 @@ export function NoonCouponsPanel() {
   const codes = [suggested, ...NOON_CODES.filter((c) => c !== suggested)];
 
   const copy = async (code: string) => {
-    trackCouponClick({ couponId: `noon-${code}`, code, title: "كاش باك 10% من نون", storeId: "noon", storeName: "نون", surface: "smart-list" });
+    trackCouponClick({ couponId: `noon-${code}`, code, title: "كاش باك 10% من نون", storeId: "noon", storeName: "نون", surface: "coupon" });
     try {
       await navigator.clipboard.writeText(code);
       setCopied(code);
@@ -53,7 +53,7 @@ export function NoonCouponsPanel() {
         href="https://www.noon.com/saudi-ar/"
         target="_blank"
         rel="nofollow sponsored noopener noreferrer"
-        onClick={() => trackCouponClick({ couponId: `noon-${suggested}`, code: suggested, title: "كاش باك 10% من نون", storeId: "noon", storeName: "نون", surface: "smart-list" })}
+        onClick={() => trackCouponClick({ couponId: `noon-${suggested}`, code: suggested, title: "كاش باك 10% من نون", storeId: "noon", storeName: "نون", surface: "coupon" })}
         className="mt-3 block text-center rounded-2xl bg-secondary py-2.5 text-sm font-black"
       >
         أكمل الشراء من نون

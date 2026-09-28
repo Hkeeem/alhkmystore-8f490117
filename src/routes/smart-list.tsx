@@ -19,6 +19,7 @@ import { ShareSheet, buildSmartListShareText } from "@/components/ShareSheet";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
 import { z } from "zod";
+import { NoonCouponsPanel } from "@/components/NoonCouponsPanel";
 
 export const Route = createFileRoute("/smart-list")({
   validateSearch: z.object({ q: z.string().optional(), auto: z.coerce.number().optional() }),
@@ -351,6 +352,8 @@ function SmartList() {
           </div>
         </div>
       )}
+
+      {result && <NoonCouponsPanel />}
 
       <ShareSheet
         open={shareOpen}
