@@ -89,7 +89,38 @@ export const Route = createFileRoute("/api/public/go/$dealId")({
           console.error("affiliate click tracking threw", e);
         }
 
-        const finalUrl = (await decorate(target, network, dealId, clickId)).toString();
+        let finalUrl = (await decorate(target, network, dealId, clickId)).toString();
+
+        // Admitad: لف الرابط بمسار التتبع الخاص بمساحة «متجر حكيم» (alhkmy.store) إن وُجد للمتجر
+        if (network !== "amazon") {
+          try {
+            const host = target.hostname.replace(/^www\./, "");
+            const { data: stores } = await supabaseAdmin
+              .from("affiliate_stores")
+              .select("site_url, tracking_template")
+              .eq("network", "admitad")
+              .eq("active", true)
+              .not("tracking_template", "is", null);
+            const match = (stores ?? []).find((s) => {
+              try {
+                const sh = new URL(s.site_url).hostname.replace(/^www\./, "");
+                return host === sh || host.endsWith("." + sh);
+              } catch {
+                return false;
+              }
+            });
+            const tpl = match?.tracking_template?.trim();
+            if (tpl && /^https:\/\/[^/]+\/g\//.test(tpl)) {
+              const w = new URL(tpl);
+              w.searchParams.set("ulp", finalUrl);
+              if (clickId) w.searchParams.set("subid", clickId);
+              w.searchParams.set("subid1", "alhkmy.store");
+              finalUrl = w.toString();
+            }
+          } catch (e) {
+            console.error("admitad wrap failed", e);
+          }
+        }
 
         return new Response(null, {
           status: 302,
