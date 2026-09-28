@@ -16,7 +16,7 @@ export const INTEGRATION_KEY_NAMES = [
 
 export type IntegrationKeyName = (typeof INTEGRATION_KEY_NAMES)[number];
 
-export const AMAZON_DEFAULT_PARTNER_TAG = "amazon0cb55d-20";
+export const AMAZON_DEFAULT_PARTNER_TAG = "amazon08b89-21";
 
 export function isIntegrationKeyName(value: string): value is IntegrationKeyName {
   return (INTEGRATION_KEY_NAMES as readonly string[]).includes(value);
