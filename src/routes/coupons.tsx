@@ -216,13 +216,16 @@ function CouponsPage() {
               {c.storeUrl && (
                 <a
                   href={c.storeUrl}
-                  onClick={() => trackCouponClick({ couponId: c.id, code: c.code, title: c.title, storeId: c.storeId, storeName: c.storeName, surface: "coupon" })}
+                  onClick={() => {
+                    trackCouponClick({ couponId: c.id, code: c.code, title: c.title, storeId: c.storeId, storeName: c.storeName, surface: "coupon" });
+                    void navigator.clipboard?.writeText(c.code).catch(() => {});
+                  }}
                   target="_blank"
                   rel="nofollow sponsored noopener noreferrer"
                   className="mt-3 w-full flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-secondary hover:bg-secondary/80 font-black text-sm transition"
                 >
                   <ExternalLink className="w-4 h-4" />
-                  افتح المنتج في {c.storeName} بالكود
+                  استخدم الكود في {c.storeName}
                 </a>
               )}
             </article>
