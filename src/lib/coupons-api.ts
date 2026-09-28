@@ -37,11 +37,29 @@ const STORE_LINKS: Record<string, string> = {
 /** معرّف الناشر العام (كود الخصم) الذي يُمرَّر مع كل رابط ترويجي */
 export const PUBLISHER_TAG = "HKM11";
 
+/** معرّف شراكة أمازون (Amazon Associates) — عام وليس سرّيًا */
+export const AMAZON_PARTNER_TAG = "amazon0cb55d-20";
+
+/** يضيف معرّف أمازون لأي رابط أمازون */
+export function withAmazonTag(url: string) {
+  try {
+    const u = new URL(url);
+    const h = u.hostname.replace(/^www\./, "");
+    if (h.endsWith("amazon.sa") || h.endsWith("amazon.com") || h.endsWith("amazon.ae")) {
+      u.searchParams.set("tag", AMAZON_PARTNER_TAG);
+      u.searchParams.set("linkCode", "ll1");
+    }
+    return u.toString();
+  } catch {
+    return url;
+  }
+}
+
 /** يضيف وسوم التتبع وكود الخصم إلى أي رابط متجر */
 export function withPromo(url: string | undefined, code?: string) {
   if (!url) return undefined;
   try {
-    const u = new URL(url);
+    const u = new URL(withAmazonTag(url));
     u.searchParams.set("utm_source", "hkeeem");
     u.searchParams.set("utm_medium", "affiliate");
     u.searchParams.set("utm_campaign", PUBLISHER_TAG);

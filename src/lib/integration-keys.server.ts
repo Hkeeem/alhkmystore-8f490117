@@ -16,6 +16,8 @@ export const INTEGRATION_KEY_NAMES = [
 
 export type IntegrationKeyName = (typeof INTEGRATION_KEY_NAMES)[number];
 
+export const AMAZON_DEFAULT_PARTNER_TAG = "amazon0cb55d-20";
+
 export function isIntegrationKeyName(value: string): value is IntegrationKeyName {
   return (INTEGRATION_KEY_NAMES as readonly string[]).includes(value);
 }
@@ -100,6 +102,8 @@ export async function getIntegrationKey(name: IntegrationKeyName): Promise<strin
     const fromEnv = process.env[name];
     value = fromEnv && String(fromEnv).trim().length > 0 ? String(fromEnv).trim() : null;
   }
+  // معرّف الشراكة العام لأمازون (ليس سرّيًا) كقيمة افتراضية ثابتة
+  if (!value && name === "AMAZON_PARTNER_TAG") value = AMAZON_DEFAULT_PARTNER_TAG;
 
   cache.set(name, { value, at: Date.now() });
   return value;
