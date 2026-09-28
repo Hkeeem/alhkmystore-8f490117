@@ -20,6 +20,22 @@ import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 import { deals, discountPercent } from "@/data/deals";
 import { z } from "zod";
 import { NoonCouponsPanel } from "@/components/NoonCouponsPanel";
+import { withAmazonTag } from "@/lib/coupons-api";
+
+function AmazonLink({ q }: { q: string }) {
+  const href = withAmazonTag(`https://www.amazon.sa/s?k=${encodeURIComponent(q)}`);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      data-testid="amazon-link"
+      className="inline-block mt-1 text-[11px] font-bold text-primary underline underline-offset-2"
+    >
+      اشترِ من أمازون ↗
+    </a>
+  );
+}
 
 export const Route = createFileRoute("/smart-list")({
   validateSearch: z.object({ q: z.string().optional(), auto: z.coerce.number().optional() }),
@@ -307,6 +323,7 @@ function SmartList() {
                     <div className="flex-1">
                       <div className="font-bold text-sm">{it.requested}</div>
                       <div className="text-xs text-muted-foreground">ما لقينا عرض مطابق حالياً</div>
+                      <AmazonLink q={it.requested} />
                     </div>
                   </div>
                 );
@@ -337,6 +354,7 @@ function SmartList() {
                       </div>
                       <span className="text-xs text-muted-foreground truncate">{s.name}</span>
                     </div>
+                    <AmazonLink q={it.requested || it.deal.title} />
                   </div>
                   <div className="text-left shrink-0">
                     <div className="font-display font-black text-primary">
