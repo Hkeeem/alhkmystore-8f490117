@@ -36,6 +36,18 @@ import {
   saveDisplayNameServer,
 } from "@/lib/rewards.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+
+function RewardsNotFound() {
+  return (
+    <InvalidLinkFallback
+      icon="🎁"
+      title="الجائزة غير متوفرة"
+      message="الجائزة المطلوبة غير معتمدة حاليًا. نقاطك محفوظة في حسابك ولا تنتهي."
+      backTo={{ to: "/rewards", label: "كل الجوائز" }}
+    />
+  );
+}
 
 export const Route = createFileRoute("/rewards")({
   head: () => ({
@@ -54,6 +66,7 @@ export const Route = createFileRoute("/rewards")({
     links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/rewards" }],
   }),
   component: RewardsPage,
+  notFoundComponent: RewardsNotFound,
 });
 
 const ACTION_ICON: Record<RewardAction, typeof Ticket> = {
