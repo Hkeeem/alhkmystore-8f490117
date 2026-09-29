@@ -63,10 +63,12 @@ import { BotsPanel } from "@/components/admin/BotsPanel";
 import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 import { AdmitadPanel } from "@/components/admin/AdmitadPanel";
+import { CommissionReportsPanel } from "@/components/admin/CommissionReportsPanel";
 
 type Tab =
   | "dashboard"
   | "admitad"
+  | "commissions"
   | "partner-coupons"
   | "offer-clicks"
   | "coupon-clicks"
@@ -213,6 +215,12 @@ function AdminPage() {
       icon: MousePointerClick,
       allow: ["super_admin", "admin"],
     },
+    {
+      id: "commissions" as const,
+      label: "تقارير العمولات",
+      icon: MousePointerClick,
+      allow: ["super_admin", "admin"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -268,6 +276,7 @@ function AdminPage() {
           {tab === "offer-clicks" && <OfferClicksPanel />}
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
           {tab === "admitad" && <AdmitadPanel />}
+          {tab === "commissions" && <CommissionReportsPanel />}
         </main>
       </div>
     </div>
