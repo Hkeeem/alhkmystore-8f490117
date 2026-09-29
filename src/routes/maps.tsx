@@ -254,7 +254,7 @@ function MapsPage() {
       L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
         .addTo(map)
         .bindPopup("<b>موقعك الحالي</b>");
-i     }
+    }
 
     const bounds: [number, number][] = userLocation ? [[userLocation.lat, userLocation.lng]] : [];
 
