@@ -185,7 +185,15 @@ export function DealCard({
             href={store.website}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              trackStoreWebsiteClick({
+                dealId: deal.id,
+                dealTitle: deal.title,
+                storeId: store.id,
+                storeName: store.name,
+              });
+            }}
             className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline w-fit"
           >
             {store.name}

@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { ExternalLink, Sparkles } from "lucide-react";
 import { getStore, type Deal } from "@/data/deals";
+import { trackStoreWebsiteClick } from "@/lib/track-deal";
 
 /** عرض اليوم: يتغيّر تلقائيًا كل يوم ويختار من العروض الحقيقية التي لها متجر برابط رسمي */
 export function DailyDeal({ deals }: { deals: Deal[] }) {
@@ -32,6 +33,14 @@ export function DailyDeal({ deals }: { deals: Deal[] }) {
           {off > 0 && <span className="mr-2 rounded-full bg-accent/20 text-accent px-2 py-0.5 text-xs font-bold">-{off}%</span>}
         </p>
         <a href={store.website} target="_blank" rel="noopener noreferrer"
+          onClick={() =>
+            trackStoreWebsiteClick({
+              dealId: pick.id,
+              dealTitle: pick.title,
+              storeId: store.id,
+              storeName: store.name,
+            })
+          }
           className="inline-flex items-center gap-1 mt-1 rounded-xl bg-primary text-primary-foreground px-3 py-2 text-sm font-bold">
           <ExternalLink className="w-4 h-4" /> افتح موقع {store.name}
         </a>

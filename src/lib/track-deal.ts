@@ -101,3 +101,31 @@ export function trackPropertyClick(input: { id: string; title?: string; city?: s
     },
   }).catch(() => {});
 }
+
+/** تسجيل زيارة رابط الموقع الرسمي للمتجر من داخل العروض */
+export function trackStoreWebsiteClick(input: {
+  dealId?: string;
+  dealTitle?: string;
+  storeId?: string;
+  storeName: string;
+}) {
+  if (typeof window === "undefined") return;
+  try {
+    void recordOfferClick({
+      data: {
+        kind: "offer",
+        offerId: input.dealId ?? `store:${input.storeId ?? input.storeName}`,
+        offerTitle: input.dealTitle ?? input.storeName,
+        storeId: input.storeId,
+        storeName: input.storeName,
+        surface: "store-website",
+        session: sessionId(),
+        path: window.location.pathname,
+      },
+    }).catch(() => {
+      /* تجاهل */
+    });
+  } catch {
+    /* تجاهل */
+  }
+}
