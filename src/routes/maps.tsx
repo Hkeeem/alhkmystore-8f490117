@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Filter, Loader2, MapPin, Navigation, Search, X, AlertTriangle, Tag } from "lucide-react";
 import { useLiveDeals } from "@/hooks/use-live-deals";
 import { useSocialOffers } from "@/hooks/use-social-offers";
+import { useStoreBranches } from "@/hooks/use-store-branches";
 import { CITIES } from "@/data/cities";
 import { trackDealClick } from "@/lib/track-deal";
 import type * as Leaflet from "leaflet";
@@ -45,16 +46,23 @@ type Pin = {
   city: string;
   href: string | null;
   hrefLabel: string;
-  kind: "live" | "social";
+  kind: "store" | "social";
   id: string;
+  dealIds: string[];
+  offers: Array<{ id: string; title: string; price: number; originalPrice: number; discount: number }>;
 };
 
-/** إزاحة ثابتة حول مركز المدينة حتى لا تتكدس الدبابيس فوق بعضها */
-function offset(base: { lat: number; lng: number }, seed: string, spread = 0.008) {
-  const h = [...seed].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
-  const angle = (h % 360) * (Math.PI / 180);
-  const r = spread + (h % 7) * 0.004;
-  return { lat: base.lat + Math.sin(angle) * r, lng: base.lng + Math.cos(angle) * r };
+function normalizedStoreId(value: string | null | undefined) {
+  return (value ?? "").trim().toLowerCase().replace(/-official$/, "");
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 type MapStyleId = "map" | "satellite" | "terrain";
@@ -89,7 +97,7 @@ function MapsPage() {
   const [categoryFilter, setCategoryFilter] = useState("الكل");
   const [mapStyle, setMapStyle] = useState<MapStyleId>("map");
   const [mapReady, setMapReady] = useState(false);
-  const [selectedPin, setSelectedPin] = useState<string | null>(focusDealId ?? null);
+  const [selectedPin, setSelectedPin] = useState<string | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<Leaflet.Map | null>(null);
@@ -101,6 +109,7 @@ function MapsPage() {
 
   const { data: liveDeals } = useLiveDeals(100);
   const { data: socialOffers } = useSocialOffers(60);
+  const branchesQuery = useStoreBranches();
 
   const requestLocation = () => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
@@ -127,39 +136,51 @@ function MapsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /** كل الدبابيس: عروض التجار الحية + عروض السوشال */
+  /** مواقع محفوظة فقط: فروع المتاجر الحقيقية + عروض السوشال ذات الإحداثيات الدقيقة */
   const pins = useMemo<Pin[]>(() => {
     const out: Pin[] = [];
-    for (const d of liveDeals ?? []) {
-      const city = CITIES.find((c) => c.name === d.merchants?.city);
-      if (!city) continue;
-      if (cityFilter !== "الكل" && d.merchants.city !== cityFilter) continue;
-      if (categoryFilter !== "الكل" && d.category !== categoryFilter) continue;
-      const pos = offset(city, d.id);
+    for (const branch of branchesQuery.data ?? []) {
+      const branchStoreId = normalizedStoreId(branch.store_id);
+      const offers = (liveDeals ?? []).filter((deal) => {
+        const merchantId = normalizedStoreId(deal.merchants.id);
+        const merchantSlug = normalizedStoreId(deal.merchants.slug);
+        return branchStoreId === merchantId || branchStoreId === merchantSlug;
+      });
+      if (cityFilter !== "الكل" && branch.city !== cityFilter) continue;
+      if (categoryFilter !== "الكل" && !offers.some((deal) => deal.category === categoryFilter)) continue;
+      const bestOffer = offers[0];
+      const address = [branch.district, branch.address].filter(Boolean).join(" · ");
       out.push({
-        key: `live-${d.id}`,
-        id: d.id,
-        kind: "live",
-        title: d.title,
-        subtitle: `${d.merchants.name} · ${d.merchants.city}`,
-        price: d.price,
-        originalPrice: d.original_price,
-        discount: d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100),
-        lat: pos.lat,
-        lng: pos.lng,
-        city: d.merchants.city ?? "",
-        href: d.product_url ?? null,
-        hrefLabel: "🛒 صفحة العرض لدى التاجر",
+        key: `store-${branch.id}`,
+        id: branch.id,
+        kind: "store",
+        title: branch.store_name,
+        subtitle: [branch.name, address].filter(Boolean).join(" · "),
+        price: bestOffer?.price ?? null,
+        originalPrice: bestOffer?.original_price ?? null,
+        discount: bestOffer
+          ? (bestOffer.discount_percent ?? Math.round(((bestOffer.original_price - bestOffer.price) / bestOffer.original_price) * 100))
+          : null,
+        lat: branch.lat,
+        lng: branch.lng,
+        city: branch.city,
+        href: branch.maps_url,
+        hrefLabel: "فتح موقع المتجر",
+        dealIds: offers.map((deal) => deal.id),
+        offers: offers.map((deal) => ({
+          id: deal.id,
+          title: deal.title,
+          price: deal.price,
+          originalPrice: deal.original_price,
+          discount:
+            deal.discount_percent ?? Math.round(((deal.original_price - deal.price) / deal.original_price) * 100),
+        })),
       });
     }
     for (const o of socialOffers ?? []) {
       if (cityFilter !== "الكل" && o.city !== cityFilter) continue;
-      const base =
-        o.lat != null && o.lng != null
-          ? { lat: o.lat, lng: o.lng }
-          : (CITIES.find((c) => c.name === o.city) ?? null);
-      if (!base) continue;
-      const pos = offset(base, o.id, 0.006);
+      if (o.lat == null || o.lng == null) continue;
+      if (categoryFilter !== "الكل") continue;
       out.push({
         key: `social-${o.id}`,
         id: o.id,
@@ -169,17 +190,25 @@ function MapsPage() {
         price: o.price,
         originalPrice: o.original_price,
         discount: o.discount_percent,
-        lat: pos.lat,
-        lng: pos.lng,
+        lat: o.lat,
+        lng: o.lng,
         city: o.city ?? "",
         href: o.post_url,
         hrefLabel: "فتح المنشور",
+        dealIds: [],
+        offers: [],
       });
     }
     const q = query.trim().toLowerCase();
     if (!q) return out;
     return out.filter((p) => p.title.toLowerCase().includes(q) || p.subtitle.toLowerCase().includes(q));
-  }, [liveDeals, socialOffers, cityFilter, categoryFilter, query]);
+  }, [branchesQuery.data, liveDeals, socialOffers, cityFilter, categoryFilter, query]);
+
+  useEffect(() => {
+    if (!focusDealId || selectedPin) return;
+    const match = pins.find((pin) => pin.dealIds.includes(focusDealId));
+    if (match) setSelectedPin(match.key);
+  }, [focusDealId, pins, selectedPin]);
 
   const categories = useMemo(
     () => ["الكل", ...Array.from(new Set((liveDeals ?? []).map((d) => d.category).filter(Boolean)))],
@@ -274,10 +303,10 @@ function MapsPage() {
         className: "",
         html: `
           <div style="display:flex;flex-direction:column;align-items:center;">
-            <div style="background:${p.kind === "live" ? "#111" : "#1d1d1f"};color:${p.kind === "live" ? "#D4AF37" : "#fff"};font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid ${p.kind === "live" ? "#D4AF37" : "#7c5cff"};box-shadow:0 2px 10px rgba(0,0,0,0.45);white-space:nowrap;">
-              ${p.kind === "live" ? `${p.title.slice(0, 26)}${p.discount ? ` · خصم ${p.discount}%` : ""}` : `📣 ${p.subtitle}`}
+             <div style="background:${p.kind === "store" ? "#111" : "#1d1d1f"};color:${p.kind === "store" ? "#D4AF37" : "#fff"};font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid ${p.kind === "store" ? "#D4AF37" : "#7c5cff"};box-shadow:0 2px 10px rgba(0,0,0,0.45);white-space:nowrap;">
+               ${p.kind === "store" ? `${escapeHtml(p.title.slice(0, 26))}${p.offers.length ? ` · ${p.offers.length} عرض` : ""}` : `📣 ${escapeHtml(p.subtitle)}`}
             </div>
-            <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid ${p.kind === "live" ? "#111" : "#1d1d1f"};margin-top:-1px;"></div>
+             <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid ${p.kind === "store" ? "#111" : "#1d1d1f"};margin-top:-1px;"></div>
           </div>`,
         iconSize: [90, 30],
         iconAnchor: [45, 30],
@@ -290,22 +319,27 @@ function MapsPage() {
             p.originalPrice ? ` <span style="font-size:11px;color:#999;text-decoration:line-through;">${p.originalPrice} ر.س</span>` : ""
           }</div>`
         : "";
+      const offerLinks = p.offers
+        .slice(0, 4)
+        .map((offer) => `<a href="/deals/${encodeURIComponent(offer.id)}" style="display:block;margin-top:6px;color:#111;font-size:11px;font-weight:900;text-decoration:none;">${escapeHtml(offer.title)} · ${offer.price} ر.س</a>`)
+        .join("");
       const hrefBtn = p.href
-        ? `<a href="${p.href}" target="_blank" rel="nofollow sponsored noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:${p.kind === "live" ? "#111" : "#7c5cff"};color:${p.kind === "live" ? "#D4AF37" : "#fff"};font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">${p.hrefLabel}</a>`
+        ? `<a href="${encodeURI(p.href)}" target="_blank" rel="nofollow sponsored noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:${p.kind === "store" ? "#111" : "#7c5cff"};color:${p.kind === "store" ? "#D4AF37" : "#fff"};font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">${p.hrefLabel}</a>`
         : "";
       const navBtn = `<a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener noreferrer" style="display:block;text-align:center;margin-top:6px;background:#D4AF37;color:#111;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">🧭 ابدأ التوجيه</a>`;
       marker.bindPopup(`
         <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:210px;max-width:250px;">
-          <div style="font-size:10px;font-weight:900;color:#B8860B;margin-bottom:2px;">${p.kind === "live" ? "⚡ عرض حقيقي من التاجر" : "عرض من السوشال ميديا"}</div>
-          <div style="font-size:13px;font-weight:900;">${p.title}</div>
-          <div style="font-size:11px;color:#888;margin:4px 0 6px;">${p.subtitle}</div>
+           <div style="font-size:10px;font-weight:900;color:#B8860B;margin-bottom:2px;">${p.kind === "store" ? "📍 موقع متجر موثّق" : "عرض من السوشال ميديا"}</div>
+           <div style="font-size:13px;font-weight:900;">${escapeHtml(p.title)}</div>
+           <div style="font-size:11px;color:#888;margin:4px 0 6px;">${escapeHtml(p.subtitle)}</div>
           ${priceRow}
+           ${offerLinks}
           ${hrefBtn}
           ${navBtn}
         </div>`);
-      marker.on("click", () => setSelectedPin(p.id));
+      marker.on("click", () => setSelectedPin(p.key));
       markersRef.current.push(marker);
-      if (p.id === selectedPin) {
+      if (p.key === selectedPin) {
         map.setView([p.lat, p.lng], 14, { animate: true });
         marker.openPopup();
         didFocusRef.current = true;
@@ -319,7 +353,7 @@ function MapsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pins, userLocation, selectedPin]);
 
-  const selected = pins.find((p) => p.id === selectedPin) ?? null;
+  const selected = pins.find((p) => p.key === selectedPin) ?? null;
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-6 pb-24 space-y-5">
@@ -429,7 +463,9 @@ function MapsPage() {
             </select>
           </label>
         </div>
-        <div className="text-[11px] text-muted-foreground">{pins.length} عرض على الخريطة</div>
+        <div className="text-[11px] text-muted-foreground">
+          {pins.filter((pin) => pin.kind === "store").length} متجر موثّق · {pins.reduce((sum, pin) => sum + pin.offers.length + (pin.kind === "social" ? 1 : 0), 0)} عرض
+        </div>
       </section>
 
       <div className="relative">
@@ -479,6 +515,17 @@ function MapsPage() {
             <p className="text-sm text-muted-foreground">{selected.subtitle}</p>
           </div>
           <div className="flex flex-wrap gap-2">
+            {selected.offers.map((offer) => (
+              <Link
+                key={offer.id}
+                to="/deals/$id"
+                params={{ id: offer.id }}
+                onClick={() => trackDealClick({ dealId: offer.id, title: offer.title, storeName: selected.title, surface: "map" })}
+                className="h-12 px-4 rounded-2xl bg-primary text-primary-foreground font-bold flex items-center gap-2"
+              >
+                {offer.title} · {offer.price} ر.س
+              </Link>
+            ))}
             {selected.href && (
               <a
                 href={selected.href}
@@ -514,15 +561,15 @@ function MapsPage() {
                   key={p.key}
                   type="button"
                   onClick={() => {
-                    if (p.kind === "live") {
+                     if (p.kind === "store" && p.offers[0]) {
                       trackDealClick({
-                        dealId: p.id,
-                        title: p.title,
+                         dealId: p.offers[0].id,
+                         title: p.offers[0].title,
                         storeName: p.subtitle,
                         surface: "map",
                       });
                     }
-                    setSelectedPin(p.id);
+                     setSelectedPin(p.key);
                     const marker = markersRef.current.find(
                       (m) => Math.abs(m.getLatLng().lat - p.lat) < 1e-9 && Math.abs(m.getLatLng().lng - p.lng) < 1e-9,
                     );
@@ -558,7 +605,7 @@ function MapsPage() {
 
       {pins.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-8">
-          لا توجد عروض على الخريطة حاليًا — تظهر هنا عروض التجار الحقيقية وعروض السوشال ميديا فور نشرها.
+          لا توجد مواقع متاجر موثّقة بإحداثيات محفوظة حاليًا. ستظهر المتاجر وعروضها هنا فور إضافة مواقعها الحقيقية.
         </p>
       )}
     </main>
