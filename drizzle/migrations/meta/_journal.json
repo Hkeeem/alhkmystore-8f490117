@@ -29,6 +29,13 @@
       "when": 1790656229279,
       "tag": "0003_create_store_branches",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790657497697,
+      "tag": "0004_add_branch_image",
+      "breakpoints": true
     }
   ]
 }

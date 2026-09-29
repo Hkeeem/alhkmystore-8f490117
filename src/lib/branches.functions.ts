@@ -21,6 +21,7 @@ export type BranchInput = {
   hours?: string | null;
   balady_url?: string | null;
   maps_url?: string | null;
+  image_url?: string | null;
   notes?: string | null;
   is_active?: boolean;
 };
@@ -58,6 +59,7 @@ function clean(input: BranchInput) {
     hours: text(input.hours, 300),
     balady_url: url(input.balady_url),
     maps_url: url(input.maps_url),
+    image_url: url(input.image_url),
     notes: text(input.notes, 500),
     is_active: input.is_active !== false,
   };

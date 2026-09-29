@@ -16,6 +16,7 @@ export type RealBranch = {
   balady_url: string | null;
   maps_url: string | null;
   notes: string | null;
+  image_url: string | null;
 };
 
 /** فروع حكيم الحقيقية المحفوظة في قاعدة البيانات (قراءة عامة) */
@@ -23,7 +24,7 @@ export async function fetchRealBranches(): Promise<RealBranch[]> {
   const { data, error } = await supabase
     .from("store_branches")
     .select(
-      "id,store_id,store_name,name,city,district,address,lat,lng,phone,whatsapp,hours,balady_url,maps_url,notes",
+      "id,store_id,store_name,name,city,district,address,lat,lng,phone,whatsapp,hours,balady_url,maps_url,notes,image_url",
     )
     .eq("is_active", true)
     .order("city", { ascending: true })

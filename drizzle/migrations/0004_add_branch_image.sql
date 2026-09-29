@@ -1,0 +1,1 @@
+ALTER TABLE public.store_branches ADD COLUMN IF NOT EXISTS image_url text;

@@ -23,6 +23,7 @@ const EMPTY = {
   hours: "",
   balady_url: "",
   maps_url: "",
+  image_url: "",
   notes: "",
   is_active: true,
 };
@@ -55,6 +56,7 @@ export function BranchesPanel() {
           hours: form.hours,
           balady_url: form.balady_url,
           maps_url: form.maps_url,
+          image_url: form.image_url,
           notes: form.notes,
           is_active: form.is_active,
         },
@@ -95,6 +97,7 @@ export function BranchesPanel() {
       hours: r.hours ?? "",
       balady_url: r.balady_url ?? "",
       maps_url: r.maps_url ?? "",
+      image_url: (r as { image_url?: string | null }).image_url ?? "",
       notes: r.notes ?? "",
       is_active: r.is_active,
     });
@@ -158,6 +161,7 @@ export function BranchesPanel() {
           {field("hours", "أوقات الدوام", "السبت-الخميس ٩ص-١١م")}
           {field("balady_url", "رابط بلدي")}
           {field("maps_url", "رابط الخريطة")}
+          {field("image_url", "رابط صورة الفرع")}
           {field("notes", "ملاحظات")}
           <label className="flex items-center gap-2 text-sm">
             <input

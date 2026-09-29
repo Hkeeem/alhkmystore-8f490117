@@ -1800,6 +1800,7 @@ export type Database = {
           district: string | null
           hours: string | null
           id: string
+          image_url: string | null
           is_active: boolean
           lat: number
           lng: number
@@ -1820,6 +1821,7 @@ export type Database = {
           district?: string | null
           hours?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           lat: number
           lng: number
@@ -1840,6 +1842,7 @@ export type Database = {
           district?: string | null
           hours?: string | null
           id?: string
+          image_url?: string | null
           is_active?: boolean
           lat?: number
           lng?: number
