@@ -206,6 +206,7 @@ function MapsPage() {
         scrollWheelZoom: true,
       });
       mapInstanceRef.current = map;
+      setMapReady(true);
       if (typeof ResizeObserver !== "undefined" && mapRef.current) {
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(mapRef.current);
@@ -223,40 +224,27 @@ function MapsPage() {
     };
   }, []);
 
-  /** تبديل نمط الخريطة */
+  /** تبديل نمط الخريطة — الطبقات تُنشأ مرة واحدة فقط، والبقية تُزال فعليًا */
   useEffect(() => {
     const L = LRef.current;
     const map = mapInstanceRef.current;
-    if (!L || !map) return;
-    const layers = [
-      {
-        id: "map" as const,
-        layer: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution: "© OpenStreetMap",
-        }),
-      },
-      {
-        id: "satellite" as const,
-        layer: L.tileLayer(
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          { maxZoom: 19, attribution: "© Esri" },
-        ),
-      },
-      {
-        id: "terrain" as const,
-        layer: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-          maxZoom: 17,
-          attribution: "© OpenTopoMap",
-        }),
-      },
-    ];
-    const current = layers.find((l) => l.id === mapStyle)!;
-    layers.forEach((l) => {
-      if (map.hasLayer(l.layer) && l.id !== mapStyle) map.removeLayer(l.layer);
+    if (!L || !map || !mapReady) return;
+    (Object.keys(BASE_LAYERS) as MapStyleId[]).forEach((id) => {
+      if (!layersRef.current[id]) {
+        const def = BASE_LAYERS[id];
+        layersRef.current[id] = L.tileLayer(def.url, {
+          maxZoom: def.maxZoom,
+          attribution: def.attribution,
+        });
+      }
+      const layer = layersRef.current[id]!;
+      if (id === mapStyle) {
+        if (!map.hasLayer(layer)) layer.addTo(map);
+      } else if (map.hasLayer(layer)) {
+        map.removeLayer(layer);
+      }
     });
-    if (!map.hasLayer(current.layer)) current.layer.addTo(map);
-  }, [mapStyle]);
+  }, [mapStyle, mapReady]);
 
   /** رسم الدبابيس */
   useEffect(() => {
