@@ -7,7 +7,7 @@ import { stores } from "@/data/deals";
 import { fetchRealBranches, telHref, type RealBranch } from "@/lib/real-branches";
 
 type Provider = "google" | "apple" | "balady";
-type View = "map" | "satellite";
+type View = "map" | "satellite" | "terrain";
 
 function km(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   const R = 6371, r = Math.PI / 180;
@@ -55,7 +55,7 @@ export function MapsHub() {
   }, [list, selected]);
 
   const center = selected ?? (me ? { ...me } : { lat: 24.7136, lng: 46.6753 });
-  const embed = `https://maps.google.com/maps?q=${center.lat},${center.lng}&z=15&t=${view === "satellite" ? "k" : "m"}&hl=ar&output=embed`;
+  const embed = `https://maps.google.com/maps?q=${center.lat},${center.lng}&z=15&t=${view === "satellite" ? "k" : view === "terrain" ? "p" : "m"}&hl=ar&output=embed`;
   const navUrl = (b: RealBranch) =>
     provider === "apple"
       ? `https://maps.apple.com/?daddr=${b.lat},${b.lng}`
@@ -158,10 +158,10 @@ export function MapsHub() {
         <section className="rounded-3xl border border-border bg-card overflow-hidden">
           <div className="relative">
             <iframe title="خريطة الفرع" src={embed} className="w-full h-80 border-0" loading="lazy" />
-            <div className="absolute top-2 right-2 flex rounded-lg overflow-hidden shadow bg-card text-sm">
-              {([["map", "خريطة"], ["satellite", "قمر صناعي"]] as const).map(([id, label]) => (
-                <button key={id} onClick={() => setView(id)}
-                  className={`px-3 py-2 ${view === id ? "bg-primary text-primary-foreground" : ""}`}>{label}</button>
+            <div role="tablist" aria-label="نوع الخريطة" className="absolute top-2 inset-x-2 grid grid-cols-3 gap-1 rounded-xl bg-card/95 p-1 shadow-lg text-sm font-bold">
+              {([["map", "🗺️ عادية"], ["satellite", "🛰️ قمر صناعي"], ["terrain", "⛰️ تضاريس"]] as const).map(([id, label]) => (
+                <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}
+                  className={`rounded-lg py-2 transition ${view === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}>{label}</button>
               ))}
             </div>
             <button onClick={locate} className="absolute bottom-3 left-3 rounded-full bg-card p-2 shadow" aria-label="موقعي">

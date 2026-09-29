@@ -15,7 +15,7 @@ function toCategory(value: string | null | undefined): Category {
 }
 
 function toStoreId(candidate: string | null | undefined, fallback: string) {
-  const v = (candidate ?? "").trim().toLowerCase();
+  const v = (candidate ?? "").trim().toLowerCase().replace(/-official$/, "");
   if (v && stores.some((s) => s.id === v)) return v;
   return fallback;
 }
