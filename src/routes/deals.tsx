@@ -10,6 +10,7 @@ import { useRealDeals, REAL_DEALS_KEY } from "@/hooks/use-real-deals";
 import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { HkeeemOffersSection, StoresDirectory } from "@/components/HkeeemOffersSection";
+import { DailyDeal } from "@/components/DailyDeal";
 import { HkeeemCatalogSection } from "@/components/HkeeemCatalogSection";
 import {
   DealsFilter,
