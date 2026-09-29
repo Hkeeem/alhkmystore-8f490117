@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type * as Leaflet from "leaflet";
 import type { RealBranch } from "@/lib/real-branches";
@@ -36,6 +36,7 @@ export function BranchPinsMap({
   const pinsRef = useRef<Leaflet.LayerGroup | null>(null);
   const markers = useRef<Record<string, Leaflet.Marker>>({});
   const navigate = useNavigate();
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,7 +48,6 @@ export function BranchPinsMap({
       const map = L.map(el.current, { zoomControl: true }).setView([24.7136, 46.6753], 11);
       mapRef.current = map;
       pinsRef.current = L.layerGroup().addTo(map);
-      map.fire("ready");
       setTick((t) => t + 1);
     })();
     return () => {
@@ -56,9 +56,6 @@ export function BranchPinsMap({
       mapRef.current = null;
     };
   }, []);
-
-  // إعادة رسم عند جاهزية الخريطة
-  const [tick, setTick] = useStateTick();
 
   useEffect(() => {
     const L = LRef.current, map = mapRef.current;
@@ -100,9 +97,4 @@ export function BranchPinsMap({
   }, [selectedId, branches]);
 
   return <div ref={el} className="w-full h-80 z-0" aria-label="خريطة الفروع" />;
-}
-
-import { useState } from "react";
-function useStateTick() {
-  return useState(0);
 }
