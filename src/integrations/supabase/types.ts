@@ -1791,6 +1791,69 @@ export type Database = {
           },
         ]
       }
+      store_branches: {
+        Row: {
+          address: string | null
+          balady_url: string | null
+          city: string
+          created_at: string
+          district: string | null
+          hours: string | null
+          id: string
+          is_active: boolean
+          lat: number
+          lng: number
+          maps_url: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          store_id: string
+          store_name: string
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          balady_url?: string | null
+          city: string
+          created_at?: string
+          district?: string | null
+          hours?: string | null
+          id?: string
+          is_active?: boolean
+          lat: number
+          lng: number
+          maps_url?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          store_id: string
+          store_name: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          balady_url?: string | null
+          city?: string
+          created_at?: string
+          district?: string | null
+          hours?: string | null
+          id?: string
+          is_active?: boolean
+          lat?: number
+          lng?: number
+          maps_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          store_id?: string
+          store_name?: string
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       store_feeds: {
         Row: {
           active: boolean
