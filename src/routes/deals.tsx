@@ -54,6 +54,7 @@ function DealsPage() {
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string | undefined>(cat);
   const [storeId, setStoreId] = useState<string | undefined>(store);
+  useEffect(() => setStoreId(store), [store]);
   const [sort, setSort] = useState<"smart" | "discount" | "price">("smart");
   const [quickFilter, setQuickFilter] = useState<DealFilter>("الكل");
   const [interest, setInterest] = useState<Interest>("electronics");
