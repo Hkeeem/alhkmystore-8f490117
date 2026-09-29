@@ -89,3 +89,6 @@
 
 - [ ] ربط حساب Admitad (Client ID/Secret) لسحب العمولات الحقيقية إلى تقارير العمولات — مؤجل بطلب المستخدم
 - [x] رابط بيانات عام لفروع خريطتي لتطبيق AI Studio (يُفعَّل بعد النشر)
+
+- [ ] Publish so /api/public/branches is live; explain AI Studio setup
+- [ ] Delete Vercel A record 76.76.21.21 (blocked: Cloudflare token read-only)
