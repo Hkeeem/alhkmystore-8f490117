@@ -205,6 +205,12 @@ function AdminPage() {
       allow: ["super_admin", "admin", "content_manager"],
     },
     {
+      id: "store-visits" as const,
+      label: "زيارات المتاجر",
+      icon: ExternalLink,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
       id: "coupon-clicks" as const,
       label: "نقرات الكوبونات",
       icon: Tags,
@@ -276,6 +282,7 @@ function AdminPage() {
           {tab === "partner-coupons" && <PartnerCouponsPanel />}
           {tab === "offer-clicks" && <OfferClicksPanel />}
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
+          {tab === "store-visits" && <StoreVisitsPanel />}
           {tab === "admitad" && <AdmitadPanel />}
           {tab === "commissions" && <CommissionReportsPanel />}
         </main>
