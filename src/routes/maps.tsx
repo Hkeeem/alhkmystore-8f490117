@@ -266,7 +266,8 @@ function MapsPage() {
           attribution: def.attribution,
         });
       }
-      const layer = layersRef.current[id]!;
+      const layer = layersRef.current[id];
+      if (!layer) return;
       if (id === mapStyle) {
         if (!map.hasLayer(layer)) layer.addTo(map);
       } else if (map.hasLayer(layer)) {
@@ -291,9 +292,10 @@ function MapsPage() {
         iconSize: [20, 20],
         iconAnchor: [10, 10],
       });
-      L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
+      const userMarker = L.marker([userLocation.lat, userLocation.lng], { icon: userIcon })
         .addTo(map)
         .bindPopup("<b>موقعك الحالي</b>");
+      markersRef.current.push(userMarker);
     }
 
     const bounds: [number, number][] = userLocation ? [[userLocation.lat, userLocation.lng]] : [];
@@ -603,7 +605,13 @@ function MapsPage() {
         </section>
       )}
 
-      {pins.length === 0 && (
+      {branchesQuery.isError && (
+        <p className="text-sm text-destructive text-center py-4">
+          تعذّر تحميل مواقع المتاجر المحفوظة. حاول تحديث الصفحة.
+        </p>
+      )}
+
+      {!branchesQuery.isError && pins.length === 0 && (
         <p className="text-sm text-muted-foreground text-center py-8">
           لا توجد مواقع متاجر موثّقة بإحداثيات محفوظة حاليًا. ستظهر المتاجر وعروضها هنا فور إضافة مواقعها الحقيقية.
         </p>
