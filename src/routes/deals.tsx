@@ -137,6 +137,9 @@ function DealsPage() {
 
       <DailyDeal deals={realDeals ?? []} />
 
+      {/* عروض السيارات من معرض حكيم — كل عرض يفتح صفحة تفاصيله */}
+      <CarOffersSection />
+
       {/* أقسام عروض حكيم مخفية مؤقتاً بطلب المالك (خدمة حكيم الخارجية متوقفة) */}
       {showHkeeemSections ? (
         <>
