@@ -1,3 +1,4 @@
+import { BranchExplorer } from "@/components/BranchExplorer";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
@@ -702,6 +703,7 @@ function MapsPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 pt-6 pb-24 space-y-5">
+      <BranchExplorer />
       <header className="flex items-center gap-3 justify-between flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-gold glow-gold flex items-center justify-center shrink-0">
