@@ -336,7 +336,7 @@ export function StoresDirectory({ offerStoreNames = [] }: { offerStoreNames?: st
                 </span>
                 <span className="text-xs text-primary font-bold">{s.category}</span>
                 <span className="text-xs text-muted-foreground font-medium">{s.region}</span>
-                {!hasOffers && (
+                {offerStoreNames.length > 0 && !hasOffers && (
                   <span className="text-xs text-muted-foreground font-medium">
                     لا توجد عروض موثقة حاليًا
                   </span>
