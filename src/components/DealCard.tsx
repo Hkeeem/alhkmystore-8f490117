@@ -180,6 +180,18 @@ export function DealCard({
           {deal.title}
         </h3>
         {deal.unit && <p className="text-[12px] text-zinc-400">{deal.unit}</p>}
+        {store.website && (
+          <a
+            href={store.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline w-fit"
+          >
+            {store.name}
+            <ExternalLink className="w-3 h-3" />
+          </a>
+        )}
 
         {reason && (
           <div>
