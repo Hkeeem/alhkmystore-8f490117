@@ -1561,6 +1561,87 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_accounts: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reward_events: {
+        Row: {
+          action: string
+          created_at: string
+          id: number
+          label: string | null
+          points: number
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: never
+          label?: string | null
+          points: number
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: never
+          label?: string | null
+          points?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reward_redemptions: {
+        Row: {
+          cost: number
+          created_at: string
+          id: string
+          reward_id: string
+          reward_title: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string
+          id?: string
+          reward_id: string
+          reward_title: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          id?: string
+          reward_id?: string
+          reward_title?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       search_console_snapshots: {
         Row: {
           created_at: string
@@ -2023,7 +2104,19 @@ export type Database = {
         }
         Returns: undefined
       }
+      award_points: {
+        Args: { _action: string; _label?: string }
+        Returns: number
+      }
       get_bots_status: { Args: never; Returns: Json }
+      get_reward_leaderboard: {
+        Args: never
+        Returns: {
+          display_name: string
+          points: number
+          rank: number
+        }[]
+      }
       get_search_console_schedule: { Args: never; Returns: Json }
       get_sync_schedule: { Args: never; Returns: Json }
       has_role: {
@@ -2064,6 +2157,10 @@ export type Database = {
           required_services: string[]
         }[]
       }
+      redeem_reward: {
+        Args: { _cost: number; _reward_id: string; _reward_title: string }
+        Returns: number
+      }
       register_affiliate_click: {
         Args: {
           _country?: string
@@ -2101,6 +2198,7 @@ export type Database = {
         Args: { _active?: boolean; _schedule: string }
         Returns: Json
       }
+      sync_guest_points: { Args: { _total: number }; Returns: number }
     }
     Enums: {
       app_role:
