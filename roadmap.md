@@ -92,3 +92,5 @@
 
 - [ ] Publish so /api/public/branches is live; explain AI Studio setup
 - [ ] Delete Vercel A record 76.76.21.21 (blocked: Cloudflare token read-only)
+- [x] Google Play privacy URL: page works; advise using https://www.alhkmy.app/privacy
+- [ ] Admitad keys (blocked: user declined secure form)
