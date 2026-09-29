@@ -12,6 +12,14 @@ import {
   type PriceCategory,
 } from "@/data/price-index";
 
+// روابط بحث المتاجر؛ تمر عبر /api/public/out فتُلف بمسار Admitad أو معرّف أمازون تلقائيًا
+const STORE_SEARCH: Partial<Record<string, (q: string) => string>> = {
+  amazon: (q) => `https://www.amazon.sa/s?k=${encodeURIComponent(q)}`,
+  noon: (q) => `https://www.noon.com/saudi-ar/search/?q=${encodeURIComponent(q)}`,
+  jarir: (q) => `https://www.jarir.com/sa-ar/catalogsearch/result/?q=${encodeURIComponent(q)}`,
+  extra: (q) => `https://www.extra.com/ar-sa/search/?text=${encodeURIComponent(q)}`,
+};
+
 export const Route = createFileRoute("/compare")({
   head: () => ({
     meta: [
@@ -208,6 +216,16 @@ function ComparePage() {
                             {fp} ر.س
                           </div>
                         </div>
+                        {STORE_SEARCH[o.retailerId] && (
+                          <a
+                            href={`/api/public/out?u=${encodeURIComponent(STORE_SEARCH[o.retailerId]!(p.name))}`}
+                            target="_blank"
+                            rel="nofollow sponsored noopener noreferrer"
+                            className="text-xs font-bold px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:opacity-90"
+                          >
+                            اذهب للمتجر
+                          </a>
+                        )}
                       </div>
                     </div>
                   );

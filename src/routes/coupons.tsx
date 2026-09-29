@@ -215,7 +215,7 @@ function CouponsPage() {
 
               {c.storeUrl && (
                 <a
-                  href={c.storeUrl}
+                  href={`/api/public/out?u=${encodeURIComponent(c.storeUrl)}`}
                   onClick={() => {
                     trackCouponClick({ couponId: c.id, code: c.code, title: c.title, storeId: c.storeId, storeName: c.storeName, surface: "coupon" });
                     void navigator.clipboard?.writeText(c.code).catch(() => {});
