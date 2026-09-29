@@ -41,18 +41,11 @@ export const Route = createFileRoute("/rewards/$id")({
 });
 
 function RewardNotFound() {
-  const nearest = [...REWARDS_CATALOG].sort((a, b) => a.cost - b.cost)[0];
   return (
     <InvalidLinkFallback
       icon="🎁"
       title="الجائزة غير متوفرة"
-      message="يمكن الجائزة انسحبت من الكتالوج. اخترنا لك الأقرب للاستبدال."
-      suggestion={{
-        to: `/rewards/${nearest.id}`,
-        label: nearest.title,
-        hint: `${nearest.cost} نقطة`,
-        emoji: nearest.icon,
-      }}
+      message="الجائزة المطلوبة غير معتمدة حاليًا. نقاطك محفوظة في حسابك ولا تنتهي."
       backTo={{ to: "/rewards", label: "كل الجوائز" }}
     />
   );
