@@ -208,9 +208,10 @@ export function HkeeemOffersSection() {
           </button>
         </div>
       ) : offers.length === 0 ? (
-        <div className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-          لا توجد عروض مطابقة حالياً من منصة HkeeemAI.
-        </div>
+        <p className="text-xs text-muted-foreground text-center py-2">
+          عروض HkeeemAI ستظهر هنا تلقائيًا بعد ربط حساب الشركاء — عروض اليوم الموثّقة معروضة في
+          الأعلى.
+        </p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {offers.map((o) => (
@@ -291,7 +292,9 @@ export function HkeeemOffersSection() {
 
       <HkeeemStatusPanel refreshKey={offersQuery.dataUpdatedAt + offersQuery.errorUpdatedAt} />
 
-      <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+      {offers.length > 0 && (
+        <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+      )}
     </section>
   );
 }
