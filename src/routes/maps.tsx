@@ -339,11 +339,28 @@ function MapsPage() {
       });
       mapInstanceRef.current = map;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      const streetLayer = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         maxNativeZoom: 19,
         keepBuffer: 4,
+        attribution: "© OpenStreetMap",
       }).addTo(map);
+      const satelliteLayer = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { maxZoom: 19, keepBuffer: 4, attribution: "© Esri" },
+      );
+      const terrainLayer = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
+        maxZoom: 17,
+        keepBuffer: 4,
+        attribution: "© OpenTopoMap",
+      });
+      L.control
+        .layers(
+          { "عادية": streetLayer, "قمر صناعي": satelliteLayer, "تضاريس": terrainLayer },
+          undefined,
+          { position: "topleft", collapsed: false },
+        )
+        .addTo(map);
 
       const userIcon = L.divIcon({
         className: "",
