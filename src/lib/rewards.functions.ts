@@ -25,12 +25,16 @@ const REWARD_ACTIONS = ["copy_coupon", "share", "visit_deal", "smart_list"] as c
 export const getRewardProfile = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<RewardProfile> => {
-    const [acct, events, board, ahead] = await Promise.all([
-      context.supabase
-        .from("reward_accounts")
-        .select("points, display_name")
-        .eq("user_id", context.userId)
-        .maybeSingle(),
+    const acct = await context.supabase
+      .from("reward_accounts")
+      .select("points, display_name")
+      .eq("user_id", context.userId)
+      .maybeSingle();
+
+    const myPoints = acct.data?.points ?? 0;
+    const iHaveName = !!acct.data?.display_name;
+
+    const [events, board, ahead] = await Promise.all([
       context.supabase
         .from("reward_events")
         .select("action, points, label, created_at")
@@ -41,12 +45,10 @@ export const getRewardProfile = createServerFn({ method: "GET" })
       context.supabase
         .from("reward_accounts")
         .select("points", { count: "exact", head: true })
-        .gt("points", acct.data?.points ?? 0),
+        .gt("points", myPoints),
     ]);
 
-    const myPoints = acct.data?.points ?? 0;
     const aheadCount = typeof ahead.count === "number" ? ahead.count : 0;
-    const iHaveName = !!acct.data?.display_name;
 
     return {
       points: myPoints,
@@ -68,7 +70,7 @@ export const awardPointsServer = createServerFn({ method: "POST" })
   .handler(async ({ context, data }) => {
     const { data: total, error } = await context.supabase.rpc("award_points", {
       _action: data.action,
-      _label: data.label ?? null,
+      _label: data.label ?? undefined,
     });
     if (error) throw new Error(error.message);
     return { total: Number(total) };
