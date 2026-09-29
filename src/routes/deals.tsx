@@ -134,6 +134,8 @@ function DealsPage() {
         </Link>
       </div>
 
+      <DailyDeal deals={realDeals ?? []} />
+
       {/* أقسام عروض حكيم مخفية مؤقتاً بطلب المالك (خدمة حكيم الخارجية متوقفة) */}
       {showHkeeemSections ? (
         <>
