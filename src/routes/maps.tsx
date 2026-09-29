@@ -124,7 +124,7 @@ function MapsPage() {
         discount: d.discount_percent ?? Math.round(((d.original_price - d.price) / d.original_price) * 100),
         lat: pos.lat,
         lng: pos.lng,
-        city: d.merchants.city,
+        city: d.merchants.city ?? "",
         href: d.product_url ?? null,
         hrefLabel: "🛒 صفحة العرض لدى التاجر",
       });
