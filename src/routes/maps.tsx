@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MapsHub } from "@/components/MapsHub";
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import {
   MapPin,
@@ -55,7 +56,7 @@ export const Route = createFileRoute("/maps")({
     ],
     links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/maps" }],
   }),
-  component: MapsPage,
+  component: MapsHub,
 });
 
 /** مجموعات رئيسية تُبسّط التصفية على الخريطة */
@@ -66,7 +67,7 @@ const GROUPS: { id: string; label: string; icon: string; categories: string[] }[
   { id: "خدمات", label: "خدمات", icon: "🧾", categories: ["صيدلية"] },
 ];
 
-function MapsPage() {
+export function MapsPage() {
   const { deal: focusDealId } = Route.useSearch();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
