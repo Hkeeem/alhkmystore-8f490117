@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { branches, CITIES } from "@/data/store-branches";
+import { CITIES } from "@/data/store-branches";
 import { stores } from "@/data/deals";
 
 const CORS = {
@@ -84,35 +84,9 @@ export const Route = createFileRoute("/api/public/branches")({
             }
           }
         } catch {
-          // في حال تعذّر الوصول لقاعدة البيانات نكتفي بالفروع التقديرية
+          // تعذّر الوصول لقاعدة البيانات — لا نعرض أي فروع غير موثقة
         }
 
-        // فروع تقديرية للعرض على الخريطة (غير موثقة)
-        for (const b of branches) {
-          if ((city && b.city !== city) || (store && b.storeId !== store)) continue;
-          const s = storeMap.get(b.storeId);
-          items.push({
-            id: b.id,
-            name: b.name,
-            city: b.city,
-            district: null,
-            address: null,
-            lat: b.lat,
-            lng: b.lng,
-            phone: null,
-            whatsapp: null,
-            hours: null,
-            baladyUrl: null,
-            verified: false,
-            store: {
-              id: b.storeId,
-              name: s?.name ?? b.storeId,
-              category: s?.category ?? null,
-              logoUrl: s?.logoUrl ?? null,
-            },
-            directionsUrl: `https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}`,
-          });
-        }
 
         return Response.json(
           {

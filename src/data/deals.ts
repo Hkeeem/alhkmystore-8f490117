@@ -9,12 +9,14 @@ export type Store = {
   logoUrl?: string; // URL for real store logo image
   color: string;
   category: Category;
+  website?: string; // الموقع الرسمي للمتجر/المطعم
 };
 
 export const stores: Store[] = [
   // سوبرماركت
   {
     id: "othaim",
+    website: "https://www.othaimmarkets.com",
     name: "أسواق العثيم",
     logo: "ع",
     logoUrl:
@@ -24,6 +26,7 @@ export const stores: Store[] = [
   },
   {
     id: "panda",
+    website: "https://www.panda.com.sa",
     name: "بنده",
     logo: "ب",
     logoUrl:
@@ -33,6 +36,7 @@ export const stores: Store[] = [
   },
   {
     id: "lulu",
+    website: "https://www.luluhypermarket.com",
     name: "لولو هايبر",
     logo: "ل",
     logoUrl:
@@ -42,6 +46,7 @@ export const stores: Store[] = [
   },
   {
     id: "danube",
+    website: "https://www.danube.com.sa",
     name: "الدانوب",
     logo: "د",
     logoUrl: "https://logo.clearbit.com/danube.com.sa",
@@ -50,6 +55,7 @@ export const stores: Store[] = [
   },
   {
     id: "tamimi",
+    website: "https://www.tamimimarkets.com",
     name: "أسواق التميمي",
     logo: "ت",
     logoUrl: "https://logo.clearbit.com/tamimimarkets.com",
@@ -59,6 +65,7 @@ export const stores: Store[] = [
   // مطاعم
   {
     id: "hunger",
+    website: "https://hungerstation.com",
     name: "هنقرستيشن",
     logo: "H",
     logoUrl:
@@ -68,6 +75,7 @@ export const stores: Store[] = [
   },
   {
     id: "jahez",
+    website: "https://www.jahez.net",
     name: "جاهز",
     logo: "ج",
     logoUrl:
@@ -86,6 +94,7 @@ export const stores: Store[] = [
   // إلكترونيات
   {
     id: "noon",
+    website: "https://www.noon.com/saudi-ar/",
     name: "نون",
     logo: "N",
     logoUrl:
@@ -95,6 +104,7 @@ export const stores: Store[] = [
   },
   {
     id: "amazon",
+    website: "https://www.amazon.sa",
     name: "أمازون السعودية",
     logo: "A",
     logoUrl:
@@ -104,6 +114,7 @@ export const stores: Store[] = [
   },
   {
     id: "jarir",
+    website: "https://www.jarir.com",
     name: "جرير",
     logo: "ج",
     logoUrl:
@@ -113,6 +124,7 @@ export const stores: Store[] = [
   },
   {
     id: "extra",
+    website: "https://www.extra.com",
     name: "إكسترا",
     logo: "X",
     logoUrl:
@@ -123,6 +135,7 @@ export const stores: Store[] = [
   // صيدلية
   {
     id: "nahdi",
+    website: "https://www.nahdionline.com",
     name: "صيدلية النهدي",
     logo: "N",
     logoUrl:
@@ -132,6 +145,7 @@ export const stores: Store[] = [
   },
   {
     id: "dawaa",
+    website: "https://www.al-dawaa.com",
     name: "صيدلية الدواء",
     logo: "د",
     logoUrl: "https://logo.clearbit.com/aldawaa.com",
