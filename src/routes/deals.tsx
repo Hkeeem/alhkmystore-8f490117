@@ -11,6 +11,7 @@ import { readPrefs, hasPrefs, type Prefs } from "@/lib/preferences";
 import { smartSort, smartReason, smartExplanation } from "@/lib/smart-rank";
 import { HkeeemOffersSection, StoresDirectory } from "@/components/HkeeemOffersSection";
 import { DailyDeal } from "@/components/DailyDeal";
+import { CarOffersSection } from "@/components/cars/CarOffersSection";
 import { HkeeemCatalogSection } from "@/components/HkeeemCatalogSection";
 import {
   DealsFilter,
