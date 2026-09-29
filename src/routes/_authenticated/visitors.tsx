@@ -6,7 +6,7 @@ import { Users, MapPin, Route as RouteIcon, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getVisitorStats } from "@/lib/visits.functions";
-import { CITIES } from "@/data/store-branches";
+import { CITIES } from "@/data/cities";
 
 export const Route = createFileRoute("/_authenticated/visitors")({
   component: VisitorsPage,
