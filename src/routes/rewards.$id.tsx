@@ -12,6 +12,7 @@ import {
 } from "@/lib/rewards";
 import { getRewardProfile, redeemRewardServer } from "@/lib/rewards.functions";
 import { useAuth } from "@/hooks/use-auth";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
 export const Route = createFileRoute("/rewards/$id")({
   loader: ({ params }) => {
