@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Compass, Layers, MapPin, Clock, Phone, Copy, Navigation, Search, Crosshair } from "lucide-react";
 import { toast } from "sonner";
+import { BranchPinsMap } from "@/components/BranchPinsMap";
 import { stores } from "@/data/deals";
 import { fetchRealBranches, telHref, type RealBranch } from "@/lib/real-branches";
 
@@ -54,8 +55,6 @@ export function MapsHub() {
     if (!selected || !list.some((x) => x.b.id === selected.id)) setSelected(list[0]?.b ?? null);
   }, [list, selected]);
 
-  const center = selected ?? (me ? { ...me } : { lat: 24.7136, lng: 46.6753 });
-  const embed = `https://maps.google.com/maps?q=${center.lat},${center.lng}&z=15&t=${view === "satellite" ? "k" : view === "terrain" ? "p" : "m"}&hl=ar&output=embed`;
   const navUrl = (b: RealBranch) =>
     provider === "apple"
       ? `https://maps.apple.com/?daddr=${b.lat},${b.lng}`
@@ -157,14 +156,14 @@ export function MapsHub() {
 
         <section className="rounded-3xl border border-border bg-card overflow-hidden">
           <div className="relative">
-            <iframe title="خريطة الفرع" src={embed} className="w-full h-80 border-0" loading="lazy" />
-            <div role="tablist" aria-label="نوع الخريطة" className="absolute top-2 inset-x-2 grid grid-cols-3 gap-1 rounded-xl bg-card/95 p-1 shadow-lg text-sm font-bold">
+            <BranchPinsMap branches={list.map((x) => x.b)} style={view} selectedId={selected?.id} me={me} />
+            <div role="tablist" aria-label="نوع الخريطة" className="absolute top-2 left-14 right-2 z-[500] grid grid-cols-3 gap-1 rounded-xl bg-card/95 p-1 shadow-lg text-sm font-bold">
               {([["map", "🗺️ عادية"], ["satellite", "🛰️ قمر صناعي"], ["terrain", "⛰️ تضاريس"]] as const).map(([id, label]) => (
                 <button key={id} role="tab" aria-selected={view === id} onClick={() => setView(id)}
                   className={`rounded-lg py-2 transition ${view === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-muted"}`}>{label}</button>
               ))}
             </div>
-            <button onClick={locate} className="absolute bottom-3 left-3 rounded-full bg-card p-2 shadow" aria-label="موقعي">
+            <button onClick={locate} className="absolute bottom-3 left-3 z-[500] rounded-full bg-card p-2 shadow" aria-label="موقعي">
               <Crosshair className="w-5 h-5 text-primary" />
             </button>
           </div>
