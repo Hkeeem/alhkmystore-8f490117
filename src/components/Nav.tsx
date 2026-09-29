@@ -74,25 +74,12 @@ type Group = { key: TKey; icon: typeof Home; items: SubItem[] };
 
 const groups: Group[] = [
   {
-    key: "group.store",
-    icon: Store,
+    key: "group.services",
+    icon: Car,
     items: [
-      { to: "/stores", key: "item.stores", icon: Store },
-      { to: "/showroom", key: "item.showroom", icon: Sparkles, badgeKey: "nav.new" },
-      { to: "/shop", key: "item.shop", icon: ShoppingBag, badgeKey: "nav.new" },
-      { to: "/deals", key: "item.deals", icon: Tag },
-      { to: "/coupons", key: "item.coupons", icon: Ticket },
       { to: "/cars", key: "item.cars", icon: Car },
       { to: "/real-estate", key: "item.realEstate", icon: Building2 },
       { to: "/merchant", key: "item.merchant", icon: Store, badgeKey: "nav.new" },
-    ],
-  },
-  {
-    key: "group.showroom",
-    icon: Sparkles,
-    items: [
-      { to: "/hkeeem-showroom", key: "item.showroom", icon: Sparkles },
-      { to: "/hkeeem-shopping", key: "item.shopping", icon: ShoppingBag, badgeKey: "nav.new" },
     ],
   },
   {

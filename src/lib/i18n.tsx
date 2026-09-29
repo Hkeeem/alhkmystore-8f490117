@@ -36,6 +36,7 @@ export const dict = {
 
   // Sidebar groups
   "group.store": { ar: "متجر حكيم AI", en: "HkeeemAI Store" },
+  "group.services": { ar: "خدمات", en: "Services" },
   "group.showroom": { ar: "معرض حكيم AI", en: "HkeeemAI Showroom" },
   "group.office": { ar: "مكتب حكيم AI", en: "HkeeemAI Office" },
   "group.intelligence": { ar: "ذكاء حكيم AI", en: "HkeeemAI Intelligence" },
