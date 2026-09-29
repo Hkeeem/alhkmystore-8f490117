@@ -276,6 +276,7 @@ function AdminPage() {
           {tab === "offer-clicks" && <OfferClicksPanel />}
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
           {tab === "admitad" && <AdmitadPanel />}
+          {tab === "commissions" && <CommissionReportsPanel />}
         </main>
       </div>
     </div>
