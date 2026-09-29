@@ -14,7 +14,7 @@ import { getRewardProfile, redeemRewardServer } from "@/lib/rewards.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
-export const Route = createFileRoute("/rewards/$id")({
+export const Route = createFileRoute("/rewards_/$id")({
   loader: ({ params }) => {
     const reward = REWARDS_CATALOG.find((r) => r.id === params.id);
     if (!reward) throw notFound();

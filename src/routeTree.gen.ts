@@ -44,7 +44,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HkeeemIndexRouteImport } from './routes/hkeeem.index'
-import { Route as RewardsIdRouteImport } from './routes/rewards.$id'
+import { Route as RewardsIdRouteImport } from './routes/rewards_.$id'
 import { Route as HkeeemProductRouteImport } from './routes/hkeeem.product'
 import { Route as HkeeemNearbyRouteImport } from './routes/hkeeem.nearby'
 import { Route as HkeeemChatRouteImport } from './routes/hkeeem.chat'
@@ -259,9 +259,9 @@ const HkeeemIndexRoute = HkeeemIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsIdRoute = RewardsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => RewardsRoute,
+  id: '/rewards_/$id',
+  path: '/rewards/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const HkeeemProductRoute = HkeeemProductRouteImport.update({
   id: '/hkeeem/product',
@@ -494,7 +494,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/rewards': typeof RewardsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/showroom': typeof ShowroomRoute
@@ -569,7 +569,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/rewards': typeof RewardsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/showroom': typeof ShowroomRoute
@@ -646,7 +646,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/pro': typeof ProRoute
   '/real-estate': typeof RealEstateRoute
-  '/rewards': typeof RewardsRouteWithChildren
+  '/rewards': typeof RewardsRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/showroom': typeof ShowroomRoute
@@ -677,7 +677,7 @@ export interface FileRoutesById {
   '/hkeeem/chat': typeof HkeeemChatRoute
   '/hkeeem/nearby': typeof HkeeemNearbyRoute
   '/hkeeem/product': typeof HkeeemProductRoute
-  '/rewards/$id': typeof RewardsIdRoute
+  '/rewards_/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
@@ -905,7 +905,7 @@ export interface FileRouteTypes {
     | '/hkeeem/chat'
     | '/hkeeem/nearby'
     | '/hkeeem/product'
-    | '/rewards/$id'
+    | '/rewards_/$id'
     | '/hkeeem/'
     | '/api/public/out'
     | '/api/public/go/$dealId'
@@ -951,7 +951,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ProRoute: typeof ProRoute
   RealEstateRoute: typeof RealEstateRoute
-  RewardsRoute: typeof RewardsRouteWithChildren
+  RewardsRoute: typeof RewardsRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   ShowroomRoute: typeof ShowroomRoute
@@ -968,6 +968,7 @@ export interface RootRouteChildren {
   HkeeemChatRoute: typeof HkeeemChatRoute
   HkeeemNearbyRoute: typeof HkeeemNearbyRoute
   HkeeemProductRoute: typeof HkeeemProductRoute
+  RewardsIdRoute: typeof RewardsIdRoute
   HkeeemIndexRoute: typeof HkeeemIndexRoute
   ApiPublicOutRoute: typeof ApiPublicOutRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
@@ -1235,12 +1236,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HkeeemIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/rewards/$id': {
-      id: '/rewards/$id'
-      path: '/$id'
+    '/rewards_/$id': {
+      id: '/rewards_/$id'
+      path: '/rewards/$id'
       fullPath: '/rewards/$id'
       preLoaderRoute: typeof RewardsIdRouteImport
-      parentRoute: typeof RewardsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/hkeeem/product': {
       id: '/hkeeem/product'
@@ -1565,17 +1566,6 @@ const DealsRouteChildren: DealsRouteChildren = {
 
 const DealsRouteWithChildren = DealsRoute._addFileChildren(DealsRouteChildren)
 
-interface RewardsRouteChildren {
-  RewardsIdRoute: typeof RewardsIdRoute
-}
-
-const RewardsRouteChildren: RewardsRouteChildren = {
-  RewardsIdRoute: RewardsIdRoute,
-}
-
-const RewardsRouteWithChildren =
-  RewardsRoute._addFileChildren(RewardsRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -1601,7 +1591,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ProRoute: ProRoute,
   RealEstateRoute: RealEstateRoute,
-  RewardsRoute: RewardsRouteWithChildren,
+  RewardsRoute: RewardsRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   ShowroomRoute: ShowroomRoute,
@@ -1618,6 +1608,7 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemChatRoute: HkeeemChatRoute,
   HkeeemNearbyRoute: HkeeemNearbyRoute,
   HkeeemProductRoute: HkeeemProductRoute,
+  RewardsIdRoute: RewardsIdRoute,
   HkeeemIndexRoute: HkeeemIndexRoute,
   ApiPublicOutRoute: ApiPublicOutRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
