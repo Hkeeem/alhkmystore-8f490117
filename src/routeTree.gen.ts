@@ -66,6 +66,7 @@ import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenticated/build-errors'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ApiPublicOutRouteImport } from './routes/api/public/out'
+import { Route as ApiPublicBranchesRouteImport } from './routes/api/public/branches'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -373,6 +374,11 @@ const ApiPublicOutRoute = ApiPublicOutRouteImport.update({
   path: '/api/public/out',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBranchesRoute = ApiPublicBranchesRouteImport.update({
+  id: '/api/public/branches',
+  path: '/api/public/branches',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -520,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
+  '/api/public/branches': typeof ApiPublicBranchesRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -594,6 +601,7 @@ export interface FileRoutesByTo {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem': typeof HkeeemIndexRoute
+  '/api/public/branches': typeof ApiPublicBranchesRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -670,6 +678,7 @@ export interface FileRoutesById {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
+  '/api/public/branches': typeof ApiPublicBranchesRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -746,6 +755,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards/$id'
     | '/hkeeem/'
+    | '/api/public/branches'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -820,6 +830,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards/$id'
     | '/hkeeem'
+    | '/api/public/branches'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -895,6 +906,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards/$id'
     | '/hkeeem/'
+    | '/api/public/branches'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -956,6 +968,7 @@ export interface RootRouteChildren {
   HkeeemNearbyRoute: typeof HkeeemNearbyRoute
   HkeeemProductRoute: typeof HkeeemProductRoute
   HkeeemIndexRoute: typeof HkeeemIndexRoute
+  ApiPublicBranchesRoute: typeof ApiPublicBranchesRoute
   ApiPublicOutRoute: typeof ApiPublicOutRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksDailyContentSyncRoute: typeof ApiPublicHooksDailyContentSyncRoute
@@ -1376,6 +1389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/branches': {
+      id: '/api/public/branches'
+      path: '/api/public/branches'
+      fullPath: '/api/public/branches'
+      preLoaderRoute: typeof ApiPublicBranchesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -1598,6 +1618,7 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemNearbyRoute: HkeeemNearbyRoute,
   HkeeemProductRoute: HkeeemProductRoute,
   HkeeemIndexRoute: HkeeemIndexRoute,
+  ApiPublicBranchesRoute: ApiPublicBranchesRoute,
   ApiPublicOutRoute: ApiPublicOutRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
   ApiPublicHooksDailyContentSyncRoute: ApiPublicHooksDailyContentSyncRoute,
