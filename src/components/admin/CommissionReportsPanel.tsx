@@ -58,6 +58,51 @@ function Table({ rows, label }: { rows: PeriodRow[]; label: (k: string) => strin
   );
 }
 
+const NET = { amazon: "أمازون", admitad: "Admitad" } as const;
+const ST: Record<string, string> = { approved: "مقبولة", pending: "قيد المراجعة", declined: "مرفوضة" };
+const dt = (s: string) => new Date(s).toLocaleString("ar-SA", { dateStyle: "short", timeStyle: "short" });
+
+type Report = Awaited<ReturnType<typeof getCommissionReport>>;
+function Details({ d }: { d: Report }) {
+  const [tab, setTab] = useState<"sales" | "clicks">("sales");
+  return (
+    <div className="rounded-xl border border-border bg-card/60 p-4 space-y-3">
+      <div className="flex gap-2">
+        {(["sales", "clicks"] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t)} className={`px-3 py-1.5 rounded-lg text-sm border ${tab === t ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}>
+            {t === "sales" ? `المبيعات (${d.sales.length})` : `النقرات (${d.clicks.length})`}
+          </button>
+        ))}
+      </div>
+      <div className="overflow-x-auto max-h-96">
+        {tab === "sales" ? (
+          d.sales.length ? (
+            <table className="w-full text-xs text-right whitespace-nowrap">
+              <thead className="text-muted-foreground"><tr><th className="p-2">التاريخ</th><th className="p-2">الشبكة</th><th className="p-2">رقم الطلب</th><th className="p-2">العرض</th><th className="p-2">المبيع</th><th className="p-2">العمولة</th><th className="p-2">الحالة</th><th className="p-2">مرتبط بنقرة</th></tr></thead>
+              <tbody>{d.sales.map((s) => (
+                <tr key={s.id} className="border-t border-border/40">
+                  <td className="p-2">{dt(s.at)}</td><td className="p-2">{NET[s.network]}</td><td className="p-2">{s.orderId}</td>
+                  <td className="p-2 max-w-48 truncate">{s.title}</td><td className="p-2">{sar(s.amount)}</td>
+                  <td className="p-2 font-bold">{sar(s.commission)}</td><td className="p-2">{ST[s.status] ?? s.status}</td>
+                  <td className="p-2">{s.clickId ? "نعم" : "—"}</td>
+                </tr>))}</tbody>
+            </table>
+          ) : <p className="text-sm text-muted-foreground">لا توجد مبيعات مسجلة في هذه السنة بعد.</p>
+        ) : d.clicks.length ? (
+          <table className="w-full text-xs text-right whitespace-nowrap">
+            <thead className="text-muted-foreground"><tr><th className="p-2">التاريخ</th><th className="p-2">الشبكة</th><th className="p-2">العرض</th><th className="p-2">المصدر</th><th className="p-2">الدولة</th></tr></thead>
+            <tbody>{d.clicks.map((c) => (
+              <tr key={c.id} className="border-t border-border/40">
+                <td className="p-2">{dt(c.at)}</td><td className="p-2">{NET[c.network]}</td>
+                <td className="p-2 max-w-48 truncate">{c.title}</td><td className="p-2">{c.source ?? "—"}</td><td className="p-2">{c.country ?? "—"}</td>
+              </tr>))}</tbody>
+          </table>
+        ) : <p className="text-sm text-muted-foreground">لا توجد نقرات مسجلة في هذه السنة بعد.</p>}
+      </div>
+    </div>
+  );
+}
+
 export function CommissionReportsPanel() {
   const now = new Date().getFullYear();
   const [year, setYear] = useState(now);
@@ -134,6 +179,7 @@ export function CommissionReportsPanel() {
             </div>
           )}
 
+          <Details d={d} />
           {view === "monthly" ? <Table rows={d.monthly} label={monthName} /> : <Table rows={d.yearly} label={(k) => k} />}
         </>
       )}
