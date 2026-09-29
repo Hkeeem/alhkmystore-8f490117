@@ -32,7 +32,6 @@ export function HkeeemOffersSection() {
     staleTime: 10 * 60_000,
     refetchInterval: 15 * 60_000,
     refetchIntervalInBackground: false,
-    enabled: false,
   });
 
   const storesQuery = useQuery({
@@ -46,7 +45,7 @@ export function HkeeemOffersSection() {
   const statusQuery = useQuery({
     queryKey: ["hkeeem-status"],
     queryFn: () => fetchStatus({}),
-    refetchInterval: 60_000,
+    refetchInterval: 5 * 60_000,
   });
 
   const offers = offersQuery.data ?? [];
