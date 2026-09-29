@@ -61,6 +61,7 @@ function BranchesPage() {
           </p>
           <Link
             to="/maps"
+            search={{ deal: undefined }}
             className="inline-flex items-center gap-1 mt-3 text-sm text-primary hover:underline"
           >
             <MapIcon className="w-4 h-4" /> عرض الفروع على خريطتي

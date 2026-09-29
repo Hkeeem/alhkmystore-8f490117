@@ -154,6 +154,7 @@ function BranchDetailPage() {
 
         <Link
           to="/maps"
+            search={{ deal: undefined }}
           className="block text-center text-sm text-primary hover:underline pb-6"
         >
           عرض الفرع ضمن خريطتي
