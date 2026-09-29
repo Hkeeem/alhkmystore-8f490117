@@ -25,7 +25,6 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfficeRouteImport } from './routes/office'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MarketRouteImport } from './routes/market'
-import { Route as MapsRouteImport } from './routes/maps'
 import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
 import { Route as HkeeemShoppingRouteImport } from './routes/hkeeem-shopping'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
@@ -161,11 +160,6 @@ const NotificationsRoute = NotificationsRouteImport.update({
 const MarketRoute = MarketRouteImport.update({
   id: '/market',
   path: '/market',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapsRoute = MapsRouteImport.update({
-  id: '/maps',
-  path: '/maps',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HkeeemShowroomRoute = HkeeemShowroomRouteImport.update({
@@ -480,7 +474,6 @@ export interface FileRoutesByFullPath {
   '/delete-account': typeof DeleteAccountRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
-  '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
@@ -554,7 +547,6 @@ export interface FileRoutesByTo {
   '/delete-account': typeof DeleteAccountRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
-  '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
@@ -630,7 +622,6 @@ export interface FileRoutesById {
   '/delete-account': typeof DeleteAccountRoute
   '/hkeeem-shopping': typeof HkeeemShoppingRoute
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
-  '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
@@ -706,7 +697,6 @@ export interface FileRouteTypes {
     | '/delete-account'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
-    | '/maps'
     | '/market'
     | '/notifications'
     | '/office'
@@ -780,7 +770,6 @@ export interface FileRouteTypes {
     | '/delete-account'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
-    | '/maps'
     | '/market'
     | '/notifications'
     | '/office'
@@ -855,7 +844,6 @@ export interface FileRouteTypes {
     | '/delete-account'
     | '/hkeeem-shopping'
     | '/hkeeem-showroom'
-    | '/maps'
     | '/market'
     | '/notifications'
     | '/office'
@@ -931,7 +919,6 @@ export interface RootRouteChildren {
   DeleteAccountRoute: typeof DeleteAccountRoute
   HkeeemShoppingRoute: typeof HkeeemShoppingRoute
   HkeeemShowroomRoute: typeof HkeeemShowroomRoute
-  MapsRoute: typeof MapsRoute
   MarketRoute: typeof MarketRoute
   NotificationsRoute: typeof NotificationsRoute
   OfficeRoute: typeof OfficeRoute
@@ -1087,13 +1074,6 @@ declare module '@tanstack/react-router' {
       path: '/market'
       fullPath: '/market'
       preLoaderRoute: typeof MarketRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/maps': {
-      id: '/maps'
-      path: '/maps'
-      fullPath: '/maps'
-      preLoaderRoute: typeof MapsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hkeeem-showroom': {
@@ -1573,7 +1553,6 @@ const rootRouteChildren: RootRouteChildren = {
   DeleteAccountRoute: DeleteAccountRoute,
   HkeeemShoppingRoute: HkeeemShoppingRoute,
   HkeeemShowroomRoute: HkeeemShowroomRoute,
-  MapsRoute: MapsRoute,
   MarketRoute: MarketRoute,
   NotificationsRoute: NotificationsRoute,
   OfficeRoute: OfficeRoute,
