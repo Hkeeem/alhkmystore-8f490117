@@ -73,6 +73,14 @@ function BranchDetailPage() {
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-5 space-y-4">
+        {branch.image_url && (
+          <img
+            src={branch.image_url}
+            alt={branch.name}
+            loading="lazy"
+            className="w-full aspect-video object-cover rounded-2xl border border-border"
+          />
+        )}
         <div className="rounded-2xl overflow-hidden border border-border">
           <iframe
             title={`موقع ${branch.name}`}

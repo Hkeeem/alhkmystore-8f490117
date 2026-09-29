@@ -29,6 +29,8 @@ import {
 import { useLiveDeals } from "@/hooks/use-live-deals";
 import { useSocialOffers } from "@/hooks/use-social-offers";
 import type * as Leaflet from "leaflet";
+import { useQuery } from "@tanstack/react-query";
+import { fetchRealBranches } from "@/lib/real-branches";
 type L = typeof Leaflet;
 
 export const Route = createFileRoute("/maps")({
@@ -90,6 +92,8 @@ function MapsPage() {
   const markersRef = useRef<Record<string, Leaflet.Marker>>({});
   const liveMarkersRef = useRef<Leaflet.Marker[]>([]);
   const socialMarkersRef = useRef<Leaflet.Marker[]>([]);
+  const realBranchMarkersRef = useRef<Leaflet.Marker[]>([]);
+  const { data: realBranches } = useQuery({ queryKey: ["real-branches"], queryFn: fetchRealBranches, staleTime: 60_000 });
   const LRef = useRef<L | null>(null);
   const resizeObsRef = useRef<ResizeObserver | null>(null);
   const didFitRef = useRef(false);
@@ -605,6 +609,38 @@ function MapsPage() {
       socialMarkersRef.current.push(marker);
     }
   }, [mapReady, socialOffers, userLocation]);
+
+  /** طبقة فروع حكيم الموثّقة — كل فرع بصورته ورابط صفحة تفاصيله */
+  useEffect(() => {
+    const L = LRef.current;
+    const map = mapInstanceRef.current;
+    if (!L || !map) return;
+    realBranchMarkersRef.current.forEach((m) => map.removeLayer(m));
+    realBranchMarkersRef.current = [];
+    const esc = (v: string) => v.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+    for (const b of realBranches ?? []) {
+      const icon = L.divIcon({
+        className: "",
+        html: `<div style="background:#B8860B;color:#fff;font-size:10px;font-weight:900;font-family:'Tajawal',sans-serif;padding:3px 7px;border-radius:20px;border:2px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.4);white-space:nowrap;">🏬 ${esc(b.store_name)}</div>`,
+        iconSize: [100, 24],
+        iconAnchor: [50, 24],
+        popupAnchor: [0, -26],
+      });
+      const img = b.image_url
+        ? `<img src="${esc(b.image_url)}" alt="${esc(b.name)}" style="width:100%;height:110px;object-fit:cover;border-radius:10px;margin-bottom:6px;" />`
+        : "";
+      const marker = L.marker([b.lat, b.lng], { icon }).addTo(map);
+      marker.bindPopup(`
+        <div dir="rtl" style="font-family:'Tajawal',sans-serif;min-width:200px;max-width:250px;">
+          ${img}
+          <div style="font-size:13px;font-weight:900;">${esc(b.name)}</div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">${esc([b.district, b.city].filter(Boolean).join("، "))}</div>
+          ${b.hours ? `<div style="font-size:11px;margin-top:4px;">🕒 ${esc(b.hours)}</div>` : ""}
+          <a href="/branches/${encodeURIComponent(b.id)}" style="display:block;text-align:center;margin-top:6px;background:#B8860B;color:#fff;font-size:12px;font-weight:900;padding:7px 12px;border-radius:12px;text-decoration:none;">تفاصيل الفرع</a>
+        </div>`);
+      realBranchMarkersRef.current.push(marker);
+    }
+  }, [mapReady, realBranches]);
 
   const focusOnMap = (dealId: string) => {
     setSelectedDeal(dealId);
