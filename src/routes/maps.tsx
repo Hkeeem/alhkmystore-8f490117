@@ -148,6 +148,18 @@ function MapsPage() {
   const { data: realDeals } = useRealDeals(120);
   const deals = useMemo(() => realDeals ?? [], [realDeals]);
 
+  const realAsBranches = useMemo<Branch[]>(
+    () =>
+      (realBranches ?? []).map((b) => ({
+        id: b.id, storeId: b.store_id, name: b.name, city: b.city, lat: b.lat, lng: b.lng,
+      })) as Branch[],
+    [realBranches],
+  );
+  const nearestReal = (storeId: string, loc: { lat: number; lng: number }, city?: string) =>
+    realAsBranches
+      .filter((b) => b.storeId === storeId && (!city || b.city === city))
+      .sort((a, b) => distanceKm(loc.lat, loc.lng, a.lat, a.lng) - distanceKm(loc.lat, loc.lng, b.lat, b.lng))[0] ?? null;
+
   const mapped = useMemo(() => {
     if (!userLocation) return [];
     const groupCats = GROUPS.find((g) => g.id === groupFilter)?.categories ?? [];
@@ -156,19 +168,10 @@ function MapsPage() {
       .filter((deal) => categoryFilter === "الكل" || deal.category === categoryFilter)
       .filter((deal) => storeFilter === "الكل" || deal.storeId === storeFilter)
       .map((deal) => {
-        const matched =
-          cityFilter === "الكل"
-            ? nearestBranch(deal.storeId, userLocation)
-            : (branches
-                .filter((b) => b.storeId === deal.storeId && b.city === cityFilter)
-                .sort(
-                  (a, b) =>
-                    distanceKm(userLocation.lat, userLocation.lng, a.lat, a.lng) -
-                    distanceKm(userLocation.lat, userLocation.lng, b.lat, b.lng),
-                )[0] ?? null);
+        const matched = nearestReal(deal.storeId, userLocation, cityFilter === "الكل" ? undefined : cityFilter);
         // متاجر غير مسجّلة في دليل الفروع (تجّار ومصادر خارجية): نضعها في مركز المدينة
         let branch: Branch | null = matched;
-        if (!branch) {
+        if (false as boolean) {
           const fallbackCity =
             cityFilter === "الكل"
               ? nearestCity(userLocation)
@@ -197,16 +200,16 @@ function MapsPage() {
       branch: Branch;
       km: number;
     }[];
-  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter, deals]);
+  }, [userLocation, cityFilter, categoryFilter, storeFilter, radiusKm, groupFilter, deals, realAsBranches]);
 
   /** أقرب عرض متاح بغضّ النظر عن التصفية — يُستخدم بدل رسالة «لا توجد عروض» */
   const nearestAnyDeal = useMemo(() => {
     if (!userLocation) return null;
     const candidates = deals
       .map((deal) => {
-        const matched = nearestBranch(deal.storeId, userLocation);
+        const matched = nearestReal(deal.storeId, userLocation);
         let branch: Branch | null = matched;
-        if (!branch) {
+        if (false as boolean) {
           const fallbackCity = nearestCity(userLocation);
           if (fallbackCity) {
             branch = {
@@ -228,7 +231,7 @@ function MapsPage() {
       })
       .filter(Boolean) as { deal: (typeof deals)[number]; branch: Branch; km: number }[];
     return candidates.sort((a, b) => a.km - b.km)[0] ?? null;
-  }, [deals, userLocation]);
+  }, [deals, userLocation, realAsBranches]);
 
   const nearbyDeals = useMemo(
     () =>
