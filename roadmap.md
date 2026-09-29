@@ -94,3 +94,7 @@
 - [ ] Delete Vercel A record 76.76.21.21 (blocked: Cloudflare token read-only)
 - [x] Google Play privacy URL: page works; advise using https://www.alhkmy.app/privacy
 - [ ] Admitad keys (blocked: user declined secure form)
+
+- [ ] إدخال بيانات فروع حكيم الحقيقية (الاسم، المدينة، الموقع، الدوام، الجوال، رابط بلدي) — بانتظار المستخدم
+- [ ] التحقق من ظهور عمولات Admitad الحقيقية في صفحة العمولات وصفحة التقارير
+- [ ] ربط حساب Admitad الحقيقي عبر نموذج المفاتيح الآمن

@@ -89,6 +89,12 @@ export function BranchExplorer() {
             ))}
           </select>
         </label>
+        <a
+          href="/branches"
+          className="inline-flex items-center gap-1 text-sm font-bold text-primary hover:underline"
+        >
+          <MapPin className="w-4 h-4" /> فروع حكيم الموثقة بتفاصيلها الكاملة
+        </a>
       </div>
 
       <div className="rounded-3xl border border-border bg-card p-4 space-y-3">
