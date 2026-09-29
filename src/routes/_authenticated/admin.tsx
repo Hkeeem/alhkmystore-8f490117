@@ -424,10 +424,10 @@ function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () =>
     try {
       const res = await claim({ data: { token: token.trim() } });
       if (res.claimed) {
-        toast.success("تم تعيينك مديراً عاماً 👑");
+        toast.success(res.role === "super_admin" ? "تم تعيينك مديراً عاماً 👑" : "تم تفعيل صلاحيات المسؤول ✅");
         onClaimed();
       } else {
-        toast.error("توجد لوحة تحكم مُعرَّفة مسبقاً. راجع المدير العام.");
+        toast.error("تعذّر تفعيل الصلاحيات");
       }
     } catch (e) {
       toast.error("رمز غير صحيح أو تعذّر التنفيذ");
@@ -435,33 +435,43 @@ function NotStaff({ hasClaim, onClaimed }: { hasClaim: boolean; onClaimed: () =>
       setBusy(false);
     }
   }
+  void hasClaim;
   return (
     <div dir="rtl" className="min-h-screen grid place-items-center bg-background p-6">
       <div className="max-w-md w-full text-center space-y-4 p-8 rounded-2xl border border-primary/20 bg-card">
         <Shield className="w-12 h-12 mx-auto text-primary" />
         <h1 className="text-xl font-bold">لوحة التحكم للمسؤولين</h1>
         <p className="text-muted-foreground text-sm">
-          هذه الصفحة متاحة فقط لفريق الإدارة. إذا كنت المسؤول الأول عن التطبيق، أدخل رمز الإعداد
-          السري لتفعيل صلاحيات المدير العام.
+          هذه الصفحة متاحة فقط لفريق الإدارة. أدخل الرمز السري للمسؤول لتفعيل صلاحياتك والدخول
+          إلى لوحة التحكم.
         </p>
-        {hasClaim && (
-          <>
-            <input
-              type="password"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              placeholder="رمز الإعداد السري"
-              className="w-full px-4 py-3 rounded-lg bg-background border border-border text-sm"
-            />
-            <button
-              onClick={handleClaim}
-              disabled={busy}
-              className="w-full px-4 py-3 rounded-lg bg-primary text-primary-foreground font-semibold disabled:opacity-50"
-            >
-              {busy ? "جارٍ..." : "تفعيل المدير العام (لأول مرة فقط)"}
-            </button>
-          </>
-        )}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleClaim();
+          }}
+          className="space-y-3"
+        >
+          <label htmlFor="admin-code" className="block text-right text-sm font-medium">
+            الرمز السري للمسؤول
+          </label>
+          <input
+            id="admin-code"
+            type="password"
+            autoComplete="off"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            placeholder="أدخل الرمز السري"
+            className="w-full px-4 py-3 rounded-lg bg-background border border-border text-sm"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full px-4 py-3 rounded-lg bg-primary text-primary-foreground font-semibold disabled:opacity-50"
+          >
+            {busy ? "جارٍ التحقق..." : "تفعيل الصلاحيات والدخول"}
+          </button>
+        </form>
         <Link to="/" className="block text-sm text-primary hover:underline">
           العودة للرئيسية
         </Link>
