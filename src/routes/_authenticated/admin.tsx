@@ -62,6 +62,7 @@ import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 import { BotsPanel } from "@/components/admin/BotsPanel";
 import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
+import { StoreVisitsPanel } from "@/components/admin/StoreVisitsPanel";
 import { AdmitadPanel } from "@/components/admin/AdmitadPanel";
 import { CommissionReportsPanel } from "@/components/admin/CommissionReportsPanel";
 type Tab =
@@ -70,6 +71,7 @@ type Tab =
   | "commissions"
   | "partner-coupons"
   | "offer-clicks"
+  | "store-visits"
   | "coupon-clicks"
   | "complaints"
   | "suggestions"
