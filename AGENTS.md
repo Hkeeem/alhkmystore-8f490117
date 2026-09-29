@@ -10,3 +10,7 @@
 > the editor, so keep the branch in a working state.
 
 <!-- LOVABLE:END -->
+
+## Project architecture
+
+- Render map pins only from persisted coordinates; never derive or offset store locations from a city center, because displayed locations must be verifiable.
