@@ -1,7 +1,7 @@
 import { type Deal, discountPercent, getStore, isLastDay } from "@/data/deals";
 import { Clock, Share2, Info, BadgeCheck, Copy, ExternalLink, Heart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { toggleFavorite } from "@/lib/user.functions";
@@ -33,6 +33,7 @@ export function DealCard({
   reasonDetail?: string;
 }) {
   const store = getStore(deal.storeId);
+  const navigate = useNavigate();
   const off = discountPercent(deal);
   const savings = Math.max(0, Math.round(deal.originalPrice - deal.price));
   const [shareOpen, setShareOpen] = useState(false);
@@ -139,9 +140,19 @@ export function DealCard({
           )}
         </div>
 
-        <div className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center overflow-hidden">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            navigate({ to: "/deals", search: { store: store.id } });
+          }}
+          aria-label={`عروض ${store.name}`}
+          title={`كل عروض ${store.name}`}
+          className="absolute top-3 left-3 w-8 h-8 rounded-full bg-white shadow flex items-center justify-center overflow-hidden"
+        >
           <StoreLogo store={store} size="sm" />
-        </div>
+        </button>
 
         <button
           onClick={(e) => {
