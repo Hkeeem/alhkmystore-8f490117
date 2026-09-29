@@ -250,5 +250,3 @@ function RewardDetail() {
     </div>
   );
 }
-
-import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
