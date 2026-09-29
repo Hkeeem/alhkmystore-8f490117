@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import {
   Trophy,
   Sparkles,
@@ -14,19 +16,38 @@ import {
   Trash2,
   Filter,
   ChevronLeft,
+  LogIn,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   loadRewards,
-  saveRewards,
   clearHistory,
+  setName as setLocalName,
+  syncGuestBalanceOnce,
   ACTION_LABEL,
   ACTION_POINTS,
-  SEED_LEADERBOARD,
   REWARDS_CATALOG,
   type RewardState,
   type RewardAction,
+  type HistoryEntry,
 } from "@/lib/rewards";
+import {
+  getRewardProfile,
+  saveDisplayNameServer,
+} from "@/lib/rewards.functions";
+import { useAuth } from "@/hooks/use-auth";
+import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
+
+function RewardsNotFound() {
+  return (
+    <InvalidLinkFallback
+      icon="🎁"
+      title="الجائزة غير متوفرة"
+      message="الجائزة المطلوبة غير معتمدة حاليًا. نقاطك محفوظة في حسابك ولا تنتهي."
+      backTo={{ to: "/rewards", label: "كل الجوائز" }}
+    />
+  );
+}
 
 export const Route = createFileRoute("/rewards")({
   head: () => ({
@@ -38,13 +59,14 @@ export const Route = createFileRoute("/rewards")({
           "اكسب نقاطاً في وفّر كل ما نسخت كوبون أو شاركت عرض أو بنيت قائمة تسوّق ذكية — واستبدلها بجوائز.",
       },
       { property: "og:title", content: "الجوائز ولوحة المتصدرين — وفّر" },
-      { property: "og:description", content: "اجمع النقاط وتصدّر لوحة أفضل الموفّرين في المملكة." },
+      { property: "og:description", content: "اجمع النقاط وتصدّر لوحة أفضل الموفّرين الحقيقية." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://alhkmystore.lovable.app/rewards" },
     ],
     links: [{ rel: "canonical", href: "https://alhkmystore.lovable.app/rewards" }],
   }),
   component: RewardsPage,
+  notFoundComponent: RewardsNotFound,
 });
 
 const ACTION_ICON: Record<RewardAction, typeof Ticket> = {
@@ -56,54 +78,103 @@ const ACTION_ICON: Record<RewardAction, typeof Ticket> = {
 
 function tierFor(points: number) {
   if (points >= 1000)
-    return { name: "بلاتيني", color: "oklch(0.7 0.15 260)", next: null, icon: Crown };
-  if (points >= 500)
-    return { name: "ذهبي", color: "oklch(0.75 0.16 85)", next: 1000, icon: Trophy };
-  if (points >= 200) return { name: "فضّي", color: "oklch(0.7 0.02 250)", next: 500, icon: Medal };
-  return { name: "برونزي", color: "oklch(0.55 0.12 40)", next: 200, icon: Award };
+    return { name: "بلاتيني", next: null, icon: Crown };
+  if (points >= 500) return { name: "ذهبي", next: 1000, icon: Trophy };
+  if (points >= 200) return { name: "فضّي", next: 500, icon: Medal };
+  return { name: "برونزي", next: 200, icon: Award };
 }
 
 function RewardsPage() {
-  const [state, setState] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
+  const { user } = useAuth();
+  const signedIn = !!user;
+  const fetchProfile = useServerFn(getRewardProfile);
+  const saveNameFn = useServerFn(saveDisplayNameServer);
+  const queryClient = useQueryClient();
+
+  const [local, setLocal] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
   const [nameInput, setNameInput] = useState("");
   const [historyFilter, setHistoryFilter] = useState<"all" | RewardAction | "redeem">("all");
+  const [savingName, setSavingName] = useState(false);
 
   useEffect(() => {
     const s = loadRewards();
-    setState(s);
+    setLocal(s);
     setNameInput(s.name === "زائر" ? "" : s.name);
-    const on = () => setState(loadRewards());
+    const on = () => setLocal(loadRewards());
     window.addEventListener("waffer:rewards", on);
     return () => window.removeEventListener("waffer:rewards", on);
   }, []);
 
-  const tier = tierFor(state.points);
-  const TierIcon = tier.icon;
-  const progress = tier.next ? Math.min(100, Math.round((state.points / tier.next) * 100)) : 100;
+  const profile = useQuery({
+    queryKey: ["reward-profile"],
+    queryFn: () => fetchProfile(),
+    enabled: signedIn,
+    staleTime: 30_000,
+    retry: 1,
+  });
 
-  const leaderboard = [
-    ...SEED_LEADERBOARD,
-    { name: state.name || "أنت", points: state.points, isMe: true },
-  ]
-    .sort((a, b) => b.points - a.points)
-    .slice(0, 10);
-  const myRank = leaderboard.findIndex((r) => (r as any).isMe) + 1;
+  // نقاط الزائر المحفوظة تُضاف لحسابه مرة واحدة عند تسجيل الدخول
+  useEffect(() => {
+    if (!signedIn) return;
+    syncGuestBalanceOnce().then((synced) => {
+      if (synced) {
+        toast.success("أضفنا نقاطك المحفوظة إلى حسابك");
+        queryClient.invalidateQueries({ queryKey: ["reward-profile"] });
+      }
+    });
+  }, [signedIn, queryClient]);
+
+  const points = signedIn ? (profile.data?.points ?? 0) : local.points;
+  const displayName = signedIn ? (profile.data?.displayName ?? "") : local.name === "زائر" ? "" : local.name;
+
+  const history: HistoryEntry[] = signedIn
+    ? (profile.data?.events ?? []).map((e) => ({
+        action: e.action as RewardAction | "redeem",
+        points: e.points,
+        at: new Date(e.created_at).getTime(),
+        label: e.label ?? undefined,
+      }))
+    : local.history;
+
+  const tier = tierFor(points);
+  const TierIcon = tier.icon;
+  const progress = tier.next ? Math.min(100, Math.round((points / tier.next) * 100)) : 100;
+
+  const leaderboard = signedIn ? (profile.data?.leaderboard ?? []) : [];
+  const myRank = signedIn ? (profile.data?.myRank ?? null) : null;
+  const amOnBoard = myRank !== null && leaderboard.some((r) => r.rank === myRank);
+
+  const handleSaveName = async () => {
+    const name = nameInput.trim();
+    if (!name) {
+      toast.error("اكتب اسماً أولاً");
+      return;
+    }
+    if (signedIn) {
+      setSavingName(true);
+      try {
+        await saveNameFn({ data: { name } });
+        toast.success("تم حفظ اسمك في لوحة المتصدرين");
+        queryClient.invalidateQueries({ queryKey: ["reward-profile"] });
+      } catch {
+        toast.error("تعذّر الحفظ، حاول مرة أخرى");
+      } finally {
+        setSavingName(false);
+      }
+    } else {
+      setLocalName(name);
+      setLocal(loadRewards());
+      toast.success("تم حفظ اسمك على هذا الجهاز — سجّل الدخول ليظهر في اللوحة");
+    }
+  };
 
   const rewards = REWARDS_CATALOG;
-
-  const saveName = () => {
-    const next = { ...state, name: nameInput.trim() || "زائر" };
-    saveRewards(next);
-    setState(next);
-    toast.success("تم حفظ اسمك في لوحة المتصدرين");
-  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 pb-24 md:pb-10 space-y-6">
       <h1 className="text-2xl md:text-3xl font-black text-foreground">الجوائز ولوحة المتصدرين</h1>
 
       {/* Hero card */}
-
       <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-6 md:p-8 shadow-glow">
         <div className="absolute -top-8 -left-8 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
         <div className="relative flex flex-col md:flex-row md:items-center gap-6 text-primary-foreground">
@@ -118,25 +189,49 @@ function RewardsPage() {
           </div>
           <div className="flex-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl md:text-5xl font-black tabular-nums">{state.points}</span>
+              <span className="text-4xl md:text-5xl font-black tabular-nums">{points}</span>
               <span className="text-sm opacity-90">نقطة</span>
-              {myRank > 0 && <span className="mr-auto text-xs opacity-90">ترتيبك: #{myRank}</span>}
+              {myRank !== null && (
+                <span className="mr-auto text-xs opacity-90">ترتيبك: #{myRank}</span>
+              )}
             </div>
             {tier.next ? (
               <>
                 <div className="mt-3 h-2 rounded-full bg-white/20 overflow-hidden">
-                  <div className="h-full bg-white" style={{ width: `${progress}%` }} />
+                  <div className="h-full bg-white transition-all" style={{ width: `${progress}%` }} />
                 </div>
                 <div className="text-[11px] opacity-90 mt-1">
-                  {tier.next - state.points} نقطة للوصول للمستوى التالي
+                  {tier.next - points} نقطة للوصول للمستوى التالي
                 </div>
               </>
             ) : (
-              <div className="text-[11px] opacity-90 mt-2">أعلى مستوى — أنت أسطورة! 👑</div>
+              <div className="text-[11px] opacity-90 mt-2">أعلى مستوى — أنت أسطورة!</div>
             )}
           </div>
         </div>
       </section>
+
+      {/* Sign-in nudge for guests */}
+      {!signedIn && (
+        <section className="rounded-3xl border border-primary/30 bg-primary/5 p-5 flex flex-col sm:flex-row items-center gap-4">
+          <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+            <LogIn className="w-5 h-5 text-primary" />
+          </div>
+          <div className="flex-1 text-sm">
+            <div className="font-black">سجّل الدخول لحفظ نقاطك في حسابك</div>
+            <div className="text-muted-foreground mt-0.5">
+              نقاطك على هذا الجهاز {local.points > 0 ? `(${local.points} نقطة) ` : ""}تُنقل لحسابك تلقائياً،
+              ويظهر اسمك في لوحة المتصدرين الحقيقية.
+            </div>
+          </div>
+          <Link
+            to="/auth"
+            className="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-3 text-sm font-black text-primary-foreground hover:opacity-90"
+          >
+            <LogIn className="w-4 h-4" /> تسجيل الدخول
+          </Link>
+        </section>
+      )}
 
       {/* Name input */}
       <section className="rounded-3xl border border-border/60 bg-card p-5">
@@ -149,13 +244,15 @@ function RewardsPage() {
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
             placeholder="اكتب اسمك (مثلاً: أبو خالد)"
+            maxLength={40}
             className="flex-1 rounded-2xl border border-border/60 bg-background px-4 py-3 text-sm outline-none focus:border-primary transition"
           />
           <button
-            onClick={saveName}
-            className="px-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90"
+            onClick={handleSaveName}
+            disabled={savingName}
+            className="px-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90 disabled:opacity-50"
           >
-            حفظ
+            {savingName ? "جارٍ الحفظ…" : "حفظ"}
           </button>
         </div>
       </section>
@@ -187,35 +284,44 @@ function RewardsPage() {
         <h2 className="font-black text-xl mb-3 flex items-center gap-2">
           <Gift className="w-5 h-5 text-primary" /> استبدل نقاطك
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {rewards.map((r) => {
-            const can = state.points >= r.cost;
-            return (
-              <Link
-                key={r.id}
-                to="/rewards/$id"
-                params={{ id: r.id }}
-                className="group rounded-3xl border border-border/60 bg-card p-5 flex items-center gap-4 hover:border-primary/60 hover:shadow-md transition"
-              >
-                <div className="text-4xl">{r.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-black">{r.title}</div>
-                  <div className="text-xs text-muted-foreground">{r.desc}</div>
-                  <div className="text-xs text-primary font-bold mt-1">{r.cost} نقطة</div>
-                </div>
-                <div
-                  className={`px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-1 ${
-                    can
-                      ? "bg-primary text-primary-foreground group-hover:opacity-90"
-                      : "bg-secondary text-muted-foreground"
-                  }`}
+        {rewards.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center space-y-2">
+            <p className="text-sm font-bold">قسائم الاستبدال قيد التجهيز</p>
+            <p className="text-sm text-muted-foreground">
+              نقاطك محفوظة في حسابك ولا تنتهي. ستُعلن الجوائز هنا عند اعتماد الشراكات الحقيقية.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {rewards.map((r) => {
+              const can = points >= r.cost;
+              return (
+                <Link
+                  key={r.id}
+                  to="/rewards/$id"
+                  params={{ id: r.id }}
+                  className="group rounded-3xl border border-border/60 bg-card p-5 flex items-center gap-4 hover:border-primary/60 hover:shadow-md transition"
                 >
-                  التفاصيل <ChevronLeft className="w-4 h-4" />
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                  <div className="text-4xl">{r.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-black">{r.title}</div>
+                    <div className="text-xs text-muted-foreground">{r.desc}</div>
+                    <div className="text-xs text-primary font-bold mt-1">{r.cost} نقطة</div>
+                  </div>
+                  <div
+                    className={`px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-1 ${
+                      can
+                        ? "bg-primary text-primary-foreground group-hover:opacity-90"
+                        : "bg-secondary text-muted-foreground"
+                    }`}
+                  >
+                    التفاصيل <ChevronLeft className="w-4 h-4" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Leaderboard */}
@@ -223,48 +329,81 @@ function RewardsPage() {
         <h2 className="font-black text-xl mb-3 flex items-center gap-2">
           <Trophy className="w-5 h-5 text-primary" /> لوحة أفضل الموفّرين
         </h2>
-        <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
-          {leaderboard.map((r, i) => {
-            const isMe = (r as any).isMe;
-            return (
-              <div
-                key={i}
-                className={`flex items-center gap-3 px-5 py-3 border-b border-border/40 last:border-0 ${
-                  isMe ? "bg-primary/5" : ""
-                }`}
-              >
+        {!signedIn ? (
+          <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center space-y-3">
+            <p className="text-sm text-muted-foreground">
+              لوحة المتصدرين تعرض أسماء حقيقية للمستخدمين المسجلين فقط.
+            </p>
+            <Link
+              to="/auth"
+              className="inline-flex items-center gap-2 rounded-2xl bg-primary px-5 py-2.5 text-sm font-black text-primary-foreground hover:opacity-90"
+            >
+              <LogIn className="w-4 h-4" /> سجّل دخولك لتظهر في اللوحة
+            </Link>
+          </div>
+        ) : leaderboard.length === 0 && !amOnBoard ? (
+          <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
+            {profile.isPending
+              ? "جارٍ تحميل اللوحة…"
+              : "اللوحة فاضية لسا — كن أول موفّر: اجمع نقاط واحفظ اسمك"}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-border/60 bg-card overflow-hidden">
+            {leaderboard.map((r, i) => {
+              const isMe = amOnBoard && r.rank === myRank;
+              return (
                 <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black ${
-                    i === 0
-                      ? "bg-yellow-400 text-yellow-950"
-                      : i === 1
-                        ? "bg-slate-300 text-slate-900"
-                        : i === 2
-                          ? "bg-amber-600 text-amber-50"
-                          : "bg-secondary text-muted-foreground"
+                  key={r.rank}
+                  className={`flex items-center gap-3 px-5 py-3 border-b border-border/40 last:border-0 ${
+                    isMe ? "bg-primary/5" : ""
                   }`}
                 >
-                  {i + 1}
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black ${
+                      i === 0
+                        ? "bg-yellow-400 text-yellow-950"
+                        : i === 1
+                          ? "bg-slate-300 text-slate-900"
+                          : i === 2
+                            ? "bg-amber-600 text-amber-50"
+                            : "bg-secondary text-muted-foreground"
+                    }`}
+                  >
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 font-bold">
+                    {r.display_name} {isMe && <span className="text-primary text-xs">(أنت)</span>}
+                  </div>
+                  <div className="tabular-nums font-black text-primary">{r.points}</div>
+                </div>
+              );
+            })}
+            {!amOnBoard && myRank !== null && (
+              <div className="flex items-center gap-3 px-5 py-3 bg-primary/5 border-t border-border/40">
+                <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center text-sm font-black text-muted-foreground">
+                  {myRank}
                 </div>
                 <div className="flex-1 font-bold">
-                  {r.name} {isMe && <span className="text-primary text-xs">(أنت)</span>}
+                  {displayName || "أنت"} <span className="text-primary text-xs">(أنت)</span>
                 </div>
-                <div className="tabular-nums font-black text-primary">{r.points}</div>
+                <div className="tabular-nums font-black text-primary">{points}</div>
               </div>
-            );
-          })}
-        </div>
+            )}
+          </div>
+        )}
       </section>
 
       {/* History */}
       <HistorySection
-        history={state.history}
+        history={history}
         filter={historyFilter}
         setFilter={setHistoryFilter}
+        signedIn={signedIn}
+        isPending={signedIn && profile.isPending}
         onClear={() => {
-          if (state.history.length === 0) return;
+          if (local.history.length === 0) return;
           clearHistory();
-          setState(loadRewards());
+          setLocal(loadRewards());
           toast.success("تم مسح سجل النشاطات");
         }}
       />
@@ -276,11 +415,15 @@ function HistorySection({
   history,
   filter,
   setFilter,
+  signedIn,
+  isPending,
   onClear,
 }: {
   history: RewardState["history"];
   filter: "all" | RewardAction | "redeem";
   setFilter: (f: "all" | RewardAction | "redeem") => void;
+  signedIn: boolean;
+  isPending: boolean;
   onClear: () => void;
 }) {
   const filtered = useMemo(() => {
@@ -327,13 +470,15 @@ function HistorySection({
         <h2 className="font-black text-xl flex items-center gap-2">
           <Filter className="w-5 h-5 text-primary" /> سجل النشاطات
         </h2>
-        <button
-          onClick={onClear}
-          disabled={history.length === 0}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 disabled:cursor-not-allowed transition"
-        >
-          <Trash2 className="w-3.5 h-3.5" /> مسح السجل
-        </button>
+        {!signedIn && (
+          <button
+            onClick={onClear}
+            disabled={history.length === 0}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          >
+            <Trash2 className="w-3.5 h-3.5" /> مسح السجل
+          </button>
+        )}
       </div>
 
       <div className="flex gap-2 overflow-x-auto pb-2 mb-3 -mx-1 px-1">
@@ -359,7 +504,11 @@ function HistorySection({
         })}
       </div>
 
-      {filtered.length === 0 ? (
+      {isPending ? (
+        <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
+          جارٍ تحميل السجل…
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="rounded-3xl border border-dashed border-border/60 bg-card/50 p-8 text-center text-sm text-muted-foreground">
           {history.length === 0
             ? "ما فيه نشاطات لسا — ابدأ اجمع نقاط!"

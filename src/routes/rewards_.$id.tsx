@@ -1,18 +1,20 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowRight, Gift, Sparkles, Check, CheckCircle2, Copy, Share2 } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { ArrowRight, Gift, Sparkles, Check, CheckCircle2, LogIn, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   REWARDS_CATALOG,
   loadRewards,
-  redeemReward,
   type RewardItem,
   type RewardState,
 } from "@/lib/rewards";
-import { ShareSheet } from "@/components/ShareSheet";
+import { getRewardProfile, redeemRewardServer } from "@/lib/rewards.functions";
+import { useAuth } from "@/hooks/use-auth";
 import { InvalidLinkFallback } from "@/components/InvalidLinkFallback";
 
-export const Route = createFileRoute("/rewards/$id")({
+export const Route = createFileRoute("/rewards_/$id")({
   loader: ({ params }) => {
     const reward = REWARDS_CATALOG.find((r) => r.id === params.id);
     if (!reward) throw notFound();
@@ -39,71 +41,73 @@ export const Route = createFileRoute("/rewards/$id")({
 });
 
 function RewardNotFound() {
-  const nearest = [...REWARDS_CATALOG].sort((a, b) => a.cost - b.cost)[0];
   return (
     <InvalidLinkFallback
       icon="🎁"
       title="الجائزة غير متوفرة"
-      message="يمكن الجائزة انسحبت من الكتالوج. اخترنا لك الأقرب للاستبدال."
-      suggestion={{
-        to: `/rewards/${nearest.id}`,
-        label: nearest.title,
-        hint: `${nearest.cost} نقطة`,
-        emoji: nearest.icon,
-      }}
+      message="الجائزة المطلوبة غير معتمدة حاليًا. نقاطك محفوظة في حسابك ولا تنتهي."
       backTo={{ to: "/rewards", label: "كل الجوائز" }}
     />
   );
 }
 
-function makeCode(id: string) {
-  // Deterministic-looking code from id + timestamp for redemption receipt.
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `WAF-${id.toUpperCase()}-${rand}`;
-}
-
 function RewardDetail() {
   const { reward } = Route.useLoaderData() as { reward: RewardItem };
   const router = useRouter();
-  const [state, setState] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
-  const [redeemedCode, setRedeemedCode] = useState<string | null>(null);
-  const [shareOpen, setShareOpen] = useState(false);
+  const { user } = useAuth();
+  const signedIn = !!user;
+  const fetchProfile = useServerFn(getRewardProfile);
+  const redeemFn = useServerFn(redeemRewardServer);
+  const queryClient = useQueryClient();
+
+  const [local, setLocal] = useState<RewardState>({ name: "زائر", points: 0, history: [] });
+  const [requestNumber, setRequestNumber] = useState<string | null>(null);
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    setState(loadRewards());
-    const on = () => setState(loadRewards());
+    setLocal(loadRewards());
+    const on = () => setLocal(loadRewards());
     window.addEventListener("waffer:rewards", on);
     return () => window.removeEventListener("waffer:rewards", on);
   }, []);
 
-  // Check if already redeemed in history.
-  const alreadyRedeemed = state.history.find(
-    (h) => h.action === "redeem" && h.rewardId === reward.id,
-  );
+  const profile = useQuery({
+    queryKey: ["reward-profile"],
+    queryFn: () => fetchProfile(),
+    enabled: signedIn,
+    staleTime: 30_000,
+    retry: 1,
+  });
 
-  const can = state.points >= reward.cost;
-  const missing = Math.max(0, reward.cost - state.points);
-  const progress = Math.min(100, Math.round((state.points / reward.cost) * 100));
+  const points = signedIn ? (profile.data?.points ?? 0) : local.points;
+  const can = points >= reward.cost;
+  const missing = Math.max(0, reward.cost - points);
+  const progress = Math.min(100, Math.round((points / reward.cost) * 100));
 
-  const handleRedeem = () => {
-    const res = redeemReward(reward.id, reward.cost, reward.title);
-    if (!res.ok) {
-      toast.error(`تحتاج ${res.missing} نقطة إضافية`);
+  const handleRedeem = async () => {
+    if (!signedIn) {
+      toast.error("سجّل الدخول أولاً لاستبدال الجوائز — نقاطك محفوظة في حسابك");
+      router.navigate({ to: "/auth" });
       return;
     }
-    const code = makeCode(reward.id);
-    setRedeemedCode(code);
-    setState(res.state);
-    toast.success(`🎉 مبروك! تم استبدال ${reward.title}`);
-  };
-
-  const copyCode = async () => {
-    if (!redeemedCode) return;
+    setBusy(true);
     try {
-      await navigator.clipboard.writeText(redeemedCode);
-      toast.success("تم نسخ كود الاستبدال");
+      const res = await redeemFn({
+        data: { rewardId: reward.id, title: reward.title, cost: reward.cost },
+      });
+      if (!res.ok) {
+        toast.error(`تحتاج ${res.missing} نقطة إضافية`);
+        return;
+      }
+      setRemaining(res.remaining);
+      setRequestNumber(`HKM-${Date.now().toString(36).toUpperCase()}`);
+      toast.success("تم إرسال طلب الاستبدال");
+      queryClient.invalidateQueries({ queryKey: ["reward-profile"] });
     } catch {
-      toast.error("تعذّر النسخ");
+      toast.error("تعذّر إرسال الطلب، حاول مرة أخرى");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -142,7 +146,7 @@ function RewardDetail() {
           </div>
           <div className="text-right">
             <div className="text-xs text-muted-foreground">نقاطك الحالية</div>
-            <div className="text-2xl font-black tabular-nums">{state.points}</div>
+            <div className="text-2xl font-black tabular-nums">{points}</div>
           </div>
         </div>
         <div className="h-2.5 rounded-full bg-secondary overflow-hidden">
@@ -152,7 +156,11 @@ function RewardDetail() {
           />
         </div>
         <div className="text-[11px] text-muted-foreground mt-2">
-          {can ? "✨ نقاطك كافية للاستبدال" : `ينقصك ${missing} نقطة`}
+          {signedIn
+            ? can
+              ? "نقاطك كافية للاستبدال"
+              : `ينقصك ${missing} نقطة`
+            : "سجّل الدخول لاستخدام نقاطك المحفوظة في حسابك"}
         </div>
       </section>
 
@@ -174,32 +182,23 @@ function RewardDetail() {
       </section>
 
       {/* Redeem action */}
-      {redeemedCode ? (
+      {requestNumber ? (
         <section className="rounded-3xl border-2 border-primary bg-primary/5 p-6 text-center space-y-4">
           <div className="w-14 h-14 mx-auto rounded-full bg-primary text-primary-foreground flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <div>
-            <div className="font-black text-lg">تم الاستبدال بنجاح</div>
-            <div className="text-sm text-muted-foreground">احفظ الكود التالي أو شاركه</div>
+            <div className="font-black text-lg">تم إرسال طلب الاستبدال</div>
+            <div className="text-sm text-muted-foreground mt-1">
+              طلبك قيد التجهيز، وسيتم إرسال الجائزة على بريدك المسجّل.
+            </div>
           </div>
           <div className="rounded-2xl bg-background border-2 border-dashed border-primary/40 p-4">
-            <div className="text-xs text-muted-foreground mb-1">كود الاستبدال</div>
-            <div className="font-mono text-xl font-black tracking-wider">{redeemedCode}</div>
+            <div className="text-xs text-muted-foreground mb-1">رقم الطلب</div>
+            <div className="font-mono text-xl font-black tracking-wider">{requestNumber}</div>
           </div>
-          <div className="flex gap-2 justify-center">
-            <button
-              onClick={copyCode}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm hover:opacity-90"
-            >
-              <Copy className="w-4 h-4" /> نسخ الكود
-            </button>
-            <button
-              onClick={() => setShareOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-secondary text-foreground font-bold text-sm hover:bg-secondary/80"
-            >
-              <Share2 className="w-4 h-4" /> مشاركة
-            </button>
+          <div className="text-xs text-muted-foreground">
+            نقاطك المتبقية: <span className="font-black text-foreground">{remaining}</span>
           </div>
           <Link
             to="/rewards"
@@ -208,48 +207,39 @@ function RewardDetail() {
             رجوع لكل الجوائز
           </Link>
         </section>
-      ) : alreadyRedeemed ? (
-        <section className="rounded-3xl border border-border/60 bg-secondary/40 p-6 text-center space-y-3">
-          <CheckCircle2 className="w-10 h-10 mx-auto text-primary" />
-          <div className="font-black">استبدلت هذه الجائزة سابقاً</div>
-          <div className="text-xs text-muted-foreground">
-            بتاريخ {new Date(alreadyRedeemed.at).toLocaleDateString("ar-SA")}
-          </div>
-          <button
-            onClick={handleRedeem}
-            disabled={!can}
-            className={`mt-2 px-5 py-2.5 rounded-2xl font-bold text-sm transition ${
-              can
-                ? "bg-primary text-primary-foreground hover:opacity-90"
-                : "bg-secondary text-muted-foreground cursor-not-allowed"
-            }`}
-          >
-            استبدل مرة ثانية
-          </button>
-        </section>
       ) : (
-        <section className="sticky bottom-16 md:bottom-4 z-30">
+        <section className="sticky bottom-16 md:bottom-4 z-30 space-y-2">
+          {!signedIn && (
+            <p className="text-center text-xs text-muted-foreground">
+              الاستبدال متاح للمستخدمين المسجلين — نقاطك على هذا الجهاز تُنقل لحسابك عند تسجيل الدخول
+            </p>
+          )}
           <button
             onClick={handleRedeem}
-            disabled={!can}
+            disabled={busy || (signedIn && !can)}
             className={`w-full flex items-center justify-center gap-2 px-6 py-4 rounded-3xl font-black text-base shadow-glow transition ${
-              can
+              !signedIn || can
                 ? "bg-gradient-hero text-primary-foreground hover:opacity-95 active:scale-[0.99]"
                 : "bg-secondary text-muted-foreground cursor-not-allowed"
-            }`}
+            } disabled:opacity-70`}
           >
-            <Gift className="w-5 h-5" />
-            {can ? `استبدل الآن — ${reward.cost} نقطة` : `يلزمك ${missing} نقطة إضافية`}
+            {busy ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : signedIn ? (
+              <Gift className="w-5 h-5" />
+            ) : (
+              <LogIn className="w-5 h-5" />
+            )}
+            {busy
+              ? "جارٍ إرسال الطلب…"
+              : signedIn
+                ? can
+                  ? `استبدل الآن — ${reward.cost} نقطة`
+                  : `يلزمك ${missing} نقطة إضافية`
+                : "سجّل الدخول للاستبدال"}
           </button>
         </section>
       )}
-
-      <ShareSheet
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
-        title={reward.title}
-        text={`🎉 استبدلت جائزة "${reward.title}" من وفّر!\nالكود: ${redeemedCode ?? ""}\nاجمع نقاطك واستبدلها.`}
-      />
     </div>
   );
 }

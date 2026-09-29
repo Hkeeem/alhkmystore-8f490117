@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { deals, stores } from "@/data/deals";
 
 type CatalogLine = string;
 
@@ -67,12 +66,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const live = await loadLiveCatalog();
 
-        const staticLines = deals.map((d) => {
-          const s = stores.find((x) => x.id === d.storeId);
-          return `- [id:${d.id}] ${d.title}${d.unit ? ` (${d.unit})` : ""} | متجر: ${s?.name ?? "متجر"} | سعر: ${d.price} ر.س | قبل: ${d.originalPrice} ر.س | تنتهي: ${d.expiresIn}`;
-        });
-
-        const allLines = [...live.deals, ...staticLines];
+        const allLines = live.deals;
         const catalog = allLines.length
           ? allLines.join("\n")
           : "(لا توجد عروض محدّثة في القاعدة الآن)";
