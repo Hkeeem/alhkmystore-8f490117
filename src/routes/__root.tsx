@@ -109,6 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
+      { name: "mitgo-verification", content: "cecd2881-09c1-43cd-b8bb-156963232a2f" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "HkeeemAI — تسوّق أذكى… وفّر أكثر" },
       {
