@@ -104,3 +104,5 @@
 - [ ] ربط Admitad — بانتظار إدخال المفاتيح من المستخدم بعد تفعيل القناة
 - [x] ربط أسماء المطاعم في العروض بمواقعها الحقيقية
 - [x] Verify restaurant links in deals are correct and unique per store
+- [ ] Three map style controls on new map page
+- [ ] Answer: how to open admin dashboard
