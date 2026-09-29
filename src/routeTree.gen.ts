@@ -34,6 +34,7 @@ import { Route as CouponsRouteImport } from './routes/coupons'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ChatRouteImport } from './routes/chat'
 import { Route as CarsRouteImport } from './routes/cars'
+import { Route as BranchesRouteImport } from './routes/branches'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AgentsRouteImport } from './routes/agents'
@@ -207,6 +208,11 @@ const ChatRoute = ChatRouteImport.update({
 const CarsRoute = CarsRouteImport.update({
   id: '/cars',
   path: '/cars',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BranchesRoute = BranchesRouteImport.update({
+  id: '/branches',
+  path: '/branches',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -478,6 +484,7 @@ export interface FileRoutesByFullPath {
   '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
+  '/branches': typeof BranchesRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
@@ -553,6 +560,7 @@ export interface FileRoutesByTo {
   '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
+  '/branches': typeof BranchesRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
@@ -630,6 +638,7 @@ export interface FileRoutesById {
   '/agents': typeof AgentsRoute
   '/analysis': typeof AnalysisRoute
   '/auth': typeof AuthRoute
+  '/branches': typeof BranchesRoute
   '/cars': typeof CarsRoute
   '/chat': typeof ChatRoute
   '/compare': typeof CompareRoute
@@ -707,6 +716,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/analysis'
     | '/auth'
+    | '/branches'
     | '/cars'
     | '/chat'
     | '/compare'
@@ -782,6 +792,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/analysis'
     | '/auth'
+    | '/branches'
     | '/cars'
     | '/chat'
     | '/compare'
@@ -858,6 +869,7 @@ export interface FileRouteTypes {
     | '/agents'
     | '/analysis'
     | '/auth'
+    | '/branches'
     | '/cars'
     | '/chat'
     | '/compare'
@@ -935,6 +947,7 @@ export interface RootRouteChildren {
   AgentsRoute: typeof AgentsRoute
   AnalysisRoute: typeof AnalysisRoute
   AuthRoute: typeof AuthRoute
+  BranchesRoute: typeof BranchesRoute
   CarsRoute: typeof CarsRoute
   ChatRoute: typeof ChatRoute
   CompareRoute: typeof CompareRoute
@@ -1163,6 +1176,13 @@ declare module '@tanstack/react-router' {
       path: '/cars'
       fullPath: '/cars'
       preLoaderRoute: typeof CarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/branches': {
+      id: '/branches'
+      path: '/branches'
+      fullPath: '/branches'
+      preLoaderRoute: typeof BranchesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1585,6 +1605,7 @@ const rootRouteChildren: RootRouteChildren = {
   AgentsRoute: AgentsRoute,
   AnalysisRoute: AnalysisRoute,
   AuthRoute: AuthRoute,
+  BranchesRoute: BranchesRoute,
   CarsRoute: CarsRoute,
   ChatRoute: ChatRoute,
   CompareRoute: CompareRoute,
