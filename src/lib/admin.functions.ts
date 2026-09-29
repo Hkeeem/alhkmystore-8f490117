@@ -30,24 +30,29 @@ export const claimSuperAdmin = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ token: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ context, data }) => {
     const expected = process.env["ADMIN_SETUP_TOKEN"];
-    if (!expected || data.token !== expected) throw new Error("forbidden");
+    if (!expected) throw new Error("forbidden");
+    const { createHash, timingSafeEqual } = await import("node:crypto");
+    const a = createHash("sha256").update(data.token, "utf8").digest();
+    const b = createHash("sha256").update(expected, "utf8").digest();
+    if (!timingSafeEqual(a, b)) throw new Error("forbidden");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { count } = await supabaseAdmin
       .from("user_roles")
       .select("id", { count: "exact", head: true })
       .eq("role", "super_admin");
-    if ((count ?? 0) > 0) return { claimed: false };
+    // First valid claim becomes super_admin; later valid codes grant admin.
+    const role = (count ?? 0) > 0 ? "admin" : "super_admin";
     const { error } = await supabaseAdmin
       .from("user_roles")
-      .insert({ user_id: context.userId, role: "super_admin" });
+      .upsert({ user_id: context.userId, role }, { onConflict: "user_id,role" });
     if (error) throw new Error("failed");
     await supabaseAdmin.from("admin_audit_log").insert({
       actor_id: context.userId,
-      action: "bootstrap_super_admin",
+      action: role === "super_admin" ? "bootstrap_super_admin" : "grant_admin_via_code",
       target_table: "user_roles",
       target_id: context.userId,
     });
-    return { claimed: true };
+    return { claimed: true, role };
   });
 
 export const getAdminStats = createServerFn({ method: "GET" })
