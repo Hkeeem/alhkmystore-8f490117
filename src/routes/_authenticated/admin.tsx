@@ -62,9 +62,11 @@ import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 import { BotsPanel } from "@/components/admin/BotsPanel";
 import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
+import { AdmitadPanel } from "@/components/admin/AdmitadPanel";
 
 type Tab =
   | "dashboard"
+  | "admitad"
   | "partner-coupons"
   | "offer-clicks"
   | "coupon-clicks"
@@ -205,6 +207,12 @@ function AdminPage() {
       icon: Tags,
       allow: ["super_admin", "admin", "content_manager"],
     },
+    {
+      id: "admitad" as const,
+      label: "عمولات Admitad",
+      icon: MousePointerClick,
+      allow: ["super_admin", "admin"],
+    },
   ].filter((t) => can(t.allow));
 
   return (
@@ -259,6 +267,7 @@ function AdminPage() {
           {tab === "partner-coupons" && <PartnerCouponsPanel />}
           {tab === "offer-clicks" && <OfferClicksPanel />}
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
+          {tab === "admitad" && <AdmitadPanel />}
         </main>
       </div>
     </div>
