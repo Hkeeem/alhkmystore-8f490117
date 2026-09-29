@@ -34,12 +34,12 @@ export const getCommissionReport = createServerFn({ method: "POST" })
     const [clicksRes, convRes] = await Promise.all([
       context.supabase
         .from("affiliate_clicks")
-        .select("network, created_at")
+        .select("id, deal_id, network, source, referrer, country, created_at")
         .gte("created_at", since)
         .limit(50000),
       context.supabase
         .from("affiliate_conversions")
-        .select("network, status, amount, commission, created_at")
+        .select("id, click_id, deal_id, network, order_id, status, amount, commission, currency, created_at")
         .gte("created_at", since)
         .limit(20000),
     ]);
@@ -85,7 +85,31 @@ export const getCommissionReport = createServerFn({ method: "POST" })
         r.sales += Number(c.amount ?? 0);
       }
     }
+    const y = String(data.year);
+    const isNet = (n: string | null) => net(n) !== null;
+    const recentClicks = (clicksRes.data ?? [])
+      .filter((c) => isNet(c.network) && String(c.created_at).startsWith(y))
+      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .slice(0, 200);
+    const recentSales = (convRes.data ?? [])
+      .filter((c) => isNet(c.network) && String(c.created_at).startsWith(y))
+      .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)))
+      .slice(0, 200);
+    const ids = [...new Set([...recentClicks, ...recentSales].map((r) => r.deal_id).filter(Boolean))] as string[];
+    const { data: deals } = ids.length
+      ? await context.supabase.from("merchant_deals").select("id, title").in("id", ids)
+      : { data: [] as { id: string; title: string }[] };
+    const title = new Map((deals ?? []).map((d) => [d.id, d.title]));
     return {
+      clicks: recentClicks.map((c) => ({
+        id: c.id, network: net(c.network)!, title: title.get(c.deal_id) ?? "—",
+        source: c.source, referrer: c.referrer, country: c.country, at: c.created_at,
+      })),
+      sales: recentSales.map((c) => ({
+        id: c.id, network: net(c.network)!, orderId: c.order_id, status: c.status,
+        amount: Number(c.amount ?? 0), commission: Number(c.commission ?? 0), currency: c.currency,
+        title: c.deal_id ? title.get(c.deal_id) ?? "—" : "—", clickId: c.click_id, at: c.created_at,
+      })),
       monthly: [...months.values()],
       yearly: [...years.values()],
       status: { approved, pending, declined },
