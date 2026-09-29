@@ -57,6 +57,27 @@ function offset(base: { lat: number; lng: number }, seed: string, spread = 0.008
   return { lat: base.lat + Math.sin(angle) * r, lng: base.lng + Math.cos(angle) * r };
 }
 
+type MapStyleId = "map" | "satellite" | "terrain";
+
+/** تعريفات طبقات الخريطة — تُنشأ الطبقات مرة واحدة وتُعاد استخدامها */
+const BASE_LAYERS: Record<MapStyleId, { url: string; maxZoom: number; attribution: string }> = {
+  map: {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    maxZoom: 19,
+    attribution: "© OpenStreetMap",
+  },
+  satellite: {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    maxZoom: 19,
+    attribution: "© Esri",
+  },
+  terrain: {
+    url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+    maxZoom: 17,
+    attribution: "© OpenTopoMap",
+  },
+};
+
 function MapsPage() {
   const { deal: focusDealId } = Route.useSearch();
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -66,7 +87,8 @@ function MapsPage() {
   const [query, setQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("الكل");
   const [categoryFilter, setCategoryFilter] = useState("الكل");
-  const [mapStyle, setMapStyle] = useState<"map" | "satellite" | "terrain">("map");
+  const [mapStyle, setMapStyle] = useState<MapStyleId>("map");
+  const [mapReady, setMapReady] = useState(false);
   const [selectedPin, setSelectedPin] = useState<string | null>(focusDealId ?? null);
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -75,6 +97,7 @@ function MapsPage() {
   const markersRef = useRef<Leaflet.Marker[]>([]);
   const resizeObsRef = useRef<ResizeObserver | null>(null);
   const didFocusRef = useRef(false);
+  const layersRef = useRef<Partial<Record<MapStyleId, Leaflet.TileLayer>>>({});
 
   const { data: liveDeals } = useLiveDeals(100);
   const { data: socialOffers } = useSocialOffers(60);
@@ -183,6 +206,7 @@ function MapsPage() {
         scrollWheelZoom: true,
       });
       mapInstanceRef.current = map;
+      setMapReady(true);
       if (typeof ResizeObserver !== "undefined" && mapRef.current) {
         const ro = new ResizeObserver(() => map.invalidateSize());
         ro.observe(mapRef.current);
@@ -200,40 +224,27 @@ function MapsPage() {
     };
   }, []);
 
-  /** تبديل نمط الخريطة */
+  /** تبديل نمط الخريطة — الطبقات تُنشأ مرة واحدة فقط، والبقية تُزال فعليًا */
   useEffect(() => {
     const L = LRef.current;
     const map = mapInstanceRef.current;
-    if (!L || !map) return;
-    const layers = [
-      {
-        id: "map" as const,
-        layer: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-          maxZoom: 19,
-          attribution: "© OpenStreetMap",
-        }),
-      },
-      {
-        id: "satellite" as const,
-        layer: L.tileLayer(
-          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          { maxZoom: 19, attribution: "© Esri" },
-        ),
-      },
-      {
-        id: "terrain" as const,
-        layer: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
-          maxZoom: 17,
-          attribution: "© OpenTopoMap",
-        }),
-      },
-    ];
-    const current = layers.find((l) => l.id === mapStyle)!;
-    layers.forEach((l) => {
-      if (map.hasLayer(l.layer) && l.id !== mapStyle) map.removeLayer(l.layer);
+    if (!L || !map || !mapReady) return;
+    (Object.keys(BASE_LAYERS) as MapStyleId[]).forEach((id) => {
+      if (!layersRef.current[id]) {
+        const def = BASE_LAYERS[id];
+        layersRef.current[id] = L.tileLayer(def.url, {
+          maxZoom: def.maxZoom,
+          attribution: def.attribution,
+        });
+      }
+      const layer = layersRef.current[id]!;
+      if (id === mapStyle) {
+        if (!map.hasLayer(layer)) layer.addTo(map);
+      } else if (map.hasLayer(layer)) {
+        map.removeLayer(layer);
+      }
     });
-    if (!map.hasLayer(current.layer)) current.layer.addTo(map);
-  }, [mapStyle]);
+  }, [mapStyle, mapReady]);
 
   /** رسم الدبابيس */
   useEffect(() => {
