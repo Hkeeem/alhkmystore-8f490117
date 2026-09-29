@@ -29,10 +29,10 @@ export function HkeeemOffersSection() {
   const offersQuery = useQuery({
     queryKey: ["hkeeem-offers", filters],
     queryFn: () => fetchOffers({ data: filters }),
-    staleTime: 5 * 60_000,
-    // تحديث دوري تلقائي كل ٥ دقائق للعروض والكوبونات
-    refetchInterval: 5 * 60_000,
+    staleTime: 10 * 60_000,
+    refetchInterval: 15 * 60_000,
     refetchIntervalInBackground: false,
+    enabled: false,
   });
 
   const storesQuery = useQuery({
