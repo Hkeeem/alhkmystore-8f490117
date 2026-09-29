@@ -36,7 +36,7 @@ export const stores: Store[] = [
   },
   {
     id: "lulu",
-    website: "https://www.luluhypermarket.com",
+    website: "https://gcc.luluhypermarket.com/ar-sa/",
     name: "لولو هايبر",
     logo: "ل",
     logoUrl:
@@ -46,7 +46,7 @@ export const stores: Store[] = [
   },
   {
     id: "danube",
-    website: "https://www.danube.com.sa",
+    website: "https://danube.sa",
     name: "الدانوب",
     logo: "د",
     logoUrl: "https://logo.clearbit.com/danube.com.sa",
