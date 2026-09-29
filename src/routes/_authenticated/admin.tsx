@@ -64,9 +64,11 @@ import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
 import { AdmitadPanel } from "@/components/admin/AdmitadPanel";
 import { CommissionReportsPanel } from "@/components/admin/CommissionReportsPanel";
+import { BranchesPanel } from "@/components/admin/BranchesPanel";
 
 type Tab =
   | "dashboard"
+  | "branches"
   | "admitad"
   | "commissions"
   | "partner-coupons"
@@ -216,6 +218,12 @@ function AdminPage() {
       allow: ["super_admin", "admin"],
     },
     {
+      id: "branches" as const,
+      label: "فروع حكيم",
+      icon: Store,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
       id: "commissions" as const,
       label: "تقارير العمولات",
       icon: MousePointerClick,
@@ -277,6 +285,7 @@ function AdminPage() {
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
           {tab === "admitad" && <AdmitadPanel />}
           {tab === "commissions" && <CommissionReportsPanel />}
+          {tab === "branches" && <BranchesPanel />}
         </main>
       </div>
     </div>
