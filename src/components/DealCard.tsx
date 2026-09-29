@@ -10,7 +10,7 @@ import { timeAgoAr } from "@/hooks/use-live-deals";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
-import { trackDealClick } from "@/lib/track-deal";
+import { trackDealClick, trackStoreWebsiteClick } from "@/lib/track-deal";
 
 /** وسم شفافية يوضح سبب ترقية العرض */
 function transparencyTag(deal: Deal, off: number): string | null {
