@@ -62,6 +62,7 @@ import { ShowroomAdminPanel } from "@/components/admin/ShowroomAdminPanel";
 import { BotsPanel } from "@/components/admin/BotsPanel";
 import { PartnerCouponsPanel } from "@/components/admin/PartnerCouponsPanel";
 import { OfferClicksPanel } from "@/components/admin/OfferClicksPanel";
+import { StoreVisitsPanel } from "@/components/admin/StoreVisitsPanel";
 import { AdmitadPanel } from "@/components/admin/AdmitadPanel";
 import { CommissionReportsPanel } from "@/components/admin/CommissionReportsPanel";
 type Tab =
@@ -70,6 +71,7 @@ type Tab =
   | "commissions"
   | "partner-coupons"
   | "offer-clicks"
+  | "store-visits"
   | "coupon-clicks"
   | "complaints"
   | "suggestions"
@@ -203,6 +205,12 @@ function AdminPage() {
       allow: ["super_admin", "admin", "content_manager"],
     },
     {
+      id: "store-visits" as const,
+      label: "زيارات المتاجر",
+      icon: ExternalLink,
+      allow: ["super_admin", "admin", "content_manager"],
+    },
+    {
       id: "coupon-clicks" as const,
       label: "نقرات الكوبونات",
       icon: Tags,
@@ -274,6 +282,7 @@ function AdminPage() {
           {tab === "partner-coupons" && <PartnerCouponsPanel />}
           {tab === "offer-clicks" && <OfferClicksPanel />}
           {tab === "coupon-clicks" && <OfferClicksPanel kind="coupon" />}
+          {tab === "store-visits" && <StoreVisitsPanel />}
           {tab === "admitad" && <AdmitadPanel />}
           {tab === "commissions" && <CommissionReportsPanel />}
         </main>

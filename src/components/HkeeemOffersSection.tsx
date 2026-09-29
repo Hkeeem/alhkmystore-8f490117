@@ -29,9 +29,8 @@ export function HkeeemOffersSection() {
   const offersQuery = useQuery({
     queryKey: ["hkeeem-offers", filters],
     queryFn: () => fetchOffers({ data: filters }),
-    staleTime: 5 * 60_000,
-    // تحديث دوري تلقائي كل ٥ دقائق للعروض والكوبونات
-    refetchInterval: 5 * 60_000,
+    staleTime: 10 * 60_000,
+    refetchInterval: 15 * 60_000,
     refetchIntervalInBackground: false,
   });
 
@@ -46,7 +45,7 @@ export function HkeeemOffersSection() {
   const statusQuery = useQuery({
     queryKey: ["hkeeem-status"],
     queryFn: () => fetchStatus({}),
-    refetchInterval: 60_000,
+    refetchInterval: 5 * 60_000,
   });
 
   const offers = offersQuery.data ?? [];
@@ -208,9 +207,10 @@ export function HkeeemOffersSection() {
           </button>
         </div>
       ) : offers.length === 0 ? (
-        <div className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-          لا توجد عروض مطابقة حالياً من منصة HkeeemAI.
-        </div>
+        <p className="text-xs text-muted-foreground text-center py-2">
+          عروض HkeeemAI ستظهر هنا تلقائيًا بعد ربط حساب الشركاء — عروض اليوم الموثّقة معروضة في
+          الأعلى.
+        </p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
           {offers.map((o) => (
@@ -291,7 +291,9 @@ export function HkeeemOffersSection() {
 
       <HkeeemStatusPanel refreshKey={offersQuery.dataUpdatedAt + offersQuery.errorUpdatedAt} />
 
-      <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+      {offers.length > 0 && (
+        <StoresDirectory offerStoreNames={offers.map((o) => o.storeName ?? "")} />
+      )}
     </section>
   );
 }
@@ -334,7 +336,7 @@ export function StoresDirectory({ offerStoreNames = [] }: { offerStoreNames?: st
                 </span>
                 <span className="text-xs text-primary font-bold">{s.category}</span>
                 <span className="text-xs text-muted-foreground font-medium">{s.region}</span>
-                {!hasOffers && (
+                {offerStoreNames.length > 0 && !hasOffers && (
                   <span className="text-xs text-muted-foreground font-medium">
                     لا توجد عروض موثقة حاليًا
                   </span>

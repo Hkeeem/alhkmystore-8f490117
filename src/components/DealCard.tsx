@@ -10,7 +10,7 @@ import { timeAgoAr } from "@/hooks/use-live-deals";
 import { ShareSheet, buildDealShareText, toDealShareMeta } from "./ShareSheet";
 import { getDealIcon } from "@/lib/icons";
 import { StoreLogo } from "./StoreLogo";
-import { trackDealClick } from "@/lib/track-deal";
+import { trackDealClick, trackStoreWebsiteClick } from "@/lib/track-deal";
 
 /** وسم شفافية يوضح سبب ترقية العرض */
 function transparencyTag(deal: Deal, off: number): string | null {
@@ -181,16 +181,25 @@ export function DealCard({
         </h3>
         {deal.unit && <p className="text-[12px] text-zinc-400">{deal.unit}</p>}
         {store.website && (
-          <a
-            href={store.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline w-fit"
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              trackStoreWebsiteClick({
+                dealId: deal.id,
+                dealTitle: deal.title,
+                storeId: store.id,
+                storeName: store.name,
+              });
+              window.open(store.website, "_blank", "noopener,noreferrer");
+            }}
+            title={`زيارة موقع ${store.name} الرسمي`}
+            className="inline-flex items-center gap-1 text-[11px] font-bold text-zinc-500 hover:text-primary transition-colors w-fit border border-zinc-200 rounded-full px-2 py-0.5"
           >
-            {store.name}
             <ExternalLink className="w-3 h-3" />
-          </a>
+            موقع {store.name}
+          </button>
         )}
 
         {reason && (

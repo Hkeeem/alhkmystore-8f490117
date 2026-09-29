@@ -7,7 +7,7 @@ import { VAT_NOTE } from "@/lib/vat";
 
 /** عروض اليوم الحية — مصدرها قاعدة البيانات مباشرة (عروض تجّار موثّقين + مصادر خارجية نشطة) */
 export function OffersSection() {
-  const { data, isPending, isError, refetch, isFetching } = useRealDeals(60);
+  const { data, isPending, isError, refetch, isFetching } = useRealDeals(120);
 
   const offers = [...(data ?? [])]
     .sort((a, b) => discountPercent(b) - discountPercent(a))

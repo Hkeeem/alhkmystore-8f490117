@@ -4,6 +4,7 @@ import {
   Home,
   ListChecks,
   MessageCircle,
+  Phone,
   Tag,
   Ticket,
   Trophy,
@@ -65,6 +66,7 @@ const items = [
   { to: "/smart-list", key: "nav.list", icon: ListChecks },
   { to: "/rewards", key: "nav.rewards", icon: Trophy },
   { to: "/chat", key: "nav.assistant", icon: MessageCircle },
+  { to: "/contact", key: "nav.contact", icon: Phone },
 ] as const;
 
 type SubItem = { to: string; key: TKey; icon: typeof Home; badgeKey?: TKey };

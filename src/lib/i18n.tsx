@@ -19,6 +19,7 @@ export const dict = {
   "nav.deals": { ar: "العروض", en: "Deals" },
   "nav.coupons": { ar: "كوبونات", en: "Coupons" },
   "nav.maps": { ar: "خريطتي", en: "Map" },
+  "nav.contact": { ar: "تواصل معنا", en: "Contact" },
   "nav.list": { ar: "قائمة", en: "List" },
   "nav.rewards": { ar: "جوائز", en: "Rewards" },
   "nav.assistant": { ar: "مساعد", en: "Assistant" },

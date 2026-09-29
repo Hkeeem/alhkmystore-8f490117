@@ -7,7 +7,7 @@ const clean = (v: unknown, max = 160) =>
     .trim()
     .slice(0, max);
 
-const SURFACES = ["list", "map", "detail", "coupon", "coupon-detail", "home"];
+const SURFACES = ["list", "map", "detail", "coupon", "coupon-detail", "home", "store-website"];
 
 /** تسجيل نقرة عرض أو كوبون في جدول offer_clicks (عام، بدون بيانات شخصية) */
 export const recordOfferClick = createServerFn({ method: "POST" })
