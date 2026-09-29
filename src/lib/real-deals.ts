@@ -49,6 +49,14 @@ export async function fetchRealDeals(limit = 120): Promise<Deal[]> {
       .limit(limit),
   ]);
 
+  // لا نبتلع أخطاء الشبكة بصمت: إذا فشل الجلب نرمي خطأ ليُعاد المحاولة بدل عرض «لا توجد عروض»
+  if (merchantRes.error && externalRes.error) {
+    throw new Error(merchantRes.error.message || "تعذّر تحميل العروض");
+  }
+  if ((merchantRes.error || externalRes.error) && !(merchantRes.data?.length || externalRes.data?.length)) {
+    throw new Error((merchantRes.error ?? externalRes.error)?.message || "تعذّر تحميل العروض");
+  }
+
   const list: Deal[] = [];
 
   for (const row of merchantRes.data ?? []) {

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchRealDeals } from "@/lib/real-deals";
 
 export const REAL_DEALS_KEY = ["real-deals"];
@@ -11,5 +11,8 @@ export function useRealDeals(limit = 120) {
     staleTime: 30_000,
     refetchInterval: 60_000,
     refetchOnWindowFocus: true,
+    retry: 3,
+    retryDelay: (n) => Math.min(1000 * 2 ** n, 8000),
+    placeholderData: keepPreviousData,
   });
 }
