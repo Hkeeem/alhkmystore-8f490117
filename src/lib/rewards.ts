@@ -1,7 +1,11 @@
 // Client-side points ledger stored in localStorage.
 // Actions: copy coupon (+10), share (+5), visit deal (+2), build smart list (+15).
+// المستخدم المسجّل: نفس النقاط تُسجَّل أيضاً في حسابه داخل قاعدة البيانات.
+
+import { supabase } from "@/integrations/supabase/client";
 
 const KEY = "waffer_rewards_v1";
+const SYNC_FLAG = "waffer_rewards_guest_synced";
 
 export type RewardAction = "copy_coupon" | "share" | "visit_deal" | "smart_list";
 
@@ -52,6 +56,16 @@ export function saveRewards(state: RewardState) {
   window.dispatchEvent(new CustomEvent("waffer:rewards"));
 }
 
+async function pushToAccount(action: RewardAction) {
+  try {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return;
+    await supabase.rpc("award_points", { _action: action });
+  } catch {
+    /* النقاط المحلية محفوظة على أي حال */
+  }
+}
+
 export function addPoints(action: RewardAction): RewardState {
   const s = loadRewards();
   const pts = ACTION_POINTS[action];
@@ -61,7 +75,31 @@ export function addPoints(action: RewardAction): RewardState {
     history: [{ action, points: pts, at: Date.now() }, ...s.history].slice(0, 50),
   };
   saveRewards(next);
+  // مزامنة النقطة نفسها مع حساب المستخدم إن كان مسجلاً (بدون تعطيل الواجهة)
+  void pushToAccount(action);
   return next;
+}
+
+/** نقاط محفوظة كزائر → تُضاف لحسابك مرة واحدة عند أول تسجيل دخول */
+export async function syncGuestBalanceOnce(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  try {
+    if (window.localStorage.getItem(SYNC_FLAG)) return false;
+    const total = loadRewards().points;
+    if (total <= 0) {
+      window.localStorage.setItem(SYNC_FLAG, "1");
+      return false;
+    }
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) return false;
+    const { error } = await supabase.rpc("sync_guest_points", { _total: total });
+    if (error) return false;
+    window.localStorage.setItem(SYNC_FLAG, "1");
+    window.dispatchEvent(new CustomEvent("waffer:rewards"));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export type RedeemResult = { ok: true; state: RewardState } | { ok: false; missing: number };
@@ -142,18 +180,4 @@ export const REWARDS_CATALOG: RewardItem[] = [
     details: "بطاقة هدايا مرنة بقيمة 100 ريال تختار المتجر اللي تبيها فيه.",
     terms: ["تختار المتجر بعد الاستبدال", "صالحة لمدة سنة كاملة", "قابلة للإهداء"],
   },
-];
-
-// Fake leaderboard "seed" so a fresh user sees a populated board.
-export const SEED_LEADERBOARD: { name: string; points: number }[] = [
-  { name: "أبو فيصل", points: 1420 },
-  { name: "منيرة", points: 1180 },
-  { name: "خالد الشمري", points: 960 },
-  { name: "نوره", points: 815 },
-  { name: "سلطان", points: 720 },
-  { name: "ريم القحطاني", points: 640 },
-  { name: "عبدالعزيز", points: 510 },
-  { name: "هند", points: 430 },
-  { name: "ماجد", points: 355 },
-  { name: "لمى", points: 240 },
 ];
