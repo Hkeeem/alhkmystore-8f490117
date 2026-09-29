@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createLovableAiGateway } from "@/lib/ai-gateway.server";
 import { convertToModelMessages, streamText, type UIMessage } from "ai";
-import { deals, stores } from "@/data/deals";
 
 type CatalogLine = string;
 
