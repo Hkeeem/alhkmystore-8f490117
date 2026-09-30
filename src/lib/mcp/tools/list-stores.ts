@@ -1,6 +1,6 @@
 import { defineTool, ToolError } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { supabaseAnon } from "../supabase";
+import { supabaseForCaller } from "../supabase";
 
 interface StoreRow {
   id: string;
@@ -23,9 +23,9 @@ export default defineTool({
     limit: z.number().int().optional().describe("عدد النتائج، الحد الأقصى 50"),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ city, category, limit }) => {
+  handler: async ({ city, category, limit }, ctx) => {
     const take = Math.min(Math.max(limit ?? 20, 1), 50);
-    let q = supabaseAnon()
+    let q = supabaseForCaller(ctx.getToken())
       .from("merchants")
       .select("id,name,slug,description,category,city,website,logo_url")
       .eq("status", "verified")

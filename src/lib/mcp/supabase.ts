@@ -47,16 +47,17 @@ function supabasePublishableKey(): string {
   throw new Error("SUPABASE_PUBLISHABLE_KEY, SUPABASE_PUBLISHABLE_KEYS, or SUPABASE_ANON_KEY is required");
 }
 
-/** لا هوية للمتصل — تُطبَّق سياسات القراءة العامة فقط. */
-export function supabaseAnon() {
+/** عميل يحمل رمز المستخدم الموثّق فتُطبَّق صلاحياته عبر سياسات الأمان. */
+export function supabaseForCaller(token: string | undefined) {
+  if (!token) throw new Error("يجب تسجيل الدخول لاستخدام هذه الأداة");
   const key = supabasePublishableKey();
   return createClient(supabaseProjectUrl(), key, {
     auth: { persistSession: false, autoRefreshToken: false },
     global: {
       fetch: (input, init) => {
         const h = new Headers(init?.headers);
-        if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
         h.set("apikey", key);
+        h.set("Authorization", `Bearer ${token}`);
         return fetch(input, { ...init, headers: h });
       },
     },

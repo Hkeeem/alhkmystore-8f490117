@@ -1,6 +1,6 @@
 import { defineTool, ToolError } from "@lovable.dev/mcp-js";
 import { z } from "zod";
-import { supabaseAnon } from "../supabase";
+import { supabaseForCaller } from "../supabase";
 
 interface DealRow {
   id: string;
@@ -28,9 +28,9 @@ export default defineTool({
     limit: z.number().int().optional().describe("عدد النتائج، الحد الأقصى 50"),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: async ({ query, category, city, limit }) => {
+  handler: async ({ query, category, city, limit }, ctx) => {
     const take = Math.min(Math.max(limit ?? 20, 1), 50);
-    let q = supabaseAnon()
+    let q = supabaseForCaller(ctx.getToken())
       .from("merchant_deals")
       .select(
         "id,title,description,category,unit,price,original_price,discount_percent,coupon_code,product_url,expires_at,merchants!inner(name,slug,city)",
