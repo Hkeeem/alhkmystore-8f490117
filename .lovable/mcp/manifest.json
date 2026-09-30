@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "sdk_version": "3.0.4",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "hkeeem",
+      "version": "0.1.0",
+      "title": "hkeeem"
+    },
+    "tools": [
+      {
+        "name": "search_deals",
+        "title": "البحث في العروض المنشورة",
+        "description": "يبحث في العروض المنشورة والمتاحة حاليًا مع إمكانية التصفية بالكلمة أو التصنيف أو المدينة.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "query": {
+              "description": "كلمة بحث في عنوان العرض",
+              "type": "string"
+            },
+            "category": {
+              "description": "تصنيف العرض",
+              "type": "string"
+            },
+            "city": {
+              "description": "مدينة المتجر",
+              "type": "string"
+            },
+            "limit": {
+              "description": "عدد النتائج، الحد الأقصى 50",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_stores",
+        "title": "المتاجر الموثّقة",
+        "description": "يعرض المتاجر الموثّقة المنشورة في التطبيق مع إمكانية التصفية بالمدينة أو التصنيف.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "city": {
+              "description": "تصفية بالمدينة",
+              "type": "string"
+            },
+            "category": {
+              "description": "تصفية بالتصنيف",
+              "type": "string"
+            },
+            "limit": {
+              "description": "عدد النتائج، الحد الأقصى 50",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_store_branches",
+        "title": "فروع المتاجر بمواقع محفوظة",
+        "description": "يعرض فروع المتاجر النشطة التي لها إحداثيات محفوظة وموثّقة فقط.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {
+            "city": {
+              "description": "تصفية بالمدينة",
+              "type": "string"
+            },
+            "store_name": {
+              "description": "اسم المتجر",
+              "type": "string"
+            },
+            "limit": {
+              "description": "عدد النتائج، الحد الأقصى 50",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "additionalProperties": false
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

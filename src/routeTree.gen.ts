@@ -24,6 +24,7 @@ import { Route as ProRouteImport } from './routes/pro'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OfficeRouteImport } from './routes/office'
 import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as MarketRouteImport } from './routes/market'
 import { Route as MapsRouteImport } from './routes/maps'
 import { Route as HkeeemShowroomRouteImport } from './routes/hkeeem-showroom'
@@ -66,6 +67,7 @@ import { Route as AuthenticatedDealsAdminRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDealReportsRouteImport } from './routes/_authenticated/deal-reports'
 import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenticated/build-errors'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as ApiPublicOutRouteImport } from './routes/api/public/out'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
@@ -157,6 +159,11 @@ const OfficeRoute = OfficeRouteImport.update({
 const NotificationsRoute = NotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MarketRoute = MarketRouteImport.update({
@@ -374,6 +381,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicOutRoute = ApiPublicOutRouteImport.update({
   id: '/api/public/out',
   path: '/api/public/out',
@@ -489,6 +502,7 @@ export interface FileRoutesByFullPath {
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
+  '/mcp': typeof McpRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
@@ -504,6 +518,7 @@ export interface FileRoutesByFullPath {
   '/stores': typeof StoresRoute
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/deal-reports': typeof AuthenticatedDealReportsRoute
@@ -564,6 +579,7 @@ export interface FileRoutesByTo {
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
+  '/mcp': typeof McpRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
@@ -579,6 +595,7 @@ export interface FileRoutesByTo {
   '/stores': typeof StoresRoute
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/deal-reports': typeof AuthenticatedDealReportsRoute
@@ -641,6 +658,7 @@ export interface FileRoutesById {
   '/hkeeem-showroom': typeof HkeeemShowroomRoute
   '/maps': typeof MapsRoute
   '/market': typeof MarketRoute
+  '/mcp': typeof McpRoute
   '/notifications': typeof NotificationsRoute
   '/office': typeof OfficeRoute
   '/privacy': typeof PrivacyRoute
@@ -656,6 +674,7 @@ export interface FileRoutesById {
   '/stores': typeof StoresRoute
   '/sync-partners': typeof SyncPartnersRoute
   '/terms': typeof TermsRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/build-errors': typeof AuthenticatedBuildErrorsRoute
   '/_authenticated/deal-reports': typeof AuthenticatedDealReportsRoute
@@ -718,6 +737,7 @@ export interface FileRouteTypes {
     | '/hkeeem-showroom'
     | '/maps'
     | '/market'
+    | '/mcp'
     | '/notifications'
     | '/office'
     | '/privacy'
@@ -733,6 +753,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/sync-partners'
     | '/terms'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/build-errors'
     | '/deal-reports'
@@ -793,6 +814,7 @@ export interface FileRouteTypes {
     | '/hkeeem-showroom'
     | '/maps'
     | '/market'
+    | '/mcp'
     | '/notifications'
     | '/office'
     | '/privacy'
@@ -808,6 +830,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/sync-partners'
     | '/terms'
+    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/build-errors'
     | '/deal-reports'
@@ -869,6 +892,7 @@ export interface FileRouteTypes {
     | '/hkeeem-showroom'
     | '/maps'
     | '/market'
+    | '/mcp'
     | '/notifications'
     | '/office'
     | '/privacy'
@@ -884,6 +908,7 @@ export interface FileRouteTypes {
     | '/stores'
     | '/sync-partners'
     | '/terms'
+    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/build-errors'
     | '/_authenticated/deal-reports'
@@ -946,6 +971,7 @@ export interface RootRouteChildren {
   HkeeemShowroomRoute: typeof HkeeemShowroomRoute
   MapsRoute: typeof MapsRoute
   MarketRoute: typeof MarketRoute
+  McpRoute: typeof McpRoute
   NotificationsRoute: typeof NotificationsRoute
   OfficeRoute: typeof OfficeRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -961,6 +987,7 @@ export interface RootRouteChildren {
   StoresRoute: typeof StoresRoute
   SyncPartnersRoute: typeof SyncPartnersRoute
   TermsRoute: typeof TermsRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
   ApiSttRoute: typeof ApiSttRoute
   ApiTtsRoute: typeof ApiTtsRoute
@@ -1094,6 +1121,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/notifications'
       preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/market': {
@@ -1390,6 +1424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/out': {
       id: '/api/public/out'
       path: '/api/public/out'
@@ -1586,6 +1627,7 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemShowroomRoute: HkeeemShowroomRoute,
   MapsRoute: MapsRoute,
   MarketRoute: MarketRoute,
+  McpRoute: McpRoute,
   NotificationsRoute: NotificationsRoute,
   OfficeRoute: OfficeRoute,
   PrivacyRoute: PrivacyRoute,
@@ -1601,6 +1643,8 @@ const rootRouteChildren: RootRouteChildren = {
   StoresRoute: StoresRoute,
   SyncPartnersRoute: SyncPartnersRoute,
   TermsRoute: TermsRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
   ApiSttRoute: ApiSttRoute,
   ApiTtsRoute: ApiTtsRoute,
