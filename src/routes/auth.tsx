@@ -18,8 +18,20 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+/** مسار داخلي آمن للعودة بعد الدخول (مثل صفحة موافقة الأدوات). */
+function nextPath(): string {
+  if (typeof window === "undefined") return "/";
+  const r = new URLSearchParams(window.location.search).get("redirect");
+  return r && r.startsWith("/") && !r.startsWith("//") ? r : "/";
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const goNext = () => {
+    const p = nextPath();
+    if (p === "/") navigate({ to: "/" });
+    else window.location.assign(p);
+  };
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
@@ -32,7 +44,7 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/" });
+      if (data.session) goNext();
     });
   }, [navigate]);
 
@@ -55,7 +67,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast.success("مرحبًا بعودتك!");
-        navigate({ to: "/" });
+        goNext();
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "فشل تسجيل الدخول");
@@ -67,7 +79,7 @@ function AuthPage() {
   async function handleGoogle() {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: window.location.origin + nextPath(),
     });
     if (result.error) {
       toast.error("فشل تسجيل الدخول بجوجل");
@@ -75,13 +87,13 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    goNext();
   }
 
   async function handleApple() {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth("apple", {
-      redirect_uri: window.location.origin,
+      redirect_uri: window.location.origin + nextPath(),
     });
     if (result.error) {
       toast.error("فشل تسجيل الدخول بـ Apple");
@@ -89,7 +101,7 @@ function AuthPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: "/" });
+    goNext();
   }
 
   async function handleSendOtp(e: React.FormEvent) {
@@ -120,7 +132,7 @@ function AuthPage() {
       const { error } = await supabase.auth.verifyOtp({ phone, token: otp, type: "sms" });
       if (error) throw error;
       toast.success("مرحبًا بعودتك!");
-      navigate({ to: "/" });
+      goNext();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "الرمز غير صحيح");
     } finally {
