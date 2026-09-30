@@ -69,6 +69,7 @@ import { Route as AuthenticatedBuildErrorsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as ApiPublicOutRouteImport } from './routes/api/public/out'
+import { Route as Char91DotlovableChar93OauthConsentRouteImport } from './routes/[.lovable].oauth.consent'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -392,6 +393,12 @@ const ApiPublicOutRoute = ApiPublicOutRouteImport.update({
   path: '/api/public/out',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Char91DotlovableChar93OauthConsentRoute =
+  Char91DotlovableChar93OauthConsentRouteImport.update({
+    id: '/.lovable/oauth/consent',
+    path: '/.lovable/oauth/consent',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -542,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
+  '/.lovable/oauth/consent': typeof Char91DotlovableChar93OauthConsentRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -619,6 +627,7 @@ export interface FileRoutesByTo {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards/$id': typeof RewardsIdRoute
   '/hkeeem': typeof HkeeemIndexRoute
+  '/.lovable/oauth/consent': typeof Char91DotlovableChar93OauthConsentRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -698,6 +707,7 @@ export interface FileRoutesById {
   '/hkeeem/product': typeof HkeeemProductRoute
   '/rewards_/$id': typeof RewardsIdRoute
   '/hkeeem/': typeof HkeeemIndexRoute
+  '/.lovable/oauth/consent': typeof Char91DotlovableChar93OauthConsentRoute
   '/api/public/out': typeof ApiPublicOutRoute
   '/api/public/go/$dealId': typeof ApiPublicGoDealIdRoute
   '/api/public/hooks/daily-content-sync': typeof ApiPublicHooksDailyContentSyncRoute
@@ -777,6 +787,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards/$id'
     | '/hkeeem/'
+    | '/.lovable/oauth/consent'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -854,6 +865,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards/$id'
     | '/hkeeem'
+    | '/.lovable/oauth/consent'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -932,6 +944,7 @@ export interface FileRouteTypes {
     | '/hkeeem/product'
     | '/rewards_/$id'
     | '/hkeeem/'
+    | '/.lovable/oauth/consent'
     | '/api/public/out'
     | '/api/public/go/$dealId'
     | '/api/public/hooks/daily-content-sync'
@@ -997,6 +1010,7 @@ export interface RootRouteChildren {
   HkeeemProductRoute: typeof HkeeemProductRoute
   RewardsIdRoute: typeof RewardsIdRoute
   HkeeemIndexRoute: typeof HkeeemIndexRoute
+  Char91DotlovableChar93OauthConsentRoute: typeof Char91DotlovableChar93OauthConsentRoute
   ApiPublicOutRoute: typeof ApiPublicOutRoute
   ApiPublicGoDealIdRoute: typeof ApiPublicGoDealIdRoute
   ApiPublicHooksDailyContentSyncRoute: typeof ApiPublicHooksDailyContentSyncRoute
@@ -1438,6 +1452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof Char91DotlovableChar93OauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -1654,6 +1675,8 @@ const rootRouteChildren: RootRouteChildren = {
   HkeeemProductRoute: HkeeemProductRoute,
   RewardsIdRoute: RewardsIdRoute,
   HkeeemIndexRoute: HkeeemIndexRoute,
+  Char91DotlovableChar93OauthConsentRoute:
+    Char91DotlovableChar93OauthConsentRoute,
   ApiPublicOutRoute: ApiPublicOutRoute,
   ApiPublicGoDealIdRoute: ApiPublicGoDealIdRoute,
   ApiPublicHooksDailyContentSyncRoute: ApiPublicHooksDailyContentSyncRoute,
